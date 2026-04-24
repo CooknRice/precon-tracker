@@ -1,18 +1,19 @@
 """
 Scrape precon prices.
 
-v1.3 changes:
-  - Dropped direct Card Kingdom scraping (blocked at IP layer from GitHub
-    Actions, confirmed by v1.1/v1.2 runs returning 100% HTTP 403).
-  - Added MTGStocks-based lookup. MTGStocks aggregates pricing across
-    MTG vendors and serves everything as server-rendered HTML. A single
-    product-page fetch yields:
-        - TCGPlayer Market price (aggregated recent-sold)
-        - TCGPlayer Low price (cheapest current listing)
-        - Card Kingdom's current listing price
-        - Clean direct URLs for both vendors (stripped of MTGStocks
-          affiliate tracking params)
-  - prices.json now has three vendors: cardkingdom, zulus, tcgplayer.
+v1.4 changes:
+  - Dropped MTGStocks (their search page is a React SPA; no sealed links
+    appeared in the server-rendered HTML, so v1.3 got 0/111 hits).
+  - Replaced it with TCGCSV (https://tcgcsv.com), a public daily dump of
+    TCGPlayer's full catalog as JSON. Gives us Market Price directly with
+    no scraping, no cookies, no rate limit anxiety. Just documented
+    endpoints returning clean data:
+        GET /tcgplayer/1/groups
+        GET /tcgplayer/1/{groupId}/products
+        GET /tcgplayer/1/{groupId}/prices
+  - Zulus unchanged (direct Shopify suggest.json, working fine).
+  - Card Kingdom is emptied in this version. MTGStocks was our bridge to
+    CK and it's gone; we'll revisit CK separately.
 """
 
 import json
@@ -24,7 +25,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
-from bs4 import BeautifulSoup
+
+TCGCSV_BASE = "https://tcgcsv.com/tcgplayer"
+MAGIC_CATEGORY = 1
+TIMEOUT = 30
+TCGCSV_UA = "precon-tracker/1.4 (+https://github.com/CooknRice/precon-tracker)"
+POLITE_SLEEP = 1.2
 
 USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
@@ -32,28 +38,218 @@ USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15",
 ]
 
-TIMEOUT = 20
-POLITE_SLEEP = 1.2     # delay between hitting different hosts
-INTRA_SLEEP = 0.6      # delay between two requests to the same host
+
+# -------------------------------------------------------------------------
+# TCGCSV helpers
+# -------------------------------------------------------------------------
+
+def norm(s: str) -> str:
+    """Lowercase + strip all non-alphanumeric. Robust for fuzzy name matching."""
+    return re.sub(r"[^a-z0-9]+", "", (s or "").lower())
 
 
-def browser_headers() -> dict:
-    return {
-        "User-Agent": random.choice(USER_AGENTS),
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Sec-Ch-Ua": '"Chromium";v="126", "Not.A/Brand";v="24", "Google Chrome";v="126"',
-        "Sec-Ch-Ua-Mobile": "?0",
-        "Sec-Ch-Ua-Platform": '"macOS"',
-        "Sec-Fetch-Dest": "document",
-        "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "none",
-        "Sec-Fetch-User": "?1",
-        "Upgrade-Insecure-Requests": "1",
-        "Referer": "https://www.google.com/",
-    }
+def fetch_tcgcsv_json(path: str, session: requests.Session) -> dict:
+    """GET a TCGCSV endpoint. Returns the parsed JSON or raises."""
+    url = f"{TCGCSV_BASE}/{path}"
+    r = session.get(url, timeout=TIMEOUT)
+    r.raise_for_status()
+    return r.json()
 
+
+def load_magic_groups(session: requests.Session) -> list:
+    """Fetch the full list of Magic groups (sets/product lines) from TCGCSV."""
+    data = fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/groups", session)
+    return data.get("results", [])
+
+
+def pick_group_for_set(groups: list, deck_set: str) -> dict | None:
+    """Match a deck's set name to a TCGCSV group.
+
+    Prefers groups whose name contains both the set tokens AND a commander
+    keyword (to land on the precon product line, not the base set). Falls
+    back to longest-prefix-match if no commander-tagged group exists.
+    """
+    set_norm = norm(deck_set)
+    if not set_norm:
+        return None
+
+    commander_kws = ["commander", "precon"]
+    scored = []
+    for g in groups:
+        name = g.get("name") or ""
+        if set_norm not in norm(name):
+            continue
+        name_l = name.lower()
+        has_cmdr = any(k in name_l for k in commander_kws)
+        # Prefer: has_commander, then shorter (less-specific variant)
+        scored.append((has_cmdr, -len(name), g))
+
+    if not scored:
+        return None
+    scored.sort(reverse=True)
+    return scored[0][2]
+
+
+def pick_product_for_deck(products: list, deck_name: str) -> dict | None:
+    """Find the product whose name contains the deck name (fuzzy)."""
+    deck_norm = norm(deck_name)
+    if not deck_norm:
+        return None
+
+    exact = []
+    partial = []
+    for p in products:
+        pname = p.get("name") or ""
+        pnorm = norm(pname)
+        if deck_norm == pnorm:
+            exact.append(p)
+        elif deck_norm in pnorm:
+            partial.append(p)
+
+    if exact:
+        return exact[0]
+    if partial:
+        # Prefer shortest match (least qualified / most canonical)
+        partial.sort(key=lambda p: len(p.get("name") or ""))
+        return partial[0]
+    return None
+
+
+def flatten_prices(price_results: list) -> dict:
+    """Turn TCGCSV prices payload into productId -> best price record.
+
+    A productId may have multiple rows (one per subTypeName, e.g. Normal
+    vs Foil). Sealed precons are typically "Normal". We prefer "Normal",
+    then fall back to whatever we find.
+    """
+    by_pid: dict[int, dict] = {}
+    for row in price_results:
+        pid = row.get("productId")
+        if pid is None:
+            continue
+        existing = by_pid.get(pid)
+        if existing is None:
+            by_pid[pid] = row
+            continue
+        # Replace if new row is "Normal" and existing isn't
+        if row.get("subTypeName") == "Normal" and existing.get("subTypeName") != "Normal":
+            by_pid[pid] = row
+    return by_pid
+
+
+def tcg_product_url(product_id: int, product_name: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", (product_name or "").lower()).strip("-")
+    return f"https://www.tcgplayer.com/product/{product_id}/magic-{slug}" if slug else f"https://www.tcgplayer.com/product/{product_id}"
+
+
+def fetch_all_tcgcsv(decks: list) -> dict:
+    """Resolve all decks via TCGCSV. Returns {deck_id: price_record}."""
+    session = requests.Session()
+    session.headers.update({"User-Agent": TCGCSV_UA, "Accept": "application/json"})
+
+    print("Loading TCGCSV Magic groups list...", flush=True)
+    try:
+        groups = load_magic_groups(session)
+    except Exception as e:
+        print(f"  FATAL: couldn't load groups list: {e}", flush=True)
+        groups = []
+    print(f"  {len(groups)} Magic groups loaded", flush=True)
+
+    # Cache per-group fetches so we don't hit the same endpoints repeatedly
+    group_cache: dict[int, dict] = {}
+
+    def ensure_group(group: dict) -> dict:
+        gid = group["groupId"]
+        if gid in group_cache:
+            return group_cache[gid]
+        try:
+            prod_data = fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/{gid}/products", session)
+            price_data = fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/{gid}/prices", session)
+            group_cache[gid] = {
+                "name": group.get("name"),
+                "products": prod_data.get("results", []),
+                "prices": flatten_prices(price_data.get("results", [])),
+                "error": None,
+            }
+            time.sleep(0.3)  # gentle on tcgcsv
+        except Exception as e:
+            group_cache[gid] = {
+                "name": group.get("name"),
+                "products": [],
+                "prices": {},
+                "error": str(e),
+            }
+        return group_cache[gid]
+
+    results: dict[str, dict] = {}
+    for i, deck in enumerate(decks, 1):
+        deck_id = deck["id"]
+        deck_name = deck["name"]
+        deck_set = deck.get("set", "")
+
+        fallback_url = f"https://www.tcgplayer.com/search/magic/product?q={urllib.parse.quote(deck_name)}"
+        base = {
+            "price": None, "price_low": None,
+            "url": fallback_url,
+            "status": "unknown",
+            "snippet": None,
+        }
+
+        group = pick_group_for_set(groups, deck_set)
+        if not group:
+            base["status"] = "tcgcsv-no-group-match"
+            base["snippet"] = f"set={deck_set}"
+            results[deck_id] = base
+            print(f"[{i:3}/{len(decks)}] {deck_name:<36} TCG ------  (no group for '{deck_set}')", flush=True)
+            continue
+
+        gc = ensure_group(group)
+        if gc.get("error"):
+            base["status"] = f"tcgcsv-group-error"
+            base["snippet"] = gc["error"][:100]
+            results[deck_id] = base
+            print(f"[{i:3}/{len(decks)}] {deck_name:<36} TCG ------  (group fetch error)", flush=True)
+            continue
+
+        product = pick_product_for_deck(gc["products"], deck_name)
+        if not product:
+            base["status"] = "tcgcsv-no-product-match"
+            base["snippet"] = f"group={gc['name']}"
+            results[deck_id] = base
+            print(f"[{i:3}/{len(decks)}] {deck_name:<36} TCG ------  (no product in '{gc['name']}')", flush=True)
+            continue
+
+        pid = product["productId"]
+        price_row = gc["prices"].get(pid)
+        market = price_row.get("marketPrice") if price_row else None
+        low = price_row.get("lowPrice") if price_row else None
+
+        url = tcg_product_url(pid, product.get("name", ""))
+        if market is not None:
+            results[deck_id] = {
+                "price": float(market),
+                "price_low": float(low) if low is not None else None,
+                "url": url,
+                "status": "ok",
+                "snippet": product.get("name"),
+            }
+            low_str = f" / low ${float(low):.2f}" if low else ""
+            print(f"[{i:3}/{len(decks)}] {deck_name:<36} TCG ${float(market):>6.2f}  (Market{low_str})", flush=True)
+        else:
+            results[deck_id] = {
+                "price": None, "price_low": None,
+                "url": url,
+                "status": "tcgcsv-no-market-price",
+                "snippet": product.get("name"),
+            }
+            print(f"[{i:3}/{len(decks)}] {deck_name:<36} TCG ------  (no market price)", flush=True)
+
+    return results
+
+
+# -------------------------------------------------------------------------
+# Zulus Games (unchanged from v1.2/v1.3)
+# -------------------------------------------------------------------------
 
 def json_headers() -> dict:
     return {
@@ -64,106 +260,7 @@ def json_headers() -> dict:
     }
 
 
-def fetch_mtgstocks(deck_name: str) -> dict:
-    """One MTGStocks lookup returns both TCGPlayer and Card Kingdom data.
-
-    Returns a dict with two sub-dicts: 'tcgplayer' and 'cardkingdom',
-    each with the usual {price, url, status, snippet} shape. The tcgplayer
-    dict additionally has 'price_low' for the cheapest current listing.
-    """
-    q = urllib.parse.quote(deck_name)
-    tcg_fallback_url = f"https://www.tcgplayer.com/search/magic/product?q={q}"
-    ck_fallback_url = (
-        f"https://www.cardkingdom.com/catalog/search"
-        f"?filter%5Bname%5D={q}&filter%5Btab%5D=product"
-    )
-    result = {
-        "tcgplayer":   {"price": None, "price_low": None, "url": tcg_fallback_url, "status": "unknown", "snippet": None},
-        "cardkingdom": {"price": None, "url": ck_fallback_url, "status": "unknown", "snippet": None},
-    }
-
-    try:
-        # Step 1: search
-        search_url = f"https://www.mtgstocks.com/search?q={q}"
-        r = requests.get(search_url, headers=browser_headers(), timeout=TIMEOUT)
-        if r.status_code != 200:
-            status = f"mtgs-search-http-{r.status_code}"
-            result["tcgplayer"]["status"] = status
-            result["cardkingdom"]["status"] = status
-            return result
-
-        soup = BeautifulSoup(r.text, "html.parser")
-        # First sealed-product hit. Links look like "/sealed/8914-tarkir-...".
-        sealed_link = soup.find("a", href=re.compile(r"^/sealed/\d+-"))
-        if not sealed_link:
-            result["tcgplayer"]["status"] = "mtgs-no-sealed-match"
-            result["cardkingdom"]["status"] = "mtgs-no-sealed-match"
-            return result
-
-        time.sleep(INTRA_SLEEP)
-
-        # Step 2: product page
-        product_url = f"https://www.mtgstocks.com{sealed_link['href']}"
-        r2 = requests.get(product_url, headers=browser_headers(), timeout=TIMEOUT)
-        if r2.status_code != 200:
-            status = f"mtgs-product-http-{r2.status_code}"
-            result["tcgplayer"]["status"] = status
-            result["cardkingdom"]["status"] = status
-            return result
-
-        soup2 = BeautifulSoup(r2.text, "html.parser")
-        text = soup2.get_text(" ", strip=True)
-
-        # Parse the "Low $X Average $X Market $X MSRP $X" summary
-        market_m = re.search(r"Market\s*\$(\d+\.\d{2})", text)
-        low_m = re.search(r"Low\s*\$(\d+\.\d{2})", text)
-        if market_m:
-            result["tcgplayer"]["price"] = float(market_m.group(1))
-            if low_m:
-                result["tcgplayer"]["price_low"] = float(low_m.group(1))
-            result["tcgplayer"]["status"] = "ok"
-            result["tcgplayer"]["snippet"] = f"TCG Market (via MTGStocks): {deck_name}"
-
-            # Extract the real TCGPlayer URL out of the partner.tcgplayer.com wrapper
-            tcg_link = soup2.find("a", href=re.compile(r"partner\.tcgplayer\.com"))
-            if tcg_link:
-                u_match = re.search(r"[?&]u=([^&]+)", tcg_link["href"])
-                if u_match:
-                    result["tcgplayer"]["url"] = urllib.parse.unquote(u_match.group(1))
-        else:
-            result["tcgplayer"]["status"] = "mtgs-no-market-price"
-
-        # Parse Card Kingdom listing (they appear on the same MTGStocks page)
-        ck_link = soup2.find("a", href=re.compile(r"cardkingdom\.com/mtg-sealed"))
-        if ck_link:
-            ck_text = ck_link.get_text(" ", strip=True)
-            ck_price_m = re.search(r"\$(\d+\.\d{2})", ck_text)
-            if ck_price_m:
-                result["cardkingdom"]["price"] = float(ck_price_m.group(1))
-                result["cardkingdom"]["status"] = "ok"
-                result["cardkingdom"]["snippet"] = f"CK (via MTGStocks): {deck_name}"
-                # Strip affiliate query params from the URL
-                result["cardkingdom"]["url"] = ck_link["href"].split("?")[0]
-            else:
-                result["cardkingdom"]["status"] = "mtgs-no-ck-price"
-        else:
-            result["cardkingdom"]["status"] = "mtgs-no-ck-listing"
-
-        return result
-    except requests.RequestException as e:
-        err = f"error-{type(e).__name__}"
-        result["tcgplayer"]["status"] = err
-        result["cardkingdom"]["status"] = err
-        return result
-    except Exception as e:
-        err = f"parse-error-{type(e).__name__}"
-        result["tcgplayer"]["status"] = err
-        result["cardkingdom"]["status"] = err
-        return result
-
-
 def is_plausible_mtg_commander_product(title: str) -> bool:
-    """Zulus filter: accept only standard MTG commander precons."""
     if not title:
         return False
     t = title.lower()
@@ -174,7 +271,6 @@ def is_plausible_mtg_commander_product(title: str) -> bool:
 
 
 def fetch_zulus(deck_name: str) -> dict:
-    """Zulus Games via Shopify /search/suggest.json."""
     query = urllib.parse.quote(deck_name)
     api_url = (
         f"https://www.zulusgames.com/search/suggest.json"
@@ -211,7 +307,6 @@ def fetch_zulus(deck_name: str) -> dict:
             if price < 10.0:
                 continue
             candidates.append((price, title, p.get("url")))
-
         if candidates:
             candidates.sort(key=lambda t: t[0])
             price, title, rel_url = candidates[0]
@@ -231,68 +326,61 @@ def fetch_zulus(deck_name: str) -> dict:
         return result
 
 
-def main():
+# -------------------------------------------------------------------------
+# Main
+# -------------------------------------------------------------------------
+
+def main() -> None:
     decks_path = Path(__file__).parent / "decks.json"
     out_path = Path(__file__).parent / "prices.json"
     decks = json.loads(decks_path.read_text())
-    print(f"Loaded {len(decks)} decks", flush=True)
+    print(f"Loaded {len(decks)} decks\n", flush=True)
+
+    # Phase 1: TCGCSV → TCGPlayer Market prices for all decks in one pass.
+    print("=== Phase 1: TCGCSV → TCGPlayer ===", flush=True)
+    tcg_results = fetch_all_tcgcsv(decks)
+
+    # Phase 2: Zulus direct scrape, per deck.
+    print("\n=== Phase 2: Zulus Games ===", flush=True)
+    zulus_results: dict[str, dict] = {}
+    for i, deck in enumerate(decks, 1):
+        did = deck["id"]
+        name = deck["name"]
+        zu = fetch_zulus(name)
+        zulus_results[did] = zu
+        if zu["price"]:
+            print(f"[{i:3}/{len(decks)}] {name:<36} Zulus ${zu['price']:>6.2f}", flush=True)
+        time.sleep(POLITE_SLEEP + random.uniform(0, 0.3))
+
+    # Card Kingdom: empty per-deck record to preserve HTML compatibility.
+    # (MTGStocks bridge is gone; direct CK is IP-blocked. Revisit later.)
+    ck_results = {
+        deck["id"]: {
+            "price": None,
+            "url": f"https://www.cardkingdom.com/catalog/search?filter%5Bname%5D={urllib.parse.quote(deck['name'])}&filter%5Btab%5D=product",
+            "status": "disabled-in-v1.4",
+            "snippet": None,
+        }
+        for deck in decks
+    }
 
     output = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "deck_count": len(decks),
         "vendors": {
-            "cardkingdom": {},
-            "zulus": {},
-            "tcgplayer": {},
+            "cardkingdom": ck_results,
+            "zulus": zulus_results,
+            "tcgplayer": tcg_results,
         },
     }
-
-    tcg_hits = 0
-    ck_hits = 0
-    zu_hits = 0
-
-    for i, deck in enumerate(decks, 1):
-        name = deck["name"]
-        did = deck["id"]
-        print(f"[{i:3}/{len(decks)}] {name}", flush=True)
-
-        # MTGStocks → TCG Market + CK listing
-        mtgs = fetch_mtgstocks(name)
-        output["vendors"]["tcgplayer"][did] = mtgs["tcgplayer"]
-        output["vendors"]["cardkingdom"][did] = mtgs["cardkingdom"]
-
-        tcg = mtgs["tcgplayer"]
-        ck = mtgs["cardkingdom"]
-        if tcg["price"]:
-            tcg_hits += 1
-            low_str = f" / low ${tcg['price_low']:.2f}" if tcg.get("price_low") else ""
-            print(f"     TCG   ${tcg['price']:>6.2f}  (Market{low_str})", flush=True)
-        else:
-            print(f"     TCG   ------  ({tcg['status']})", flush=True)
-        if ck["price"]:
-            ck_hits += 1
-            print(f"     CK    ${ck['price']:>6.2f}", flush=True)
-        else:
-            print(f"     CK    ------  ({ck['status']})", flush=True)
-
-        time.sleep(POLITE_SLEEP + random.uniform(0, 0.5))
-
-        # Zulus
-        zu = fetch_zulus(name)
-        output["vendors"]["zulus"][did] = zu
-        if zu["price"]:
-            zu_hits += 1
-            print(f"     Zulus ${zu['price']:>6.2f}", flush=True)
-        else:
-            print(f"     Zulus ------  ({zu['status']})", flush=True)
-
-        time.sleep(POLITE_SLEEP + random.uniform(0, 0.5))
-
     out_path.write_text(json.dumps(output, indent=2))
+
+    tcg_hits = sum(1 for v in tcg_results.values() if v.get("price") is not None)
+    zu_hits = sum(1 for v in zulus_results.values() if v.get("price") is not None)
+
     print(f"\nWrote {out_path}")
-    print(f"TCGPlayer:    {tcg_hits}/{len(decks)} hits")
-    print(f"Card Kingdom: {ck_hits}/{len(decks)} hits")
-    print(f"Zulus Games:  {zu_hits}/{len(decks)} hits")
+    print(f"TCGPlayer: {tcg_hits}/{len(decks)} hits")
+    print(f"Zulus:     {zu_hits}/{len(decks)} hits")
 
 
 if __name__ == "__main__":
