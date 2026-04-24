@@ -37,7 +37,15 @@ jobs:
           git add prices.json
           if git diff --staged --quiet; then
             echo "No price changes today."
-          else
-            git commit -m "prices: automated update $(date -u +%Y-%m-%d)"
-            git push
+            exit 0
           fi
+          git commit -m "prices: automated update $(date -u +%Y-%m-%d)"
+          # Pull any commits that landed during the scrape, then push.
+          # Rebase keeps our commit on top; --autostash handles any stray changes.
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin main && git push && exit 0
+            echo "Push attempt $i failed, retrying..."
+            sleep 3
+          done
+          echo "Push failed after 3 attempts"
+          exit 1
