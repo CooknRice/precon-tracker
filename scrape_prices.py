@@ -86,7 +86,7 @@ def pick_group_for_set(groups: list, deck_set: str) -> dict | None:
 
     if not scored:
         return None
-    scored.sort(reverse=True)
+    scored.sort(key=lambda x: (x[0], x[1]), reverse=True)
     return scored[0][2]
 
 
