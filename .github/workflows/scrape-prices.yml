@@ -1,0 +1,43 @@
+name: Scrape precon prices
+# Add scraper workflow
+# Runs every day at 13:00 UTC (6 AM Pacific) and on manual trigger.
+on:
+  schedule:
+    - cron: '0 13 * * *'
+  workflow_dispatch: {}
+
+# Allow committing prices.json back to the repo.
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run scraper
+        run: python scrape_prices.py
+
+      - name: Commit updated prices.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add prices.json
+          if git diff --staged --quiet; then
+            echo "No price changes today."
+          else
+            git commit -m "prices: automated update $(date -u +%Y-%m-%d)"
+            git push
+          fi
