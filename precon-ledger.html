@@ -1,0 +1,2742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Precon Ledger · MTG Commander Deck Price Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #15120e;          /* deep warm charcoal — the page */
+  --paper-deep: #1d1915;     /* cards/panels */
+  --paper-line: #2c2720;     /* borders/dividers */
+  --ink: #ede3ca;            /* primary warm cream */
+  --ink-soft: #c9c0a8;       /* secondary text */
+  --ink-muted: #8a8168;      /* labels */
+  --ink-faded: #625b49;      /* faded hints */
+  --burgundy: #d97485;       /* brightened crimson for deals/prices on dark */
+  --burgundy-soft: #bd5d6e;
+  --gold: #c69a3e;           /* warm antique gold */
+  --gold-bright: #e4b954;
+  --sage: #6e8a55;           /* owned/sage accent */
+  --deal-bg: #2c2518;        /* warm dark umber for deal cards */
+  --owned-bg: #1f2a1c;       /* deep moss for owned */
+  --w: #e8dcb0;
+  --u: #6da8db;
+  --b: #524a52;              /* lifted from pure black for dark-bg visibility */
+  --r: #d87256;
+  --g: #7ba068;
+  --c: #9b9586;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-ui: 'DM Sans', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Menlo', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.55;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  background-image:
+    radial-gradient(circle at 15% 5%, rgba(198,154,62,0.06), transparent 55%),
+    radial-gradient(circle at 85% 95%, rgba(217,116,133,0.04), transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(237,227,202,0.01), transparent 80%);
+  background-attachment: fixed;
+}
+.wrap { max-width: 1280px; margin: 0 auto; padding: 32px 28px 80px; }
+
+/* Header */
+header { border-bottom: 1px solid var(--paper-line); padding-bottom: 28px; margin-bottom: 28px; position: relative; }
+.title-block { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; }
+h1.title {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4.5vw, 52px);
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: var(--ink);
+}
+h1.title em { font-style: normal; color: var(--burgundy); font-weight: 600; }
+.tagline {
+  font-family: var(--font-display);
+  font-size: 17px;
+  color: var(--ink-muted);
+  margin-top: 8px;
+  font-style: italic;
+  max-width: 580px;
+}
+.meta-line {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faded);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: right;
+  line-height: 1.8;
+}
+.meta-line strong { color: var(--ink-soft); font-weight: 500; }
+
+/* Stat cards */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 2px;
+  background: var(--paper-line);
+  border: 1px solid var(--paper-line);
+  margin-bottom: 28px;
+}
+.stat {
+  background: var(--paper-deep);
+  padding: 16px 20px;
+}
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-faded);
+  margin-bottom: 6px;
+}
+.stat-val {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.stat-sub { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+
+.live-status {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  line-height: 1.3;
+  padding-top: 4px;
+}
+.live-status.ok { color: var(--ink-soft); }
+.live-status.offline { color: var(--ink-faded); font-style: italic; }
+.live-status .live-dot {
+  color: #3ec66a;
+  margin-right: 6px;
+  animation: livepulse 2s ease-in-out infinite;
+}
+.live-status .live-dot.offline {
+  color: var(--ink-faded);
+  animation: none;
+}
+
+/* Filters */
+.filters {
+  background: var(--paper-deep);
+  border: 1px solid var(--paper-line);
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: 1fr auto auto auto auto;
+  gap: 12px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+.filter-group { display: flex; flex-direction: column; gap: 6px; }
+.filter-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+}
+.search-input, .filter-select {
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  padding: 9px 12px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--ink);
+  height: 38px;
+  min-width: 140px;
+}
+.search-input { width: 100%; }
+.search-input:focus, .filter-select:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(198,154,62,0.18);
+}
+.color-filter { display: flex; gap: 6px; }
+.color-btn {
+  width: 30px; height: 30px;
+  border: 1px solid var(--paper-line);
+  border-radius: 50%;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, box-shadow 0.15s;
+  user-select: none;
+}
+.color-btn:hover { transform: scale(1.08); }
+.color-btn.active { box-shadow: 0 0 0 2px var(--gold-bright); }
+.cb-w { background: var(--w); color: #5d4e1a; }
+.cb-u { background: var(--u); color: #0c2940; }
+.cb-b { background: var(--b); color: #e8e4d8; }
+.cb-r { background: var(--r); color: #3a1810; }
+.cb-g { background: var(--g); color: #152512; }
+.cb-c { background: var(--c); color: #2a241c; }
+.reset-btn {
+  background: transparent;
+  border: 1px solid var(--ink-faded);
+  color: var(--ink-soft);
+  padding: 9px 16px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  height: 38px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.reset-btn:hover { background: var(--paper-deep); border-color: var(--ink-muted); color: var(--ink); }
+
+/* Grid */
+.count-line {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--paper-line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sort-select {
+  background: transparent;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2px;
+  background: var(--paper-line);
+  border: 1px solid var(--paper-line);
+}
+.card {
+  background: var(--paper-deep);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  transition: background 0.15s;
+}
+.card.owned { background: var(--owned-bg); }
+.card.deal { background: var(--deal-bg); }
+.card:hover { background: #262118; }
+.card.owned:hover { background: #2a3524; }
+.card.deal:hover { background: #362d1e; }
+
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.card-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.card-name em { font-style: italic; font-weight: 500; }
+.card-set {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+.card-colors { display: flex; gap: 3px; flex-shrink: 0; }
+.mana-pip {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.15);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mana-pip.pip-w { background: var(--w); color: #5d4e1a; }
+.mana-pip.pip-u { background: var(--u); color: #0c2940; }
+.mana-pip.pip-b { background: var(--b); color: #e8e4d8; }
+.mana-pip.pip-r { background: var(--r); color: #3a1810; }
+.mana-pip.pip-g { background: var(--g); color: #152512; }
+.mana-pip.pip-c { background: var(--c); color: #2a241c; }
+
+.card-commander {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+.card-commander::before { content: "◆ "; color: var(--gold); font-style: normal; }
+.card-desc {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  flex-grow: 1;
+}
+.card-meta {
+  display: flex;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  padding-top: 6px;
+  border-top: 1px dashed var(--paper-line);
+}
+.card-meta span strong { color: var(--ink-soft); font-weight: 500; }
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding-top: 4px;
+}
+.price-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+}
+.price-main {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--burgundy);
+  line-height: 1;
+}
+.price-source {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+.price-source::before {
+  content: "via ";
+  color: var(--ink-faded);
+}
+.price-live-dot {
+  color: #3ec66a;
+  font-size: 10px;
+  margin-left: 6px;
+  animation: livepulse 2s ease-in-out infinite;
+}
+@keyframes livepulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.price-live-other {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-muted);
+  margin-top: 3px;
+}
+.price-live-other::before {
+  content: "also · ";
+  color: var(--ink-faded);
+}
+.price-unverified {
+  color: var(--ink-muted) !important;
+  font-style: italic;
+}
+.price-checkprompt {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-faded);
+  font-style: italic;
+  margin-top: 3px;
+  letter-spacing: 0.02em;
+}
+.price-msrp {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-faded);
+  text-decoration: line-through;
+  margin-left: 8px;
+}
+
+/* Power rating — ScryCheck inline score OR scan link */
+.power-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--paper-line);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.power-label {
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+}
+.power-score {
+  color: var(--gold-bright);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.power-divider {
+  color: var(--ink-faded);
+  font-size: 10px;
+}
+.power-bracket {
+  padding: 1px 6px;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.power-bracket.b1 { color: var(--ink-faded); }
+.power-bracket.b2 { color: var(--ink-soft); }
+.power-bracket.b3 { color: var(--gold); }
+.power-bracket.b4 { color: var(--burgundy); }
+.power-bracket.b5 { color: var(--burgundy); font-weight: 700; }
+.power-scan {
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color 120ms;
+  margin-left: auto;
+}
+.power-scan:hover {
+  color: var(--gold-bright);
+  text-decoration: underline;
+}
+.discount-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--gold-bright);
+  color: #201a0e;
+  padding: 3px 7px;
+  letter-spacing: 0.05em;
+}
+
+.vendor-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  margin-top: 4px;
+}
+.vendor-btn {
+  background: #100d09;
+  border: 1px solid var(--paper-line);
+  padding: 7px 3px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.12s;
+  display: block;
+}
+.vendor-btn:hover {
+  background: var(--gold);
+  color: #1a1308;
+  border-color: var(--gold-bright);
+}
+.vendor-btn.local {
+  border-color: var(--sage);
+  color: #a8c08a;
+}
+.vendor-btn.local:hover {
+  background: var(--sage);
+  color: #f0ecd8;
+  border-color: var(--sage);
+}
+
+.own-toggle {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 22px; height: 22px;
+  border: 1.5px solid var(--ink-faded);
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s;
+  padding: 0;
+}
+.own-toggle:hover { border-color: var(--ink); }
+.own-toggle.checked {
+  background: var(--sage);
+  border-color: var(--sage);
+  color: #f0ecd8;
+}
+
+.empty {
+  grid-column: 1 / -1;
+  background: var(--paper-deep);
+  padding: 60px 40px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--ink-muted);
+}
+
+footer {
+  margin-top: 60px;
+  padding-top: 24px;
+  border-top: 1px solid var(--paper-line);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-faded);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+footer a { color: var(--gold-bright); text-decoration: none; }
+footer a:hover { text-decoration: underline; color: var(--burgundy); }
+
+@media (max-width: 720px) {
+  .wrap { padding: 20px 16px 60px; }
+  .filters { grid-template-columns: 1fr; }
+  .vendor-row { grid-template-columns: repeat(3, 1fr); }
+  .meta-line { text-align: left; }
+}
+@media (max-width: 480px) {
+  .vendor-row { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="title-block">
+    <div>
+      <h1 class="title">The <em>Precon</em> Ledger</h1>
+      <p class="tagline">A curated index of every MTG Commander preconstructed deck from the last five years, with one-click price checks across five certified vendors.</p>
+    </div>
+    <div class="meta-line">
+      <div>Last verified · <strong id="lastUpdated">April 23, 2026</strong></div>
+      <div>Coverage · <strong id="coverageRange">Apr 2021 — Apr 2026</strong></div>
+      <div>Tracked decks · <strong id="totalTracked">—</strong></div>
+    </div>
+  </div>
+</header>
+
+<section class="stats">
+  <div class="stat">
+    <div class="stat-label">Decks tracked</div>
+    <div class="stat-val" id="statTotal">—</div>
+    <div class="stat-sub" id="statSets">across — sets</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">On your shelf</div>
+    <div class="stat-val" id="statOwned">—</div>
+    <div class="stat-sub" id="statOwnedValue">— paid at MSRP</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Best discount today</div>
+    <div class="stat-val" id="statBestPct">—</div>
+    <div class="stat-sub" id="statBestName">—</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Median current price</div>
+    <div class="stat-val" id="statMedian">—</div>
+    <div class="stat-sub">MSRP runs $44.99–$69.99</div>
+  </div>
+  <div class="stat live-status-wrap">
+    <div class="stat-label">Live price feed</div>
+    <div id="liveStatus" class="live-status">loading…</div>
+    <div class="stat-sub">from CardKingdom + Zulus, updated daily</div>
+  </div>
+</section>
+
+<section class="filters">
+  <div class="filter-group" style="grid-column: 1 / -1;">
+    <label class="filter-label" for="search">Search · name · commander · strategy</label>
+    <input type="text" id="search" class="search-input" placeholder="Try: dragons, reanimator, Zimone, Jeskai…">
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">Year</label>
+    <select id="yearFilter" class="filter-select">
+      <option value="all">All years</option>
+      <option value="2026">2026</option>
+      <option value="2025">2025</option>
+      <option value="2024">2024</option>
+      <option value="2023">2023</option>
+      <option value="2022">2022</option>
+      <option value="2021">2021</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">Set type</label>
+    <select id="typeFilter" class="filter-select">
+      <option value="all">Any</option>
+      <option value="standard">Standard set</option>
+      <option value="ub">Universes Beyond</option>
+      <option value="commander">Commander-focused</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">Colors</label>
+    <div class="color-filter" id="colorFilter">
+      <div class="color-btn cb-w" data-color="W" title="White">W</div>
+      <div class="color-btn cb-u" data-color="U" title="Blue">U</div>
+      <div class="color-btn cb-b" data-color="B" title="Black">B</div>
+      <div class="color-btn cb-r" data-color="R" title="Red">R</div>
+      <div class="color-btn cb-g" data-color="G" title="Green">G</div>
+    </div>
+  </div>
+  <div class="filter-group">
+    <label class="filter-label" style="opacity:0;">Reset</label>
+    <button class="reset-btn" id="resetBtn">Reset filters</button>
+  </div>
+</section>
+
+<div class="count-line">
+  <span id="resultCount">Loading…</span>
+  <div>
+    <span style="margin-right:8px;">Sort by</span>
+    <select id="sortSelect" class="sort-select">
+      <option value="releaseDesc">Newest first</option>
+      <option value="releaseAsc">Oldest first</option>
+      <option value="discount">Biggest discount</option>
+
+      <option value="priceAsc">Price, low → high</option>
+      <option value="priceDesc">Price, high → low</option>
+      <option value="powerDesc">Power score, high → low</option>
+      <option value="powerAsc">Power score, low → high</option>
+      <option value="name">Name, A → Z</option>
+    </select>
+  </div>
+</div>
+
+<section class="grid" id="deckGrid">
+  <div class="empty">Loading the archive…</div>
+</section>
+
+<footer>
+  <div>
+    <div>Prices come from three tiers, best-first: <em style="color:#3ec66a;">Live</em> (CardKingdom + Zulus, refreshed daily via a GitHub Action scraper) → <em style="color:var(--gold);">Snapshot</em> (verified research from April 2026) → <em style="color:var(--ink-muted);">MSRP reference</em>. Amazon and TCGPlayer stay as search links because their product pages need headless-browser automation.</div>
+    <div style="margin-top:6px;">Power scores from <a href="https://scrycheck.com/precons" target="_blank" rel="noopener" style="color:var(--gold);">ScryCheck</a> — rule-based analysis, 93% bracket accuracy against 252 reference decks. 108 of 111 decks scored inline. Brackets follow Wizards' official system (<em>B1 casual → B5 cEDH</em>).</div>
+    <div style="margin-top:6px;">Vendors: Amazon, TCGPlayer, CardKingdom, Zulus (your local shop).</div>
+  </div>
+  <div>Built for Isaac · <a id="reportLink" href="#">Report an error</a></div>
+</footer>
+
+</div>
+
+<script>
+// Precon database — all Commander preconstructed decks from April 2021 to April 2026
+// All face commanders, colors, and deck names verified against Wizards official decklists (April 2026).
+// `currentPrice` is a research snapshot; the vendor buttons are source of truth for live pricing.
+
+const PRECONS = [
+  // ============= 2026 =============
+  {
+    id: "quandrix-unlimited",
+    scryCheckSlug: "quandrix-unlimited",
+    name: "Quandrix Unlimited",
+    set: "Secrets of Strixhaven",
+    setType: "standard",
+    releaseDate: "2026-04-24",
+    colors: ["U","G"],
+    commander: "Zimone, Infinite Analyst",
+    desc: "X-spells and +1/+1 counters in one tight package. Zimone makes X-spells cheaper as she grows, and nearly every payoff in the deck scales with mana. Pure Simic ramp into haymakers.",
+    msrp: 49.99, currentPrice: 49.99, priceSource: "CardKingdom", priceDate: "2026-04-24",
+    singlesValue: 19,
+    power: 2.5,
+    powerScore: 3.6, powerBracket: "B2"
+  },
+  {
+    id: "silverquill-influence",
+    scryCheckSlug: "silverquill-influence",
+    name: "Silverquill Influence",
+    set: "Secrets of Strixhaven",
+    setType: "standard",
+    releaseDate: "2026-04-24",
+    colors: ["W","B"],
+    commander: "Killian, Decisive Mentor",
+    desc: "Auras on opponents' creatures to goad them into attacking each other while you draw cards. Highest reprint value of the Strixhaven cycle. Political and passive-aggressive.",
+    msrp: 49.99, currentPrice: 49.99, priceSource: "CardKingdom", priceDate: "2026-04-24",
+    singlesValue: 214,
+    power: 2.5,
+    powerScore: 3.5, powerBracket: "B2"
+  },
+  {
+    id: "prismari-artistry",
+    scryCheckSlug: "prismari-artistry",
+    name: "Prismari Artistry",
+    set: "Secrets of Strixhaven",
+    setType: "standard",
+    releaseDate: "2026-04-24",
+    colors: ["U","R"],
+    commander: "Rootha, Mastering the Moment",
+    desc: "Cast expensive spells; generate a proportionally huge Elemental token each upkeep. Rewards you for going big instead of going wide. Pairs with the new Prepared mechanic.",
+    msrp: 49.99, currentPrice: 49.99, priceSource: "CardKingdom", priceDate: "2026-04-24",
+    power: 2.0,
+    powerScore: 4.5, powerBracket: "B2"
+  },
+  {
+    id: "lorehold-spirit",
+    scryCheckSlug: "lorehold-spirit",
+    name: "Lorehold Spirit",
+    set: "Secrets of Strixhaven",
+    setType: "standard",
+    releaseDate: "2026-04-24",
+    colors: ["W","R"],
+    commander: "Quintorius, History Chaser",
+    desc: "Create Spirits as cards leave your graveyard, then buff them to close out. A unique Boros graveyard strategy — not typical aggro. Heavy on first-time reprints.",
+    msrp: 49.99, currentPrice: 49.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.4, powerBracket: "B2"
+  },
+  {
+    id: "witherbloom-pestilence",
+    scryCheckSlug: "witherbloom-pestilence",
+    name: "Witherbloom Pestilence",
+    set: "Secrets of Strixhaven",
+    setType: "standard",
+    releaseDate: "2026-04-24",
+    colors: ["B","G"],
+    commander: "Dina, Essence Brewer",
+    desc: "Create Pests and sacrifice them for life, cards, and stackable counters. Classic Golgari attrition tuned for Strixhaven's biology department.",
+    msrp: 49.99, currentPrice: 49.99, priceSource: "CardKingdom", priceDate: "2026-04-24",
+    singlesValue: 134,
+    power: 2.0,
+    powerScore: 4.5, powerBracket: "B2"
+  },
+  {
+    id: "turtle-power",
+    scryCheckSlug: "turtle-power",
+    name: "Turtle Power!",
+    set: "Teenage Mutant Ninja Turtles",
+    setType: "ub",
+    releaseDate: "2026-03-06",
+    colors: ["W","U","B","R","G"],
+    commander: "Leonardo, the Balance",
+    partner: "Heroes in a Half Shell",
+    desc: "Five-color go-wide with +1/+1 counters on turtles, mutants, and ninjas. Character Select mechanic lets you partner Leonardo with any of the other four turtles or Splinter.",
+    msrp: 69.99, currentPrice: 59.99, priceSource: "Amazon", priceDate: "2026-04-13",
+    power: 2.5,
+    powerScore: 2.6, powerBracket: "B1"
+  },
+  {
+    id: "dance-of-the-elements",
+    scryCheckSlug: "dance-of-the-elements",
+    name: "Dance of the Elements",
+    set: "Lorwyn Eclipsed",
+    setType: "standard",
+    releaseDate: "2026-01-23",
+    colors: ["W","U","B","R","G"],
+    commander: "Ashling, the Limitless",
+    partner: "Mass of Mysteries",
+    desc: "Cheat big Elementals in with evoke, then sacrifice and copy them for value. Includes Fury, Endurance, and a first-ever reprint of Timeless Lotus.",
+    msrp: 49.99, currentPrice: 35.1, priceSource: "Amazon", priceDate: "2026-04-13",
+    power: 2.5,
+    powerScore: 3.3, powerBracket: "B2"
+  },
+  {
+    id: "blight-curse",
+    scryCheckSlug: "blight-curse",
+    name: "Blight Curse",
+    set: "Lorwyn Eclipsed",
+    setType: "standard",
+    releaseDate: "2026-01-23",
+    colors: ["B","R","G"],
+    commander: "Auntie Ool, Cursewretch",
+    partner: "The Reaper, King No More",
+    desc: "Spread -1/-1 counters to grind opponents out, then steal their weakened creatures. Jund attrition. Necroskitter, Massacre Girl, Flourishing Defenses included.",
+    msrp: 49.99, currentPrice: 38.45, priceSource: "Amazon", priceDate: "2026-04-13",
+    power: 2.0,
+    powerScore: 3.4, powerBracket: "B3"
+  },
+
+  // ============= 2025 =============
+  {
+    id: "counter-intelligence",
+    scryCheckSlug: "counter-intelligence",
+    name: "Counter Intelligence",
+    set: "Edge of Eternities",
+    setType: "standard",
+    releaseDate: "2025-08-01",
+    colors: ["W","U","R"],
+    commander: "Kilo, Apogee Mind",
+    partner: "Inspirit, Flagship Vessel",
+    desc: "Artifacts and proliferate in Jeskai colors, with spacecraft-as-commander. Reprint value well above MSRP. EDHREC grade A.",
+    msrp: 44.99, currentPrice: 31.75, priceSource: "MTGStocks", priceDate: "2026-04-23",
+    singlesValue: 113,
+    power: 3.0,
+    powerScore: 3.5, powerBracket: "B2"
+  },
+  {
+    id: "world-shaper",
+    scryCheckSlug: "world-shaper",
+    name: "World Shaper",
+    set: "Edge of Eternities",
+    setType: "standard",
+    releaseDate: "2025-08-01",
+    colors: ["B","G"],
+    commander: "Hearthhull, the Worldseed",
+    partner: "Szarel, Genesis Shepherd",
+    desc: "Sacrifice lands to grow a seedship, then drain opponents when lands die. One-shot kill potential with Sylvan Safekeeper.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 5.3, powerBracket: "B3"
+  },
+  {
+    id: "revival-trance",
+    scryCheckSlug: "revival-trance",
+    name: "Revival Trance",
+    set: "Commander: Final Fantasy",
+    setType: "ub",
+    releaseDate: "2025-06-13",
+    colors: ["W","B","R"],
+    commander: "Terra, Herald of Hope",
+    partner: "Celes, Rune Knight",
+    desc: "Mardu reanimator focused on small-power creatures (3 or less) — Terra returns them when she deals combat damage. FF6 World of Ruin flavor.",
+    msrp: 69.99, currentPrice: 42.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 3.7, powerBracket: "B2"
+  },
+  {
+    id: "limit-break",
+    scryCheckSlug: "limit-break",
+    name: "Limit Break",
+    set: "Commander: Final Fantasy",
+    setType: "ub",
+    releaseDate: "2025-06-13",
+    colors: ["W","R","G"],
+    commander: "Cloud, ex-SOLDIER",
+    partner: "Tifa, Martial Artist",
+    desc: "Equipment-focused Naya voltron — push creatures to 7+ power with Swords of X and Y. Tutors for weapons, buffs attackers. FF7 flavor tightly integrated.",
+    msrp: 69.99, currentPrice: 54.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 3.6, powerBracket: "B2"
+  },
+  {
+    id: "counter-blitz",
+    scryCheckSlug: "counter-blitz",
+    name: "Counter Blitz",
+    set: "Commander: Final Fantasy",
+    setType: "ub",
+    releaseDate: "2025-06-13",
+    colors: ["W","U","G"],
+    commander: "Tidus, Yuna's Guardian",
+    partner: "Yuna, Grand Summoner",
+    desc: "Bant counter-manipulation — move counters between permanents, proliferate them, deal combat damage to snowball. FF10 flavor with Summons and Blitzball.",
+    msrp: 69.99, currentPrice: 64.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 3.7, powerBracket: "B3"
+  },
+  {
+    id: "scions-and-spellcraft",
+    scryCheckSlug: "scions-spellcraft",
+    name: "Scions & Spellcraft",
+    set: "Commander: Final Fantasy",
+    setType: "ub",
+    releaseDate: "2025-06-13",
+    colors: ["W","U","B"],
+    commander: "Y'shtola, Night's Blessed",
+    desc: "Esper spellslinger-control. Y'shtola drains life on big noncreature spells, drawing you four cards per rotation through the right setup. FF14 flavor.",
+    msrp: 69.99, currentPrice: 64.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 5.0, powerBracket: "B3"
+  },
+  {
+    id: "jeskai-striker",
+    scryCheckSlug: "jeskai-striker",
+    name: "Jeskai Striker",
+    set: "Tarkir: Dragonstorm",
+    setType: "standard",
+    releaseDate: "2025-04-11",
+    colors: ["W","U","R"],
+    commander: "Shiko, Paragon of the Way",
+    partner: "Narset, Unified",
+    desc: "Spellslinger tempo in Jeskai colors — no dragon tribal despite the set. Triggers off noncreature spells with Flurry-based payoffs. Strong Prepared synergies.",
+    msrp: 49.99, currentPrice: 34.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 6.3, powerBracket: "B3"
+  },
+  {
+    id: "abzan-armor",
+    scryCheckSlug: "abzan-armor",
+    name: "Abzan Armor",
+    set: "Tarkir: Dragonstorm",
+    setType: "standard",
+    releaseDate: "2025-04-11",
+    colors: ["W","B","G"],
+    commander: "Felothar, Dawn of the Abzan",
+    partner: "Betor, Ancestor's Voice",
+    desc: "Abzan defenders/toughness midrange. Felothar sacrifices creatures for card draw equal to toughness. Doran-inspired.",
+    msrp: 49.99, currentPrice: 49.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 3.2, powerBracket: "B3"
+  },
+  {
+    id: "sultai-arisen",
+    scryCheckSlug: "sultai-arisen",
+    name: "Sultai Arisen",
+    set: "Tarkir: Dragonstorm",
+    setType: "standard",
+    releaseDate: "2025-04-11",
+    colors: ["U","B","G"],
+    commander: "Kotis, Sibsig Champion",
+    partner: "Teval, the Balanced Scale",
+    desc: "Sultai graveyard value with leaves-the-graveyard triggers. Kotis returns as a zombie druid; Teval is the clan's Spirit Dragon.",
+    msrp: 49.99, currentPrice: 59.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.5, powerBracket: "B2"
+  },
+  {
+    id: "mardu-surge",
+    scryCheckSlug: "mardu-surge",
+    name: "Mardu Surge",
+    set: "Tarkir: Dragonstorm",
+    setType: "standard",
+    releaseDate: "2025-04-11",
+    colors: ["W","B","R"],
+    commander: "Zurgo, Thunder's Decree",
+    partner: "Neriv, Crackling Vanguard",
+    desc: "Mardu token-sacrifice aggro. Make attackers, swing in, sacrifice them for value. Zurgo leads the new Mardu clan.",
+    msrp: 49.99, currentPrice: 44.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 6.0, powerBracket: "B3"
+  },
+  {
+    id: "temur-roar",
+    scryCheckSlug: "temur-roar",
+    name: "Temur Roar",
+    set: "Tarkir: Dragonstorm",
+    setType: "standard",
+    releaseDate: "2025-04-11",
+    colors: ["U","R","G"],
+    commander: "Eshki, Temur's Roar",
+    partner: "Ureni, the Song Unbroken",
+    desc: "Temur ramp into big dragons. Ureni is the Spirit Dragon of wisdom. The closest thing in the set to classic dragon tribal.",
+    msrp: 49.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 5.3, powerBracket: "B3"
+  },
+  {
+    id: "living-energy",
+    scryCheckSlug: "living-energy",
+    name: "Living Energy",
+    set: "Aetherdrift Commander",
+    setType: "standard",
+    releaseDate: "2025-02-14",
+    colors: ["U","R","G"],
+    commander: "Saheeli, Radiant Creator",
+    partner: "Pia Nalaar, Chief Mechanic",
+    desc: "Temur energy + artifact creatures. Saheeli generates energy on artifact casts; Pia spends it on flying Aetherjet vehicle tokens. Kaladesh flavor on steroids.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 5.3, powerBracket: "B3"
+  },
+  {
+    id: "eternal-might",
+    scryCheckSlug: "eternal-might",
+    name: "Eternal Might",
+    set: "Aetherdrift Commander",
+    setType: "standard",
+    releaseDate: "2025-02-14",
+    colors: ["W","U","B"],
+    commander: "Temmet, Naktamun's Will",
+    partner: "Hashaton, Scarab's Fist",
+    desc: "Esper zombie discard with Eternalize. Naktamun (Amonkhet) flavor — draw-discard value while raising mummies.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 3.0,
+    powerScore: 4.7, powerBracket: "B2"
+  },
+
+  // ============= 2024 =============
+  {
+    id: "miracle-worker",
+    scryCheckSlug: "miracle-worker",
+    name: "Miracle Worker",
+    set: "Duskmourn: House of Horror",
+    setType: "standard",
+    releaseDate: "2024-09-27",
+    colors: ["W","U","B"],
+    commander: "Aminatou, Veil Piercer",
+    partner: "The Master of Keys",
+    desc: "Esper enchantments with miracle cost reduction. Aminatou surveils each upkeep and discounts enchantments by 4 via miracle. One of the stronger precon commanders in years.",
+    msrp: 44.99, currentPrice: 44.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 3.0,
+    powerScore: 4.5, powerBracket: "B3"
+  },
+  {
+    id: "death-toll",
+    scryCheckSlug: "death-toll",
+    name: "Death Toll",
+    set: "Duskmourn: House of Horror",
+    setType: "standard",
+    releaseDate: "2024-09-27",
+    colors: ["B","G"],
+    commander: "Winter, Cynical Opportunist",
+    partner: "Rendmaw, Creaking Nest",
+    desc: "Golgari delirium reanimator. Fill the graveyard, hit four card types, return big permanents. Rendmaw scales on card-type variety.",
+    msrp: 44.99, currentPrice: 34.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 3.5, powerBracket: "B2"
+  },
+  {
+    id: "jump-scare",
+    scryCheckSlug: "jump-scare",
+    name: "Jump Scare!",
+    set: "Duskmourn: House of Horror",
+    setType: "standard",
+    releaseDate: "2024-09-27",
+    colors: ["U","G"],
+    commander: "Zimone, Mystery Unraveler",
+    desc: "Simic manifest dread and landfall. Flip face-down cards at instant speed, churn the library for value. The original Zimone, before the 2026 Quandrix version.",
+    msrp: 44.99, currentPrice: 39.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 3.8, powerBracket: "B2"
+  },
+  {
+    id: "endless-punishment",
+    scryCheckSlug: "endless-punishment",
+    name: "Endless Punishment",
+    set: "Duskmourn: House of Horror",
+    setType: "standard",
+    releaseDate: "2024-09-27",
+    colors: ["B","R"],
+    commander: "Valgavoth, Harrower of Souls",
+    desc: "Rakdos group-slug. Constantly deal damage to everyone; Valgavoth grows and devours opponents' fallen souls. Pure attrition villainy.",
+    msrp: 44.99, currentPrice: 119.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 3.5, powerBracket: "B2"
+  },
+  {
+    id: "family-matters",
+    scryCheckSlug: "family-matters",
+    name: "Family Matters",
+    set: "Bloomburrow Commander",
+    setType: "standard",
+    releaseDate: "2024-08-02",
+    colors: ["W","U","R"],
+    commander: "Zinnia, Valley's Voice",
+    desc: "Jeskai Offspring go-wide. Drop a little extra mana on cast for a 1/1 token copy. Zinnia makes Offspring for any creature in your deck for two mana.",
+    msrp: 44.99, currentPrice: 33.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 5.0, powerBracket: "B3"
+  },
+  {
+    id: "squirreled-away",
+    scryCheckSlug: "squirreled-away",
+    name: "Squirreled Away",
+    set: "Bloomburrow Commander",
+    setType: "standard",
+    releaseDate: "2024-08-02",
+    colors: ["B","G"],
+    commander: "Hazel of the Rootbloom",
+    desc: "Golgari squirrel tribal with token mana. Tap tokens for any color to fuel bigger spells. Best reprint value of the Bloomburrow cycle — Chatterfang, Saw in Half, Beledros Witherbloom.",
+    msrp: 44.99, currentPrice: 54.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 5.0, powerBracket: "B3"
+  },
+  {
+    id: "animated-army",
+    scryCheckSlug: "animated-army",
+    name: "Animated Army",
+    set: "Bloomburrow Commander",
+    setType: "standard",
+    releaseDate: "2024-08-02",
+    colors: ["R","G"],
+    commander: "Bello, Bard of the Brambles",
+    desc: "Gruul artifact/enchantment animator. Non-equipment artifacts and non-aura enchantments of MV 4+ become 4/4 indestructible hasty elementals. Novel build-around.",
+    msrp: 44.99, currentPrice: 39.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 5.2, powerBracket: "B3"
+  },
+  {
+    id: "peace-offering-blb",
+    scryCheckSlug: "peace-offering",
+    name: "Peace Offering",
+    set: "Bloomburrow Commander",
+    setType: "standard",
+    releaseDate: "2024-08-02",
+    colors: ["W","U","G"],
+    commander: "Ms. Bumbleflower",
+    desc: "Bant group-hug with +1/+1 counters. Ms. Bumbleflower gives opponents cards but counters and evasion go to you. Rare win-con group-hug.",
+    msrp: 44.99, currentPrice: 44.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.8, powerBracket: "B2"
+  },
+  {
+    id: "animus-antiquity",
+    scryCheckSlug: "animus-antiquity",
+    name: "Animus Antiquity",
+    set: "Assassin's Creed",
+    setType: "ub",
+    releaseDate: "2024-07-05",
+    colors: ["W","U","G"],
+    commander: "Eivor, Battle-Ready",
+    desc: "Bant historic-matters. Sagas, artifacts, legendaries trigger Eivor. Viking flavor from Assassin's Creed Valhalla.",
+    msrp: 59.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0
+  },
+  {
+    id: "master-of-keys-ac",
+    scryCheckSlug: "master-of-keys-ac",
+    name: "Master of Keys",
+    set: "Assassin's Creed",
+    setType: "ub",
+    releaseDate: "2024-07-05",
+    colors: ["U","B","R"],
+    commander: "Basim Ibn Ishaq",
+    desc: "Grixis exile-matters with Freerunning mechanic (prowess-lite). Hit-and-run aggro with unblockable triggers.",
+    msrp: 59.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0
+  },
+  {
+    id: "creative-energy",
+    scryCheckSlug: "creative-energy",
+    name: "Creative Energy",
+    set: "Modern Horizons 3",
+    setType: "commander",
+    releaseDate: "2024-06-14",
+    colors: ["W","U","R"],
+    commander: "Satya, Aetherflux Genius",
+    partner: "Cayth, Famed Mechanist",
+    desc: "Jeskai energy + artifacts. Generate energy, spend for card draw, creatures, burn. A fresh mechanic finally in Commander.",
+    msrp: 59.99, currentPrice: 44.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 5.4, powerBracket: "B3"
+  },
+  {
+    id: "eldrazi-incursion",
+    scryCheckSlug: "eldrazi-incursion",
+    name: "Eldrazi Incursion",
+    set: "Modern Horizons 3",
+    setType: "commander",
+    releaseDate: "2024-06-14",
+    colors: ["W","U","B","R","G"],
+    commander: "Ulalek, Fused Atrocity",
+    partner: "Azlask, the Swelling Scourge",
+    desc: "Five-color colorless Eldrazi. Ulalek uses colorless-hybrid mana and copies Eldrazi spells and triggered abilities. Ramp into apocalypse.",
+    msrp: 59.99, currentPrice: 105.0, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 3.0,
+    powerScore: 5.5, powerBracket: "B3"
+  },
+  {
+    id: "graveyard-overdrive",
+    scryCheckSlug: "graveyard-overdrive",
+    name: "Graveyard Overdrive",
+    set: "Modern Horizons 3",
+    setType: "commander",
+    releaseDate: "2024-06-14",
+    colors: ["B","R","G"],
+    commander: "Disa the Restless",
+    partner: "Coram, the Undertaker",
+    desc: "Jund Lhurgoyf tribal. Disa makes Tarmogoyf tokens from your graveyard. Many players prefer Coram as commander for flexibility.",
+    msrp: 59.99, currentPrice: 44.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.4, powerBracket: "B2"
+  },
+  {
+    id: "tricky-terrain",
+    scryCheckSlug: "tricky-terrain",
+    name: "Tricky Terrain",
+    set: "Modern Horizons 3",
+    setType: "commander",
+    releaseDate: "2024-06-14",
+    colors: ["U","G"],
+    commander: "Omo, Queen of Vesuva",
+    partner: "Jyoti, Moag Ancient",
+    desc: "Simic lands-matter with 'everything counters.' Omo puts a counter that gives a land all land types. Urzatron and gates synergy.",
+    msrp: 59.99, currentPrice: 59.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.6, powerBracket: "B2"
+  },
+  {
+    id: "most-wanted",
+    scryCheckSlug: "most-wanted",
+    name: "Most Wanted",
+    set: "Outlaws of Thunder Junction",
+    setType: "standard",
+    releaseDate: "2024-04-19",
+    colors: ["W","B","R"],
+    commander: "Olivia, Opulent Outlaw",
+    partner: "Vihaan, Goldwaker",
+    desc: "Mardu outlaw tribal + treasure. Hire Assassins/Mercenaries/Pirates/Rogues/Warlocks. Vihaan animates treasures into 3/3 outlaws.",
+    msrp: 44.99, currentPrice: 119.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 3.0,
+    powerScore: 4.7, powerBracket: "B2"
+  },
+  {
+    id: "grand-larceny",
+    scryCheckSlug: "grand-larceny",
+    name: "Grand Larceny",
+    set: "Outlaws of Thunder Junction",
+    setType: "standard",
+    releaseDate: "2024-04-19",
+    colors: ["U","B","G"],
+    commander: "Gonti, Canny Acquisitor",
+    partner: "Felix Five-Boots",
+    desc: "Sultai theft. Exile opponents' cards when doing combat damage, cast them at a discount. Chaos politics.",
+    msrp: 44.99, currentPrice: 199.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 5.1, powerBracket: "B3"
+  },
+  {
+    id: "quick-draw",
+    scryCheckSlug: "quick-draw",
+    name: "Quick Draw",
+    set: "Outlaws of Thunder Junction",
+    setType: "standard",
+    releaseDate: "2024-04-19",
+    colors: ["U","R"],
+    commander: "Stella Lee, Wild Card",
+    desc: "Izzet spells-per-turn spellslinger. Plot mechanic for instant-speed tempo plays. Copies instants and sorceries when you cast multiple in a turn.",
+    msrp: 44.99, currentPrice: 179.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 5.5, powerBracket: "B3"
+  },
+  {
+    id: "desert-bloom",
+    scryCheckSlug: "desert-bloom",
+    name: "Desert Bloom",
+    set: "Outlaws of Thunder Junction",
+    setType: "standard",
+    releaseDate: "2024-04-19",
+    colors: ["W","R","G"],
+    commander: "Yuma, Proud Protector",
+    partner: "Kirri, Talented Sprout",
+    desc: "Naya Desert lands-matter. Discard lands early, bring them back, create Plant armies. Yuma gets cheaper for every land in your graveyard.",
+    msrp: 44.99, currentPrice: 79.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.6, powerBracket: "B2"
+  },
+  {
+    id: "scrappy-survivors",
+    scryCheckSlug: "scrappy-survivors",
+    name: "Scrappy Survivors",
+    set: "Fallout Commander",
+    setType: "ub",
+    releaseDate: "2024-03-08",
+    colors: ["W","R","G"],
+    commander: "Dogmeat, Ever Loyal",
+    partner: "Preston Garvey, Minuteman",
+    desc: "Naya voltron with auras and equipment. Dogmeat mills for auras/equipment, creates Junk tokens for impulse draw. Preston is the aura-focused alternate.",
+    msrp: 59.99, currentPrice: 59.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.3, powerBracket: "B2"
+  },
+  {
+    id: "mutant-menace",
+    scryCheckSlug: "mutant-menace",
+    name: "Mutant Menace",
+    set: "Fallout Commander",
+    setType: "ub",
+    releaseDate: "2024-03-08",
+    colors: ["U","B","G"],
+    commander: "The Wise Mothman",
+    partner: "The Master, Transcendent",
+    desc: "Sultai rad counters and proliferate. Distribute rad to opponents to mill them and buff your mutants. New mechanic exclusive to this set.",
+    msrp: 59.99, currentPrice: 129.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 3.0,
+    powerScore: 4.5, powerBracket: "B2"
+  },
+  {
+    id: "hail-caesar",
+    scryCheckSlug: "hail-caesar",
+    name: "Hail, Caesar",
+    set: "Fallout Commander",
+    setType: "ub",
+    releaseDate: "2024-03-08",
+    colors: ["W","B","R"],
+    commander: "Caesar, Legion's Emperor",
+    desc: "Mardu go-wide aggro with Caesar's Legion theme. Human soldier tribal, token armies, modal combat triggers.",
+    msrp: 59.99, currentPrice: 79.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 6.1, powerBracket: "B3"
+  },
+  {
+    id: "science",
+    scryCheckSlug: "science",
+    name: "Science!",
+    set: "Fallout Commander",
+    setType: "ub",
+    releaseDate: "2024-03-08",
+    colors: ["W","U","R"],
+    commander: "Dr. Madison Li",
+    desc: "Jeskai energy + artifacts. Generate energy on artifact casts, play pre-war technology, assemble Liberty Prime and crush the enemy.",
+    msrp: 59.99, currentPrice: 44.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 5.3, powerBracket: "B3"
+  },
+  {
+    id: "deep-clue-sea",
+    scryCheckSlug: "deep-clue-sea",
+    name: "Deep Clue Sea",
+    set: "Murders at Karlov Manor",
+    setType: "standard",
+    releaseDate: "2024-02-09",
+    colors: ["W","U"],
+    commander: "Kaust, Eyes of Glory",
+    partner: "Morska, Undersea Sleuth",
+    desc: "Azorius clues and face-down cards. Kaust cheats morph creatures out at reduced cost. Investigate synergies throughout.",
+    msrp: 44.99, currentPrice: 29.99, priceSource: "GeekeryGames", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.8, powerBracket: "B3"
+  },
+  {
+    id: "revenant-recon",
+    scryCheckSlug: "revenant-recon",
+    name: "Revenant Recon",
+    set: "Murders at Karlov Manor",
+    setType: "standard",
+    releaseDate: "2024-02-09",
+    colors: ["U","B"],
+    commander: "Mirko, Obsessive Theorist",
+    partner: "Marvo, Deep Operative",
+    desc: "Dimir surveil + finality-counter reanimator. Cards with finality counters recurse in new ways. Grave interaction without infinite loops.",
+    msrp: 44.99, currentPrice: 44.99, priceSource: "GeekeryGames", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 3.5, powerBracket: "B2"
+  },
+  {
+    id: "blame-game",
+    scryCheckSlug: "blame-game",
+    name: "Blame Game",
+    set: "Murders at Karlov Manor",
+    setType: "standard",
+    releaseDate: "2024-02-09",
+    colors: ["W","B","R"],
+    commander: "Nelly Borca, Impulsive Accuser",
+    partner: "Feather, Radiant Arbiter",
+    desc: "Mardu goad tribal. Suspect creatures, force attacks, draw cards off the chaos. Nelly's goading snowballs across the table.",
+    msrp: 44.99, currentPrice: 49.99, priceSource: "GeekeryGames", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.0, powerBracket: "B2"
+  },
+  {
+    id: "deadly-disguise",
+    scryCheckSlug: "deadly-disguise",
+    name: "Deadly Disguise",
+    set: "Murders at Karlov Manor",
+    setType: "standard",
+    releaseDate: "2024-02-09",
+    colors: ["W","R","G"],
+    commander: "Giada, Font of Hope",
+    desc: "Naya face-down matters — disguise, morph, megamorph, manifest. Flip creatures up for combat blowouts.",
+    msrp: 44.99, currentPrice: 44.99, priceSource: "GeekeryGames", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 3.6, powerBracket: "B3"
+  },
+
+  // ============= 2023 =============
+  {
+    id: "ahoy-mateys",
+    scryCheckSlug: "ahoy-mateys",
+    name: "Ahoy Mateys",
+    set: "The Lost Caverns of Ixalan",
+    setType: "standard",
+    releaseDate: "2023-11-17",
+    colors: ["U","B","R"],
+    commander: "Don Andres, the Renegade",
+    desc: "Grixis Pirate tribal. Cast cards opponents own when plundering, treasure production, raid triggers.",
+    msrp: 44.99, currentPrice: 34.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.6, powerBracket: "B2"
+  },
+  {
+    id: "veloci-ramp-tor",
+    scryCheckSlug: "veloci-ramp-tor",
+    name: "Veloci-Ramp-Tor",
+    set: "The Lost Caverns of Ixalan",
+    setType: "standard",
+    releaseDate: "2023-11-17",
+    colors: ["R","G"],
+    commander: "Pantlaza, Sun-Favored",
+    desc: "Gruul Dinosaurs with Discover mechanic. Cascade-like triggers cheat big stompy creatures into play.",
+    msrp: 44.99, currentPrice: 69.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.5, powerBracket: "B2"
+  },
+  {
+    id: "blood-rites",
+    scryCheckSlug: "blood-rites",
+    name: "Blood Rites",
+    set: "The Lost Caverns of Ixalan",
+    setType: "standard",
+    releaseDate: "2023-11-17",
+    colors: ["W","B"],
+    commander: "Clavileño, First of the Blessed",
+    desc: "Orzhov Vampires. Sacrifice fodder for Vampire tokens, Clavileño turns creatures into a growing army.",
+    msrp: 44.99, currentPrice: 44.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.3, powerBracket: "B2"
+  },
+  {
+    id: "explorers-of-the-deep",
+    scryCheckSlug: "explorers-of-the-deep",
+    name: "Explorers of the Deep",
+    set: "The Lost Caverns of Ixalan",
+    setType: "standard",
+    releaseDate: "2023-11-17",
+    colors: ["W","U","G"],
+    commander: "Admiral Brass, Unsinkable",
+    desc: "Bant Merfolk and Explore mechanic. Explore triggers grow the board and filter draws simultaneously.",
+    msrp: 44.99, currentPrice: 39.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.5, powerBracket: "B2"
+  },
+  {
+    id: "blast-from-the-past",
+    scryCheckSlug: "blast-from-the-past",
+    name: "Blast from the Past",
+    set: "Doctor Who Commander",
+    setType: "ub",
+    releaseDate: "2023-10-13",
+    colors: ["U","R"],
+    commander: "The First Doctor",
+    desc: "Izzet historic-matters with Doctor/companion partner system. First through Fourth Doctors plus companions. Time Lord flavor peaks here.",
+    msrp: 54.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 3.8, powerBracket: "B3"
+  },
+  {
+    id: "timey-wimey",
+    scryCheckSlug: "timey-wimey",
+    name: "Timey-Wimey",
+    set: "Doctor Who Commander",
+    setType: "ub",
+    releaseDate: "2023-10-13",
+    colors: ["U","G"],
+    commander: "The Fifth Doctor",
+    desc: "Simic time-counter shenanigans. Suspend cards, proliferate time counters, cast for free.",
+    msrp: 54.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.3, powerBracket: "B3"
+  },
+  {
+    id: "paradox-power",
+    scryCheckSlug: "paradox-power",
+    name: "Paradox Power",
+    set: "Doctor Who Commander",
+    setType: "ub",
+    releaseDate: "2023-10-13",
+    colors: ["U","R","G"],
+    commander: "The Tenth Doctor",
+    desc: "Temur new Doctors (9 through 12). Flicker effects, ETB value, Tenth Doctor partnerships with Rose/Donna/Martha.",
+    msrp: 54.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 3.2, powerBracket: "B2"
+  },
+  {
+    id: "masters-of-evil",
+    scryCheckSlug: "masters-of-evil",
+    name: "Masters of Evil",
+    set: "Doctor Who Commander",
+    setType: "ub",
+    releaseDate: "2023-10-13",
+    colors: ["W","U","B"],
+    commander: "The Master, Multiplied",
+    desc: "Esper villain tribal — The Master, Daleks, Cybermen. Villainous Choice mechanic gives opponents bad options.",
+    msrp: 54.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.3, powerBracket: "B2"
+  },
+  {
+    id: "virtue-and-valor",
+    scryCheckSlug: "virtue-and-valor",
+    name: "Virtue and Valor",
+    set: "Wilds of Eldraine",
+    setType: "standard",
+    releaseDate: "2023-09-08",
+    colors: ["W","R"],
+    commander: "Syr Ginger, the Meal Ender",
+    desc: "Boros Knights and Food tokens. Aggro backed by sustained life to push through late-game blockers.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.3, powerBracket: "B2"
+  },
+  {
+    id: "fae-dominion",
+    scryCheckSlug: "fae-dominion",
+    name: "Fae Dominion",
+    set: "Wilds of Eldraine",
+    setType: "standard",
+    releaseDate: "2023-09-08",
+    colors: ["U","B"],
+    commander: "Talion, the Kindly Lord",
+    desc: "Dimir Faerie flying tribal. Instant-speed plays, pingers in the air, Talion punishes wrong-name guesses.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.8, powerBracket: "B2"
+  },
+  {
+    id: "peace-offering-woe",
+    scryCheckSlug: "peace-offering",
+    name: "Peace Offering",
+    set: "Wilds of Eldraine",
+    setType: "standard",
+    releaseDate: "2023-09-08",
+    colors: ["W","G"],
+    commander: "Ellivere of the Wild Court",
+    desc: "Selesnya Roles and Auras. Create Role tokens, pump them up, swing wide with enchanted creatures.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.8, powerBracket: "B2"
+  },
+  {
+    id: "faerie-schemes",
+    scryCheckSlug: "faerie-schemes",
+    name: "Faerie Schemes",
+    set: "Wilds of Eldraine",
+    setType: "standard",
+    releaseDate: "2023-09-08",
+    colors: ["U","B","R"],
+    commander: "Tegwyll, Duke of Splendor",
+    desc: "Grixis wicked-fae politics. Offer Celebrations to opponents, force bad decisions, collect on mistakes.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0
+  },
+  {
+    id: "sliver-swarm",
+    scryCheckSlug: "sliver-swarm",
+    name: "Sliver Swarm",
+    set: "Commander Masters",
+    setType: "commander",
+    releaseDate: "2023-08-04",
+    colors: ["W","U","B","R","G"],
+    commander: "Sliver Gravemother",
+    desc: "Five-color sliver tribal with graveyard recursion. Sliver Gravemother lets slivers escape repeatedly. Contains staples; priced accordingly.",
+    msrp: 74.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 3.0,
+    powerScore: 4.5, powerBracket: "B2"
+  },
+  {
+    id: "eldrazi-unbound",
+    scryCheckSlug: "eldrazi-unbound",
+    name: "Eldrazi Unbound",
+    set: "Commander Masters",
+    setType: "commander",
+    releaseDate: "2023-08-04",
+    colors: ["C"],
+    commander: "Zhulodok, Void Gorger",
+    desc: "Colorless eldrazi ramp. Wastes tribal that swings into Annihilator. Includes Eldrazi Temple, Sensei's Divining Top.",
+    msrp: 74.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.5, powerBracket: "B2"
+  },
+  {
+    id: "enduring-enchantments",
+    scryCheckSlug: "enduring-enchantments",
+    name: "Enduring Enchantments",
+    set: "Commander Masters",
+    setType: "commander",
+    releaseDate: "2023-08-04",
+    colors: ["W","U","B"],
+    commander: "Anikthea, Hand of Erebos",
+    desc: "Esper enchantress constellation. Turn your enchantments into creature tokens, weaponize the graveyard.",
+    msrp: 74.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 3.0,
+    powerScore: 4.7, powerBracket: "B2"
+  },
+  {
+    id: "planeswalker-party",
+    scryCheckSlug: "planeswalker-party",
+    name: "Planeswalker Party",
+    set: "Commander Masters",
+    setType: "commander",
+    releaseDate: "2023-08-04",
+    colors: ["W","U","R"],
+    commander: "Commodore Guff",
+    desc: "Jeskai superfriends. Planeswalker tribal with emblems and ultimate triggers as a core theme.",
+    msrp: 74.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.3, powerBracket: "B3"
+  },
+  {
+    id: "the-hosts-of-mordor",
+    scryCheckSlug: "the-hosts-of-mordor",
+    name: "The Hosts of Mordor",
+    set: "The Lord of the Rings: Tales of Middle-earth",
+    setType: "ub",
+    releaseDate: "2023-06-23",
+    colors: ["B","R"],
+    commander: "Sauron, the Dark Lord",
+    desc: "Rakdos orcs and amass. The Ring-tempt mechanic pressures life totals. Iconic IP, beloved precon.",
+    msrp: 59.99, currentPrice: 89.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 3.0,
+    powerScore: 4.5, powerBracket: "B3"
+  },
+  {
+    id: "food-and-fellowship",
+    scryCheckSlug: "food-and-fellowship",
+    name: "Food and Fellowship",
+    set: "The Lord of the Rings: Tales of Middle-earth",
+    setType: "ub",
+    releaseDate: "2023-06-23",
+    colors: ["W","G"],
+    commander: "Frodo, Adventurous Hobbit",
+    partner: "Sam, Loyal Attendant",
+    desc: "Selesnya Hobbits and Food. Lifegain tribal with creature tokens. Second-breakfast jokes canonized.",
+    msrp: 59.99, currentPrice: 74.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.7, powerBracket: "B2"
+  },
+  {
+    id: "elven-council",
+    scryCheckSlug: "elven-council",
+    name: "Elven Council",
+    set: "The Lord of the Rings: Tales of Middle-earth",
+    setType: "ub",
+    releaseDate: "2023-06-23",
+    colors: ["W","U","G"],
+    commander: "Galadriel of Lothlórien",
+    desc: "Bant elves tribal. Elrond, Arwen, Legolas support. Scry-heavy card filtering with token production.",
+    msrp: 59.99, currentPrice: 59.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 3.7, powerBracket: "B2"
+  },
+  {
+    id: "riders-of-rohan",
+    scryCheckSlug: "riders-of-rohan",
+    name: "Riders of Rohan",
+    set: "The Lord of the Rings: Tales of Middle-earth",
+    setType: "ub",
+    releaseDate: "2023-06-23",
+    colors: ["W","R"],
+    commander: "Éowyn, Shieldmaiden",
+    desc: "Boros human soldiers with battle-cry triggers. Equipment, go-wide aggression, heroic tempo shell.",
+    msrp: 59.99, currentPrice: 59.99, priceSource: "CardKingdom", priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.7, powerBracket: "B2"
+  },
+  {
+    id: "call-for-backup",
+    scryCheckSlug: "call-for-backup",
+    name: "Call for Backup",
+    set: "March of the Machine",
+    setType: "standard",
+    releaseDate: "2023-04-21",
+    colors: ["W","R","G"],
+    commander: "Bright-Palm, Soul Awakener",
+    partner: "Shalai and Hallar",
+    desc: "Naya +1/+1 counters with the Backup mechanic. Shalai and Hallar turn counter placement into direct damage.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 2.8, powerBracket: "B1"
+  },
+  {
+    id: "divine-convocation",
+    scryCheckSlug: "divine-convocation",
+    name: "Divine Convocation",
+    set: "March of the Machine",
+    setType: "standard",
+    releaseDate: "2023-04-21",
+    colors: ["W","U","R"],
+    commander: "Kasla, the Broken Halo",
+    partner: "Saint Traft and Rem Karolus",
+    desc: "Jeskai convoke + creature tokens. Tap tiny creatures to cast big spells. Saint Traft is often the better commander option.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.3, powerBracket: "B2"
+  },
+  {
+    id: "growing-threat",
+    scryCheckSlug: "growing-threat",
+    name: "Growing Threat",
+    set: "March of the Machine",
+    setType: "standard",
+    releaseDate: "2023-04-21",
+    colors: ["W","B"],
+    commander: "Brimaz, Blight of Oreskos",
+    partner: "Moira and Teshar",
+    desc: "Orzhov phyrexian + Incubator tokens. Brimaz creates Incubators that flip into big phyrexians. Moira and Teshar enable a historic-reanimator alternate.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.0, powerBracket: "B2"
+  },
+  {
+    id: "cavalry-charge",
+    scryCheckSlug: "cavalry-charge",
+    name: "Cavalry Charge",
+    set: "March of the Machine",
+    setType: "standard",
+    releaseDate: "2023-04-21",
+    colors: ["W","U","B"],
+    commander: "Sidar Jabari of Zhalfir",
+    partner: "Elenda and Azor",
+    desc: "Esper Knights with horsemanship. Knight tribal in three colors, vampire knight subtheme via Elenda & Azor.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.3, powerBracket: "B2"
+  },
+  {
+    id: "tinker-time",
+    scryCheckSlug: "tinker-time",
+    name: "Tinker Time",
+    set: "March of the Machine",
+    setType: "standard",
+    releaseDate: "2023-04-21",
+    colors: ["U","R","G"],
+    commander: "Gimbal, Gremlin Prodigy",
+    partner: "Rashmi and Ragavan",
+    desc: "Temur artifact tokens. Clues, Food, Blood, Treasures all care about unique types. Rashmi and Ragavan steal spells for free.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.2, powerBracket: "B2"
+  },
+  {
+    id: "rebellion-rising",
+    scryCheckSlug: "rebellion-rising",
+    name: "Rebellion Rising",
+    set: "Phyrexia: All Will Be One",
+    setType: "standard",
+    releaseDate: "2023-02-03",
+    colors: ["W","R"],
+    commander: "Jirina, Dauntless General",
+    desc: "Boros Mirran survivors. Go wide, double-strike, equip, smash through Phyrexia's horrors.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 1.5,
+    powerScore: 4.4, powerBracket: "B2"
+  },
+  {
+    id: "corrupting-influence",
+    scryCheckSlug: "corrupting-influence",
+    name: "Corrupting Influence",
+    set: "Phyrexia: All Will Be One",
+    setType: "standard",
+    releaseDate: "2023-02-03",
+    colors: ["B","G"],
+    commander: "Ixhel, Scion of Atraxa",
+    desc: "Golgari poison counters. Toxic creatures and proliferate aim at 10 poison as an alternate win condition.",
+    msrp: 44.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 3.1, powerBracket: "B2"
+  },
+
+  // ============= 2022 =============
+  {
+    id: "urzas-iron-alliance",
+    scryCheckSlug: "urzas-iron-alliance",
+    name: "Urza's Iron Alliance",
+    set: "The Brothers' War",
+    setType: "standard",
+    releaseDate: "2022-11-18",
+    colors: ["W","U","R"],
+    commander: "Urza, Chief Artificer",
+    desc: "Jeskai soldiers + artifacts. Brothers' War era. Affinity-adjacent with strong card selection.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.5, powerBracket: "B2"
+  },
+  {
+    id: "mishras-burnished-banner",
+    scryCheckSlug: "mishras-burnished-banner",
+    name: "Mishra's Burnished Banner",
+    set: "The Brothers' War",
+    setType: "standard",
+    releaseDate: "2022-11-18",
+    colors: ["B","R","G"],
+    commander: "Mishra, Claimed by Gix",
+    desc: "Jund artifact sacrifice. Mishra draws cards and unearth enables recursion. Junk-pile aesthetic.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.4, powerBracket: "B2"
+  },
+  {
+    id: "forces-of-the-imperium",
+    scryCheckSlug: "forces-of-the-imperium",
+    name: "Forces of the Imperium",
+    set: "Warhammer 40,000 Commander",
+    setType: "commander",
+    releaseDate: "2022-10-07",
+    colors: ["W","U","B"],
+    commander: "Inquisitor Greyfax",
+    partner: "Marneus Calgar",
+    desc: "Esper Space Marines / Imperium humans tribal. Heroic combat and protective counter-magic.",
+    msrp: 49.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.4, powerBracket: "B2"
+  },
+  {
+    id: "necron-dynasties",
+    scryCheckSlug: "necron-dynasties",
+    name: "Necron Dynasties",
+    set: "Warhammer 40,000 Commander",
+    setType: "commander",
+    releaseDate: "2022-10-07",
+    colors: ["B"],
+    commander: "Szarekh, the Silent King",
+    desc: "Mono-black Necron artifact horde. Reanimate, sacrifice, flood the board with undying robot-aliens.",
+    msrp: 49.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.5, powerBracket: "B2"
+  },
+  {
+    id: "tyranid-swarm",
+    scryCheckSlug: "tyranid-swarm",
+    name: "Tyranid Swarm",
+    set: "Warhammer 40,000 Commander",
+    setType: "commander",
+    releaseDate: "2022-10-07",
+    colors: ["B","R","G"],
+    commander: "The Swarmlord",
+    desc: "Jund Tyranid tokens + counters. Swarm goes wide then wide-and-tall as Swarmlord hands out upgrades.",
+    msrp: 49.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 3.1, powerBracket: "B2"
+  },
+  {
+    id: "the-ruinous-powers",
+    scryCheckSlug: "the-ruinous-powers",
+    name: "The Ruinous Powers",
+    set: "Warhammer 40,000 Commander",
+    setType: "commander",
+    releaseDate: "2022-10-07",
+    colors: ["W","U","B","R"],
+    commander: "Abaddon the Despoiler",
+    desc: "Four-color chaos demons. Cascade triggers on combat damage — swing once, cast chaos.",
+    msrp: 49.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 3.0,
+    powerScore: 4.5, powerBracket: "B2"
+  },
+  {
+    id: "legends-legacy",
+    scryCheckSlug: "legends-legacy",
+    name: "Legends' Legacy",
+    set: "Dominaria United",
+    setType: "standard",
+    releaseDate: "2022-09-09",
+    colors: ["W","B","R"],
+    commander: "Dihada, Binder of Wills",
+    desc: "Mardu legendary tribal. Every legendary triggers Dihada for card filtering and tokens.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.3, powerBracket: "B2"
+  },
+  {
+    id: "painbow",
+    scryCheckSlug: "painbow",
+    name: "Painbow",
+    set: "Dominaria United",
+    setType: "standard",
+    releaseDate: "2022-09-09",
+    colors: ["W","U","B","R","G"],
+    commander: "Jared Carthalion",
+    desc: "Five-color pain-lands shell. Domain counting, monarch/initiative subthemes.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.3, powerBracket: "B2"
+  },
+  {
+    id: "party-time",
+    scryCheckSlug: "party-time",
+    name: "Party Time",
+    set: "Commander Legends: Battle for Baldur's Gate",
+    setType: "commander",
+    releaseDate: "2022-06-10",
+    colors: ["W","U","G"],
+    commander: "Nalia de'Arnise",
+    desc: "Bant adventure party tribal. Match the four D&D party roles (cleric/fighter/rogue/wizard) for buffs.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.2, powerBracket: "B4"
+  },
+  {
+    id: "mind-flayarrrs",
+    scryCheckSlug: "mind-flayarrrs",
+    name: "Mind Flayarrrs",
+    set: "Commander Legends: Battle for Baldur's Gate",
+    setType: "commander",
+    releaseDate: "2022-06-10",
+    colors: ["U","B"],
+    commander: "Captain N'ghathrod",
+    desc: "Dimir horror tribal with mill. Reanimate from opponents' graveyards after milling them into submission.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 3.8, powerBracket: "B2"
+  },
+  {
+    id: "exit-from-exile",
+    scryCheckSlug: "exit-from-exile",
+    name: "Exit from Exile",
+    set: "Commander Legends: Battle for Baldur's Gate",
+    setType: "commander",
+    releaseDate: "2022-06-10",
+    colors: ["R","G"],
+    commander: "Faldorn, Dread Wolf Herald",
+    desc: "Gruul exile-cast wolves. Impulse draw from top of library, cast werewolves at instant speed, grow the pack.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.2, powerBracket: "B3"
+  },
+  {
+    id: "draconic-dissent",
+    scryCheckSlug: "draconic-dissent",
+    name: "Draconic Dissent",
+    set: "Commander Legends: Battle for Baldur's Gate",
+    setType: "commander",
+    releaseDate: "2022-06-10",
+    colors: ["W","U","R"],
+    commander: "Firkraag, Cunning Instigator",
+    desc: "Jeskai dragon goad. Force opponents to attack each other with dragons, capitalize on the openings.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.4, powerBracket: "B2"
+  },
+  {
+    id: "obscura-operation",
+    scryCheckSlug: "obscura-operation",
+    name: "Obscura Operation",
+    set: "Streets of New Capenna",
+    setType: "standard",
+    releaseDate: "2022-04-29",
+    colors: ["W","U","B"],
+    commander: "Anhelo, the Painter",
+    desc: "Esper connive — draw and discard in one motion. Anhelo copies your first instant or sorcery each turn.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.6, powerBracket: "B2"
+  },
+  {
+    id: "maestros-massacre",
+    scryCheckSlug: "maestros-massacre",
+    name: "Maestros Massacre",
+    set: "Streets of New Capenna",
+    setType: "standard",
+    releaseDate: "2022-04-29",
+    colors: ["U","B","R"],
+    commander: "Parnesse, the Subtle Brush",
+    desc: "Grixis spellslinger with casualty. Sacrifice creatures on cast to copy instants and sorceries.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.5, powerBracket: "B2"
+  },
+  {
+    id: "riveteers-rampage",
+    scryCheckSlug: "riveteers-rampage",
+    name: "Riveteers Rampage",
+    set: "Streets of New Capenna",
+    setType: "standard",
+    releaseDate: "2022-04-29",
+    colors: ["B","R","G"],
+    commander: "Henzie \"Toolbox\" Torre",
+    desc: "Jund blitz — cast creatures cheap, die at turn's end, sacrifice for value.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.4, powerBracket: "B2"
+  },
+  {
+    id: "cabaretti-cacophony",
+    scryCheckSlug: "cabaretti-cacophony",
+    name: "Cabaretti Cacophony",
+    set: "Streets of New Capenna",
+    setType: "standard",
+    releaseDate: "2022-04-29",
+    colors: ["W","R","G"],
+    commander: "Kitt Kanto, Mayhem Diva",
+    partner: "Jinnie Fay, Jetmir's Second",
+    desc: "Naya token party. Cats, Dogs, anything wide. Kitt Kanto rides whatever you can assemble.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.8, powerBracket: "B2"
+  },
+  {
+    id: "bedecked-brokers",
+    scryCheckSlug: "bedecked-brokers",
+    name: "Bedecked Brokers",
+    set: "Streets of New Capenna",
+    setType: "standard",
+    releaseDate: "2022-04-29",
+    colors: ["W","U","G"],
+    commander: "Perrie, the Pulverizer",
+    desc: "Bant shield counters. Counters protect creatures and offer utility trade-ins. Slow, resilient, deliberate.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 1.5,
+    powerScore: 3.1, powerBracket: "B2"
+  },
+  {
+    id: "upgrades-unleashed",
+    scryCheckSlug: "upgrades-unleashed",
+    name: "Upgrades Unleashed",
+    set: "Kamigawa: Neon Dynasty",
+    setType: "standard",
+    releaseDate: "2022-02-18",
+    colors: ["W","U","R"],
+    commander: "Kotori, Pilot Prodigy",
+    desc: "Jeskai vehicles and equipment. Crew things, swing things, go tall in a deck type that rarely gets love.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 2.7, powerBracket: "B1"
+  },
+  {
+    id: "buckle-up",
+    scryCheckSlug: "buckle-up",
+    name: "Buckle Up",
+    set: "Kamigawa: Neon Dynasty",
+    setType: "standard",
+    releaseDate: "2022-02-18",
+    colors: ["W","R","G"],
+    commander: "Chishiro, the Shattered Blade",
+    desc: "Naya modified creatures (counters, equipment, auras). Chishiro makes Spirit tokens when modified creatures die.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 1.5,
+    powerScore: 4.1, powerBracket: "B2"
+  },
+  {
+    id: "take-flight",
+    scryCheckSlug: "first-flight",
+    name: "Take Flight",
+    set: "Starter Commander Decks",
+    setType: "commander",
+    releaseDate: "2022-12-02",
+    colors: ["W","U"],
+    commander: "Isperia, Supreme Judge",
+    desc: "Azorius flying tribal. Beginner-friendly with a clear game plan: fly over, swing through the air, draw cards on attacks.",
+    msrp: 24.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 1.5,
+    powerScore: 4.2, powerBracket: "B2"
+  },
+  {
+    id: "grave-danger",
+    scryCheckSlug: "grave-danger",
+    name: "Grave Danger",
+    set: "Starter Commander Decks",
+    setType: "commander",
+    releaseDate: "2022-12-02",
+    colors: ["U","B"],
+    commander: "Szadek, Lord of Secrets",
+    desc: "Dimir mill/reanimator starter. Mill opponents, bring back their best creatures as your own.",
+    msrp: 24.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 1.5,
+    powerScore: 3.9, powerBracket: "B2"
+  },
+  {
+    id: "token-triumph",
+    scryCheckSlug: "token-triumph",
+    name: "Token Triumph",
+    set: "Starter Commander Decks",
+    setType: "commander",
+    releaseDate: "2022-12-02",
+    colors: ["W","G"],
+    commander: "Emmara, Soul of the Accord",
+    desc: "Selesnya token go-wide. Beginner-friendly with a clear game plan, significantly power-crept by 2026 but a good chassis.",
+    msrp: 24.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 1.5,
+    powerScore: 4.2, powerBracket: "B2"
+  },
+  {
+    id: "chaos-incarnate",
+    scryCheckSlug: "chaos-incarnate",
+    name: "Chaos Incarnate",
+    set: "Starter Commander Decks",
+    setType: "commander",
+    releaseDate: "2022-12-02",
+    colors: ["U","B","R"],
+    commander: "Nicol Bolas, the Deceiver",
+    desc: "Grixis control villain deck. Bolas steals things, burns things, counters things. Classic mustache-twirling.",
+    msrp: 24.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 1.5,
+    powerScore: 3.1, powerBracket: "B2"
+  },
+  {
+    id: "draconic-domination",
+    scryCheckSlug: "draconic-domination",
+    name: "Draconic Domination",
+    set: "Starter Commander Decks",
+    setType: "commander",
+    releaseDate: "2022-12-02",
+    colors: ["W","U","B","R","G"],
+    commander: "The Ur-Dragon",
+    desc: "Five-color dragon tribal led by the OG. A useful benchmark for 5C dragon tribal at real-deck prices.",
+    msrp: 24.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 1.5,
+    powerScore: 5.5, powerBracket: "B3"
+  },
+
+  // ============= 2021 =============
+  {
+    id: "vampiric-bloodlust",
+    scryCheckSlug: "vampiric-bloodlust",
+    name: "Vampiric Bloodlust",
+    set: "Innistrad: Crimson Vow",
+    setType: "standard",
+    releaseDate: "2021-11-19",
+    colors: ["B","R"],
+    commander: "Strefan, Maurer Progenitor",
+    desc: "Rakdos vampire tribal with blood tokens. Drain, aggro, vampire swarm — Crimson Vow's signature theme.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 5.5, powerBracket: "B3"
+  },
+  {
+    id: "spirit-squadron",
+    scryCheckSlug: "spirit-squadron",
+    name: "Spirit Squadron",
+    set: "Innistrad: Crimson Vow",
+    setType: "standard",
+    releaseDate: "2021-11-19",
+    colors: ["W","U"],
+    commander: "Millicent, Restless Revenant",
+    desc: "Azorius spirit flying tribal. Go-wide in the air with grave-return payoffs.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.6, powerBracket: "B2"
+  },
+  {
+    id: "coven-counters",
+    scryCheckSlug: "coven-counters",
+    name: "Coven Counters",
+    set: "Innistrad: Midnight Hunt",
+    setType: "standard",
+    releaseDate: "2021-09-24",
+    colors: ["W","G"],
+    commander: "Leinore, Autumn Sovereign",
+    desc: "Selesnya human/coven tribal. Coven triggers (three creatures of different power) reward board diversity.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 2.9, powerBracket: "B1"
+  },
+  {
+    id: "undead-unleashed",
+    scryCheckSlug: "undead-unleashed",
+    name: "Undead Unleashed",
+    set: "Innistrad: Midnight Hunt",
+    setType: "standard",
+    releaseDate: "2021-09-24",
+    colors: ["U","B"],
+    commander: "Wilhelt, the Rotcleaver",
+    desc: "Dimir zombie decay. Wilhelt turns every dying zombie into a new one, self-perpetuating threat density.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.6, powerBracket: "B2"
+  },
+  {
+    id: "aura-of-courage",
+    scryCheckSlug: "aura-of-courage",
+    name: "Aura of Courage",
+    set: "Adventures in the Forgotten Realms",
+    setType: "standard",
+    releaseDate: "2021-07-23",
+    colors: ["W","U","G"],
+    commander: "Galea, Kindler of Hope",
+    desc: "Bant Voltron auras/equipment. Galea lets you play enchantments and equipment from the top of your library for free.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 3.3, powerBracket: "B2"
+  },
+  {
+    id: "dungeons-of-death",
+    scryCheckSlug: "dungeons-of-death",
+    name: "Dungeons of Death",
+    set: "Adventures in the Forgotten Realms",
+    setType: "standard",
+    releaseDate: "2021-07-23",
+    colors: ["B"],
+    commander: "Sefris of the Hidden Ways",
+    desc: "Mono-black dungeon adventure. Venture into dungeons when creatures die for escalating value.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.5, powerBracket: "B2"
+  },
+  {
+    id: "draconic-rage",
+    scryCheckSlug: "draconic-rage",
+    name: "Draconic Rage",
+    set: "Adventures in the Forgotten Realms",
+    setType: "standard",
+    releaseDate: "2021-07-23",
+    colors: ["R","G"],
+    commander: "Vrondiss, Rage of Ancients",
+    desc: "Gruul dragon tribal. Take damage to trigger elementals and dragons, brute-force Jund-style.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 3.9, powerBracket: "B3"
+  },
+  {
+    id: "planar-portal",
+    scryCheckSlug: "planar-portal",
+    name: "Planar Portal",
+    set: "Adventures in the Forgotten Realms",
+    setType: "standard",
+    releaseDate: "2021-07-23",
+    colors: ["B","R"],
+    commander: "Prosper, Tome-Bound",
+    desc: "Rakdos impulse draw and treasure. Prosper exiles cards from top of library, casts them, pays with treasures.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.2, powerBracket: "B2"
+  },
+  {
+    id: "silverquill-statement",
+    scryCheckSlug: "silverquill-statement",
+    name: "Silverquill Statement",
+    set: "Strixhaven: School of Mages (Commander 2021)",
+    setType: "standard",
+    releaseDate: "2021-04-23",
+    colors: ["W","B"],
+    commander: "Breena, the Demagogue",
+    desc: "Orzhov political. Breena draws cards and doubles counters when opponents attack each other. The OG Strixhaven precon.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 3.4, powerBracket: "B4"
+  },
+  {
+    id: "prismari-performance",
+    scryCheckSlug: "prismari-performance",
+    name: "Prismari Performance",
+    set: "Strixhaven: School of Mages (Commander 2021)",
+    setType: "standard",
+    releaseDate: "2021-04-23",
+    colors: ["U","R"],
+    commander: "Zaffai, Thunder Conductor",
+    desc: "Izzet spells-matter. Zaffai scales rewards with spell mana value — cast big, get huge triggers.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 4.4, powerBracket: "B2"
+  },
+  {
+    id: "witherbloom-witchcraft",
+    scryCheckSlug: "witherbloom-witchcraft",
+    name: "Witherbloom Witchcraft",
+    set: "Strixhaven: School of Mages (Commander 2021)",
+    setType: "standard",
+    releaseDate: "2021-04-23",
+    colors: ["B","G"],
+    commander: "Willowdusk, Essence Seer",
+    desc: "Golgari life-as-resource. Pay life to grow Willowdusk, then hand those counters to your biggest threat.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.0,
+    powerScore: 2.6, powerBracket: "B1"
+  },
+  {
+    id: "lorehold-legacies",
+    scryCheckSlug: "lorehold-legacies",
+    name: "Lorehold Legacies",
+    set: "Strixhaven: School of Mages (Commander 2021)",
+    setType: "standard",
+    releaseDate: "2021-04-23",
+    colors: ["W","R"],
+    commander: "Osgir, the Reconstructor",
+    desc: "Boros artifact recursion. Sacrifice artifacts to make two copies. Dramatic Reversal-Isochron pieces included.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.2, powerBracket: "B2"
+  },
+  {
+    id: "quantum-quandrix",
+    scryCheckSlug: "quantum-quandrix",
+    name: "Quantum Quandrix",
+    set: "Strixhaven: School of Mages (Commander 2021)",
+    setType: "standard",
+    releaseDate: "2021-04-23",
+    colors: ["U","G"],
+    commander: "Adrix and Nev, Twincasters",
+    desc: "Simic token doubling. Parallel Lives in the command zone. The original Quandrix precon before 2026's Unlimited.",
+    msrp: 39.99, currentPrice: null, priceSource: null, priceDate: "2026-04-23",
+    power: 2.5,
+    powerScore: 4.5, powerBracket: "B2"
+  }
+];
+
+</script>
+<script>
+// Precon Ledger — app logic
+// Renders, filters, sorts, and persists owned state via window.storage when available
+
+(() => {
+  const $ = id => document.getElementById(id);
+  const grid = $("deckGrid");
+  const searchInput = $("search");
+  const yearFilter = $("yearFilter");
+  const typeFilter = $("typeFilter");
+  const colorFilter = $("colorFilter");
+  const sortSelect = $("sortSelect");
+  const resetBtn = $("resetBtn");
+  const resultCount = $("resultCount");
+  const reportLink = $("reportLink");
+
+  let activeColors = new Set();
+  let ownedSet = new Set();
+
+  // ---------- Live prices config ----------
+  // The tracker tries to load prices.json from these sources in order.
+  // Fill in LIVE_PRICES_REMOTE_URL with your GitHub raw URL after repo setup:
+  //   https://raw.githubusercontent.com/YOUR_USER/YOUR_REPO/main/prices.json
+  // Leave as null to skip remote load (e.g. when running fully offline).
+  const LIVE_PRICES_REMOTE_URL = null;  // ← EDIT THIS AFTER YOU CREATE THE REPO
+  const LIVE_PRICES_LOCAL_URL = "./prices.json";  // works when HTML is served from same folder
+  let LIVE_PRICES = null;  // populated by loadLivePrices(); null = unavailable
+
+  async function loadLivePrices() {
+    const urls = [LIVE_PRICES_LOCAL_URL, LIVE_PRICES_REMOTE_URL].filter(Boolean);
+    for (const url of urls) {
+      try {
+        const res = await fetch(url, { cache: "no-cache" });
+        if (!res.ok) continue;
+        const data = await res.json();
+        if (data && data.vendors) {
+          LIVE_PRICES = data;
+          console.log(`Live prices loaded from ${url} (updated ${data.updated_at})`);
+          return;
+        }
+      } catch (e) {
+        // fetch failures are expected when running offline or before repo is set up
+      }
+    }
+    console.log("Live prices unavailable — using baked-in snapshot");
+  }
+
+  // Get live vendor prices for a deck, or empty object if none loaded.
+  function getLivePrices(deck) {
+    if (!LIVE_PRICES) return {};
+    const out = {};
+    const ck = LIVE_PRICES.vendors.cardkingdom?.[deck.id];
+    const zu = LIVE_PRICES.vendors.zulus?.[deck.id];
+    if (ck?.price) out.cardkingdom = { price: ck.price, url: ck.url };
+    if (zu?.price) out.zulus = { price: zu.price, url: zu.url };
+    return out;
+  }
+
+  // ---------- Vendor URL builders ----------
+  // Each returns a search URL for that vendor. Deep-linking to product pages is brittle,
+  // but searches resolve reliably.
+  const vendors = [
+    {
+      key: "amzn",
+      label: "Amazon",
+      url: d => `https://www.amazon.com/s?k=${encodeURIComponent(`${d.name} commander deck magic gathering`)}`
+    },
+    {
+      key: "tcg",
+      label: "TCGPlayer",
+      url: d => `https://www.tcgplayer.com/search/magic/product?productLineName=magic&q=${encodeURIComponent(`${d.name} commander deck`)}&view=grid`
+    },
+    {
+      key: "ck",
+      label: "CardKingdom",
+      url: d => `https://www.cardkingdom.com/catalog/search?search=header&filter%5Bname%5D=${encodeURIComponent(`${d.name}`)}`
+    },
+    {
+      key: "zulus",
+      label: "Zulus",
+      local: true, // Isaac's local Sammamish shop — styled differently
+      url: d => `https://www.zulusgames.com/search?type=product&q=${encodeURIComponent(`${d.name}`)}`
+    }
+  ];
+
+  // ---------- Storage (graceful fallback) ----------
+  async function loadOwned() {
+    try {
+      if (window.storage && window.storage.get) {
+        const result = await window.storage.get("owned");
+        if (result && result.value) {
+          ownedSet = new Set(JSON.parse(result.value));
+        }
+      }
+    } catch (e) {
+      // Key doesn't exist yet, or storage unavailable — start fresh
+      ownedSet = new Set();
+    }
+  }
+
+  async function saveOwned() {
+    try {
+      if (window.storage && window.storage.set) {
+        await window.storage.set("owned", JSON.stringify([...ownedSet]));
+      }
+    } catch (e) {
+      console.warn("Could not persist owned state:", e);
+    }
+  }
+
+  // ---------- Filtering ----------
+  function filterDecks() {
+    const q = searchInput.value.trim().toLowerCase();
+    const year = yearFilter.value;
+    const type = typeFilter.value;
+
+    return PRECONS.filter(d => {
+      if (q) {
+        const hay = `${d.name} ${d.set} ${d.commander || ""} ${d.partner || ""} ${d.desc}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      if (year !== "all" && !d.releaseDate.startsWith(year)) return false;
+      if (type !== "all" && d.setType !== type) return false;
+      if (activeColors.size > 0) {
+        // Must include ALL selected colors (intersection match)
+        for (const c of activeColors) {
+          if (!d.colors.includes(c)) return false;
+        }
+      }
+      return true;
+    });
+  }
+
+  // ---------- Sorting ----------
+  function sortDecks(decks) {
+    const mode = sortSelect.value;
+    const copy = [...decks];
+    switch (mode) {
+      case "releaseAsc":
+        return copy.sort((a, b) => a.releaseDate.localeCompare(b.releaseDate));
+      case "releaseDesc":
+        return copy.sort((a, b) => b.releaseDate.localeCompare(a.releaseDate));
+      case "priceAsc":
+        return copy.sort((a, b) => (effectivePrice(a) ?? 999) - (effectivePrice(b) ?? 999));
+      case "priceDesc":
+        return copy.sort((a, b) => (effectivePrice(b) ?? 0) - (effectivePrice(a) ?? 0));
+      case "discount":
+        return copy.sort((a, b) => discountPct(b) - discountPct(a));
+      case "powerDesc":
+        // Unscored decks sink to bottom
+        return copy.sort((a, b) => (b.powerScore ?? -1) - (a.powerScore ?? -1) || a.name.localeCompare(b.name));
+      case "powerAsc":
+        return copy.sort((a, b) => (a.powerScore ?? 99) - (b.powerScore ?? 99) || a.name.localeCompare(b.name));
+      case "name":
+        return copy.sort((a, b) => a.name.localeCompare(b.name));
+      default:
+        return copy;
+    }
+  }
+
+  function effectivePrice(d) {
+    const live = getLivePrices(d);
+    const prices = Object.values(live).map(v => v.price);
+    if (prices.length > 0) return Math.min(...prices);
+    if (d.currentPrice != null) return d.currentPrice;
+    return null;
+  }
+
+  function discountPct(d) {
+    const ep = effectivePrice(d);
+    if (!ep || !d.msrp) return 0;
+    const pct = ((d.msrp - ep) / d.msrp) * 100;
+    return pct > 0 ? pct : 0;
+  }
+
+  // ---------- Rendering ----------
+  function formatDate(iso) {
+    const [y, m] = iso.split("-");
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return `${months[parseInt(m)-1]} ${y}`;
+  }
+
+  function manaPips(colors) {
+    if (!colors || colors.length === 0) return '<span class="mana-pip pip-c">C</span>';
+    return colors.map(c => `<span class="mana-pip pip-${c.toLowerCase()}">${c}</span>`).join("");
+  }
+
+  function escapeHtml(s) {
+    if (!s) return "";
+    return String(s).replace(/[&<>"']/g, ch => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[ch]));
+  }
+
+  function renderCard(d) {
+    const isOwned = ownedSet.has(d.id);
+    const pct = discountPct(d);
+    const isDeal = pct >= 20;
+    const classes = ["card"];
+    if (isOwned) classes.push("owned");
+    else if (isDeal) classes.push("deal");
+
+    const commanderLine = d.commander
+      ? `<div class="card-commander">${escapeHtml(d.commander)}${d.partner ? ` &amp; ${escapeHtml(d.partner)}` : ""}</div>`
+      : "";
+
+    const msrpLine = d.msrp
+      ? `<span class="price-msrp">MSRP $${d.msrp.toFixed(2)}</span>`
+      : "";
+
+    const badge = isDeal
+      ? `<span class="discount-badge">${pct.toFixed(0)}% off</span>`
+      : "";
+
+    // Price display — three-layer priority:
+    //   1. LIVE: CK or Zulus live prices from prices.json (freshest)
+    //   2. SNAPSHOT: baked-in verified price from April 2026 research
+    //   3. MSRP: fallback when we have nothing better
+    const livePrices = getLivePrices(d);
+    const liveEntries = Object.entries(livePrices);  // [["cardkingdom", {price, url}], ...]
+    const hasLive = liveEntries.length > 0;
+    const hasSnapshot = d.currentPrice != null && d.priceSource != null;
+
+    let priceBlock;
+    if (hasLive) {
+      // Find cheapest live price
+      liveEntries.sort((a, b) => a[1].price - b[1].price);
+      const [winnerKey, winner] = liveEntries[0];
+      const winnerLabel = winnerKey === "cardkingdom" ? "CardKingdom" : "Zulus";
+      const liveOtherRows = liveEntries.slice(1).map(([k, v]) => {
+        const label = k === "cardkingdom" ? "CardKingdom" : "Zulus";
+        return `<div class="price-live-other">${label}: $${v.price.toFixed(2)}</div>`;
+      }).join("");
+      priceBlock = `
+        <div class="price-row">
+          <div>
+            <div class="price-label">Live · ${winnerLabel}</div>
+            <span class="price-main">$${winner.price.toFixed(2)}</span>
+            <span class="price-live-dot" title="Live price — updated daily">●</span>
+            ${msrpLine}
+            ${liveOtherRows}
+          </div>
+          ${badge}
+        </div>`;
+    } else if (hasSnapshot) {
+      const priceVal = `$${d.currentPrice.toFixed(2)}`;
+      const sourceTag = `<span class="price-source">${escapeHtml(d.priceSource)}</span>`;
+      priceBlock = `
+        <div class="price-row">
+          <div>
+            <div class="price-label">Snapshot</div>
+            <span class="price-main">${priceVal}</span>${sourceTag}
+            ${msrpLine}
+          </div>
+          ${badge}
+        </div>`;
+    } else {
+      const msrpBig = d.msrp ? `$${d.msrp.toFixed(2)}` : "—";
+      priceBlock = `
+        <div class="price-row">
+          <div>
+            <div class="price-label">MSRP reference</div>
+            <span class="price-main price-unverified">${msrpBig}</span>
+            <span class="price-checkprompt">check vendors below for current price</span>
+          </div>
+        </div>`;
+    }
+
+    const singlesLine = d.singlesValue
+      ? `<span><strong>Singles</strong> ~$${d.singlesValue.toFixed(0)}</span>`
+      : "";
+
+    const metaBits = [singlesLine].filter(Boolean).join("");
+
+    // Power rating via ScryCheck (scrycheck.com) — rule-based analysis with 93% bracket accuracy
+    // 24 decks have baked-in scores from ScryCheck's published per-precon pages (April 2026).
+    // For the remaining 87, we link directly to their ScryCheck analysis page.
+    const scryCheckUrl = d.scryCheckSlug
+      ? `https://scrycheck.com/precons/${d.scryCheckSlug}`
+      : "https://scrycheck.com/precons";
+
+    let powerLine;
+    if (d.powerScore != null && d.powerBracket) {
+      // Color bracket: B1 = casual/muted, B2 = mid/soft, B3 = enhanced/gold
+      const bClass = { "B1": "b1", "B2": "b2", "B3": "b3", "B4": "b4", "B5": "b5" }[d.powerBracket] || "b2";
+      powerLine = `
+        <div class="power-row">
+          <span class="power-label">Power</span>
+          <span class="power-score">${d.powerScore.toFixed(1)}</span>
+          <span class="power-divider">/ 10</span>
+          <span class="power-bracket ${bClass}">${d.powerBracket}</span>
+          <a class="power-scan" href="${scryCheckUrl}" target="_blank" rel="noopener noreferrer" title="Full ScryCheck analysis">details →</a>
+        </div>`;
+    } else {
+      powerLine = `
+        <div class="power-row">
+          <a class="power-scan" href="${scryCheckUrl}" target="_blank" rel="noopener noreferrer" title="View power analysis on ScryCheck">⚡ Analyze on ScryCheck →</a>
+        </div>`;
+    }
+
+    const vendorBtns = vendors.map(v => {
+      const href = v.url(d);
+      const cls = v.local ? "vendor-btn local" : "vendor-btn";
+      const title = v.local ? `${v.label} Games (local · Sammamish)` : v.label;
+      return `<a class="${cls}" href="${href}" target="_blank" rel="noopener noreferrer" title="${title}">${v.label}</a>`;
+    }).join("");
+
+    return `
+      <article class="${classes.join(" ")}" data-id="${d.id}">
+        <button class="own-toggle ${isOwned ? 'checked' : ''}" data-id="${d.id}" title="${isOwned ? 'Owned' : 'Mark as owned'}" aria-label="Toggle owned">${isOwned ? '✓' : ''}</button>
+        <div class="card-top">
+          <div>
+            <div class="card-name">${escapeHtml(d.name)}</div>
+            <div class="card-set">${escapeHtml(d.set)} · ${formatDate(d.releaseDate)}</div>
+          </div>
+          <div class="card-colors">${manaPips(d.colors)}</div>
+        </div>
+        ${commanderLine}
+        <p class="card-desc">${escapeHtml(d.desc)}</p>
+        ${metaBits ? `<div class="card-meta">${metaBits}</div>` : ""}
+        ${powerLine}
+        ${priceBlock}
+        <div class="vendor-row">${vendorBtns}</div>
+      </article>
+    `;
+  }
+
+  function renderGrid() {
+    const filtered = filterDecks();
+    const sorted = sortDecks(filtered);
+
+    resultCount.textContent = sorted.length === PRECONS.length
+      ? `Showing all ${sorted.length} decks`
+      : `Showing ${sorted.length} of ${PRECONS.length} decks`;
+
+    if (sorted.length === 0) {
+      grid.innerHTML = `<div class="empty">No decks match these filters. Try relaxing the search or resetting the color pips.</div>`;
+      return;
+    }
+
+    grid.innerHTML = sorted.map(renderCard).join("");
+  }
+
+  // ---------- Stats ----------
+  function renderStats() {
+    $("statTotal").textContent = PRECONS.length;
+    const sets = new Set(PRECONS.map(d => d.set));
+    $("statSets").textContent = `across ${sets.size} sets`;
+    $("totalTracked").textContent = PRECONS.length;
+
+    const owned = PRECONS.filter(d => ownedSet.has(d.id));
+    $("statOwned").textContent = owned.length;
+    const totalMsrp = owned.reduce((sum, d) => sum + (d.msrp || 0), 0);
+    $("statOwnedValue").textContent = `$${totalMsrp.toFixed(0)} paid at MSRP`;
+
+    const withPricing = PRECONS.filter(d => effectivePrice(d) != null && d.msrp);
+    const bestDeal = withPricing.reduce((best, d) => {
+      return discountPct(d) > discountPct(best) ? d : best;
+    }, withPricing[0]);
+    if (bestDeal) {
+      $("statBestPct").textContent = `${discountPct(bestDeal).toFixed(0)}%`;
+      $("statBestName").textContent = bestDeal.name;
+    }
+
+    const prices = withPricing.map(d => effectivePrice(d)).sort((a, b) => a - b);
+    const median = prices.length ? prices[Math.floor(prices.length / 2)] : 0;
+    $("statMedian").textContent = `$${median.toFixed(0)}`;
+
+    // Live-price status badge
+    const statusEl = $("liveStatus");
+    if (statusEl) {
+      if (LIVE_PRICES) {
+        const date = new Date(LIVE_PRICES.updated_at);
+        const ckHits = Object.values(LIVE_PRICES.vendors.cardkingdom || {}).filter(v => v.price).length;
+        const zuHits = Object.values(LIVE_PRICES.vendors.zulus || {}).filter(v => v.price).length;
+        statusEl.innerHTML = `<span class="live-dot">●</span> Live · ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })} · ${ckHits} CK · ${zuHits} Zulus`;
+        statusEl.className = "live-status ok";
+      } else {
+        statusEl.innerHTML = `<span class="live-dot offline">○</span> Snapshot only · no live data`;
+        statusEl.className = "live-status offline";
+      }
+    }
+  }
+
+  // ---------- Wire up events ----------
+  function wireEvents() {
+    searchInput.addEventListener("input", renderGrid);
+    yearFilter.addEventListener("change", renderGrid);
+    typeFilter.addEventListener("change", renderGrid);
+    sortSelect.addEventListener("change", renderGrid);
+
+    colorFilter.addEventListener("click", e => {
+      const btn = e.target.closest(".color-btn");
+      if (!btn) return;
+      const color = btn.dataset.color;
+      if (activeColors.has(color)) {
+        activeColors.delete(color);
+        btn.classList.remove("active");
+      } else {
+        activeColors.add(color);
+        btn.classList.add("active");
+      }
+      renderGrid();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      yearFilter.value = "all";
+      typeFilter.value = "all";
+      sortSelect.value = "releaseDesc";
+      activeColors.clear();
+      colorFilter.querySelectorAll(".color-btn").forEach(b => b.classList.remove("active"));
+      renderGrid();
+    });
+
+    // Event delegation for owned-toggle buttons (re-rendered each filter)
+    grid.addEventListener("click", async e => {
+      const toggle = e.target.closest(".own-toggle");
+      if (!toggle) return;
+      const id = toggle.dataset.id;
+      if (ownedSet.has(id)) {
+        ownedSet.delete(id);
+      } else {
+        ownedSet.add(id);
+      }
+      await saveOwned();
+      renderStats();
+      renderGrid();
+    });
+
+    reportLink.addEventListener("click", e => {
+      e.preventDefault();
+      alert("Spotted a wrong commander, missing deck, or broken price? Just tell Claude in the next message — e.g. 'Family Matters commander is wrong, it's actually X' — and he'll patch the data file.");
+    });
+  }
+
+  // ---------- Init ----------
+  async function init() {
+    await loadOwned();
+    // Start live-price fetch in parallel — don't block initial render.
+    const livePricesPromise = loadLivePrices();
+    wireEvents();
+    renderStats();
+    renderGrid();
+    // When live prices arrive, re-render so the UI updates.
+    livePricesPromise.then(() => {
+      if (LIVE_PRICES) {
+        renderStats();
+        renderGrid();
+      }
+    });
+  }
+
+  init();
+})();
+
+</script>
+</body>
+</html>
