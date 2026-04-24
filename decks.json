@@ -1,0 +1,557 @@
+[
+  {
+    "id": "quandrix-unlimited",
+    "name": "Quandrix Unlimited",
+    "set": "Secrets of Strixhaven"
+  },
+  {
+    "id": "silverquill-influence",
+    "name": "Silverquill Influence",
+    "set": "Secrets of Strixhaven"
+  },
+  {
+    "id": "prismari-artistry",
+    "name": "Prismari Artistry",
+    "set": "Secrets of Strixhaven"
+  },
+  {
+    "id": "lorehold-spirit",
+    "name": "Lorehold Spirit",
+    "set": "Secrets of Strixhaven"
+  },
+  {
+    "id": "witherbloom-pestilence",
+    "name": "Witherbloom Pestilence",
+    "set": "Secrets of Strixhaven"
+  },
+  {
+    "id": "turtle-power",
+    "name": "Turtle Power!",
+    "set": "Teenage Mutant Ninja Turtles"
+  },
+  {
+    "id": "dance-of-the-elements",
+    "name": "Dance of the Elements",
+    "set": "Lorwyn Eclipsed"
+  },
+  {
+    "id": "blight-curse",
+    "name": "Blight Curse",
+    "set": "Lorwyn Eclipsed"
+  },
+  {
+    "id": "counter-intelligence",
+    "name": "Counter Intelligence",
+    "set": "Edge of Eternities"
+  },
+  {
+    "id": "world-shaper",
+    "name": "World Shaper",
+    "set": "Edge of Eternities"
+  },
+  {
+    "id": "revival-trance",
+    "name": "Revival Trance",
+    "set": "Commander: Final Fantasy"
+  },
+  {
+    "id": "limit-break",
+    "name": "Limit Break",
+    "set": "Commander: Final Fantasy"
+  },
+  {
+    "id": "counter-blitz",
+    "name": "Counter Blitz",
+    "set": "Commander: Final Fantasy"
+  },
+  {
+    "id": "scions-and-spellcraft",
+    "name": "Scions & Spellcraft",
+    "set": "Commander: Final Fantasy"
+  },
+  {
+    "id": "jeskai-striker",
+    "name": "Jeskai Striker",
+    "set": "Tarkir: Dragonstorm"
+  },
+  {
+    "id": "abzan-armor",
+    "name": "Abzan Armor",
+    "set": "Tarkir: Dragonstorm"
+  },
+  {
+    "id": "sultai-arisen",
+    "name": "Sultai Arisen",
+    "set": "Tarkir: Dragonstorm"
+  },
+  {
+    "id": "mardu-surge",
+    "name": "Mardu Surge",
+    "set": "Tarkir: Dragonstorm"
+  },
+  {
+    "id": "temur-roar",
+    "name": "Temur Roar",
+    "set": "Tarkir: Dragonstorm"
+  },
+  {
+    "id": "living-energy",
+    "name": "Living Energy",
+    "set": "Aetherdrift Commander"
+  },
+  {
+    "id": "eternal-might",
+    "name": "Eternal Might",
+    "set": "Aetherdrift Commander"
+  },
+  {
+    "id": "miracle-worker",
+    "name": "Miracle Worker",
+    "set": "Duskmourn: House of Horror"
+  },
+  {
+    "id": "death-toll",
+    "name": "Death Toll",
+    "set": "Duskmourn: House of Horror"
+  },
+  {
+    "id": "jump-scare",
+    "name": "Jump Scare!",
+    "set": "Duskmourn: House of Horror"
+  },
+  {
+    "id": "endless-punishment",
+    "name": "Endless Punishment",
+    "set": "Duskmourn: House of Horror"
+  },
+  {
+    "id": "family-matters",
+    "name": "Family Matters",
+    "set": "Bloomburrow Commander"
+  },
+  {
+    "id": "squirreled-away",
+    "name": "Squirreled Away",
+    "set": "Bloomburrow Commander"
+  },
+  {
+    "id": "animated-army",
+    "name": "Animated Army",
+    "set": "Bloomburrow Commander"
+  },
+  {
+    "id": "peace-offering-blb",
+    "name": "Peace Offering",
+    "set": "Bloomburrow Commander"
+  },
+  {
+    "id": "animus-antiquity",
+    "name": "Animus Antiquity",
+    "set": "Assassin's Creed"
+  },
+  {
+    "id": "master-of-keys-ac",
+    "name": "Master of Keys",
+    "set": "Assassin's Creed"
+  },
+  {
+    "id": "creative-energy",
+    "name": "Creative Energy",
+    "set": "Modern Horizons 3"
+  },
+  {
+    "id": "eldrazi-incursion",
+    "name": "Eldrazi Incursion",
+    "set": "Modern Horizons 3"
+  },
+  {
+    "id": "graveyard-overdrive",
+    "name": "Graveyard Overdrive",
+    "set": "Modern Horizons 3"
+  },
+  {
+    "id": "tricky-terrain",
+    "name": "Tricky Terrain",
+    "set": "Modern Horizons 3"
+  },
+  {
+    "id": "most-wanted",
+    "name": "Most Wanted",
+    "set": "Outlaws of Thunder Junction"
+  },
+  {
+    "id": "grand-larceny",
+    "name": "Grand Larceny",
+    "set": "Outlaws of Thunder Junction"
+  },
+  {
+    "id": "quick-draw",
+    "name": "Quick Draw",
+    "set": "Outlaws of Thunder Junction"
+  },
+  {
+    "id": "desert-bloom",
+    "name": "Desert Bloom",
+    "set": "Outlaws of Thunder Junction"
+  },
+  {
+    "id": "scrappy-survivors",
+    "name": "Scrappy Survivors",
+    "set": "Fallout Commander"
+  },
+  {
+    "id": "mutant-menace",
+    "name": "Mutant Menace",
+    "set": "Fallout Commander"
+  },
+  {
+    "id": "hail-caesar",
+    "name": "Hail, Caesar",
+    "set": "Fallout Commander"
+  },
+  {
+    "id": "science",
+    "name": "Science!",
+    "set": "Fallout Commander"
+  },
+  {
+    "id": "deep-clue-sea",
+    "name": "Deep Clue Sea",
+    "set": "Murders at Karlov Manor"
+  },
+  {
+    "id": "revenant-recon",
+    "name": "Revenant Recon",
+    "set": "Murders at Karlov Manor"
+  },
+  {
+    "id": "blame-game",
+    "name": "Blame Game",
+    "set": "Murders at Karlov Manor"
+  },
+  {
+    "id": "deadly-disguise",
+    "name": "Deadly Disguise",
+    "set": "Murders at Karlov Manor"
+  },
+  {
+    "id": "ahoy-mateys",
+    "name": "Ahoy Mateys",
+    "set": "The Lost Caverns of Ixalan"
+  },
+  {
+    "id": "veloci-ramp-tor",
+    "name": "Veloci-Ramp-Tor",
+    "set": "The Lost Caverns of Ixalan"
+  },
+  {
+    "id": "blood-rites",
+    "name": "Blood Rites",
+    "set": "The Lost Caverns of Ixalan"
+  },
+  {
+    "id": "explorers-of-the-deep",
+    "name": "Explorers of the Deep",
+    "set": "The Lost Caverns of Ixalan"
+  },
+  {
+    "id": "blast-from-the-past",
+    "name": "Blast from the Past",
+    "set": "Doctor Who Commander"
+  },
+  {
+    "id": "timey-wimey",
+    "name": "Timey-Wimey",
+    "set": "Doctor Who Commander"
+  },
+  {
+    "id": "paradox-power",
+    "name": "Paradox Power",
+    "set": "Doctor Who Commander"
+  },
+  {
+    "id": "masters-of-evil",
+    "name": "Masters of Evil",
+    "set": "Doctor Who Commander"
+  },
+  {
+    "id": "virtue-and-valor",
+    "name": "Virtue and Valor",
+    "set": "Wilds of Eldraine"
+  },
+  {
+    "id": "fae-dominion",
+    "name": "Fae Dominion",
+    "set": "Wilds of Eldraine"
+  },
+  {
+    "id": "peace-offering-woe",
+    "name": "Peace Offering",
+    "set": "Wilds of Eldraine"
+  },
+  {
+    "id": "faerie-schemes",
+    "name": "Faerie Schemes",
+    "set": "Wilds of Eldraine"
+  },
+  {
+    "id": "sliver-swarm",
+    "name": "Sliver Swarm",
+    "set": "Commander Masters"
+  },
+  {
+    "id": "eldrazi-unbound",
+    "name": "Eldrazi Unbound",
+    "set": "Commander Masters"
+  },
+  {
+    "id": "enduring-enchantments",
+    "name": "Enduring Enchantments",
+    "set": "Commander Masters"
+  },
+  {
+    "id": "planeswalker-party",
+    "name": "Planeswalker Party",
+    "set": "Commander Masters"
+  },
+  {
+    "id": "the-hosts-of-mordor",
+    "name": "The Hosts of Mordor",
+    "set": "The Lord of the Rings: Tales of Middle-earth"
+  },
+  {
+    "id": "food-and-fellowship",
+    "name": "Food and Fellowship",
+    "set": "The Lord of the Rings: Tales of Middle-earth"
+  },
+  {
+    "id": "elven-council",
+    "name": "Elven Council",
+    "set": "The Lord of the Rings: Tales of Middle-earth"
+  },
+  {
+    "id": "riders-of-rohan",
+    "name": "Riders of Rohan",
+    "set": "The Lord of the Rings: Tales of Middle-earth"
+  },
+  {
+    "id": "call-for-backup",
+    "name": "Call for Backup",
+    "set": "March of the Machine"
+  },
+  {
+    "id": "divine-convocation",
+    "name": "Divine Convocation",
+    "set": "March of the Machine"
+  },
+  {
+    "id": "growing-threat",
+    "name": "Growing Threat",
+    "set": "March of the Machine"
+  },
+  {
+    "id": "cavalry-charge",
+    "name": "Cavalry Charge",
+    "set": "March of the Machine"
+  },
+  {
+    "id": "tinker-time",
+    "name": "Tinker Time",
+    "set": "March of the Machine"
+  },
+  {
+    "id": "rebellion-rising",
+    "name": "Rebellion Rising",
+    "set": "Phyrexia: All Will Be One"
+  },
+  {
+    "id": "corrupting-influence",
+    "name": "Corrupting Influence",
+    "set": "Phyrexia: All Will Be One"
+  },
+  {
+    "id": "urzas-iron-alliance",
+    "name": "Urza's Iron Alliance",
+    "set": "The Brothers' War"
+  },
+  {
+    "id": "mishras-burnished-banner",
+    "name": "Mishra's Burnished Banner",
+    "set": "The Brothers' War"
+  },
+  {
+    "id": "forces-of-the-imperium",
+    "name": "Forces of the Imperium",
+    "set": "Warhammer 40,000 Commander"
+  },
+  {
+    "id": "necron-dynasties",
+    "name": "Necron Dynasties",
+    "set": "Warhammer 40,000 Commander"
+  },
+  {
+    "id": "tyranid-swarm",
+    "name": "Tyranid Swarm",
+    "set": "Warhammer 40,000 Commander"
+  },
+  {
+    "id": "the-ruinous-powers",
+    "name": "The Ruinous Powers",
+    "set": "Warhammer 40,000 Commander"
+  },
+  {
+    "id": "legends-legacy",
+    "name": "Legends' Legacy",
+    "set": "Dominaria United"
+  },
+  {
+    "id": "painbow",
+    "name": "Painbow",
+    "set": "Dominaria United"
+  },
+  {
+    "id": "party-time",
+    "name": "Party Time",
+    "set": "Commander Legends: Battle for Baldur's Gate"
+  },
+  {
+    "id": "mind-flayarrrs",
+    "name": "Mind Flayarrrs",
+    "set": "Commander Legends: Battle for Baldur's Gate"
+  },
+  {
+    "id": "exit-from-exile",
+    "name": "Exit from Exile",
+    "set": "Commander Legends: Battle for Baldur's Gate"
+  },
+  {
+    "id": "draconic-dissent",
+    "name": "Draconic Dissent",
+    "set": "Commander Legends: Battle for Baldur's Gate"
+  },
+  {
+    "id": "obscura-operation",
+    "name": "Obscura Operation",
+    "set": "Streets of New Capenna"
+  },
+  {
+    "id": "maestros-massacre",
+    "name": "Maestros Massacre",
+    "set": "Streets of New Capenna"
+  },
+  {
+    "id": "riveteers-rampage",
+    "name": "Riveteers Rampage",
+    "set": "Streets of New Capenna"
+  },
+  {
+    "id": "cabaretti-cacophony",
+    "name": "Cabaretti Cacophony",
+    "set": "Streets of New Capenna"
+  },
+  {
+    "id": "bedecked-brokers",
+    "name": "Bedecked Brokers",
+    "set": "Streets of New Capenna"
+  },
+  {
+    "id": "upgrades-unleashed",
+    "name": "Upgrades Unleashed",
+    "set": "Kamigawa: Neon Dynasty"
+  },
+  {
+    "id": "buckle-up",
+    "name": "Buckle Up",
+    "set": "Kamigawa: Neon Dynasty"
+  },
+  {
+    "id": "take-flight",
+    "name": "Take Flight",
+    "set": "Starter Commander Decks"
+  },
+  {
+    "id": "grave-danger",
+    "name": "Grave Danger",
+    "set": "Starter Commander Decks"
+  },
+  {
+    "id": "token-triumph",
+    "name": "Token Triumph",
+    "set": "Starter Commander Decks"
+  },
+  {
+    "id": "chaos-incarnate",
+    "name": "Chaos Incarnate",
+    "set": "Starter Commander Decks"
+  },
+  {
+    "id": "draconic-domination",
+    "name": "Draconic Domination",
+    "set": "Starter Commander Decks"
+  },
+  {
+    "id": "vampiric-bloodlust",
+    "name": "Vampiric Bloodlust",
+    "set": "Innistrad: Crimson Vow"
+  },
+  {
+    "id": "spirit-squadron",
+    "name": "Spirit Squadron",
+    "set": "Innistrad: Crimson Vow"
+  },
+  {
+    "id": "coven-counters",
+    "name": "Coven Counters",
+    "set": "Innistrad: Midnight Hunt"
+  },
+  {
+    "id": "undead-unleashed",
+    "name": "Undead Unleashed",
+    "set": "Innistrad: Midnight Hunt"
+  },
+  {
+    "id": "aura-of-courage",
+    "name": "Aura of Courage",
+    "set": "Adventures in the Forgotten Realms"
+  },
+  {
+    "id": "dungeons-of-death",
+    "name": "Dungeons of Death",
+    "set": "Adventures in the Forgotten Realms"
+  },
+  {
+    "id": "draconic-rage",
+    "name": "Draconic Rage",
+    "set": "Adventures in the Forgotten Realms"
+  },
+  {
+    "id": "planar-portal",
+    "name": "Planar Portal",
+    "set": "Adventures in the Forgotten Realms"
+  },
+  {
+    "id": "silverquill-statement",
+    "name": "Silverquill Statement",
+    "set": "Strixhaven: School of Mages (Commander 2021)"
+  },
+  {
+    "id": "prismari-performance",
+    "name": "Prismari Performance",
+    "set": "Strixhaven: School of Mages (Commander 2021)"
+  },
+  {
+    "id": "witherbloom-witchcraft",
+    "name": "Witherbloom Witchcraft",
+    "set": "Strixhaven: School of Mages (Commander 2021)"
+  },
+  {
+    "id": "lorehold-legacies",
+    "name": "Lorehold Legacies",
+    "set": "Strixhaven: School of Mages (Commander 2021)"
+  },
+  {
+    "id": "quantum-quandrix",
+    "name": "Quantum Quandrix",
+    "set": "Strixhaven: School of Mages (Commander 2021)"
+  }
+]

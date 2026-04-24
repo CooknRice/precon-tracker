@@ -1,0 +1,1343 @@
+{
+  "updated_at": "2026-04-24T14:44:22.605687+00:00",
+  "deck_count": 111,
+  "note": "SEED DATA: initial snapshot from prior research, Apr 2026. Replaced on first GitHub Action run.",
+  "vendors": {
+    "cardkingdom": {
+      "quandrix-unlimited": {
+        "price": 49.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Quandrix+Unlimited&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Quandrix Unlimited (verified from prior research)"
+      },
+      "silverquill-influence": {
+        "price": 49.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Silverquill+Influence&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Silverquill Influence (verified from prior research)"
+      },
+      "prismari-artistry": {
+        "price": 49.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Prismari+Artistry&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Prismari Artistry (verified from prior research)"
+      },
+      "lorehold-spirit": {
+        "price": 49.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Lorehold+Spirit&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Lorehold Spirit (verified from prior research)"
+      },
+      "witherbloom-pestilence": {
+        "price": 49.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Witherbloom+Pestilence&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Witherbloom Pestilence (verified from prior research)"
+      },
+      "turtle-power": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "dance-of-the-elements": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "blight-curse": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "counter-intelligence": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "world-shaper": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "revival-trance": {
+        "price": 42.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Revival+Trance&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Revival Trance (verified from prior research)"
+      },
+      "limit-break": {
+        "price": 54.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Limit+Break&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Limit Break (verified from prior research)"
+      },
+      "counter-blitz": {
+        "price": 64.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Counter+Blitz&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Counter Blitz (verified from prior research)"
+      },
+      "scions-and-spellcraft": {
+        "price": 64.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Scions+&+Spellcraft&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Scions & Spellcraft (verified from prior research)"
+      },
+      "jeskai-striker": {
+        "price": 34.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Jeskai+Striker&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Jeskai Striker (verified from prior research)"
+      },
+      "abzan-armor": {
+        "price": 49.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Abzan+Armor&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Abzan Armor (verified from prior research)"
+      },
+      "sultai-arisen": {
+        "price": 59.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Sultai+Arisen&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Sultai Arisen (verified from prior research)"
+      },
+      "mardu-surge": {
+        "price": 44.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Mardu+Surge&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Mardu Surge (verified from prior research)"
+      },
+      "temur-roar": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "living-energy": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "eternal-might": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "miracle-worker": {
+        "price": 44.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Miracle+Worker&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Miracle Worker (verified from prior research)"
+      },
+      "death-toll": {
+        "price": 34.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Death+Toll&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Death Toll (verified from prior research)"
+      },
+      "jump-scare": {
+        "price": 39.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Jump+Scare!&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Jump Scare! (verified from prior research)"
+      },
+      "endless-punishment": {
+        "price": 119.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Endless+Punishment&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Endless Punishment (verified from prior research)"
+      },
+      "family-matters": {
+        "price": 33.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Family+Matters&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Family Matters (verified from prior research)"
+      },
+      "squirreled-away": {
+        "price": 54.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Squirreled+Away&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Squirreled Away (verified from prior research)"
+      },
+      "animated-army": {
+        "price": 39.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Animated+Army&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Animated Army (verified from prior research)"
+      },
+      "peace-offering-blb": {
+        "price": 44.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Peace+Offering&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Peace Offering (verified from prior research)"
+      },
+      "animus-antiquity": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "master-of-keys-ac": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "creative-energy": {
+        "price": 44.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Creative+Energy&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Creative Energy (verified from prior research)"
+      },
+      "eldrazi-incursion": {
+        "price": 105.0,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Eldrazi+Incursion&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Eldrazi Incursion (verified from prior research)"
+      },
+      "graveyard-overdrive": {
+        "price": 44.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Graveyard+Overdrive&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Graveyard Overdrive (verified from prior research)"
+      },
+      "tricky-terrain": {
+        "price": 59.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Tricky+Terrain&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Tricky Terrain (verified from prior research)"
+      },
+      "most-wanted": {
+        "price": 119.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Most+Wanted&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Most Wanted (verified from prior research)"
+      },
+      "grand-larceny": {
+        "price": 199.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Grand+Larceny&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Grand Larceny (verified from prior research)"
+      },
+      "quick-draw": {
+        "price": 179.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Quick+Draw&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Quick Draw (verified from prior research)"
+      },
+      "desert-bloom": {
+        "price": 79.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Desert+Bloom&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Desert Bloom (verified from prior research)"
+      },
+      "scrappy-survivors": {
+        "price": 59.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Scrappy+Survivors&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Scrappy Survivors (verified from prior research)"
+      },
+      "mutant-menace": {
+        "price": 129.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Mutant+Menace&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Mutant Menace (verified from prior research)"
+      },
+      "hail-caesar": {
+        "price": 79.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Hail,+Caesar&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Hail, Caesar (verified from prior research)"
+      },
+      "science": {
+        "price": 44.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Science!&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Science! (verified from prior research)"
+      },
+      "deep-clue-sea": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "revenant-recon": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "blame-game": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "deadly-disguise": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "ahoy-mateys": {
+        "price": 34.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Ahoy+Mateys&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Ahoy Mateys (verified from prior research)"
+      },
+      "veloci-ramp-tor": {
+        "price": 69.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Veloci-Ramp-Tor&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Veloci-Ramp-Tor (verified from prior research)"
+      },
+      "blood-rites": {
+        "price": 44.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Blood+Rites&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Blood Rites (verified from prior research)"
+      },
+      "explorers-of-the-deep": {
+        "price": 39.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Explorers+of+the+Deep&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Explorers of the Deep (verified from prior research)"
+      },
+      "blast-from-the-past": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "timey-wimey": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "paradox-power": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "masters-of-evil": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "virtue-and-valor": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "fae-dominion": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "peace-offering-woe": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "faerie-schemes": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "sliver-swarm": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "eldrazi-unbound": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "enduring-enchantments": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "planeswalker-party": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "the-hosts-of-mordor": {
+        "price": 89.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=The+Hosts+of+Mordor&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "The Hosts of Mordor (verified from prior research)"
+      },
+      "food-and-fellowship": {
+        "price": 74.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Food+and+Fellowship&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Food and Fellowship (verified from prior research)"
+      },
+      "elven-council": {
+        "price": 59.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Elven+Council&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Elven Council (verified from prior research)"
+      },
+      "riders-of-rohan": {
+        "price": 59.99,
+        "url": "https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=Riders+of+Rohan&filter%5Btab%5D=product",
+        "status": "seed",
+        "snippet": "Riders of Rohan (verified from prior research)"
+      },
+      "call-for-backup": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "divine-convocation": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "growing-threat": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "cavalry-charge": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "tinker-time": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "rebellion-rising": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "corrupting-influence": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "urzas-iron-alliance": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "mishras-burnished-banner": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "forces-of-the-imperium": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "necron-dynasties": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "tyranid-swarm": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "the-ruinous-powers": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "legends-legacy": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "painbow": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "party-time": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "mind-flayarrrs": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "exit-from-exile": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "draconic-dissent": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "obscura-operation": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "maestros-massacre": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "riveteers-rampage": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "cabaretti-cacophony": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "bedecked-brokers": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "upgrades-unleashed": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "buckle-up": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "take-flight": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "grave-danger": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "token-triumph": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "chaos-incarnate": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "draconic-domination": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "vampiric-bloodlust": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "spirit-squadron": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "coven-counters": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "undead-unleashed": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "aura-of-courage": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "dungeons-of-death": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "draconic-rage": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "planar-portal": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "silverquill-statement": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "prismari-performance": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "witherbloom-witchcraft": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "lorehold-legacies": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "quantum-quandrix": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      }
+    },
+    "zulus": {
+      "quandrix-unlimited": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "silverquill-influence": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "prismari-artistry": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "lorehold-spirit": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "witherbloom-pestilence": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "turtle-power": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "dance-of-the-elements": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "blight-curse": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "counter-intelligence": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "world-shaper": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "revival-trance": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "limit-break": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "counter-blitz": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "scions-and-spellcraft": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "jeskai-striker": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "abzan-armor": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "sultai-arisen": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "mardu-surge": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "temur-roar": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "living-energy": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "eternal-might": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "miracle-worker": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "death-toll": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "jump-scare": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "endless-punishment": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "family-matters": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "squirreled-away": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "animated-army": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "peace-offering-blb": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "animus-antiquity": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "master-of-keys-ac": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "creative-energy": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "eldrazi-incursion": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "graveyard-overdrive": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "tricky-terrain": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "most-wanted": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "grand-larceny": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "quick-draw": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "desert-bloom": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "scrappy-survivors": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "mutant-menace": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "hail-caesar": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "science": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "deep-clue-sea": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "revenant-recon": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "blame-game": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "deadly-disguise": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "ahoy-mateys": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "veloci-ramp-tor": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "blood-rites": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "explorers-of-the-deep": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "blast-from-the-past": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "timey-wimey": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "paradox-power": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "masters-of-evil": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "virtue-and-valor": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "fae-dominion": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "peace-offering-woe": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "faerie-schemes": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "sliver-swarm": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "eldrazi-unbound": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "enduring-enchantments": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "planeswalker-party": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "the-hosts-of-mordor": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "food-and-fellowship": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "elven-council": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "riders-of-rohan": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "call-for-backup": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "divine-convocation": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "growing-threat": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "cavalry-charge": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "tinker-time": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "rebellion-rising": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "corrupting-influence": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "urzas-iron-alliance": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "mishras-burnished-banner": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "forces-of-the-imperium": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "necron-dynasties": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "tyranid-swarm": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "the-ruinous-powers": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "legends-legacy": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "painbow": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "party-time": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "mind-flayarrrs": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "exit-from-exile": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "draconic-dissent": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "obscura-operation": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "maestros-massacre": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "riveteers-rampage": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "cabaretti-cacophony": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "bedecked-brokers": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "upgrades-unleashed": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "buckle-up": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "take-flight": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "grave-danger": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "token-triumph": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "chaos-incarnate": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "draconic-domination": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "vampiric-bloodlust": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "spirit-squadron": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "coven-counters": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "undead-unleashed": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "aura-of-courage": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "dungeons-of-death": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "draconic-rage": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "planar-portal": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "silverquill-statement": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "prismari-performance": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "witherbloom-witchcraft": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "lorehold-legacies": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      },
+      "quantum-quandrix": {
+        "price": null,
+        "url": null,
+        "status": "seed-pending",
+        "snippet": null
+      }
+    }
+  }
+}
