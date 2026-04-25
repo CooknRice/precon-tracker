@@ -464,7 +464,7 @@ h1.title em { font-style: normal; color: var(--burgundy); font-weight: 600; }
 
 .vendor-row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 4px;
   margin-top: 4px;
 }
@@ -551,11 +551,11 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 @media (max-width: 720px) {
   .wrap { padding: 20px 16px 60px; }
   .filters { grid-template-columns: 1fr; }
-  .vendor-row { grid-template-columns: repeat(2, 1fr); }
+  .vendor-row { grid-template-columns: 1fr; }
   .meta-line { text-align: left; }
 }
 @media (max-width: 480px) {
-  .vendor-row { grid-template-columns: repeat(2, 1fr); }
+  .vendor-row { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -566,7 +566,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   <div class="title-block">
     <div>
       <h1 class="title">The <em>Precon</em> Ledger</h1>
-      <p class="tagline">A curated index of every MTG Commander preconstructed deck from the last five years, with live TCGPlayer Market prices and one-click checks at your local Zulus.</p>
+      <p class="tagline">A curated index of every MTG Commander preconstructed deck from the last five years, with live TCGPlayer Market prices refreshed daily.</p>
     </div>
     <div class="meta-line">
       <div>Last verified · <strong id="lastUpdated">April 23, 2026</strong></div>
@@ -600,7 +600,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   <div class="stat live-status-wrap">
     <div class="stat-label">Live price feed</div>
     <div id="liveStatus" class="live-status">loading…</div>
-    <div class="stat-sub">from TCGPlayer Market + Zulus, updated daily</div>
+    <div class="stat-sub">from TCGPlayer Market, updated daily</div>
   </div>
 </section>
 
@@ -670,9 +670,9 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
 <footer>
   <div>
-    <div>Prices come from three tiers, best-first: <em style="color:#3ec66a;">Live</em> (TCGPlayer Market + Zulus, refreshed daily via a GitHub Action scraper) → <em style="color:var(--gold);">Snapshot</em> (verified research from April 2026) → <em style="color:var(--ink-muted);">MSRP reference</em>.</div>
+    <div>Prices come from three tiers, best-first: <em style="color:#3ec66a;">Live</em> (TCGPlayer Market, refreshed daily via a GitHub Action scraper) → <em style="color:var(--gold);">Snapshot</em> (verified research from April 2026) → <em style="color:var(--ink-muted);">MSRP reference</em>.</div>
     <div style="margin-top:6px;">Power scores from <a href="https://scrycheck.com/precons" target="_blank" rel="noopener" style="color:var(--gold);">ScryCheck</a> — rule-based analysis, 93% bracket accuracy against 252 reference decks. 108 of 111 decks scored inline. Brackets follow Wizards' official system (<em>B1 casual → B5 cEDH</em>).</div>
-    <div style="margin-top:6px;">Vendors: TCGPlayer, Zulus (your local shop in Sammamish).</div>
+    <div style="margin-top:6px;">Vendor: TCGPlayer.</div>
   </div>
   <div>Built for Isaac · <a id="reportLink" href="#">Report an error</a></div>
 </footer>
@@ -2338,36 +2338,23 @@ const PRECONS = [
     console.log("Live prices unavailable — using baked-in snapshot");
   }
 
-  // Get live vendor prices for a deck. Returns {tcgplayer?, zulus?} where each
-  // entry has {price, url} (and tcgplayer also has price_low when available).
-  function getLivePrices(deck) {
-    if (!LIVE_PRICES) return {};
-    const out = {};
+  // Get the live TCGPlayer price for a deck. Returns {price, price_low, url}
+  // when available, or null if no live data exists.
+  function getLivePrice(deck) {
+    if (!LIVE_PRICES) return null;
     const tcg = LIVE_PRICES.vendors.tcgplayer?.[deck.id];
-    const zu = LIVE_PRICES.vendors.zulus?.[deck.id];
-    if (tcg?.price) {
-      out.tcgplayer = { price: tcg.price, price_low: tcg.price_low ?? null, url: tcg.url };
-    }
-    if (zu?.price) {
-      out.zulus = { price: zu.price, url: zu.url };
-    }
-    return out;
+    if (!tcg?.price) return null;
+    return { price: tcg.price, price_low: tcg.price_low ?? null, url: tcg.url };
   }
 
-  // ---------- Vendor URL builders ----------
-  // Returns a search URL for that vendor as a fallback. When live data exists
-  // for a deck, renderCard uses the direct product URL from prices.json instead.
+  // ---------- Vendor URL builder ----------
+  // Returns a search URL as a fallback. When live data exists for a deck,
+  // renderCard uses the direct product URL from prices.json instead.
   const vendors = [
     {
       key: "tcg",
-      label: "TCGPlayer",
+      label: "View on TCGPlayer",
       url: d => `https://www.tcgplayer.com/search/magic/product?productLineName=magic&q=${encodeURIComponent(`${d.name} commander deck`)}&view=grid`
-    },
-    {
-      key: "zulus",
-      label: "Zulus",
-      local: true, // Isaac's local Sammamish shop — styled differently
-      url: d => `https://www.zulusgames.com/search?type=product&q=${encodeURIComponent(`${d.name}`)}`
     }
   ];
 
@@ -2446,12 +2433,11 @@ const PRECONS = [
     }
   }
 
-  // For sorting and "best discount" calculation. Uses the cheapest live vendor
-  // price (TCG Market or Zulus), falling back to snapshot, then null.
+  // For sorting and "best discount" calculation. Uses the live TCG Market
+  // price, falling back to snapshot, then null.
   function effectivePrice(d) {
-    const live = getLivePrices(d);
-    const prices = Object.values(live).map(v => v.price);
-    if (prices.length > 0) return Math.min(...prices);
+    const live = getLivePrice(d);
+    if (live) return live.price;
     if (d.currentPrice != null) return d.currentPrice;
     return null;
   }
@@ -2503,43 +2489,26 @@ const PRECONS = [
       : "";
 
     // Price display — three-layer priority:
-    //   1. LIVE: TCGPlayer Market (preferred) and/or Zulus from prices.json
+    //   1. LIVE: TCGPlayer Market from prices.json (with TCG Low as a sub-note)
     //   2. SNAPSHOT: baked-in verified price from April 2026 research
     //   3. MSRP: fallback when we have nothing better
-    const livePrices = getLivePrices(d);
-    const tcg = livePrices.tcgplayer;
-    const zu = livePrices.zulus;
-    const hasLive = !!(tcg || zu);
+    const live = getLivePrice(d);
+    const hasLive = !!live;
     const hasSnapshot = d.currentPrice != null && d.priceSource != null;
 
     let priceBlock;
     if (hasLive) {
-      // Prefer TCGPlayer Market as the headline live price (it's an aggregated
-      // value, more stable than any single seller). Zulus shows as secondary.
-      let mainLabel, mainPrice, lowNote = "", otherRows = "";
-      if (tcg) {
-        mainLabel = "Live · TCG Market";
-        mainPrice = tcg.price;
-        if (tcg.price_low != null) {
-          lowNote = `<span class="price-low-note">$${tcg.price_low.toFixed(2)}</span>`;
-        }
-        if (zu) {
-          otherRows = `<div class="price-live-other">Zulus $${zu.price.toFixed(2)}</div>`;
-        }
-      } else {
-        // TCG missed but Zulus is available
-        mainLabel = "Live · Zulus";
-        mainPrice = zu.price;
-      }
+      const lowNote = live.price_low != null
+        ? `<span class="price-low-note">$${live.price_low.toFixed(2)}</span>`
+        : "";
       priceBlock = `
         <div class="price-row">
           <div>
-            <div class="price-label">${mainLabel}</div>
-            <span class="price-main">$${mainPrice.toFixed(2)}</span>
+            <div class="price-label">Live · TCG Market</div>
+            <span class="price-main">$${live.price.toFixed(2)}</span>
             <span class="price-live-dot" title="Live price — updated daily">●</span>
             ${lowNote}
             ${msrpLine}
-            ${otherRows}
           </div>
           ${badge}
         </div>`;
@@ -2599,17 +2568,11 @@ const PRECONS = [
         </div>`;
     }
 
-    // Vendor buttons — use the live URL from prices.json when available so the
-    // button deep-links straight to the product page; otherwise fall back to
-    // the search URL builder.
+    // Vendor button — uses the live TCG product URL when available so it
+    // deep-links to the exact product page; otherwise falls back to a search.
     const vendorBtns = vendors.map(v => {
-      let href;
-      if (v.key === "tcg" && tcg?.url) href = tcg.url;
-      else if (v.key === "zulus" && zu?.url) href = zu.url;
-      else href = v.url(d);
-      const cls = v.local ? "vendor-btn local" : "vendor-btn";
-      const title = v.local ? `${v.label} Games (local · Sammamish)` : v.label;
-      return `<a class="${cls}" href="${href}" target="_blank" rel="noopener noreferrer" title="${title}">${v.label}</a>`;
+      const href = (v.key === "tcg" && live?.url) ? live.url : v.url(d);
+      return `<a class="vendor-btn" href="${href}" target="_blank" rel="noopener noreferrer" title="${v.label}">${v.label}</a>`;
     }).join("");
 
     return `
@@ -2679,8 +2642,7 @@ const PRECONS = [
       if (LIVE_PRICES) {
         const date = new Date(LIVE_PRICES.updated_at);
         const tcgHits = Object.values(LIVE_PRICES.vendors.tcgplayer || {}).filter(v => v.price).length;
-        const zuHits = Object.values(LIVE_PRICES.vendors.zulus || {}).filter(v => v.price).length;
-        statusEl.innerHTML = `<span class="live-dot">●</span> Live · ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })} · ${tcgHits} TCG · ${zuHits} Zulus`;
+        statusEl.innerHTML = `<span class="live-dot">●</span> Live · ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })} · ${tcgHits} TCG`;
         statusEl.className = "live-status ok";
       } else {
         statusEl.innerHTML = `<span class="live-dot offline">○</span> Snapshot only · no live data`;
