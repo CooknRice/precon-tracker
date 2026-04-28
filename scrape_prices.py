@@ -39,6 +39,7 @@ TIMEOUT = 30
 TCGCSV_UA = "precon-tracker/1.5 (+https://github.com/CooknRice/precon-tracker)"
 POLITE_SLEEP = 1.2
 PRICE_FLOOR = 5.0  # USD; any "deck" priced below this is rejected as a single
+HISTORY_DAYS = 90  # rolling window of price snapshots kept per deck
 
 USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
@@ -475,6 +476,8 @@ def main() -> None:
     }
     out_path.write_text(json.dumps(output, indent=2))
 
+    update_history(decks, tcg_results, zulus_results)
+
     tcg_hits = sum(1 for v in tcg_results.values() if v.get("price") is not None)
     zu_hits = sum(1 for v in zulus_results.values() if v.get("price") is not None)
     rejected = sum(1 for v in tcg_results.values() if v.get("status") == "tcgcsv-likely-single")
@@ -482,6 +485,67 @@ def main() -> None:
     print(f"\nWrote {out_path}")
     print(f"TCGPlayer: {tcg_hits}/{len(decks)} hits  (rejected {rejected} as likely singles)")
     print(f"Zulus:     {zu_hits}/{len(decks)} hits")
+
+
+def update_history(decks: list, tcg_results: dict, zulus_results: dict) -> None:
+    """Append today's prices to prices_history.json and trim to HISTORY_DAYS.
+
+    File shape: { "decks": { deck_id: [{date: 'YYYY-MM-DD', tcg: 49.99, zulus: 47.50}, ...] } }
+    Skips appending if today's prices match the most-recent entry's, so the
+    file stays small for decks that don't move much.
+    """
+    history_path = Path(__file__).parent / "prices_history.json"
+    today = datetime.now(timezone.utc).date().isoformat()
+
+    if history_path.exists():
+        try:
+            history = json.loads(history_path.read_text())
+        except json.JSONDecodeError:
+            print(f"  WARN: {history_path.name} unreadable, starting fresh", flush=True)
+            history = {}
+    else:
+        history = {}
+
+    decks_history = history.get("decks") if isinstance(history.get("decks"), dict) else {}
+
+    for deck in decks:
+        did = deck["id"]
+        tcg_price = tcg_results.get(did, {}).get("price")
+        zu_price = zulus_results.get(did, {}).get("price")
+        if tcg_price is None and zu_price is None:
+            continue  # nothing to record
+
+        series = decks_history.get(did, [])
+        # If today's entry already exists, replace it (re-runs in same day).
+        # Otherwise compare to the previous entry; only append when changed.
+        new_entry = {"date": today}
+        if tcg_price is not None:
+            new_entry["tcg"] = round(float(tcg_price), 2)
+        if zu_price is not None:
+            new_entry["zulus"] = round(float(zu_price), 2)
+
+        if series and series[-1].get("date") == today:
+            series[-1] = new_entry
+        else:
+            prev = series[-1] if series else None
+            same = prev and prev.get("tcg") == new_entry.get("tcg") and prev.get("zulus") == new_entry.get("zulus")
+            if not same:
+                series.append(new_entry)
+
+        # Trim to rolling window
+        if len(series) > HISTORY_DAYS:
+            series = series[-HISTORY_DAYS:]
+        decks_history[did] = series
+
+    history = {
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "window_days": HISTORY_DAYS,
+        "decks": decks_history,
+    }
+    history_path.write_text(json.dumps(history, separators=(",", ":")))
+    sample_lens = [len(v) for v in decks_history.values()]
+    if sample_lens:
+        print(f"History: {len(decks_history)} decks, max {max(sample_lens)} / median {sorted(sample_lens)[len(sample_lens)//2]} entries")
 
 
 if __name__ == "__main__":

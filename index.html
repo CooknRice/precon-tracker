@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="fetch" href="./decks.json" crossorigin>
 <link rel="preload" as="fetch" href="./prices.json" crossorigin>
+<link rel="prefetch" href="./prices_history.json">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -561,6 +562,218 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 @media (max-width: 480px) {
   .vendor-row { grid-template-columns: 1fr; }
 }
+
+/* Stale-price banner — shown when prices.json is more than 3 days old */
+.stale-banner {
+  background: #3a2820;
+  border: 1px solid #6b4830;
+  color: #e8c8a8;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  display: none;
+}
+.stale-banner.visible { display: block; }
+
+/* Watch toggle — top-left mirror of own-toggle */
+.watch-toggle {
+  position: absolute;
+  top: 14px; left: 14px;
+  width: 22px; height: 22px;
+  border: 1.5px solid var(--ink-faded);
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink-faded);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s;
+  padding: 0;
+  line-height: 1;
+}
+.watch-toggle:hover { border-color: var(--gold); color: var(--gold); }
+.watch-toggle.checked {
+  background: transparent;
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+}
+.card.watching { box-shadow: inset 3px 0 0 var(--gold-bright); }
+
+/* Compare checkbox — small inline checkbox bottom-right */
+.compare-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-faded);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  user-select: none;
+  margin-top: 2px;
+}
+.compare-toggle input { margin: 0; cursor: pointer; accent-color: var(--gold); }
+.compare-toggle:hover { color: var(--ink-soft); }
+
+/* Compare bar — fixed bottom when items selected */
+.compare-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--paper-deep);
+  border-top: 1px solid var(--gold);
+  padding: 12px 24px;
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  z-index: 50;
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.4);
+}
+.compare-bar.visible { display: flex; }
+.compare-bar-actions { display: flex; gap: 12px; }
+.compare-bar button {
+  background: var(--gold);
+  color: #1a1308;
+  border: none;
+  padding: 7px 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  font-weight: 600;
+}
+.compare-bar button.secondary {
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid var(--ink-faded);
+}
+
+/* Compare modal */
+.compare-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 100;
+  overflow-y: auto;
+  padding: 40px 20px;
+}
+.compare-modal.visible { display: block; }
+.compare-modal-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: var(--paper-deep);
+  border: 1px solid var(--paper-line);
+  padding: 32px;
+}
+.compare-modal-close {
+  float: right;
+  background: transparent;
+  border: 1px solid var(--ink-faded);
+  color: var(--ink-soft);
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+}
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 24px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+}
+.compare-table th, .compare-table td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--paper-line);
+  vertical-align: top;
+}
+.compare-table th {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+  width: 140px;
+}
+.compare-table th.deck-h {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  text-transform: none;
+  letter-spacing: 0;
+  width: auto;
+}
+.compare-table .best { color: var(--burgundy); font-weight: 600; }
+
+/* Power bracket filter chips */
+.bracket-filter { display: flex; gap: 4px; }
+.bracket-chip {
+  padding: 6px 9px;
+  border: 1px solid var(--paper-line);
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+}
+.bracket-chip:hover { border-color: var(--gold); }
+.bracket-chip.active { background: var(--gold); color: #1a1308; border-color: var(--gold); }
+
+/* Show-watching-only chip */
+.scope-chip {
+  padding: 0 12px;
+  border: 1px solid var(--paper-line);
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.12s;
+}
+.scope-chip:hover { border-color: var(--gold); }
+.scope-chip.active { background: var(--gold-bright); color: #1a1308; border-color: var(--gold-bright); }
+
+/* Zulus second-vendor price row */
+.price-zulus {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+.price-zulus a { color: var(--ink-soft); text-decoration: none; }
+.price-zulus a:hover { color: var(--gold); }
+.price-zulus.cheaper { color: var(--burgundy-soft); font-weight: 500; }
+
+/* Sparkline */
+.sparkline {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 8px;
+}
+.sparkline path { fill: none; stroke: var(--gold); stroke-width: 1.5; }
+.sparkline .sparkline-area { fill: var(--gold); fill-opacity: 0.12; stroke: none; }
+.sparkline.up path { stroke: var(--burgundy); }
+.sparkline.up .sparkline-area { fill: var(--burgundy); fill-opacity: 0.12; }
+.sparkline.down path { stroke: var(--sage); }
+.sparkline.down .sparkline-area { fill: var(--sage); fill-opacity: 0.12; }
 </style>
 </head>
 <body>
@@ -580,6 +793,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   </div>
 </header>
 
+<div id="staleBanner" class="stale-banner" role="status"></div>
 <section class="stats">
   <div class="stat">
     <div class="stat-label">Decks tracked</div>
@@ -645,6 +859,20 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     </div>
   </div>
   <div class="filter-group">
+    <label class="filter-label">Power bracket</label>
+    <div class="bracket-filter" id="bracketFilter">
+      <button type="button" class="bracket-chip" data-bracket="B1" aria-pressed="false">B1</button>
+      <button type="button" class="bracket-chip" data-bracket="B2" aria-pressed="false">B2</button>
+      <button type="button" class="bracket-chip" data-bracket="B3" aria-pressed="false">B3</button>
+      <button type="button" class="bracket-chip" data-bracket="B4" aria-pressed="false">B4</button>
+      <button type="button" class="bracket-chip" data-bracket="B5" aria-pressed="false">B5</button>
+    </div>
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">Scope</label>
+    <button type="button" class="scope-chip" id="watchOnlyChip" aria-pressed="false">★ Watching only</button>
+  </div>
+  <div class="filter-group">
     <label class="filter-label" style="opacity:0;">Reset</label>
     <button class="reset-btn" id="resetBtn">Reset filters</button>
   </div>
@@ -672,13 +900,30 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   <div class="empty">Loading the archive…</div>
 </section>
 
+
+<div id="compareBar" class="compare-bar" role="region" aria-label="Compare selection">
+  <span><strong id="compareCount">0</strong> decks selected for compare</span>
+  <div class="compare-bar-actions">
+    <button type="button" class="secondary" id="compareClear">Clear</button>
+    <button type="button" id="compareOpen">Compare →</button>
+  </div>
+</div>
+
+<div id="compareModal" class="compare-modal" role="dialog" aria-modal="true" aria-labelledby="compareModalTitle">
+  <div class="compare-modal-inner">
+    <button type="button" class="compare-modal-close" id="compareModalClose">Close ×</button>
+    <h2 id="compareModalTitle" style="font-family: var(--font-display); font-size: 28px; font-weight: 500; font-style: italic;">Compare</h2>
+    <div id="compareTableWrap"></div>
+  </div>
+</div>
+
 <footer>
   <div>
     <div>Prices come from three tiers, best-first: <em style="color:#3ec66a;">Live</em> (TCGPlayer Market, refreshed daily via a GitHub Action scraper) → <em style="color:var(--gold);">Snapshot</em> (verified research from April 2026) → <em style="color:var(--ink-muted);">MSRP reference</em>.</div>
     <div style="margin-top:6px;">Power scores from <a href="https://scrycheck.com/precons" target="_blank" rel="noopener" style="color:var(--gold);">ScryCheck</a> — rule-based analysis, 93% bracket accuracy against 252 reference decks. 108 of 111 decks scored inline. Brackets follow Wizards' official system (<em>B1 casual → B5 cEDH</em>).</div>
     <div style="margin-top:6px;">Vendor: TCGPlayer.</div>
   </div>
-  <div>Built for Isaac · <a id="reportLink" href="#">Report an error</a></div>
+  <div>Built for Isaac · <a id="reportLink" href="https://github.com/CooknRice/precon-tracker/issues/new?labels=data-fix" target="_blank" rel="noopener noreferrer">Report an error</a></div>
 </footer>
 
 </div>
@@ -694,13 +939,31 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   const yearFilter = $("yearFilter");
   const typeFilter = $("typeFilter");
   const colorFilter = $("colorFilter");
+  const bracketFilter = $("bracketFilter");
+  const watchOnlyChip = $("watchOnlyChip");
   const sortSelect = $("sortSelect");
   const resetBtn = $("resetBtn");
   const resultCount = $("resultCount");
   const reportLink = $("reportLink");
+  const staleBanner = $("staleBanner");
+  const compareBar = $("compareBar");
+  const compareCountEl = $("compareCount");
+  const compareModal = $("compareModal");
+  const compareTableWrap = $("compareTableWrap");
+
+  // GitHub repo for "Report an error" links — adjust if you fork.
+  const REPO_SLUG = "CooknRice/precon-tracker";
+  // Show banner when prices.json is older than this many days.
+  const STALE_DAYS = 3;
+  // Maximum decks selectable for compare view.
+  const COMPARE_MAX = 4;
 
   let activeColors = new Set();
+  let activeBrackets = new Set();
+  let watchOnly = false;
   let ownedSet = new Set();
+  let watchSet = new Set();
+  let compareSet = new Set();
 
   // ---------- Live prices config ----------
   // The tracker tries to load prices.json from these sources in order.
@@ -710,12 +973,24 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   const LIVE_PRICES_REMOTE_URL = null;  // ← EDIT THIS AFTER YOU CREATE THE REPO
   const LIVE_PRICES_LOCAL_URL = "./prices.json";  // works when HTML is served from same folder
   let LIVE_PRICES = null;  // populated by loadLivePrices(); null = unavailable
+  let PRICE_HISTORY = null;  // populated by loadHistory(); { deck_id: [{date, tcg, zulus}, ...] }
   let PRECONS = [];        // populated by loadDecks() from decks.json
 
   async function loadDecks() {
     const res = await fetch("./decks.json", { cache: "no-cache" });
     if (!res.ok) throw new Error(`decks.json HTTP ${res.status}`);
     PRECONS = await res.json();
+  }
+
+  async function loadHistory() {
+    try {
+      const res = await fetch("./prices_history.json", { cache: "no-cache" });
+      if (!res.ok) return;
+      const data = await res.json();
+      PRICE_HISTORY = data && data.decks ? data.decks : null;
+    } catch (e) {
+      // History is optional — built up over time by the scraper.
+    }
   }
 
   async function loadLivePrices() {
@@ -746,6 +1021,20 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     return { price: tcg.price, price_low: tcg.price_low ?? null, url: tcg.url };
   }
 
+  // Zulus is scraped in parallel with TCGPlayer. Returns {price, url} or null.
+  function getZulusPrice(deck) {
+    if (!LIVE_PRICES) return null;
+    const z = LIVE_PRICES.vendors.zulus?.[deck.id];
+    if (!z?.price) return null;
+    return { price: z.price, url: z.url };
+  }
+
+  function getHistory(deck) {
+    if (!PRICE_HISTORY) return null;
+    const series = PRICE_HISTORY[deck.id];
+    return Array.isArray(series) && series.length >= 2 ? series : null;
+  }
+
   // ---------- Vendor URL builder ----------
   // Returns a search URL as a fallback. When live data exists for a deck,
   // renderCard uses the direct product URL from prices.json instead.
@@ -758,29 +1047,43 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   ];
 
   // ---------- Storage (graceful fallback) ----------
-  async function loadOwned() {
+  // Tries window.storage first (Claude.ai sandbox), then localStorage.
+  async function loadKey(key) {
     try {
       if (window.storage && window.storage.get) {
-        const result = await window.storage.get("owned");
-        if (result && result.value) {
-          ownedSet = new Set(JSON.parse(result.value));
-        }
+        const result = await window.storage.get(key);
+        if (result && result.value) return JSON.parse(result.value);
       }
-    } catch (e) {
-      // Key doesn't exist yet, or storage unavailable — start fresh
-      ownedSet = new Set();
-    }
+    } catch (e) { /* fall through */ }
+    try {
+      const raw = localStorage.getItem(`precon-${key}`);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
   }
 
-  async function saveOwned() {
+  async function saveKey(key, value) {
+    const json = JSON.stringify(value);
     try {
       if (window.storage && window.storage.set) {
-        await window.storage.set("owned", JSON.stringify([...ownedSet]));
+        await window.storage.set(key, json);
       }
-    } catch (e) {
-      console.warn("Could not persist owned state:", e);
-    }
+    } catch (e) { /* fall through */ }
+    try {
+      localStorage.setItem(`precon-${key}`, json);
+    } catch (e) { console.warn(`Could not persist ${key}:`, e); }
   }
+
+  async function loadOwned() {
+    const arr = await loadKey("owned");
+    if (Array.isArray(arr)) ownedSet = new Set(arr);
+  }
+  async function saveOwned() { await saveKey("owned", [...ownedSet]); }
+
+  async function loadWatched() {
+    const arr = await loadKey("watched");
+    if (Array.isArray(arr)) watchSet = new Set(arr);
+  }
+  async function saveWatched() { await saveKey("watched", [...watchSet]); }
 
   // ---------- Filtering ----------
   function filterDecks() {
@@ -801,6 +1104,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
           if (!d.colors.includes(c)) return false;
         }
       }
+      if (activeBrackets.size > 0) {
+        if (!d.powerBracket || !activeBrackets.has(d.powerBracket)) return false;
+      }
+      if (watchOnly && !watchSet.has(d.id)) return false;
       return true;
     });
   }
@@ -867,13 +1174,72 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     }[ch]));
   }
 
+  // Inline SVG sparkline. Trend determines colour: down=sage, up=burgundy, flat=gold.
+  // Series entries look like {date, tcg, zulus}. We chart `tcg`.
+  function sparklineSvg(series) {
+    if (!series || series.length < 2) return "";
+    const pts = series.map(s => s.tcg).filter(v => typeof v === "number");
+    if (pts.length < 2) return "";
+    const w = 60, h = 18, pad = 1;
+    const min = Math.min(...pts), max = Math.max(...pts);
+    const range = max - min || 1;
+    const stepX = (w - pad * 2) / (pts.length - 1);
+    const coords = pts.map((v, i) => {
+      const x = pad + i * stepX;
+      const y = h - pad - ((v - min) / range) * (h - pad * 2);
+      return [x, y];
+    });
+    const path = "M " + coords.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" L ");
+    const area = path + ` L ${(w - pad).toFixed(1)},${(h - pad).toFixed(1)} L ${pad},${(h - pad).toFixed(1)} Z`;
+    const first = pts[0], last = pts[pts.length - 1];
+    let trend = "flat";
+    if (last < first * 0.97) trend = "down";
+    else if (last > first * 1.03) trend = "up";
+    const title = `${pts.length} days · $${first.toFixed(2)} → $${last.toFixed(2)}`;
+    return `<svg class="sparkline ${trend}" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-label="${title}"><title>${title}</title><path class="sparkline-area" d="${area}"/><path d="${path}"/></svg>`;
+  }
+
+  // Banner: warn the user if the last scrape was more than STALE_DAYS ago.
+  function updateStaleBanner() {
+    if (!staleBanner) return;
+    if (!LIVE_PRICES?.updated_at) {
+      staleBanner.classList.remove("visible");
+      return;
+    }
+    const updated = new Date(LIVE_PRICES.updated_at);
+    const ageDays = (Date.now() - updated.getTime()) / 86400000;
+    if (ageDays > STALE_DAYS) {
+      const dateStr = updated.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+      staleBanner.textContent = `⚠ Prices last updated ${dateStr} (${Math.round(ageDays)} days ago). The daily scraper may be down — open an issue if it's been more than a week.`;
+      staleBanner.classList.add("visible");
+    } else {
+      staleBanner.classList.remove("visible");
+    }
+  }
+
+  // Build a prefilled "report a problem" GitHub Issue URL for one deck.
+  function reportIssueUrl(deck) {
+    const title = `Issue with “${deck.name}”`;
+    const body = [
+      `**Deck:** ${deck.name} (${deck.set})`,
+      `**ID:** \`${deck.id}\``,
+      `**What's wrong?** (e.g. wrong commander, missing deck, broken price, typo)`,
+      "",
+      "<!-- Add details here. Auto-prefilled from the Precon Ledger. -->",
+    ].join("\n");
+    return `https://github.com/${REPO_SLUG}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}&labels=data-fix`;
+  }
+
   function renderCard(d) {
     const isOwned = ownedSet.has(d.id);
+    const isWatching = watchSet.has(d.id);
+    const isComparing = compareSet.has(d.id);
     const pct = discountPct(d);
     const isDeal = pct >= 20;
     const classes = ["card"];
     if (isOwned) classes.push("owned");
     else if (isDeal) classes.push("deal");
+    if (isWatching) classes.push("watching");
 
     const commanderLine = d.commander
       ? `<div class="card-commander">${escapeHtml(d.commander)}${d.partner ? ` &amp; ${escapeHtml(d.partner)}` : ""}</div>`
@@ -887,11 +1253,26 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       ? `<span class="discount-badge">${pct.toFixed(0)}% off</span>`
       : "";
 
+    // Sparkline of recent TCG prices (when history is available).
+    const spark = sparklineSvg(getHistory(d));
+
+    // Zulus second-vendor row: shown when we have a Zulus price.
+    // If Zulus is cheaper than TCG, highlight it.
+    const zulus = getZulusPrice(d);
+    const live = getLivePrice(d);
+    let zulusLine = "";
+    if (zulus) {
+      const cheaperClass = (live && zulus.price < live.price) ? " cheaper" : "";
+      const delta = (live && zulus.price < live.price)
+        ? ` <span style="color:var(--sage);">(saves $${(live.price - zulus.price).toFixed(2)})</span>`
+        : "";
+      zulusLine = `<div class="price-zulus${cheaperClass}">Zulus · <a href="${zulus.url}" target="_blank" rel="noopener noreferrer">$${zulus.price.toFixed(2)}</a>${delta}</div>`;
+    }
+
     // Price display — three-layer priority:
     //   1. LIVE: TCGPlayer Market from prices.json (with TCG Low as a sub-note)
     //   2. SNAPSHOT: baked-in verified price from April 2026 research
     //   3. MSRP: fallback when we have nothing better
-    const live = getLivePrice(d);
     const hasLive = !!live;
     const hasSnapshot = d.currentPrice != null && d.priceSource != null;
 
@@ -906,11 +1287,13 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
             <div class="price-label">Live · TCG Market</div>
             <span class="price-main">$${live.price.toFixed(2)}</span>
             <span class="price-live-dot" title="Live price — updated daily">●</span>
+            ${spark}
             ${lowNote}
             ${msrpLine}
           </div>
           ${badge}
-        </div>`;
+        </div>
+        ${zulusLine}`;
     } else if (hasSnapshot) {
       const priceVal = `$${d.currentPrice.toFixed(2)}`;
       const sourceTag = `<span class="price-source">${escapeHtml(d.priceSource)}</span>`;
@@ -922,7 +1305,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
             ${msrpLine}
           </div>
           ${badge}
-        </div>`;
+        </div>
+        ${zulusLine}`;
     } else {
       const msrpBig = d.msrp ? `$${d.msrp.toFixed(2)}` : "—";
       priceBlock = `
@@ -932,7 +1316,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
             <span class="price-main price-unverified">${msrpBig}</span>
             <span class="price-checkprompt">check vendors below for current price</span>
           </div>
-        </div>`;
+        </div>
+        ${zulusLine}`;
     }
 
     const singlesLine = d.singlesValue
@@ -976,7 +1361,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
     return `
       <article class="${classes.join(" ")}" data-id="${d.id}">
-        <button class="own-toggle ${isOwned ? 'checked' : ''}" data-id="${d.id}" title="${isOwned ? 'Owned' : 'Mark as owned'}" aria-label="Toggle owned">${isOwned ? '✓' : ''}</button>
+        <button class="watch-toggle ${isWatching ? 'checked' : ''}" data-watch="${d.id}" title="${isWatching ? 'Watching' : 'Add to watchlist'}" aria-label="Toggle watchlist" aria-pressed="${isWatching}">${isWatching ? '★' : '☆'}</button>
+        <button class="own-toggle ${isOwned ? 'checked' : ''}" data-id="${d.id}" title="${isOwned ? 'Owned' : 'Mark as owned'}" aria-label="Toggle owned" aria-pressed="${isOwned}">${isOwned ? '✓' : ''}</button>
         <div class="card-top">
           <div>
             <div class="card-name">${escapeHtml(d.name)}</div>
@@ -990,6 +1376,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         ${powerLine}
         ${priceBlock}
         <div class="vendor-row">${vendorBtns}</div>
+        <label class="compare-toggle">
+          <input type="checkbox" data-compare="${d.id}" ${isComparing ? 'checked' : ''}>
+          Add to compare
+        </label>
       </article>
     `;
   }
@@ -1008,6 +1398,121 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     }
 
     grid.innerHTML = sorted.map(renderCard).join("");
+  }
+
+  // ---------- Compare view ----------
+  function renderCompareBar() {
+    if (compareSet.size === 0) {
+      compareBar.classList.remove("visible");
+    } else {
+      compareCountEl.textContent = compareSet.size;
+      compareBar.classList.add("visible");
+    }
+  }
+
+  function renderCompareModal() {
+    const decks = PRECONS.filter(d => compareSet.has(d.id));
+    if (decks.length < 2) {
+      compareTableWrap.innerHTML = `<p style="color:var(--ink-muted); margin-top:16px;">Pick at least 2 decks to compare (up to ${COMPARE_MAX}).</p>`;
+      return;
+    }
+
+    // Compute "best in row" highlights for price (lowest), discount (highest),
+    // power (highest).
+    const livePrices = decks.map(d => effectivePrice(d) ?? Infinity);
+    const minPrice = Math.min(...livePrices);
+    const discounts = decks.map(d => discountPct(d));
+    const maxDiscount = Math.max(...discounts);
+    const powers = decks.map(d => d.powerScore ?? -1);
+    const maxPower = Math.max(...powers);
+
+    const fmt = v => v == null ? "—" : v;
+    const dollars = v => v == null || !isFinite(v) ? "—" : `$${v.toFixed(2)}`;
+
+    const headers = decks.map(d => `<th class="deck-h">${escapeHtml(d.name)}</th>`).join("");
+    const rows = [
+      ["Set", decks.map(d => escapeHtml(d.set))],
+      ["Released", decks.map(d => formatDate(d.releaseDate))],
+      ["Colors", decks.map(d => manaPips(d.colors))],
+      ["Commander", decks.map(d => escapeHtml(d.commander || "—"))],
+      ["MSRP", decks.map(d => d.msrp ? dollars(d.msrp) : "—")],
+      ["Live price", decks.map((d, i) => {
+        const ep = effectivePrice(d);
+        const cls = (ep === minPrice && isFinite(ep)) ? "best" : "";
+        return `<span class="${cls}">${dollars(ep)}</span>`;
+      })],
+      ["Discount", decks.map((d, i) => {
+        const cls = (discounts[i] === maxDiscount && maxDiscount > 0) ? "best" : "";
+        return `<span class="${cls}">${discounts[i] > 0 ? discounts[i].toFixed(0) + "%" : "—"}</span>`;
+      })],
+      ["Power", decks.map((d, i) => {
+        const cls = (powers[i] === maxPower && maxPower >= 0) ? "best" : "";
+        return `<span class="${cls}">${d.powerScore != null ? d.powerScore.toFixed(1) + " " + (d.powerBracket || "") : "—"}</span>`;
+      })],
+      ["Singles", decks.map(d => d.singlesValue ? `~$${d.singlesValue}` : "—")],
+      ["Strategy", decks.map(d => `<span style="font-size:12px; line-height:1.45;">${escapeHtml(d.desc)}</span>`)],
+    ];
+
+    const body = rows.map(([label, cells]) =>
+      `<tr><th>${label}</th>${cells.map(c => `<td>${c}</td>`).join("")}</tr>`
+    ).join("");
+
+    compareTableWrap.innerHTML = `<table class="compare-table"><thead><tr><th></th>${headers}</tr></thead><tbody>${body}</tbody></table>`;
+  }
+
+  // ---------- URL state (shareable filters) ----------
+  // Encodes search/year/type/colors/brackets/sort into ?q=...&year=2026 etc.
+  // Read on init, written on every filter change.
+  function readUrlState() {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("q") || "";
+    if (q) searchInput.value = q;
+    const year = params.get("year");
+    if (year && [...yearFilter.options].some(o => o.value === year)) yearFilter.value = year;
+    const type = params.get("type");
+    if (type && [...typeFilter.options].some(o => o.value === type)) typeFilter.value = type;
+    const sort = params.get("sort");
+    if (sort && [...sortSelect.options].some(o => o.value === sort)) sortSelect.value = sort;
+    const colors = (params.get("colors") || "").split("").filter(c => "WUBRGC".includes(c));
+    activeColors = new Set(colors);
+    colorFilter.querySelectorAll(".color-btn").forEach(b => {
+      const on = activeColors.has(b.dataset.color);
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    const brackets = (params.get("brackets") || "").split(",").filter(b => /^B[1-5]$/.test(b));
+    activeBrackets = new Set(brackets);
+    bracketFilter.querySelectorAll(".bracket-chip").forEach(b => {
+      const on = activeBrackets.has(b.dataset.bracket);
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    if (params.get("watching") === "1") {
+      watchOnly = true;
+      watchOnlyChip.classList.add("active");
+      watchOnlyChip.setAttribute("aria-pressed", "true");
+    }
+  }
+
+  function writeUrlState() {
+    const params = new URLSearchParams();
+    const q = searchInput.value.trim();
+    if (q) params.set("q", q);
+    if (yearFilter.value !== "all") params.set("year", yearFilter.value);
+    if (typeFilter.value !== "all") params.set("type", typeFilter.value);
+    if (sortSelect.value !== "releaseDesc") params.set("sort", sortSelect.value);
+    if (activeColors.size > 0) params.set("colors", [...activeColors].sort().join(""));
+    if (activeBrackets.size > 0) params.set("brackets", [...activeBrackets].sort().join(","));
+    if (watchOnly) params.set("watching", "1");
+    const qs = params.toString();
+    const url = qs ? `?${qs}` : window.location.pathname;
+    history.replaceState(null, "", url);
+  }
+
+  // Wrap renderGrid so URL state stays in sync without scattering write calls.
+  function refresh() {
+    writeUrlState();
+    renderGrid();
   }
 
   // ---------- Stats ----------
@@ -1052,10 +1557,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
   // ---------- Wire up events ----------
   function wireEvents() {
-    searchInput.addEventListener("input", renderGrid);
-    yearFilter.addEventListener("change", renderGrid);
-    typeFilter.addEventListener("change", renderGrid);
-    sortSelect.addEventListener("change", renderGrid);
+    searchInput.addEventListener("input", refresh);
+    yearFilter.addEventListener("change", refresh);
+    typeFilter.addEventListener("change", refresh);
+    sortSelect.addEventListener("change", refresh);
 
     colorFilter.addEventListener("click", e => {
       const btn = e.target.closest(".color-btn");
@@ -1071,7 +1576,30 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         btn.classList.add("active");
         btn.setAttribute("aria-pressed", "true");
       }
-      renderGrid();
+      refresh();
+    });
+
+    bracketFilter.addEventListener("click", e => {
+      const btn = e.target.closest(".bracket-chip");
+      if (!btn) return;
+      const b = btn.dataset.bracket;
+      if (activeBrackets.has(b)) {
+        activeBrackets.delete(b);
+        btn.classList.remove("active");
+        btn.setAttribute("aria-pressed", "false");
+      } else {
+        activeBrackets.add(b);
+        btn.classList.add("active");
+        btn.setAttribute("aria-pressed", "true");
+      }
+      refresh();
+    });
+
+    watchOnlyChip.addEventListener("click", () => {
+      watchOnly = !watchOnly;
+      watchOnlyChip.classList.toggle("active", watchOnly);
+      watchOnlyChip.setAttribute("aria-pressed", watchOnly ? "true" : "false");
+      refresh();
     });
 
     resetBtn.addEventListener("click", () => {
@@ -1080,47 +1608,103 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       typeFilter.value = "all";
       sortSelect.value = "releaseDesc";
       activeColors.clear();
+      activeBrackets.clear();
+      watchOnly = false;
       colorFilter.querySelectorAll(".color-btn").forEach(b => {
         b.classList.remove("active");
         b.setAttribute("aria-pressed", "false");
       });
-      renderGrid();
+      bracketFilter.querySelectorAll(".bracket-chip").forEach(b => {
+        b.classList.remove("active");
+        b.setAttribute("aria-pressed", "false");
+      });
+      watchOnlyChip.classList.remove("active");
+      watchOnlyChip.setAttribute("aria-pressed", "false");
+      refresh();
     });
 
-    // Event delegation for owned-toggle buttons (re-rendered each filter)
+    // Event delegation for the per-card buttons (own/watch/compare).
     grid.addEventListener("click", async e => {
-      const toggle = e.target.closest(".own-toggle");
-      if (!toggle) return;
-      const id = toggle.dataset.id;
-      if (ownedSet.has(id)) {
-        ownedSet.delete(id);
-      } else {
-        ownedSet.add(id);
+      const ownBtn = e.target.closest(".own-toggle");
+      if (ownBtn) {
+        const id = ownBtn.dataset.id;
+        if (ownedSet.has(id)) ownedSet.delete(id); else ownedSet.add(id);
+        await saveOwned();
+        renderStats();
+        renderGrid();
+        return;
       }
-      await saveOwned();
-      renderStats();
-      renderGrid();
+      const watchBtn = e.target.closest(".watch-toggle");
+      if (watchBtn) {
+        const id = watchBtn.dataset.watch;
+        if (watchSet.has(id)) watchSet.delete(id); else watchSet.add(id);
+        await saveWatched();
+        renderGrid();
+      }
     });
 
-    reportLink.addEventListener("click", e => {
-      e.preventDefault();
-      alert("Spotted a wrong commander, missing deck, or broken price? Just tell Claude in the next message — e.g. 'Family Matters commander is wrong, it's actually X' — and he'll patch the data file.");
+    grid.addEventListener("change", e => {
+      const cb = e.target.closest("input[data-compare]");
+      if (!cb) return;
+      const id = cb.dataset.compare;
+      if (cb.checked) {
+        if (compareSet.size >= COMPARE_MAX) {
+          cb.checked = false;
+          alert(`You can compare up to ${COMPARE_MAX} decks at a time. Clear the bar at the bottom to add more.`);
+          return;
+        }
+        compareSet.add(id);
+      } else {
+        compareSet.delete(id);
+      }
+      renderCompareBar();
     });
+
+    $("compareClear").addEventListener("click", () => {
+      compareSet.clear();
+      renderCompareBar();
+      // Uncheck every visible compare checkbox without re-rendering everything.
+      grid.querySelectorAll("input[data-compare]").forEach(cb => { cb.checked = false; });
+    });
+    $("compareOpen").addEventListener("click", () => {
+      renderCompareModal();
+      compareModal.classList.add("visible");
+    });
+    $("compareModalClose").addEventListener("click", () => {
+      compareModal.classList.remove("visible");
+    });
+    compareModal.addEventListener("click", e => {
+      // Click on the dim backdrop (not the inner panel) closes the modal.
+      if (e.target === compareModal) compareModal.classList.remove("visible");
+    });
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && compareModal.classList.contains("visible")) {
+        compareModal.classList.remove("visible");
+      }
+    });
+
+    // The footer link goes to a generic issue form; per-card "report" links
+    // (added below) prefill with deck context. Both open in a new tab.
   }
 
   // ---------- Init ----------
   async function init() {
     wireEvents();
     try {
-      // Decks are required for any render; fetch in parallel with owned/prices
-      // but don't render until we have them.
+      // Decks are required for any render; fetch in parallel with everything
+      // else but don't render until we have them.
       await Promise.all([
         loadDecks(),
         loadOwned(),
+        loadWatched(),
         loadLivePrices().catch(() => null),
+        loadHistory().catch(() => null),
       ]);
+      readUrlState();
+      updateStaleBanner();
       renderStats();
       renderGrid();
+      renderCompareBar();
     } catch (e) {
       console.error("Failed to load decks:", e);
       grid.innerHTML = `<div class="empty" role="alert">Couldn't load the deck archive. Refresh to retry, or check your connection.</div>`;
