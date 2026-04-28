@@ -1,557 +1,2442 @@
 [
   {
     "id": "quandrix-unlimited",
+    "scryCheckSlug": "quandrix-unlimited",
     "name": "Quandrix Unlimited",
-    "set": "Secrets of Strixhaven"
+    "set": "Secrets of Strixhaven",
+    "setType": "standard",
+    "releaseDate": "2026-04-24",
+    "colors": [
+      "U",
+      "G"
+    ],
+    "commander": "Zimone, Infinite Analyst",
+    "desc": "X-spells and +1/+1 counters in one tight package. Zimone makes X-spells cheaper as she grows, and nearly every payoff in the deck scales with mana. Pure Simic ramp into haymakers.",
+    "msrp": 49.99,
+    "currentPrice": 49.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-24",
+    "singlesValue": 19,
+    "power": 2.5,
+    "powerScore": 3.6,
+    "powerBracket": "B2"
   },
   {
     "id": "silverquill-influence",
+    "scryCheckSlug": "silverquill-influence",
     "name": "Silverquill Influence",
-    "set": "Secrets of Strixhaven"
+    "set": "Secrets of Strixhaven",
+    "setType": "standard",
+    "releaseDate": "2026-04-24",
+    "colors": [
+      "W",
+      "B"
+    ],
+    "commander": "Killian, Decisive Mentor",
+    "desc": "Auras on opponents' creatures to goad them into attacking each other while you draw cards. Highest reprint value of the Strixhaven cycle. Political and passive-aggressive.",
+    "msrp": 49.99,
+    "currentPrice": 49.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-24",
+    "singlesValue": 214,
+    "power": 2.5,
+    "powerScore": 3.5,
+    "powerBracket": "B2"
   },
   {
     "id": "prismari-artistry",
+    "scryCheckSlug": "prismari-artistry",
     "name": "Prismari Artistry",
-    "set": "Secrets of Strixhaven"
+    "set": "Secrets of Strixhaven",
+    "setType": "standard",
+    "releaseDate": "2026-04-24",
+    "colors": [
+      "U",
+      "R"
+    ],
+    "commander": "Rootha, Mastering the Moment",
+    "desc": "Cast expensive spells; generate a proportionally huge Elemental token each upkeep. Rewards you for going big instead of going wide. Pairs with the new Prepared mechanic.",
+    "msrp": 49.99,
+    "currentPrice": 49.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-24",
+    "power": 2.0,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   },
   {
     "id": "lorehold-spirit",
+    "scryCheckSlug": "lorehold-spirit",
     "name": "Lorehold Spirit",
-    "set": "Secrets of Strixhaven"
+    "set": "Secrets of Strixhaven",
+    "setType": "standard",
+    "releaseDate": "2026-04-24",
+    "colors": [
+      "W",
+      "R"
+    ],
+    "commander": "Quintorius, History Chaser",
+    "desc": "Create Spirits as cards leave your graveyard, then buff them to close out. A unique Boros graveyard strategy — not typical aggro. Heavy on first-time reprints.",
+    "msrp": 49.99,
+    "currentPrice": 49.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.4,
+    "powerBracket": "B2"
   },
   {
     "id": "witherbloom-pestilence",
+    "scryCheckSlug": "witherbloom-pestilence",
     "name": "Witherbloom Pestilence",
-    "set": "Secrets of Strixhaven"
+    "set": "Secrets of Strixhaven",
+    "setType": "standard",
+    "releaseDate": "2026-04-24",
+    "colors": [
+      "B",
+      "G"
+    ],
+    "commander": "Dina, Essence Brewer",
+    "desc": "Create Pests and sacrifice them for life, cards, and stackable counters. Classic Golgari attrition tuned for Strixhaven's biology department.",
+    "msrp": 49.99,
+    "currentPrice": 49.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-24",
+    "singlesValue": 134,
+    "power": 2.0,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   },
   {
     "id": "turtle-power",
+    "scryCheckSlug": "turtle-power",
     "name": "Turtle Power!",
-    "set": "Teenage Mutant Ninja Turtles"
+    "set": "Teenage Mutant Ninja Turtles",
+    "setType": "ub",
+    "releaseDate": "2026-03-06",
+    "colors": [
+      "W",
+      "U",
+      "B",
+      "R",
+      "G"
+    ],
+    "commander": "Leonardo, the Balance",
+    "partner": "Heroes in a Half Shell",
+    "desc": "Five-color go-wide with +1/+1 counters on turtles, mutants, and ninjas. Character Select mechanic lets you partner Leonardo with any of the other four turtles or Splinter.",
+    "msrp": 69.99,
+    "currentPrice": 59.99,
+    "priceSource": "Amazon",
+    "priceDate": "2026-04-13",
+    "power": 2.5,
+    "powerScore": 2.6,
+    "powerBracket": "B1"
   },
   {
     "id": "dance-of-the-elements",
+    "scryCheckSlug": "dance-of-the-elements",
     "name": "Dance of the Elements",
-    "set": "Lorwyn Eclipsed"
+    "set": "Lorwyn Eclipsed",
+    "setType": "standard",
+    "releaseDate": "2026-01-23",
+    "colors": [
+      "W",
+      "U",
+      "B",
+      "R",
+      "G"
+    ],
+    "commander": "Ashling, the Limitless",
+    "partner": "Mass of Mysteries",
+    "desc": "Cheat big Elementals in with evoke, then sacrifice and copy them for value. Includes Fury, Endurance, and a first-ever reprint of Timeless Lotus.",
+    "msrp": 49.99,
+    "currentPrice": 35.1,
+    "priceSource": "Amazon",
+    "priceDate": "2026-04-13",
+    "power": 2.5,
+    "powerScore": 3.3,
+    "powerBracket": "B2"
   },
   {
     "id": "blight-curse",
+    "scryCheckSlug": "blight-curse",
     "name": "Blight Curse",
-    "set": "Lorwyn Eclipsed"
+    "set": "Lorwyn Eclipsed",
+    "setType": "standard",
+    "releaseDate": "2026-01-23",
+    "colors": [
+      "B",
+      "R",
+      "G"
+    ],
+    "commander": "Auntie Ool, Cursewretch",
+    "partner": "The Reaper, King No More",
+    "desc": "Spread -1/-1 counters to grind opponents out, then steal their weakened creatures. Jund attrition. Necroskitter, Massacre Girl, Flourishing Defenses included.",
+    "msrp": 49.99,
+    "currentPrice": 38.45,
+    "priceSource": "Amazon",
+    "priceDate": "2026-04-13",
+    "power": 2.0,
+    "powerScore": 3.4,
+    "powerBracket": "B3"
   },
   {
     "id": "counter-intelligence",
+    "scryCheckSlug": "counter-intelligence",
     "name": "Counter Intelligence",
-    "set": "Edge of Eternities"
+    "set": "Edge of Eternities",
+    "setType": "standard",
+    "releaseDate": "2025-08-01",
+    "colors": [
+      "W",
+      "U",
+      "R"
+    ],
+    "commander": "Kilo, Apogee Mind",
+    "partner": "Inspirit, Flagship Vessel",
+    "desc": "Artifacts and proliferate in Jeskai colors, with spacecraft-as-commander. Reprint value well above MSRP. EDHREC grade A.",
+    "msrp": 44.99,
+    "currentPrice": 31.75,
+    "priceSource": "MTGStocks",
+    "priceDate": "2026-04-23",
+    "singlesValue": 113,
+    "power": 3.0,
+    "powerScore": 3.5,
+    "powerBracket": "B2"
   },
   {
     "id": "world-shaper",
+    "scryCheckSlug": "world-shaper",
     "name": "World Shaper",
-    "set": "Edge of Eternities"
+    "set": "Edge of Eternities",
+    "setType": "standard",
+    "releaseDate": "2025-08-01",
+    "colors": [
+      "B",
+      "G"
+    ],
+    "commander": "Hearthhull, the Worldseed",
+    "partner": "Szarel, Genesis Shepherd",
+    "desc": "Sacrifice lands to grow a seedship, then drain opponents when lands die. One-shot kill potential with Sylvan Safekeeper.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 5.3,
+    "powerBracket": "B3"
   },
   {
     "id": "revival-trance",
+    "scryCheckSlug": "revival-trance",
     "name": "Revival Trance",
-    "set": "Commander: Final Fantasy"
+    "set": "Commander: Final Fantasy",
+    "setType": "ub",
+    "releaseDate": "2025-06-13",
+    "colors": [
+      "W",
+      "B",
+      "R"
+    ],
+    "commander": "Terra, Herald of Hope",
+    "partner": "Celes, Rune Knight",
+    "desc": "Mardu reanimator focused on small-power creatures (3 or less) — Terra returns them when she deals combat damage. FF6 World of Ruin flavor.",
+    "msrp": 69.99,
+    "currentPrice": 42.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 3.7,
+    "powerBracket": "B2"
   },
   {
     "id": "limit-break",
+    "scryCheckSlug": "limit-break",
     "name": "Limit Break",
-    "set": "Commander: Final Fantasy"
+    "set": "Commander: Final Fantasy",
+    "setType": "ub",
+    "releaseDate": "2025-06-13",
+    "colors": [
+      "W",
+      "R",
+      "G"
+    ],
+    "commander": "Cloud, ex-SOLDIER",
+    "partner": "Tifa, Martial Artist",
+    "desc": "Equipment-focused Naya voltron — push creatures to 7+ power with Swords of X and Y. Tutors for weapons, buffs attackers. FF7 flavor tightly integrated.",
+    "msrp": 69.99,
+    "currentPrice": 54.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 3.6,
+    "powerBracket": "B2"
   },
   {
     "id": "counter-blitz",
+    "scryCheckSlug": "counter-blitz",
     "name": "Counter Blitz",
-    "set": "Commander: Final Fantasy"
+    "set": "Commander: Final Fantasy",
+    "setType": "ub",
+    "releaseDate": "2025-06-13",
+    "colors": [
+      "W",
+      "U",
+      "G"
+    ],
+    "commander": "Tidus, Yuna's Guardian",
+    "partner": "Yuna, Grand Summoner",
+    "desc": "Bant counter-manipulation — move counters between permanents, proliferate them, deal combat damage to snowball. FF10 flavor with Summons and Blitzball.",
+    "msrp": 69.99,
+    "currentPrice": 64.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 3.7,
+    "powerBracket": "B3"
   },
   {
     "id": "scions-and-spellcraft",
+    "scryCheckSlug": "scions-spellcraft",
     "name": "Scions & Spellcraft",
-    "set": "Commander: Final Fantasy"
+    "set": "Commander: Final Fantasy",
+    "setType": "ub",
+    "releaseDate": "2025-06-13",
+    "colors": [
+      "W",
+      "U",
+      "B"
+    ],
+    "commander": "Y'shtola, Night's Blessed",
+    "desc": "Esper spellslinger-control. Y'shtola drains life on big noncreature spells, drawing you four cards per rotation through the right setup. FF14 flavor.",
+    "msrp": 69.99,
+    "currentPrice": 64.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 5.0,
+    "powerBracket": "B3"
   },
   {
     "id": "jeskai-striker",
+    "scryCheckSlug": "jeskai-striker",
     "name": "Jeskai Striker",
-    "set": "Tarkir: Dragonstorm"
+    "set": "Tarkir: Dragonstorm",
+    "setType": "standard",
+    "releaseDate": "2025-04-11",
+    "colors": [
+      "W",
+      "U",
+      "R"
+    ],
+    "commander": "Shiko, Paragon of the Way",
+    "partner": "Narset, Unified",
+    "desc": "Spellslinger tempo in Jeskai colors — no dragon tribal despite the set. Triggers off noncreature spells with Flurry-based payoffs. Strong Prepared synergies.",
+    "msrp": 49.99,
+    "currentPrice": 34.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 6.3,
+    "powerBracket": "B3"
   },
   {
     "id": "abzan-armor",
+    "scryCheckSlug": "abzan-armor",
     "name": "Abzan Armor",
-    "set": "Tarkir: Dragonstorm"
+    "set": "Tarkir: Dragonstorm",
+    "setType": "standard",
+    "releaseDate": "2025-04-11",
+    "colors": [
+      "W",
+      "B",
+      "G"
+    ],
+    "commander": "Felothar, Dawn of the Abzan",
+    "partner": "Betor, Ancestor's Voice",
+    "desc": "Abzan defenders/toughness midrange. Felothar sacrifices creatures for card draw equal to toughness. Doran-inspired.",
+    "msrp": 49.99,
+    "currentPrice": 49.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 3.2,
+    "powerBracket": "B3"
   },
   {
     "id": "sultai-arisen",
+    "scryCheckSlug": "sultai-arisen",
     "name": "Sultai Arisen",
-    "set": "Tarkir: Dragonstorm"
+    "set": "Tarkir: Dragonstorm",
+    "setType": "standard",
+    "releaseDate": "2025-04-11",
+    "colors": [
+      "U",
+      "B",
+      "G"
+    ],
+    "commander": "Kotis, Sibsig Champion",
+    "partner": "Teval, the Balanced Scale",
+    "desc": "Sultai graveyard value with leaves-the-graveyard triggers. Kotis returns as a zombie druid; Teval is the clan's Spirit Dragon.",
+    "msrp": 49.99,
+    "currentPrice": 59.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   },
   {
     "id": "mardu-surge",
+    "scryCheckSlug": "mardu-surge",
     "name": "Mardu Surge",
-    "set": "Tarkir: Dragonstorm"
+    "set": "Tarkir: Dragonstorm",
+    "setType": "standard",
+    "releaseDate": "2025-04-11",
+    "colors": [
+      "W",
+      "B",
+      "R"
+    ],
+    "commander": "Zurgo, Thunder's Decree",
+    "partner": "Neriv, Crackling Vanguard",
+    "desc": "Mardu token-sacrifice aggro. Make attackers, swing in, sacrifice them for value. Zurgo leads the new Mardu clan.",
+    "msrp": 49.99,
+    "currentPrice": 44.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 6.0,
+    "powerBracket": "B3"
   },
   {
     "id": "temur-roar",
+    "scryCheckSlug": "temur-roar",
     "name": "Temur Roar",
-    "set": "Tarkir: Dragonstorm"
+    "set": "Tarkir: Dragonstorm",
+    "setType": "standard",
+    "releaseDate": "2025-04-11",
+    "colors": [
+      "U",
+      "R",
+      "G"
+    ],
+    "commander": "Eshki, Temur's Roar",
+    "partner": "Ureni, the Song Unbroken",
+    "desc": "Temur ramp into big dragons. Ureni is the Spirit Dragon of wisdom. The closest thing in the set to classic dragon tribal.",
+    "msrp": 49.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 5.3,
+    "powerBracket": "B3"
   },
   {
     "id": "living-energy",
+    "scryCheckSlug": "living-energy",
     "name": "Living Energy",
-    "set": "Aetherdrift Commander"
+    "set": "Aetherdrift Commander",
+    "setType": "standard",
+    "releaseDate": "2025-02-14",
+    "colors": [
+      "U",
+      "R",
+      "G"
+    ],
+    "commander": "Saheeli, Radiant Creator",
+    "partner": "Pia Nalaar, Chief Mechanic",
+    "desc": "Temur energy + artifact creatures. Saheeli generates energy on artifact casts; Pia spends it on flying Aetherjet vehicle tokens. Kaladesh flavor on steroids.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 5.3,
+    "powerBracket": "B3"
   },
   {
     "id": "eternal-might",
+    "scryCheckSlug": "eternal-might",
     "name": "Eternal Might",
-    "set": "Aetherdrift Commander"
+    "set": "Aetherdrift Commander",
+    "setType": "standard",
+    "releaseDate": "2025-02-14",
+    "colors": [
+      "W",
+      "U",
+      "B"
+    ],
+    "commander": "Temmet, Naktamun's Will",
+    "partner": "Hashaton, Scarab's Fist",
+    "desc": "Esper zombie discard with Eternalize. Naktamun (Amonkhet) flavor — draw-discard value while raising mummies.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 3.0,
+    "powerScore": 4.7,
+    "powerBracket": "B2"
   },
   {
     "id": "miracle-worker",
+    "scryCheckSlug": "miracle-worker",
     "name": "Miracle Worker",
-    "set": "Duskmourn: House of Horror"
+    "set": "Duskmourn: House of Horror",
+    "setType": "standard",
+    "releaseDate": "2024-09-27",
+    "colors": [
+      "W",
+      "U",
+      "B"
+    ],
+    "commander": "Aminatou, Veil Piercer",
+    "partner": "The Master of Keys",
+    "desc": "Esper enchantments with miracle cost reduction. Aminatou surveils each upkeep and discounts enchantments by 4 via miracle. One of the stronger precon commanders in years.",
+    "msrp": 44.99,
+    "currentPrice": 44.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 3.0,
+    "powerScore": 4.5,
+    "powerBracket": "B3"
   },
   {
     "id": "death-toll",
+    "scryCheckSlug": "death-toll",
     "name": "Death Toll",
-    "set": "Duskmourn: House of Horror"
+    "set": "Duskmourn: House of Horror",
+    "setType": "standard",
+    "releaseDate": "2024-09-27",
+    "colors": [
+      "B",
+      "G"
+    ],
+    "commander": "Winter, Cynical Opportunist",
+    "partner": "Rendmaw, Creaking Nest",
+    "desc": "Golgari delirium reanimator. Fill the graveyard, hit four card types, return big permanents. Rendmaw scales on card-type variety.",
+    "msrp": 44.99,
+    "currentPrice": 34.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 3.5,
+    "powerBracket": "B2"
   },
   {
     "id": "jump-scare",
+    "scryCheckSlug": "jump-scare",
     "name": "Jump Scare!",
-    "set": "Duskmourn: House of Horror"
+    "set": "Duskmourn: House of Horror",
+    "setType": "standard",
+    "releaseDate": "2024-09-27",
+    "colors": [
+      "U",
+      "G"
+    ],
+    "commander": "Zimone, Mystery Unraveler",
+    "desc": "Simic manifest dread and landfall. Flip face-down cards at instant speed, churn the library for value. The original Zimone, before the 2026 Quandrix version.",
+    "msrp": 44.99,
+    "currentPrice": 39.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 3.8,
+    "powerBracket": "B2"
   },
   {
     "id": "endless-punishment",
+    "scryCheckSlug": "endless-punishment",
     "name": "Endless Punishment",
-    "set": "Duskmourn: House of Horror"
+    "set": "Duskmourn: House of Horror",
+    "setType": "standard",
+    "releaseDate": "2024-09-27",
+    "colors": [
+      "B",
+      "R"
+    ],
+    "commander": "Valgavoth, Harrower of Souls",
+    "desc": "Rakdos group-slug. Constantly deal damage to everyone; Valgavoth grows and devours opponents' fallen souls. Pure attrition villainy.",
+    "msrp": 44.99,
+    "currentPrice": 119.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 3.5,
+    "powerBracket": "B2"
   },
   {
     "id": "family-matters",
+    "scryCheckSlug": "family-matters",
     "name": "Family Matters",
-    "set": "Bloomburrow Commander"
+    "set": "Bloomburrow Commander",
+    "setType": "standard",
+    "releaseDate": "2024-08-02",
+    "colors": [
+      "W",
+      "U",
+      "R"
+    ],
+    "commander": "Zinnia, Valley's Voice",
+    "desc": "Jeskai Offspring go-wide. Drop a little extra mana on cast for a 1/1 token copy. Zinnia makes Offspring for any creature in your deck for two mana.",
+    "msrp": 44.99,
+    "currentPrice": 33.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 5.0,
+    "powerBracket": "B3"
   },
   {
     "id": "squirreled-away",
+    "scryCheckSlug": "squirreled-away",
     "name": "Squirreled Away",
-    "set": "Bloomburrow Commander"
+    "set": "Bloomburrow Commander",
+    "setType": "standard",
+    "releaseDate": "2024-08-02",
+    "colors": [
+      "B",
+      "G"
+    ],
+    "commander": "Hazel of the Rootbloom",
+    "desc": "Golgari squirrel tribal with token mana. Tap tokens for any color to fuel bigger spells. Best reprint value of the Bloomburrow cycle — Chatterfang, Saw in Half, Beledros Witherbloom.",
+    "msrp": 44.99,
+    "currentPrice": 54.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 5.0,
+    "powerBracket": "B3"
   },
   {
     "id": "animated-army",
+    "scryCheckSlug": "animated-army",
     "name": "Animated Army",
-    "set": "Bloomburrow Commander"
+    "set": "Bloomburrow Commander",
+    "setType": "standard",
+    "releaseDate": "2024-08-02",
+    "colors": [
+      "R",
+      "G"
+    ],
+    "commander": "Bello, Bard of the Brambles",
+    "desc": "Gruul artifact/enchantment animator. Non-equipment artifacts and non-aura enchantments of MV 4+ become 4/4 indestructible hasty elementals. Novel build-around.",
+    "msrp": 44.99,
+    "currentPrice": 39.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 5.2,
+    "powerBracket": "B3"
   },
   {
     "id": "peace-offering-blb",
+    "scryCheckSlug": "peace-offering",
     "name": "Peace Offering",
-    "set": "Bloomburrow Commander"
+    "set": "Bloomburrow Commander",
+    "setType": "standard",
+    "releaseDate": "2024-08-02",
+    "colors": [
+      "W",
+      "U",
+      "G"
+    ],
+    "commander": "Ms. Bumbleflower",
+    "desc": "Bant group-hug with +1/+1 counters. Ms. Bumbleflower gives opponents cards but counters and evasion go to you. Rare win-con group-hug.",
+    "msrp": 44.99,
+    "currentPrice": 44.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.8,
+    "powerBracket": "B2"
   },
   {
     "id": "animus-antiquity",
+    "scryCheckSlug": "animus-antiquity",
     "name": "Animus Antiquity",
-    "set": "Assassin's Creed"
+    "set": "Assassin's Creed",
+    "setType": "ub",
+    "releaseDate": "2024-07-05",
+    "colors": [
+      "W",
+      "U",
+      "G"
+    ],
+    "commander": "Eivor, Battle-Ready",
+    "desc": "Bant historic-matters. Sagas, artifacts, legendaries trigger Eivor. Viking flavor from Assassin's Creed Valhalla.",
+    "msrp": 59.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0
   },
   {
     "id": "master-of-keys-ac",
+    "scryCheckSlug": "master-of-keys-ac",
     "name": "Master of Keys",
-    "set": "Assassin's Creed"
+    "set": "Assassin's Creed",
+    "setType": "ub",
+    "releaseDate": "2024-07-05",
+    "colors": [
+      "U",
+      "B",
+      "R"
+    ],
+    "commander": "Basim Ibn Ishaq",
+    "desc": "Grixis exile-matters with Freerunning mechanic (prowess-lite). Hit-and-run aggro with unblockable triggers.",
+    "msrp": 59.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0
   },
   {
     "id": "creative-energy",
+    "scryCheckSlug": "creative-energy",
     "name": "Creative Energy",
-    "set": "Modern Horizons 3"
+    "set": "Modern Horizons 3",
+    "setType": "commander",
+    "releaseDate": "2024-06-14",
+    "colors": [
+      "W",
+      "U",
+      "R"
+    ],
+    "commander": "Satya, Aetherflux Genius",
+    "partner": "Cayth, Famed Mechanist",
+    "desc": "Jeskai energy + artifacts. Generate energy, spend for card draw, creatures, burn. A fresh mechanic finally in Commander.",
+    "msrp": 59.99,
+    "currentPrice": 44.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 5.4,
+    "powerBracket": "B3"
   },
   {
     "id": "eldrazi-incursion",
+    "scryCheckSlug": "eldrazi-incursion",
     "name": "Eldrazi Incursion",
-    "set": "Modern Horizons 3"
+    "set": "Modern Horizons 3",
+    "setType": "commander",
+    "releaseDate": "2024-06-14",
+    "colors": [
+      "W",
+      "U",
+      "B",
+      "R",
+      "G"
+    ],
+    "commander": "Ulalek, Fused Atrocity",
+    "partner": "Azlask, the Swelling Scourge",
+    "desc": "Five-color colorless Eldrazi. Ulalek uses colorless-hybrid mana and copies Eldrazi spells and triggered abilities. Ramp into apocalypse.",
+    "msrp": 59.99,
+    "currentPrice": 105.0,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 3.0,
+    "powerScore": 5.5,
+    "powerBracket": "B3"
   },
   {
     "id": "graveyard-overdrive",
+    "scryCheckSlug": "graveyard-overdrive",
     "name": "Graveyard Overdrive",
-    "set": "Modern Horizons 3"
+    "set": "Modern Horizons 3",
+    "setType": "commander",
+    "releaseDate": "2024-06-14",
+    "colors": [
+      "B",
+      "R",
+      "G"
+    ],
+    "commander": "Disa the Restless",
+    "partner": "Coram, the Undertaker",
+    "desc": "Jund Lhurgoyf tribal. Disa makes Tarmogoyf tokens from your graveyard. Many players prefer Coram as commander for flexibility.",
+    "msrp": 59.99,
+    "currentPrice": 44.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.4,
+    "powerBracket": "B2"
   },
   {
     "id": "tricky-terrain",
+    "scryCheckSlug": "tricky-terrain",
     "name": "Tricky Terrain",
-    "set": "Modern Horizons 3"
+    "set": "Modern Horizons 3",
+    "setType": "commander",
+    "releaseDate": "2024-06-14",
+    "colors": [
+      "U",
+      "G"
+    ],
+    "commander": "Omo, Queen of Vesuva",
+    "partner": "Jyoti, Moag Ancient",
+    "desc": "Simic lands-matter with 'everything counters.' Omo puts a counter that gives a land all land types. Urzatron and gates synergy.",
+    "msrp": 59.99,
+    "currentPrice": 59.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.6,
+    "powerBracket": "B2"
   },
   {
     "id": "most-wanted",
+    "scryCheckSlug": "most-wanted",
     "name": "Most Wanted",
-    "set": "Outlaws of Thunder Junction"
+    "set": "Outlaws of Thunder Junction",
+    "setType": "standard",
+    "releaseDate": "2024-04-19",
+    "colors": [
+      "W",
+      "B",
+      "R"
+    ],
+    "commander": "Olivia, Opulent Outlaw",
+    "partner": "Vihaan, Goldwaker",
+    "desc": "Mardu outlaw tribal + treasure. Hire Assassins/Mercenaries/Pirates/Rogues/Warlocks. Vihaan animates treasures into 3/3 outlaws.",
+    "msrp": 44.99,
+    "currentPrice": 119.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 3.0,
+    "powerScore": 4.7,
+    "powerBracket": "B2"
   },
   {
     "id": "grand-larceny",
+    "scryCheckSlug": "grand-larceny",
     "name": "Grand Larceny",
-    "set": "Outlaws of Thunder Junction"
+    "set": "Outlaws of Thunder Junction",
+    "setType": "standard",
+    "releaseDate": "2024-04-19",
+    "colors": [
+      "U",
+      "B",
+      "G"
+    ],
+    "commander": "Gonti, Canny Acquisitor",
+    "partner": "Felix Five-Boots",
+    "desc": "Sultai theft. Exile opponents' cards when doing combat damage, cast them at a discount. Chaos politics.",
+    "msrp": 44.99,
+    "currentPrice": 199.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 5.1,
+    "powerBracket": "B3"
   },
   {
     "id": "quick-draw",
+    "scryCheckSlug": "quick-draw",
     "name": "Quick Draw",
-    "set": "Outlaws of Thunder Junction"
+    "set": "Outlaws of Thunder Junction",
+    "setType": "standard",
+    "releaseDate": "2024-04-19",
+    "colors": [
+      "U",
+      "R"
+    ],
+    "commander": "Stella Lee, Wild Card",
+    "desc": "Izzet spells-per-turn spellslinger. Plot mechanic for instant-speed tempo plays. Copies instants and sorceries when you cast multiple in a turn.",
+    "msrp": 44.99,
+    "currentPrice": 179.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 5.5,
+    "powerBracket": "B3"
   },
   {
     "id": "desert-bloom",
+    "scryCheckSlug": "desert-bloom",
     "name": "Desert Bloom",
-    "set": "Outlaws of Thunder Junction"
+    "set": "Outlaws of Thunder Junction",
+    "setType": "standard",
+    "releaseDate": "2024-04-19",
+    "colors": [
+      "W",
+      "R",
+      "G"
+    ],
+    "commander": "Yuma, Proud Protector",
+    "partner": "Kirri, Talented Sprout",
+    "desc": "Naya Desert lands-matter. Discard lands early, bring them back, create Plant armies. Yuma gets cheaper for every land in your graveyard.",
+    "msrp": 44.99,
+    "currentPrice": 79.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.6,
+    "powerBracket": "B2"
   },
   {
     "id": "scrappy-survivors",
+    "scryCheckSlug": "scrappy-survivors",
     "name": "Scrappy Survivors",
-    "set": "Fallout Commander"
+    "set": "Fallout Commander",
+    "setType": "ub",
+    "releaseDate": "2024-03-08",
+    "colors": [
+      "W",
+      "R",
+      "G"
+    ],
+    "commander": "Dogmeat, Ever Loyal",
+    "partner": "Preston Garvey, Minuteman",
+    "desc": "Naya voltron with auras and equipment. Dogmeat mills for auras/equipment, creates Junk tokens for impulse draw. Preston is the aura-focused alternate.",
+    "msrp": 59.99,
+    "currentPrice": 59.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.3,
+    "powerBracket": "B2"
   },
   {
     "id": "mutant-menace",
+    "scryCheckSlug": "mutant-menace",
     "name": "Mutant Menace",
-    "set": "Fallout Commander"
+    "set": "Fallout Commander",
+    "setType": "ub",
+    "releaseDate": "2024-03-08",
+    "colors": [
+      "U",
+      "B",
+      "G"
+    ],
+    "commander": "The Wise Mothman",
+    "partner": "The Master, Transcendent",
+    "desc": "Sultai rad counters and proliferate. Distribute rad to opponents to mill them and buff your mutants. New mechanic exclusive to this set.",
+    "msrp": 59.99,
+    "currentPrice": 129.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 3.0,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   },
   {
     "id": "hail-caesar",
+    "scryCheckSlug": "hail-caesar",
     "name": "Hail, Caesar",
-    "set": "Fallout Commander"
+    "set": "Fallout Commander",
+    "setType": "ub",
+    "releaseDate": "2024-03-08",
+    "colors": [
+      "W",
+      "B",
+      "R"
+    ],
+    "commander": "Caesar, Legion's Emperor",
+    "desc": "Mardu go-wide aggro with Caesar's Legion theme. Human soldier tribal, token armies, modal combat triggers.",
+    "msrp": 59.99,
+    "currentPrice": 79.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 6.1,
+    "powerBracket": "B3"
   },
   {
     "id": "science",
+    "scryCheckSlug": "science",
     "name": "Science!",
-    "set": "Fallout Commander"
+    "set": "Fallout Commander",
+    "setType": "ub",
+    "releaseDate": "2024-03-08",
+    "colors": [
+      "W",
+      "U",
+      "R"
+    ],
+    "commander": "Dr. Madison Li",
+    "desc": "Jeskai energy + artifacts. Generate energy on artifact casts, play pre-war technology, assemble Liberty Prime and crush the enemy.",
+    "msrp": 59.99,
+    "currentPrice": 44.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 5.3,
+    "powerBracket": "B3"
   },
   {
     "id": "deep-clue-sea",
+    "scryCheckSlug": "deep-clue-sea",
     "name": "Deep Clue Sea",
-    "set": "Murders at Karlov Manor"
+    "set": "Murders at Karlov Manor",
+    "setType": "standard",
+    "releaseDate": "2024-02-09",
+    "colors": [
+      "W",
+      "U"
+    ],
+    "commander": "Kaust, Eyes of Glory",
+    "partner": "Morska, Undersea Sleuth",
+    "desc": "Azorius clues and face-down cards. Kaust cheats morph creatures out at reduced cost. Investigate synergies throughout.",
+    "msrp": 44.99,
+    "currentPrice": 29.99,
+    "priceSource": "GeekeryGames",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.8,
+    "powerBracket": "B3"
   },
   {
     "id": "revenant-recon",
+    "scryCheckSlug": "revenant-recon",
     "name": "Revenant Recon",
-    "set": "Murders at Karlov Manor"
+    "set": "Murders at Karlov Manor",
+    "setType": "standard",
+    "releaseDate": "2024-02-09",
+    "colors": [
+      "U",
+      "B"
+    ],
+    "commander": "Mirko, Obsessive Theorist",
+    "partner": "Marvo, Deep Operative",
+    "desc": "Dimir surveil + finality-counter reanimator. Cards with finality counters recurse in new ways. Grave interaction without infinite loops.",
+    "msrp": 44.99,
+    "currentPrice": 44.99,
+    "priceSource": "GeekeryGames",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 3.5,
+    "powerBracket": "B2"
   },
   {
     "id": "blame-game",
+    "scryCheckSlug": "blame-game",
     "name": "Blame Game",
-    "set": "Murders at Karlov Manor"
+    "set": "Murders at Karlov Manor",
+    "setType": "standard",
+    "releaseDate": "2024-02-09",
+    "colors": [
+      "W",
+      "B",
+      "R"
+    ],
+    "commander": "Nelly Borca, Impulsive Accuser",
+    "partner": "Feather, Radiant Arbiter",
+    "desc": "Mardu goad tribal. Suspect creatures, force attacks, draw cards off the chaos. Nelly's goading snowballs across the table.",
+    "msrp": 44.99,
+    "currentPrice": 49.99,
+    "priceSource": "GeekeryGames",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.0,
+    "powerBracket": "B2"
   },
   {
     "id": "deadly-disguise",
+    "scryCheckSlug": "deadly-disguise",
     "name": "Deadly Disguise",
-    "set": "Murders at Karlov Manor"
+    "set": "Murders at Karlov Manor",
+    "setType": "standard",
+    "releaseDate": "2024-02-09",
+    "colors": [
+      "W",
+      "R",
+      "G"
+    ],
+    "commander": "Giada, Font of Hope",
+    "desc": "Naya face-down matters — disguise, morph, megamorph, manifest. Flip creatures up for combat blowouts.",
+    "msrp": 44.99,
+    "currentPrice": 44.99,
+    "priceSource": "GeekeryGames",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 3.6,
+    "powerBracket": "B3"
   },
   {
     "id": "ahoy-mateys",
+    "scryCheckSlug": "ahoy-mateys",
     "name": "Ahoy Mateys",
-    "set": "The Lost Caverns of Ixalan"
+    "set": "The Lost Caverns of Ixalan",
+    "setType": "standard",
+    "releaseDate": "2023-11-17",
+    "colors": [
+      "U",
+      "B",
+      "R"
+    ],
+    "commander": "Don Andres, the Renegade",
+    "desc": "Grixis Pirate tribal. Cast cards opponents own when plundering, treasure production, raid triggers.",
+    "msrp": 44.99,
+    "currentPrice": 34.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.6,
+    "powerBracket": "B2"
   },
   {
     "id": "veloci-ramp-tor",
+    "scryCheckSlug": "veloci-ramp-tor",
     "name": "Veloci-Ramp-Tor",
-    "set": "The Lost Caverns of Ixalan"
+    "set": "The Lost Caverns of Ixalan",
+    "setType": "standard",
+    "releaseDate": "2023-11-17",
+    "colors": [
+      "R",
+      "G"
+    ],
+    "commander": "Pantlaza, Sun-Favored",
+    "desc": "Gruul Dinosaurs with Discover mechanic. Cascade-like triggers cheat big stompy creatures into play.",
+    "msrp": 44.99,
+    "currentPrice": 69.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   },
   {
     "id": "blood-rites",
+    "scryCheckSlug": "blood-rites",
     "name": "Blood Rites",
-    "set": "The Lost Caverns of Ixalan"
+    "set": "The Lost Caverns of Ixalan",
+    "setType": "standard",
+    "releaseDate": "2023-11-17",
+    "colors": [
+      "W",
+      "B"
+    ],
+    "commander": "Clavileño, First of the Blessed",
+    "desc": "Orzhov Vampires. Sacrifice fodder for Vampire tokens, Clavileño turns creatures into a growing army.",
+    "msrp": 44.99,
+    "currentPrice": 44.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.3,
+    "powerBracket": "B2"
   },
   {
     "id": "explorers-of-the-deep",
+    "scryCheckSlug": "explorers-of-the-deep",
     "name": "Explorers of the Deep",
-    "set": "The Lost Caverns of Ixalan"
+    "set": "The Lost Caverns of Ixalan",
+    "setType": "standard",
+    "releaseDate": "2023-11-17",
+    "colors": [
+      "W",
+      "U",
+      "G"
+    ],
+    "commander": "Admiral Brass, Unsinkable",
+    "desc": "Bant Merfolk and Explore mechanic. Explore triggers grow the board and filter draws simultaneously.",
+    "msrp": 44.99,
+    "currentPrice": 39.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   },
   {
     "id": "blast-from-the-past",
+    "scryCheckSlug": "blast-from-the-past",
     "name": "Blast from the Past",
-    "set": "Doctor Who Commander"
+    "set": "Doctor Who Commander",
+    "setType": "ub",
+    "releaseDate": "2023-10-13",
+    "colors": [
+      "U",
+      "R"
+    ],
+    "commander": "The First Doctor",
+    "desc": "Izzet historic-matters with Doctor/companion partner system. First through Fourth Doctors plus companions. Time Lord flavor peaks here.",
+    "msrp": 54.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 3.8,
+    "powerBracket": "B3"
   },
   {
     "id": "timey-wimey",
+    "scryCheckSlug": "timey-wimey",
     "name": "Timey-Wimey",
-    "set": "Doctor Who Commander"
+    "set": "Doctor Who Commander",
+    "setType": "ub",
+    "releaseDate": "2023-10-13",
+    "colors": [
+      "U",
+      "G"
+    ],
+    "commander": "The Fifth Doctor",
+    "desc": "Simic time-counter shenanigans. Suspend cards, proliferate time counters, cast for free.",
+    "msrp": 54.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.3,
+    "powerBracket": "B3"
   },
   {
     "id": "paradox-power",
+    "scryCheckSlug": "paradox-power",
     "name": "Paradox Power",
-    "set": "Doctor Who Commander"
+    "set": "Doctor Who Commander",
+    "setType": "ub",
+    "releaseDate": "2023-10-13",
+    "colors": [
+      "U",
+      "R",
+      "G"
+    ],
+    "commander": "The Tenth Doctor",
+    "desc": "Temur new Doctors (9 through 12). Flicker effects, ETB value, Tenth Doctor partnerships with Rose/Donna/Martha.",
+    "msrp": 54.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 3.2,
+    "powerBracket": "B2"
   },
   {
     "id": "masters-of-evil",
+    "scryCheckSlug": "masters-of-evil",
     "name": "Masters of Evil",
-    "set": "Doctor Who Commander"
+    "set": "Doctor Who Commander",
+    "setType": "ub",
+    "releaseDate": "2023-10-13",
+    "colors": [
+      "W",
+      "U",
+      "B"
+    ],
+    "commander": "The Master, Multiplied",
+    "desc": "Esper villain tribal — The Master, Daleks, Cybermen. Villainous Choice mechanic gives opponents bad options.",
+    "msrp": 54.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.3,
+    "powerBracket": "B2"
   },
   {
     "id": "virtue-and-valor",
+    "scryCheckSlug": "virtue-and-valor",
     "name": "Virtue and Valor",
-    "set": "Wilds of Eldraine"
+    "set": "Wilds of Eldraine",
+    "setType": "standard",
+    "releaseDate": "2023-09-08",
+    "colors": [
+      "W",
+      "R"
+    ],
+    "commander": "Syr Ginger, the Meal Ender",
+    "desc": "Boros Knights and Food tokens. Aggro backed by sustained life to push through late-game blockers.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.3,
+    "powerBracket": "B2"
   },
   {
     "id": "fae-dominion",
+    "scryCheckSlug": "fae-dominion",
     "name": "Fae Dominion",
-    "set": "Wilds of Eldraine"
+    "set": "Wilds of Eldraine",
+    "setType": "standard",
+    "releaseDate": "2023-09-08",
+    "colors": [
+      "U",
+      "B"
+    ],
+    "commander": "Talion, the Kindly Lord",
+    "desc": "Dimir Faerie flying tribal. Instant-speed plays, pingers in the air, Talion punishes wrong-name guesses.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.8,
+    "powerBracket": "B2"
   },
   {
     "id": "peace-offering-woe",
+    "scryCheckSlug": "peace-offering",
     "name": "Peace Offering",
-    "set": "Wilds of Eldraine"
+    "set": "Wilds of Eldraine",
+    "setType": "standard",
+    "releaseDate": "2023-09-08",
+    "colors": [
+      "W",
+      "G"
+    ],
+    "commander": "Ellivere of the Wild Court",
+    "desc": "Selesnya Roles and Auras. Create Role tokens, pump them up, swing wide with enchanted creatures.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.8,
+    "powerBracket": "B2"
   },
   {
     "id": "faerie-schemes",
+    "scryCheckSlug": "faerie-schemes",
     "name": "Faerie Schemes",
-    "set": "Wilds of Eldraine"
+    "set": "Wilds of Eldraine",
+    "setType": "standard",
+    "releaseDate": "2023-09-08",
+    "colors": [
+      "U",
+      "B",
+      "R"
+    ],
+    "commander": "Tegwyll, Duke of Splendor",
+    "desc": "Grixis wicked-fae politics. Offer Celebrations to opponents, force bad decisions, collect on mistakes.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0
   },
   {
     "id": "sliver-swarm",
+    "scryCheckSlug": "sliver-swarm",
     "name": "Sliver Swarm",
-    "set": "Commander Masters"
+    "set": "Commander Masters",
+    "setType": "commander",
+    "releaseDate": "2023-08-04",
+    "colors": [
+      "W",
+      "U",
+      "B",
+      "R",
+      "G"
+    ],
+    "commander": "Sliver Gravemother",
+    "desc": "Five-color sliver tribal with graveyard recursion. Sliver Gravemother lets slivers escape repeatedly. Contains staples; priced accordingly.",
+    "msrp": 74.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 3.0,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   },
   {
     "id": "eldrazi-unbound",
+    "scryCheckSlug": "eldrazi-unbound",
     "name": "Eldrazi Unbound",
-    "set": "Commander Masters"
+    "set": "Commander Masters",
+    "setType": "commander",
+    "releaseDate": "2023-08-04",
+    "colors": [
+      "C"
+    ],
+    "commander": "Zhulodok, Void Gorger",
+    "desc": "Colorless eldrazi ramp. Wastes tribal that swings into Annihilator. Includes Eldrazi Temple, Sensei's Divining Top.",
+    "msrp": 74.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   },
   {
     "id": "enduring-enchantments",
+    "scryCheckSlug": "enduring-enchantments",
     "name": "Enduring Enchantments",
-    "set": "Commander Masters"
+    "set": "Commander Masters",
+    "setType": "commander",
+    "releaseDate": "2023-08-04",
+    "colors": [
+      "W",
+      "U",
+      "B"
+    ],
+    "commander": "Anikthea, Hand of Erebos",
+    "desc": "Esper enchantress constellation. Turn your enchantments into creature tokens, weaponize the graveyard.",
+    "msrp": 74.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 3.0,
+    "powerScore": 4.7,
+    "powerBracket": "B2"
   },
   {
     "id": "planeswalker-party",
+    "scryCheckSlug": "planeswalker-party",
     "name": "Planeswalker Party",
-    "set": "Commander Masters"
+    "set": "Commander Masters",
+    "setType": "commander",
+    "releaseDate": "2023-08-04",
+    "colors": [
+      "W",
+      "U",
+      "R"
+    ],
+    "commander": "Commodore Guff",
+    "desc": "Jeskai superfriends. Planeswalker tribal with emblems and ultimate triggers as a core theme.",
+    "msrp": 74.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.3,
+    "powerBracket": "B3"
   },
   {
     "id": "the-hosts-of-mordor",
+    "scryCheckSlug": "the-hosts-of-mordor",
     "name": "The Hosts of Mordor",
-    "set": "The Lord of the Rings: Tales of Middle-earth"
+    "set": "The Lord of the Rings: Tales of Middle-earth",
+    "setType": "ub",
+    "releaseDate": "2023-06-23",
+    "colors": [
+      "B",
+      "R"
+    ],
+    "commander": "Sauron, the Dark Lord",
+    "desc": "Rakdos orcs and amass. The Ring-tempt mechanic pressures life totals. Iconic IP, beloved precon.",
+    "msrp": 59.99,
+    "currentPrice": 89.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 3.0,
+    "powerScore": 4.5,
+    "powerBracket": "B3"
   },
   {
     "id": "food-and-fellowship",
+    "scryCheckSlug": "food-and-fellowship",
     "name": "Food and Fellowship",
-    "set": "The Lord of the Rings: Tales of Middle-earth"
+    "set": "The Lord of the Rings: Tales of Middle-earth",
+    "setType": "ub",
+    "releaseDate": "2023-06-23",
+    "colors": [
+      "W",
+      "G"
+    ],
+    "commander": "Frodo, Adventurous Hobbit",
+    "partner": "Sam, Loyal Attendant",
+    "desc": "Selesnya Hobbits and Food. Lifegain tribal with creature tokens. Second-breakfast jokes canonized.",
+    "msrp": 59.99,
+    "currentPrice": 74.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.7,
+    "powerBracket": "B2"
   },
   {
     "id": "elven-council",
+    "scryCheckSlug": "elven-council",
     "name": "Elven Council",
-    "set": "The Lord of the Rings: Tales of Middle-earth"
+    "set": "The Lord of the Rings: Tales of Middle-earth",
+    "setType": "ub",
+    "releaseDate": "2023-06-23",
+    "colors": [
+      "W",
+      "U",
+      "G"
+    ],
+    "commander": "Galadriel of Lothlórien",
+    "desc": "Bant elves tribal. Elrond, Arwen, Legolas support. Scry-heavy card filtering with token production.",
+    "msrp": 59.99,
+    "currentPrice": 59.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 3.7,
+    "powerBracket": "B2"
   },
   {
     "id": "riders-of-rohan",
+    "scryCheckSlug": "riders-of-rohan",
     "name": "Riders of Rohan",
-    "set": "The Lord of the Rings: Tales of Middle-earth"
+    "set": "The Lord of the Rings: Tales of Middle-earth",
+    "setType": "ub",
+    "releaseDate": "2023-06-23",
+    "colors": [
+      "W",
+      "R"
+    ],
+    "commander": "Éowyn, Shieldmaiden",
+    "desc": "Boros human soldiers with battle-cry triggers. Equipment, go-wide aggression, heroic tempo shell.",
+    "msrp": 59.99,
+    "currentPrice": 59.99,
+    "priceSource": "CardKingdom",
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.7,
+    "powerBracket": "B2"
   },
   {
     "id": "call-for-backup",
+    "scryCheckSlug": "call-for-backup",
     "name": "Call for Backup",
-    "set": "March of the Machine"
+    "set": "March of the Machine",
+    "setType": "standard",
+    "releaseDate": "2023-04-21",
+    "colors": [
+      "W",
+      "R",
+      "G"
+    ],
+    "commander": "Bright-Palm, Soul Awakener",
+    "partner": "Shalai and Hallar",
+    "desc": "Naya +1/+1 counters with the Backup mechanic. Shalai and Hallar turn counter placement into direct damage.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 2.8,
+    "powerBracket": "B1"
   },
   {
     "id": "divine-convocation",
+    "scryCheckSlug": "divine-convocation",
     "name": "Divine Convocation",
-    "set": "March of the Machine"
+    "set": "March of the Machine",
+    "setType": "standard",
+    "releaseDate": "2023-04-21",
+    "colors": [
+      "W",
+      "U",
+      "R"
+    ],
+    "commander": "Kasla, the Broken Halo",
+    "partner": "Saint Traft and Rem Karolus",
+    "desc": "Jeskai convoke + creature tokens. Tap tiny creatures to cast big spells. Saint Traft is often the better commander option.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.3,
+    "powerBracket": "B2"
   },
   {
     "id": "growing-threat",
+    "scryCheckSlug": "growing-threat",
     "name": "Growing Threat",
-    "set": "March of the Machine"
+    "set": "March of the Machine",
+    "setType": "standard",
+    "releaseDate": "2023-04-21",
+    "colors": [
+      "W",
+      "B"
+    ],
+    "commander": "Brimaz, Blight of Oreskos",
+    "partner": "Moira and Teshar",
+    "desc": "Orzhov phyrexian + Incubator tokens. Brimaz creates Incubators that flip into big phyrexians. Moira and Teshar enable a historic-reanimator alternate.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.0,
+    "powerBracket": "B2"
   },
   {
     "id": "cavalry-charge",
+    "scryCheckSlug": "cavalry-charge",
     "name": "Cavalry Charge",
-    "set": "March of the Machine"
+    "set": "March of the Machine",
+    "setType": "standard",
+    "releaseDate": "2023-04-21",
+    "colors": [
+      "W",
+      "U",
+      "B"
+    ],
+    "commander": "Sidar Jabari of Zhalfir",
+    "partner": "Elenda and Azor",
+    "desc": "Esper Knights with horsemanship. Knight tribal in three colors, vampire knight subtheme via Elenda & Azor.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.3,
+    "powerBracket": "B2"
   },
   {
     "id": "tinker-time",
+    "scryCheckSlug": "tinker-time",
     "name": "Tinker Time",
-    "set": "March of the Machine"
+    "set": "March of the Machine",
+    "setType": "standard",
+    "releaseDate": "2023-04-21",
+    "colors": [
+      "U",
+      "R",
+      "G"
+    ],
+    "commander": "Gimbal, Gremlin Prodigy",
+    "partner": "Rashmi and Ragavan",
+    "desc": "Temur artifact tokens. Clues, Food, Blood, Treasures all care about unique types. Rashmi and Ragavan steal spells for free.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.2,
+    "powerBracket": "B2"
   },
   {
     "id": "rebellion-rising",
+    "scryCheckSlug": "rebellion-rising",
     "name": "Rebellion Rising",
-    "set": "Phyrexia: All Will Be One"
+    "set": "Phyrexia: All Will Be One",
+    "setType": "standard",
+    "releaseDate": "2023-02-03",
+    "colors": [
+      "W",
+      "R"
+    ],
+    "commander": "Jirina, Dauntless General",
+    "desc": "Boros Mirran survivors. Go wide, double-strike, equip, smash through Phyrexia's horrors.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 1.5,
+    "powerScore": 4.4,
+    "powerBracket": "B2"
   },
   {
     "id": "corrupting-influence",
+    "scryCheckSlug": "corrupting-influence",
     "name": "Corrupting Influence",
-    "set": "Phyrexia: All Will Be One"
+    "set": "Phyrexia: All Will Be One",
+    "setType": "standard",
+    "releaseDate": "2023-02-03",
+    "colors": [
+      "B",
+      "G"
+    ],
+    "commander": "Ixhel, Scion of Atraxa",
+    "desc": "Golgari poison counters. Toxic creatures and proliferate aim at 10 poison as an alternate win condition.",
+    "msrp": 44.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 3.1,
+    "powerBracket": "B2"
   },
   {
     "id": "urzas-iron-alliance",
+    "scryCheckSlug": "urzas-iron-alliance",
     "name": "Urza's Iron Alliance",
-    "set": "The Brothers' War"
+    "set": "The Brothers' War",
+    "setType": "standard",
+    "releaseDate": "2022-11-18",
+    "colors": [
+      "W",
+      "U",
+      "R"
+    ],
+    "commander": "Urza, Chief Artificer",
+    "desc": "Jeskai soldiers + artifacts. Brothers' War era. Affinity-adjacent with strong card selection.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   },
   {
     "id": "mishras-burnished-banner",
+    "scryCheckSlug": "mishras-burnished-banner",
     "name": "Mishra's Burnished Banner",
-    "set": "The Brothers' War"
+    "set": "The Brothers' War",
+    "setType": "standard",
+    "releaseDate": "2022-11-18",
+    "colors": [
+      "B",
+      "R",
+      "G"
+    ],
+    "commander": "Mishra, Claimed by Gix",
+    "desc": "Jund artifact sacrifice. Mishra draws cards and unearth enables recursion. Junk-pile aesthetic.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.4,
+    "powerBracket": "B2"
   },
   {
     "id": "forces-of-the-imperium",
+    "scryCheckSlug": "forces-of-the-imperium",
     "name": "Forces of the Imperium",
-    "set": "Warhammer 40,000 Commander"
+    "set": "Warhammer 40,000 Commander",
+    "setType": "commander",
+    "releaseDate": "2022-10-07",
+    "colors": [
+      "W",
+      "U",
+      "B"
+    ],
+    "commander": "Inquisitor Greyfax",
+    "partner": "Marneus Calgar",
+    "desc": "Esper Space Marines / Imperium humans tribal. Heroic combat and protective counter-magic.",
+    "msrp": 49.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.4,
+    "powerBracket": "B2"
   },
   {
     "id": "necron-dynasties",
+    "scryCheckSlug": "necron-dynasties",
     "name": "Necron Dynasties",
-    "set": "Warhammer 40,000 Commander"
+    "set": "Warhammer 40,000 Commander",
+    "setType": "commander",
+    "releaseDate": "2022-10-07",
+    "colors": [
+      "B"
+    ],
+    "commander": "Szarekh, the Silent King",
+    "desc": "Mono-black Necron artifact horde. Reanimate, sacrifice, flood the board with undying robot-aliens.",
+    "msrp": 49.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   },
   {
     "id": "tyranid-swarm",
+    "scryCheckSlug": "tyranid-swarm",
     "name": "Tyranid Swarm",
-    "set": "Warhammer 40,000 Commander"
+    "set": "Warhammer 40,000 Commander",
+    "setType": "commander",
+    "releaseDate": "2022-10-07",
+    "colors": [
+      "B",
+      "R",
+      "G"
+    ],
+    "commander": "The Swarmlord",
+    "desc": "Jund Tyranid tokens + counters. Swarm goes wide then wide-and-tall as Swarmlord hands out upgrades.",
+    "msrp": 49.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 3.1,
+    "powerBracket": "B2"
   },
   {
     "id": "the-ruinous-powers",
+    "scryCheckSlug": "the-ruinous-powers",
     "name": "The Ruinous Powers",
-    "set": "Warhammer 40,000 Commander"
+    "set": "Warhammer 40,000 Commander",
+    "setType": "commander",
+    "releaseDate": "2022-10-07",
+    "colors": [
+      "W",
+      "U",
+      "B",
+      "R"
+    ],
+    "commander": "Abaddon the Despoiler",
+    "desc": "Four-color chaos demons. Cascade triggers on combat damage — swing once, cast chaos.",
+    "msrp": 49.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 3.0,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   },
   {
     "id": "legends-legacy",
+    "scryCheckSlug": "legends-legacy",
     "name": "Legends' Legacy",
-    "set": "Dominaria United"
+    "set": "Dominaria United",
+    "setType": "standard",
+    "releaseDate": "2022-09-09",
+    "colors": [
+      "W",
+      "B",
+      "R"
+    ],
+    "commander": "Dihada, Binder of Wills",
+    "desc": "Mardu legendary tribal. Every legendary triggers Dihada for card filtering and tokens.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.3,
+    "powerBracket": "B2"
   },
   {
     "id": "painbow",
+    "scryCheckSlug": "painbow",
     "name": "Painbow",
-    "set": "Dominaria United"
+    "set": "Dominaria United",
+    "setType": "standard",
+    "releaseDate": "2022-09-09",
+    "colors": [
+      "W",
+      "U",
+      "B",
+      "R",
+      "G"
+    ],
+    "commander": "Jared Carthalion",
+    "desc": "Five-color pain-lands shell. Domain counting, monarch/initiative subthemes.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.3,
+    "powerBracket": "B2"
   },
   {
     "id": "party-time",
+    "scryCheckSlug": "party-time",
     "name": "Party Time",
-    "set": "Commander Legends: Battle for Baldur's Gate"
+    "set": "Commander Legends: Battle for Baldur's Gate",
+    "setType": "commander",
+    "releaseDate": "2022-06-10",
+    "colors": [
+      "W",
+      "U",
+      "G"
+    ],
+    "commander": "Nalia de'Arnise",
+    "desc": "Bant adventure party tribal. Match the four D&D party roles (cleric/fighter/rogue/wizard) for buffs.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.2,
+    "powerBracket": "B4"
   },
   {
     "id": "mind-flayarrrs",
+    "scryCheckSlug": "mind-flayarrrs",
     "name": "Mind Flayarrrs",
-    "set": "Commander Legends: Battle for Baldur's Gate"
+    "set": "Commander Legends: Battle for Baldur's Gate",
+    "setType": "commander",
+    "releaseDate": "2022-06-10",
+    "colors": [
+      "U",
+      "B"
+    ],
+    "commander": "Captain N'ghathrod",
+    "desc": "Dimir horror tribal with mill. Reanimate from opponents' graveyards after milling them into submission.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 3.8,
+    "powerBracket": "B2"
   },
   {
     "id": "exit-from-exile",
+    "scryCheckSlug": "exit-from-exile",
     "name": "Exit from Exile",
-    "set": "Commander Legends: Battle for Baldur's Gate"
+    "set": "Commander Legends: Battle for Baldur's Gate",
+    "setType": "commander",
+    "releaseDate": "2022-06-10",
+    "colors": [
+      "R",
+      "G"
+    ],
+    "commander": "Faldorn, Dread Wolf Herald",
+    "desc": "Gruul exile-cast wolves. Impulse draw from top of library, cast werewolves at instant speed, grow the pack.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.2,
+    "powerBracket": "B3"
   },
   {
     "id": "draconic-dissent",
+    "scryCheckSlug": "draconic-dissent",
     "name": "Draconic Dissent",
-    "set": "Commander Legends: Battle for Baldur's Gate"
+    "set": "Commander Legends: Battle for Baldur's Gate",
+    "setType": "commander",
+    "releaseDate": "2022-06-10",
+    "colors": [
+      "W",
+      "U",
+      "R"
+    ],
+    "commander": "Firkraag, Cunning Instigator",
+    "desc": "Jeskai dragon goad. Force opponents to attack each other with dragons, capitalize on the openings.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.4,
+    "powerBracket": "B2"
   },
   {
     "id": "obscura-operation",
+    "scryCheckSlug": "obscura-operation",
     "name": "Obscura Operation",
-    "set": "Streets of New Capenna"
+    "set": "Streets of New Capenna",
+    "setType": "standard",
+    "releaseDate": "2022-04-29",
+    "colors": [
+      "W",
+      "U",
+      "B"
+    ],
+    "commander": "Anhelo, the Painter",
+    "desc": "Esper connive — draw and discard in one motion. Anhelo copies your first instant or sorcery each turn.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.6,
+    "powerBracket": "B2"
   },
   {
     "id": "maestros-massacre",
+    "scryCheckSlug": "maestros-massacre",
     "name": "Maestros Massacre",
-    "set": "Streets of New Capenna"
+    "set": "Streets of New Capenna",
+    "setType": "standard",
+    "releaseDate": "2022-04-29",
+    "colors": [
+      "U",
+      "B",
+      "R"
+    ],
+    "commander": "Parnesse, the Subtle Brush",
+    "desc": "Grixis spellslinger with casualty. Sacrifice creatures on cast to copy instants and sorceries.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   },
   {
     "id": "riveteers-rampage",
+    "scryCheckSlug": "riveteers-rampage",
     "name": "Riveteers Rampage",
-    "set": "Streets of New Capenna"
+    "set": "Streets of New Capenna",
+    "setType": "standard",
+    "releaseDate": "2022-04-29",
+    "colors": [
+      "B",
+      "R",
+      "G"
+    ],
+    "commander": "Henzie \"Toolbox\" Torre",
+    "desc": "Jund blitz — cast creatures cheap, die at turn's end, sacrifice for value.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.4,
+    "powerBracket": "B2"
   },
   {
     "id": "cabaretti-cacophony",
+    "scryCheckSlug": "cabaretti-cacophony",
     "name": "Cabaretti Cacophony",
-    "set": "Streets of New Capenna"
+    "set": "Streets of New Capenna",
+    "setType": "standard",
+    "releaseDate": "2022-04-29",
+    "colors": [
+      "W",
+      "R",
+      "G"
+    ],
+    "commander": "Kitt Kanto, Mayhem Diva",
+    "partner": "Jinnie Fay, Jetmir's Second",
+    "desc": "Naya token party. Cats, Dogs, anything wide. Kitt Kanto rides whatever you can assemble.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.8,
+    "powerBracket": "B2"
   },
   {
     "id": "bedecked-brokers",
+    "scryCheckSlug": "bedecked-brokers",
     "name": "Bedecked Brokers",
-    "set": "Streets of New Capenna"
+    "set": "Streets of New Capenna",
+    "setType": "standard",
+    "releaseDate": "2022-04-29",
+    "colors": [
+      "W",
+      "U",
+      "G"
+    ],
+    "commander": "Perrie, the Pulverizer",
+    "desc": "Bant shield counters. Counters protect creatures and offer utility trade-ins. Slow, resilient, deliberate.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 1.5,
+    "powerScore": 3.1,
+    "powerBracket": "B2"
   },
   {
     "id": "upgrades-unleashed",
+    "scryCheckSlug": "upgrades-unleashed",
     "name": "Upgrades Unleashed",
-    "set": "Kamigawa: Neon Dynasty"
+    "set": "Kamigawa: Neon Dynasty",
+    "setType": "standard",
+    "releaseDate": "2022-02-18",
+    "colors": [
+      "W",
+      "U",
+      "R"
+    ],
+    "commander": "Kotori, Pilot Prodigy",
+    "desc": "Jeskai vehicles and equipment. Crew things, swing things, go tall in a deck type that rarely gets love.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 2.7,
+    "powerBracket": "B1"
   },
   {
     "id": "buckle-up",
+    "scryCheckSlug": "buckle-up",
     "name": "Buckle Up",
-    "set": "Kamigawa: Neon Dynasty"
+    "set": "Kamigawa: Neon Dynasty",
+    "setType": "standard",
+    "releaseDate": "2022-02-18",
+    "colors": [
+      "W",
+      "R",
+      "G"
+    ],
+    "commander": "Chishiro, the Shattered Blade",
+    "desc": "Naya modified creatures (counters, equipment, auras). Chishiro makes Spirit tokens when modified creatures die.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 1.5,
+    "powerScore": 4.1,
+    "powerBracket": "B2"
   },
   {
     "id": "take-flight",
+    "scryCheckSlug": "first-flight",
     "name": "Take Flight",
-    "set": "Starter Commander Decks"
+    "set": "Starter Commander Decks",
+    "setType": "commander",
+    "releaseDate": "2022-12-02",
+    "colors": [
+      "W",
+      "U"
+    ],
+    "commander": "Isperia, Supreme Judge",
+    "desc": "Azorius flying tribal. Beginner-friendly with a clear game plan: fly over, swing through the air, draw cards on attacks.",
+    "msrp": 24.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 1.5,
+    "powerScore": 4.2,
+    "powerBracket": "B2"
   },
   {
     "id": "grave-danger",
+    "scryCheckSlug": "grave-danger",
     "name": "Grave Danger",
-    "set": "Starter Commander Decks"
+    "set": "Starter Commander Decks",
+    "setType": "commander",
+    "releaseDate": "2022-12-02",
+    "colors": [
+      "U",
+      "B"
+    ],
+    "commander": "Szadek, Lord of Secrets",
+    "desc": "Dimir mill/reanimator starter. Mill opponents, bring back their best creatures as your own.",
+    "msrp": 24.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 1.5,
+    "powerScore": 3.9,
+    "powerBracket": "B2"
   },
   {
     "id": "token-triumph",
+    "scryCheckSlug": "token-triumph",
     "name": "Token Triumph",
-    "set": "Starter Commander Decks"
+    "set": "Starter Commander Decks",
+    "setType": "commander",
+    "releaseDate": "2022-12-02",
+    "colors": [
+      "W",
+      "G"
+    ],
+    "commander": "Emmara, Soul of the Accord",
+    "desc": "Selesnya token go-wide. Beginner-friendly with a clear game plan, significantly power-crept by 2026 but a good chassis.",
+    "msrp": 24.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 1.5,
+    "powerScore": 4.2,
+    "powerBracket": "B2"
   },
   {
     "id": "chaos-incarnate",
+    "scryCheckSlug": "chaos-incarnate",
     "name": "Chaos Incarnate",
-    "set": "Starter Commander Decks"
+    "set": "Starter Commander Decks",
+    "setType": "commander",
+    "releaseDate": "2022-12-02",
+    "colors": [
+      "U",
+      "B",
+      "R"
+    ],
+    "commander": "Nicol Bolas, the Deceiver",
+    "desc": "Grixis control villain deck. Bolas steals things, burns things, counters things. Classic mustache-twirling.",
+    "msrp": 24.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 1.5,
+    "powerScore": 3.1,
+    "powerBracket": "B2"
   },
   {
     "id": "draconic-domination",
+    "scryCheckSlug": "draconic-domination",
     "name": "Draconic Domination",
-    "set": "Starter Commander Decks"
+    "set": "Starter Commander Decks",
+    "setType": "commander",
+    "releaseDate": "2022-12-02",
+    "colors": [
+      "W",
+      "U",
+      "B",
+      "R",
+      "G"
+    ],
+    "commander": "The Ur-Dragon",
+    "desc": "Five-color dragon tribal led by the OG. A useful benchmark for 5C dragon tribal at real-deck prices.",
+    "msrp": 24.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 1.5,
+    "powerScore": 5.5,
+    "powerBracket": "B3"
   },
   {
     "id": "vampiric-bloodlust",
+    "scryCheckSlug": "vampiric-bloodlust",
     "name": "Vampiric Bloodlust",
-    "set": "Innistrad: Crimson Vow"
+    "set": "Innistrad: Crimson Vow",
+    "setType": "standard",
+    "releaseDate": "2021-11-19",
+    "colors": [
+      "B",
+      "R"
+    ],
+    "commander": "Strefan, Maurer Progenitor",
+    "desc": "Rakdos vampire tribal with blood tokens. Drain, aggro, vampire swarm — Crimson Vow's signature theme.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 5.5,
+    "powerBracket": "B3"
   },
   {
     "id": "spirit-squadron",
+    "scryCheckSlug": "spirit-squadron",
     "name": "Spirit Squadron",
-    "set": "Innistrad: Crimson Vow"
+    "set": "Innistrad: Crimson Vow",
+    "setType": "standard",
+    "releaseDate": "2021-11-19",
+    "colors": [
+      "W",
+      "U"
+    ],
+    "commander": "Millicent, Restless Revenant",
+    "desc": "Azorius spirit flying tribal. Go-wide in the air with grave-return payoffs.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.6,
+    "powerBracket": "B2"
   },
   {
     "id": "coven-counters",
+    "scryCheckSlug": "coven-counters",
     "name": "Coven Counters",
-    "set": "Innistrad: Midnight Hunt"
+    "set": "Innistrad: Midnight Hunt",
+    "setType": "standard",
+    "releaseDate": "2021-09-24",
+    "colors": [
+      "W",
+      "G"
+    ],
+    "commander": "Leinore, Autumn Sovereign",
+    "desc": "Selesnya human/coven tribal. Coven triggers (three creatures of different power) reward board diversity.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 2.9,
+    "powerBracket": "B1"
   },
   {
     "id": "undead-unleashed",
+    "scryCheckSlug": "undead-unleashed",
     "name": "Undead Unleashed",
-    "set": "Innistrad: Midnight Hunt"
+    "set": "Innistrad: Midnight Hunt",
+    "setType": "standard",
+    "releaseDate": "2021-09-24",
+    "colors": [
+      "U",
+      "B"
+    ],
+    "commander": "Wilhelt, the Rotcleaver",
+    "desc": "Dimir zombie decay. Wilhelt turns every dying zombie into a new one, self-perpetuating threat density.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.6,
+    "powerBracket": "B2"
   },
   {
     "id": "aura-of-courage",
+    "scryCheckSlug": "aura-of-courage",
     "name": "Aura of Courage",
-    "set": "Adventures in the Forgotten Realms"
+    "set": "Adventures in the Forgotten Realms",
+    "setType": "standard",
+    "releaseDate": "2021-07-23",
+    "colors": [
+      "W",
+      "U",
+      "G"
+    ],
+    "commander": "Galea, Kindler of Hope",
+    "desc": "Bant Voltron auras/equipment. Galea lets you play enchantments and equipment from the top of your library for free.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 3.3,
+    "powerBracket": "B2"
   },
   {
     "id": "dungeons-of-death",
+    "scryCheckSlug": "dungeons-of-death",
     "name": "Dungeons of Death",
-    "set": "Adventures in the Forgotten Realms"
+    "set": "Adventures in the Forgotten Realms",
+    "setType": "standard",
+    "releaseDate": "2021-07-23",
+    "colors": [
+      "B"
+    ],
+    "commander": "Sefris of the Hidden Ways",
+    "desc": "Mono-black dungeon adventure. Venture into dungeons when creatures die for escalating value.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   },
   {
     "id": "draconic-rage",
+    "scryCheckSlug": "draconic-rage",
     "name": "Draconic Rage",
-    "set": "Adventures in the Forgotten Realms"
+    "set": "Adventures in the Forgotten Realms",
+    "setType": "standard",
+    "releaseDate": "2021-07-23",
+    "colors": [
+      "R",
+      "G"
+    ],
+    "commander": "Vrondiss, Rage of Ancients",
+    "desc": "Gruul dragon tribal. Take damage to trigger elementals and dragons, brute-force Jund-style.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 3.9,
+    "powerBracket": "B3"
   },
   {
     "id": "planar-portal",
+    "scryCheckSlug": "planar-portal",
     "name": "Planar Portal",
-    "set": "Adventures in the Forgotten Realms"
+    "set": "Adventures in the Forgotten Realms",
+    "setType": "standard",
+    "releaseDate": "2021-07-23",
+    "colors": [
+      "B",
+      "R"
+    ],
+    "commander": "Prosper, Tome-Bound",
+    "desc": "Rakdos impulse draw and treasure. Prosper exiles cards from top of library, casts them, pays with treasures.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.2,
+    "powerBracket": "B2"
   },
   {
     "id": "silverquill-statement",
+    "scryCheckSlug": "silverquill-statement",
     "name": "Silverquill Statement",
-    "set": "Strixhaven: School of Mages (Commander 2021)"
+    "set": "Strixhaven: School of Mages (Commander 2021)",
+    "setType": "standard",
+    "releaseDate": "2021-04-23",
+    "colors": [
+      "W",
+      "B"
+    ],
+    "commander": "Breena, the Demagogue",
+    "desc": "Orzhov political. Breena draws cards and doubles counters when opponents attack each other. The OG Strixhaven precon.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 3.4,
+    "powerBracket": "B4"
   },
   {
     "id": "prismari-performance",
+    "scryCheckSlug": "prismari-performance",
     "name": "Prismari Performance",
-    "set": "Strixhaven: School of Mages (Commander 2021)"
+    "set": "Strixhaven: School of Mages (Commander 2021)",
+    "setType": "standard",
+    "releaseDate": "2021-04-23",
+    "colors": [
+      "U",
+      "R"
+    ],
+    "commander": "Zaffai, Thunder Conductor",
+    "desc": "Izzet spells-matter. Zaffai scales rewards with spell mana value — cast big, get huge triggers.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 4.4,
+    "powerBracket": "B2"
   },
   {
     "id": "witherbloom-witchcraft",
+    "scryCheckSlug": "witherbloom-witchcraft",
     "name": "Witherbloom Witchcraft",
-    "set": "Strixhaven: School of Mages (Commander 2021)"
+    "set": "Strixhaven: School of Mages (Commander 2021)",
+    "setType": "standard",
+    "releaseDate": "2021-04-23",
+    "colors": [
+      "B",
+      "G"
+    ],
+    "commander": "Willowdusk, Essence Seer",
+    "desc": "Golgari life-as-resource. Pay life to grow Willowdusk, then hand those counters to your biggest threat.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.0,
+    "powerScore": 2.6,
+    "powerBracket": "B1"
   },
   {
     "id": "lorehold-legacies",
+    "scryCheckSlug": "lorehold-legacies",
     "name": "Lorehold Legacies",
-    "set": "Strixhaven: School of Mages (Commander 2021)"
+    "set": "Strixhaven: School of Mages (Commander 2021)",
+    "setType": "standard",
+    "releaseDate": "2021-04-23",
+    "colors": [
+      "W",
+      "R"
+    ],
+    "commander": "Osgir, the Reconstructor",
+    "desc": "Boros artifact recursion. Sacrifice artifacts to make two copies. Dramatic Reversal-Isochron pieces included.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.2,
+    "powerBracket": "B2"
   },
   {
     "id": "quantum-quandrix",
+    "scryCheckSlug": "quantum-quandrix",
     "name": "Quantum Quandrix",
-    "set": "Strixhaven: School of Mages (Commander 2021)"
+    "set": "Strixhaven: School of Mages (Commander 2021)",
+    "setType": "standard",
+    "releaseDate": "2021-04-23",
+    "colors": [
+      "U",
+      "G"
+    ],
+    "commander": "Adrix and Nev, Twincasters",
+    "desc": "Simic token doubling. Parallel Lives in the command zone. The original Quandrix precon before 2026's Unlimited.",
+    "msrp": 39.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-04-23",
+    "power": 2.5,
+    "powerScore": 4.5,
+    "powerBracket": "B2"
   }
 ]
