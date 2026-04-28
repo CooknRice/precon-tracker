@@ -30,6 +30,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 TCGCSV_BASE = "https://tcgcsv.com/tcgplayer"
 MAGIC_CATEGORY = 1
@@ -66,6 +68,31 @@ def norm(s: str) -> str:
 def tokenize(s: str) -> set:
     """Lowercase, split on non-alphanumeric, drop pure stopwords."""
     return {t for t in re.findall(r"[a-z0-9]+", (s or "").lower()) if t not in STOPWORDS}
+
+
+def make_session(user_agent: str) -> requests.Session:
+    """Session with exponential-backoff retry on transient failures.
+
+    Retries on 429 (rate limit) and 5xx, with backoff 1s, 2s, 4s. urllib3
+    honours Retry-After headers automatically. Connection errors get the
+    same treatment via `connect=` and `read=`.
+    """
+    session = requests.Session()
+    session.headers.update({"User-Agent": user_agent, "Accept": "application/json"})
+    retry = Retry(
+        total=4,
+        connect=3,
+        read=3,
+        backoff_factor=1.0,
+        status_forcelist=(429, 500, 502, 503, 504),
+        allowed_methods=("GET",),
+        respect_retry_after_header=True,
+        raise_on_status=False,
+    )
+    adapter = HTTPAdapter(max_retries=retry, pool_connections=4, pool_maxsize=8)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    return session
 
 
 def fetch_tcgcsv_json(path: str, session: requests.Session) -> dict:
@@ -136,8 +163,16 @@ def pick_group_for_set(groups: list, deck_set: str) -> dict | None:
     return candidates[0][1]
 
 
-def pick_product_for_deck(products: list, deck_name: str) -> dict | None:
-    """Find the product that's most likely a precon deck, not a single card."""
+def pick_product_for_deck(
+    products: list, deck_name: str, prices: dict | None = None
+) -> dict | None:
+    """Find the product that's most likely a precon deck, not a single card.
+
+    When `prices` is supplied, products priced below PRICE_FLOOR are
+    deprioritised (still considered as a last-resort fallback, but only
+    if no plausibly-priced precon match exists). This avoids wasting the
+    matched-product slot on a same-named single card.
+    """
     deck_norm = norm(deck_name)
     if not deck_norm:
         return None
@@ -156,8 +191,17 @@ def pick_product_for_deck(products: list, deck_name: str) -> dict | None:
             kw in pname_lower for kw in ("deck", "kit", "precon", "commander", "bundle")
         )
 
-        # Sortable score: prefer precon-named, then exact, then shortest.
-        score = (is_precon_named, is_exact, -len(pname))
+        # Price-floor signal: products priced below the floor are almost
+        # always single cards. Demote them so a real precon wins ties.
+        passes_floor = True
+        if prices is not None:
+            row = prices.get(p.get("productId"))
+            market = row.get("marketPrice") if row else None
+            if market is not None and market < PRICE_FLOOR:
+                passes_floor = False
+
+        # Sortable score: floor-passing > precon-named > exact > shortest.
+        score = (passes_floor, is_precon_named, is_exact, -len(pname))
         candidates.append((score, p))
 
     if not candidates:
@@ -189,8 +233,7 @@ def tcg_product_url(product_id: int, product_name: str) -> str:
 
 
 def fetch_all_tcgcsv(decks: list) -> dict:
-    session = requests.Session()
-    session.headers.update({"User-Agent": TCGCSV_UA, "Accept": "application/json"})
+    session = make_session(TCGCSV_UA)
 
     print("Loading TCGCSV Magic groups list...", flush=True)
     try:
@@ -255,7 +298,7 @@ def fetch_all_tcgcsv(decks: list) -> dict:
             print(f"[{i:3}/{len(decks)}] {deck_name:<36} TCG ------  (group fetch error)", flush=True)
             continue
 
-        product = pick_product_for_deck(gc["products"], deck_name)
+        product = pick_product_for_deck(gc["products"], deck_name, gc["prices"])
         if not product:
             base["status"] = "tcgcsv-no-product-match"
             base["snippet"] = f"group={gc['name']}"
@@ -327,7 +370,7 @@ def is_plausible_mtg_commander_product(title: str) -> bool:
     return has_magic and has_commander and not is_premium
 
 
-def fetch_zulus(deck_name: str) -> dict:
+def fetch_zulus(deck_name: str, session: requests.Session) -> dict:
     query = urllib.parse.quote(deck_name)
     api_url = (
         f"https://www.zulusgames.com/search/suggest.json"
@@ -336,7 +379,7 @@ def fetch_zulus(deck_name: str) -> dict:
     human_url = f"https://www.zulusgames.com/search?q={query}"
     result = {"price": None, "url": human_url, "status": "unknown", "snippet": None}
     try:
-        r = requests.get(api_url, headers=json_headers(), timeout=TIMEOUT)
+        r = session.get(api_url, headers=json_headers(), timeout=TIMEOUT)
         if r.status_code != 200:
             result["status"] = f"http-{r.status_code}"
             return result
@@ -378,7 +421,9 @@ def fetch_zulus(deck_name: str) -> dict:
     except requests.RequestException as e:
         result["status"] = f"error-{type(e).__name__}"
         return result
-    except Exception as e:
+    except (ValueError, KeyError, AttributeError) as e:
+        # JSON decode errors and shape mismatches when the API changes.
+        # Real bugs (e.g. NameError) propagate so we notice them in CI.
         result["status"] = f"parse-error-{type(e).__name__}"
         return result
 
@@ -397,11 +442,12 @@ def main() -> None:
     tcg_results = fetch_all_tcgcsv(decks)
 
     print("\n=== Phase 2: Zulus Games ===", flush=True)
+    zulus_session = make_session(USER_AGENTS[0])
     zulus_results: dict[str, dict] = {}
     for i, deck in enumerate(decks, 1):
         did = deck["id"]
         name = deck["name"]
-        zu = fetch_zulus(name)
+        zu = fetch_zulus(name, zulus_session)
         zulus_results[did] = zu
         if zu["price"]:
             print(f"[{i:3}/{len(decks)}] {name:<36} Zulus ${zu['price']:>6.2f}", flush=True)
