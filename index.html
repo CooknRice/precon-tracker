@@ -774,6 +774,127 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .sparkline.up .sparkline-area { fill: var(--burgundy); fill-opacity: 0.12; }
 .sparkline.down path { stroke: var(--sage); }
 .sparkline.down .sparkline-area { fill: var(--sage); fill-opacity: 0.12; }
+
+/* Chart modal */
+.chart-modal-inner { max-width: 720px; position: relative; padding-top: 48px; }
+.chart-modal-inner .compare-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  float: none;
+}
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  border-bottom: 1px solid var(--paper-line);
+  padding-bottom: 16px;
+  flex-wrap: wrap;
+}
+.chart-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.chart-subtitle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 6px;
+}
+.chart-summary { text-align: right; }
+.chart-price-now {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--burgundy);
+  line-height: 1;
+}
+.chart-delta {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  margin-top: 6px;
+  letter-spacing: 0.04em;
+}
+.chart-delta.up { color: var(--burgundy); }       /* price went UP — bad for buyer */
+.chart-delta.down { color: var(--sage); }         /* price went DOWN — good for buyer */
+.chart-delta.flat { color: var(--ink-muted); }
+
+.chart-range {
+  display: flex;
+  gap: 4px;
+  margin-top: 18px;
+  padding: 4px;
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  width: fit-content;
+}
+.range-btn {
+  background: transparent;
+  border: none;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.range-btn:hover { color: var(--ink); }
+.range-btn.active {
+  background: var(--gold-bright);
+  color: #1a1308;
+}
+
+.chart-canvas-wrap {
+  margin-top: 20px;
+  width: 100%;
+  overflow-x: auto;
+}
+.chart-svg {
+  display: block;
+  width: 100%;
+  height: 320px;
+  font-family: var(--font-mono);
+}
+.chart-svg .axis-label {
+  fill: var(--ink-muted);
+  font-size: 10px;
+  font-family: var(--font-mono);
+}
+.chart-svg .gridline { stroke: var(--paper-line); stroke-width: 1; }
+.chart-svg .price-line { fill: none; stroke: var(--gold-bright); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.chart-svg .price-area { fill: var(--gold-bright); fill-opacity: 0.08; stroke: none; }
+.chart-svg .price-dot { fill: var(--gold-bright); }
+.chart-svg .price-dot.endpoint { fill: var(--burgundy); r: 4; }
+
+.chart-empty {
+  margin-top: 24px;
+  padding: 32px 20px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink-muted);
+  display: none;
+}
+.chart-empty.visible { display: block; }
+
+/* Make the inline card sparkline visibly clickable */
+.sparkline {
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+.sparkline:hover { background: rgba(228, 185, 84, 0.08); }
 </style>
 </head>
 <body>
@@ -914,6 +1035,32 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     <button type="button" class="compare-modal-close" id="compareModalClose">Close ×</button>
     <h2 id="compareModalTitle" style="font-family: var(--font-display); font-size: 28px; font-weight: 500; font-style: italic;">Compare</h2>
     <div id="compareTableWrap"></div>
+  </div>
+</div>
+
+<div id="chartModal" class="compare-modal" role="dialog" aria-modal="true" aria-labelledby="chartModalTitle">
+  <div class="compare-modal-inner chart-modal-inner">
+    <button type="button" class="compare-modal-close" id="chartModalClose">Close ×</button>
+    <div class="chart-header">
+      <div>
+        <h2 id="chartModalTitle" class="chart-title">—</h2>
+        <div class="chart-subtitle" id="chartSubtitle">—</div>
+      </div>
+      <div class="chart-summary">
+        <div class="chart-price-now" id="chartPriceNow">—</div>
+        <div class="chart-delta" id="chartDelta">—</div>
+      </div>
+    </div>
+    <div class="chart-range" role="tablist" aria-label="Chart time range">
+      <button type="button" class="range-btn" data-range="7" role="tab">1W</button>
+      <button type="button" class="range-btn" data-range="30" role="tab">1M</button>
+      <button type="button" class="range-btn" data-range="90" role="tab">3M</button>
+      <button type="button" class="range-btn active" data-range="all" role="tab" aria-selected="true">All</button>
+    </div>
+    <div class="chart-canvas-wrap" id="chartCanvasWrap">
+      <!-- SVG injected by renderChart() -->
+    </div>
+    <div class="chart-empty" id="chartEmpty"></div>
   </div>
 </div>
 
@@ -1196,7 +1343,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     if (last < first * 0.97) trend = "down";
     else if (last > first * 1.03) trend = "up";
     const title = `${pts.length} days · $${first.toFixed(2)} → $${last.toFixed(2)}`;
-    return `<svg class="sparkline ${trend}" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-label="${title}"><title>${title}</title><path class="sparkline-area" d="${area}"/><path d="${path}"/></svg>`;
+    return `<svg class="sparkline ${trend}" data-chart-trigger="1" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="button" tabindex="0" aria-label="Open price chart — ${title}"><title>${title} · click for full chart</title><path class="sparkline-area" d="${area}"/><path d="${path}"/></svg>`;
   }
 
   // Banner: warn the user if the last scrape was more than STALE_DAYS ago.
@@ -1215,6 +1362,171 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     } else {
       staleBanner.classList.remove("visible");
     }
+  }
+
+  // ---------- Price-history chart ----------
+  // Catmull-Rom → cubic Bezier smoothing. Produces a path "M ... C ..."
+  // that flows naturally through every point. Used for the line in the
+  // chart modal; the tiny inline sparkline stays as a polyline for speed.
+  function smoothPath(points) {
+    if (points.length < 2) return "";
+    const [first] = points;
+    let d = `M ${first[0]},${first[1]}`;
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = points[i - 1] || points[i];
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      const p3 = points[i + 2] || p2;
+      const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
+      const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
+      const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
+      const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
+      d += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+    }
+    return d;
+  }
+
+  function fmtChartDate(iso) {
+    const d = new Date(iso);
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  }
+
+  // Pick "nice" tick values for the Y axis. Returns up to 5 tick values
+  // that span min..max with rounded steps.
+  function niceTicks(min, max, count = 5) {
+    const range = max - min || 1;
+    const rough = range / (count - 1);
+    const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+    const norm = rough / mag;
+    let step;
+    if (norm < 1.5) step = mag;
+    else if (norm < 3) step = 2 * mag;
+    else if (norm < 7) step = 5 * mag;
+    else step = 10 * mag;
+    const start = Math.floor(min / step) * step;
+    const ticks = [];
+    for (let v = start; v <= max + step * 0.5; v += step) ticks.push(v);
+    return ticks;
+  }
+
+  // State for the chart modal (which deck, which time range).
+  let chartCurrentDeck = null;
+  let chartCurrentRange = "all";
+
+  function renderChart() {
+    const deck = chartCurrentDeck;
+    const wrap = $("chartCanvasWrap");
+    const empty = $("chartEmpty");
+    if (!deck) return;
+
+    let series = (PRICE_HISTORY && PRICE_HISTORY[deck.id]) || [];
+
+    // Trim to selected window
+    if (chartCurrentRange !== "all") {
+      const days = parseInt(chartCurrentRange, 10);
+      const cutoff = Date.now() - days * 86400000;
+      series = series.filter(s => new Date(s.date).getTime() >= cutoff);
+    }
+
+    // Fall back to all available if the window is too narrow to plot anything.
+    if (series.length < 2 && chartCurrentRange !== "all") {
+      series = (PRICE_HISTORY && PRICE_HISTORY[deck.id]) || [];
+    }
+
+    const points = series
+      .map(s => ({ date: s.date, price: s.tcg }))
+      .filter(p => typeof p.price === "number");
+
+    if (points.length < 2) {
+      wrap.innerHTML = "";
+      empty.classList.add("visible");
+      empty.textContent = points.length === 0
+        ? "No live price history yet for this deck."
+        : `Only ${points.length} data point so far — come back in a few days as the daily scraper builds up history.`;
+      $("chartPriceNow").textContent = points[0] ? `$${points[0].price.toFixed(2)}` : "—";
+      $("chartDelta").textContent = "—";
+      $("chartDelta").className = "chart-delta flat";
+      return;
+    }
+
+    empty.classList.remove("visible");
+
+    // Header: current price + delta vs window start
+    const first = points[0].price, last = points[points.length - 1].price;
+    const deltaPct = ((last - first) / first) * 100;
+    $("chartPriceNow").textContent = `$${last.toFixed(2)}`;
+    const deltaEl = $("chartDelta");
+    const sign = deltaPct >= 0 ? "+" : "";
+    deltaEl.textContent = `${sign}${deltaPct.toFixed(1)}% · ${points.length}d`;
+    deltaEl.className = "chart-delta " + (deltaPct > 0.5 ? "up" : deltaPct < -0.5 ? "down" : "flat");
+
+    // SVG layout (responsive via viewBox)
+    const W = 700, H = 320;
+    const padL = 56, padR = 24, padT = 24, padB = 40;
+    const innerW = W - padL - padR, innerH = H - padT - padB;
+
+    const prices = points.map(p => p.price);
+    const yMin = Math.min(...prices), yMax = Math.max(...prices);
+    // Pad range so the line doesn't kiss the top/bottom edges
+    const yPad = (yMax - yMin) * 0.15 || 1;
+    const yLo = Math.max(0, yMin - yPad), yHi = yMax + yPad;
+    const yTicks = niceTicks(yLo, yHi, 5);
+
+    const xs = points.map((_, i) => padL + (i / (points.length - 1)) * innerW);
+    const ys = prices.map(p => padT + (1 - (p - yLo) / (yHi - yLo)) * innerH);
+    const coords = xs.map((x, i) => [x, ys[i]]);
+
+    const gridLines = yTicks.map(t => {
+      const y = padT + (1 - (t - yLo) / (yHi - yLo)) * innerH;
+      return `<line class="gridline" x1="${padL}" y1="${y.toFixed(1)}" x2="${W - padR}" y2="${y.toFixed(1)}"/>`;
+    }).join("");
+    const yLabels = yTicks.map(t => {
+      const y = padT + (1 - (t - yLo) / (yHi - yLo)) * innerH;
+      return `<text class="axis-label" x="${padL - 8}" y="${(y + 3).toFixed(1)}" text-anchor="end">$${t.toFixed(2)}</text>`;
+    }).join("");
+
+    // X axis: up to 5 evenly-spaced date labels (always include first + last)
+    const labelCount = Math.min(points.length, 5);
+    const xLabels = Array.from({ length: labelCount }, (_, i) => {
+      const idx = Math.round(i * (points.length - 1) / Math.max(1, labelCount - 1));
+      const x = xs[idx];
+      return `<text class="axis-label" x="${x.toFixed(1)}" y="${H - padB + 18}" text-anchor="middle">${fmtChartDate(points[idx].date)}</text>`;
+    }).join("");
+
+    const linePath = smoothPath(coords);
+    const areaPath = linePath +
+      ` L ${xs[xs.length - 1].toFixed(1)},${(padT + innerH).toFixed(1)}` +
+      ` L ${xs[0].toFixed(1)},${(padT + innerH).toFixed(1)} Z`;
+
+    const dots = coords.map(([x, y], i) =>
+      `<circle class="price-dot${i === coords.length - 1 ? " endpoint" : ""}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${i === coords.length - 1 ? 4 : 2}"><title>${fmtChartDate(points[i].date)} · $${prices[i].toFixed(2)}</title></circle>`
+    ).join("");
+
+    wrap.innerHTML = `
+      <svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Price history chart for ${escapeHtml(deck.name)}">
+        ${gridLines}
+        <path class="price-area" d="${areaPath}"/>
+        <path class="price-line" d="${linePath}"/>
+        ${dots}
+        ${yLabels}
+        ${xLabels}
+      </svg>`;
+  }
+
+  function openChart(deckId, range = "all") {
+    const deck = PRECONS.find(d => d.id === deckId);
+    if (!deck) return;
+    chartCurrentDeck = deck;
+    chartCurrentRange = range;
+    $("chartModalTitle").textContent = deck.name;
+    $("chartSubtitle").textContent = `${deck.set} · TCGPlayer Market`;
+    document.querySelectorAll("#chartModal .range-btn").forEach(b => {
+      const on = b.dataset.range === String(range);
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    renderChart();
+    $("chartModal").classList.add("visible");
   }
 
   // Build a prefilled "report a problem" GitHub Issue URL for one deck.
@@ -1623,7 +1935,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       refresh();
     });
 
-    // Event delegation for the per-card buttons (own/watch/compare).
+    // Event delegation for the per-card buttons (own/watch/compare/sparkline).
     grid.addEventListener("click", async e => {
       const ownBtn = e.target.closest(".own-toggle");
       if (ownBtn) {
@@ -1640,7 +1952,21 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         if (watchSet.has(id)) watchSet.delete(id); else watchSet.add(id);
         await saveWatched();
         renderGrid();
+        return;
       }
+      const sparkBtn = e.target.closest("[data-chart-trigger]");
+      if (sparkBtn) {
+        const card = sparkBtn.closest("article[data-id]");
+        if (card) openChart(card.dataset.id);
+      }
+    });
+
+    // Keyboard accessibility for the sparkline (it's a focusable role=button)
+    grid.addEventListener("keydown", e => {
+      if ((e.key !== "Enter" && e.key !== " ") || !e.target.matches?.("[data-chart-trigger]")) return;
+      e.preventDefault();
+      const card = e.target.closest("article[data-id]");
+      if (card) openChart(card.dataset.id);
     });
 
     grid.addEventListener("change", e => {
@@ -1677,10 +2003,29 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       // Click on the dim backdrop (not the inner panel) closes the modal.
       if (e.target === compareModal) compareModal.classList.remove("visible");
     });
+
+    // Chart modal close + range buttons + ESC
+    const chartModal = $("chartModal");
+    $("chartModalClose").addEventListener("click", () => chartModal.classList.remove("visible"));
+    chartModal.addEventListener("click", e => {
+      if (e.target === chartModal) chartModal.classList.remove("visible");
+    });
+    chartModal.querySelectorAll(".range-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        chartCurrentRange = btn.dataset.range;
+        chartModal.querySelectorAll(".range-btn").forEach(b => {
+          const on = b === btn;
+          b.classList.toggle("active", on);
+          b.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        renderChart();
+      });
+    });
+
     document.addEventListener("keydown", e => {
-      if (e.key === "Escape" && compareModal.classList.contains("visible")) {
-        compareModal.classList.remove("visible");
-      }
+      if (e.key !== "Escape") return;
+      if (compareModal.classList.contains("visible")) compareModal.classList.remove("visible");
+      if (chartModal.classList.contains("visible")) chartModal.classList.remove("visible");
     });
 
     // The footer link goes to a generic issue form; per-card "report" links
