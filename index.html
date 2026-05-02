@@ -895,6 +895,39 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   transition: background 0.15s;
 }
 .sparkline:hover { background: rgba(228, 185, 84, 0.08); }
+
+/* Set-bundle inline note (shown on cards from sets with a Commander Deck Case) */
+.bundle-note {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  background: rgba(228, 185, 84, 0.08);
+  border-left: 2px solid var(--gold-bright);
+  padding: 6px 10px;
+  margin-top: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.bundle-note .bundle-label {
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+}
+.bundle-note a {
+  color: var(--gold-bright);
+  text-decoration: none;
+  font-weight: 600;
+}
+.bundle-note a:hover { text-decoration: underline; }
+.bundle-note .bundle-savings {
+  color: var(--sage);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
 </style>
 </head>
 <body>
@@ -1180,6 +1213,17 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     if (!PRICE_HISTORY) return null;
     const series = PRICE_HISTORY[deck.id];
     return Array.isArray(series) && series.length >= 2 ? series : null;
+  }
+
+  // If this deck belongs to a set with a TCGPlayer bundle (Commander Deck
+  // Case / Set of N), return the bundle info. Null otherwise.
+  function getBundleForDeck(deck) {
+    const bundles = LIVE_PRICES?.bundles;
+    if (!bundles) return null;
+    for (const b of Object.values(bundles)) {
+      if (b.deck_ids && b.deck_ids.includes(deck.id)) return b;
+    }
+    return null;
   }
 
   // ---------- Vendor URL builder ----------
@@ -1671,6 +1715,22 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       return `<a class="vendor-btn" href="${href}" target="_blank" rel="noopener noreferrer" title="${v.label}">${v.label}</a>`;
     }).join("");
 
+    // Set-bundle note: if this deck is part of a known TCGPlayer bundle
+    // (Commander Deck Case), show price + "saves $X" if buying-as-bundle
+    // beats summing the individual decks.
+    const bundle = getBundleForDeck(d);
+    let bundleNote = "";
+    if (bundle) {
+      const savings = (bundle.savings && bundle.savings > 0)
+        ? `<span class="bundle-savings">saves $${bundle.savings.toFixed(2)}</span>`
+        : "";
+      bundleNote = `
+        <div class="bundle-note">
+          <span><span class="bundle-label">Set bundle</span> · all ${bundle.deck_count} decks · <a href="${bundle.url}" target="_blank" rel="noopener noreferrer">$${bundle.price.toFixed(2)}</a></span>
+          ${savings}
+        </div>`;
+    }
+
     return `
       <article class="${classes.join(" ")}" data-id="${d.id}">
         <button class="watch-toggle ${isWatching ? 'checked' : ''}" data-watch="${d.id}" title="${isWatching ? 'Watching' : 'Add to watchlist'}" aria-label="Toggle watchlist" aria-pressed="${isWatching}">${isWatching ? '★' : '☆'}</button>
@@ -1687,6 +1747,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         ${metaBits ? `<div class="card-meta">${metaBits}</div>` : ""}
         ${powerLine}
         ${priceBlock}
+        ${bundleNote}
         <div class="vendor-row">${vendorBtns}</div>
         <label class="compare-toggle">
           <input type="checkbox" data-compare="${d.id}" ${isComparing ? 'checked' : ''}>
