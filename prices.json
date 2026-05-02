@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-02T15:37:47.480442+00:00",
+  "updated_at": "2026-05-02T19:30:40.219702+00:00",
   "deck_count": 111,
   "vendors": {
     "cardkingdom": {
@@ -1342,6 +1342,7 @@
       "quandrix-unlimited": {
         "price": 45.16,
         "price_low": 42.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675571/magic-secrets-of-strixhaven-commander-deck-quandrix-unlimited",
         "status": "ok",
         "snippet": "Secrets of Strixhaven Commander Deck - Quandrix Unlimited"
@@ -1349,6 +1350,7 @@
       "silverquill-influence": {
         "price": 65.89,
         "price_low": 58.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675567/magic-secrets-of-strixhaven-commander-deck-silverquill-influence",
         "status": "ok",
         "snippet": "Secrets of Strixhaven Commander Deck - Silverquill Influence"
@@ -1356,6 +1358,7 @@
       "prismari-artistry": {
         "price": 39.29,
         "price_low": 35.8,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675568/magic-secrets-of-strixhaven-commander-deck-prismari-artistry",
         "status": "ok",
         "snippet": "Secrets of Strixhaven Commander Deck - Prismari Artistry"
@@ -1363,6 +1366,7 @@
       "lorehold-spirit": {
         "price": 41.8,
         "price_low": 40.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675570/magic-secrets-of-strixhaven-commander-deck-lorehold-spirit",
         "status": "ok",
         "snippet": "Secrets of Strixhaven Commander Deck - Lorehold Spirit"
@@ -1370,6 +1374,7 @@
       "witherbloom-pestilence": {
         "price": 64.02,
         "price_low": 55.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675569/magic-secrets-of-strixhaven-commander-deck-witherbloom-pestilence",
         "status": "ok",
         "snippet": "Secrets of Strixhaven Commander Deck - Witherbloom Pestilence"
@@ -1377,6 +1382,7 @@
       "turtle-power": {
         "price": 46.02,
         "price_low": 38.76,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/657865/magic-teenage-mutant-ninja-turtles-commander-deck-turtle-power",
         "status": "ok",
         "snippet": "Teenage Mutant Ninja Turtles Commander Deck - Turtle Power!"
@@ -1384,6 +1390,7 @@
       "dance-of-the-elements": {
         "price": 26.72,
         "price_low": 24.95,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/656352/magic-lorwyn-eclipsed-commander-deck-dance-of-the-elements",
         "status": "ok",
         "snippet": "Lorwyn Eclipsed Commander Deck - Dance of the Elements"
@@ -1391,6 +1398,7 @@
       "blight-curse": {
         "price": 26.98,
         "price_low": 22.88,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/656354/magic-lorwyn-eclipsed-commander-deck-blight-curse",
         "status": "ok",
         "snippet": "Lorwyn Eclipsed Commander Deck - Blight Curse"
@@ -1398,6 +1406,7 @@
       "counter-intelligence": {
         "price": 29.75,
         "price_low": 27.83,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619677/magic-edge-of-eternities-commander-deck-counter-intelligence",
         "status": "ok",
         "snippet": "Edge of Eternities Commander Deck - Counter Intelligence"
@@ -1405,76 +1414,87 @@
       "world-shaper": {
         "price": 44.3,
         "price_low": 40.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619676/magic-edge-of-eternities-commander-deck-world-shaper",
         "status": "ok",
         "snippet": "Edge of Eternities Commander Deck - World Shaper"
       },
       "revival-trance": {
-        "price": 75.98,
-        "price_low": 69.99,
-        "url": "https://www.tcgplayer.com/product/641712/magic-final-fantasy-deluxe-commander-kit-revival-trance",
+        "price": 38.08,
+        "price_low": 34.64,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/618903/magic-final-fantasy-commander-deck-final-fantasy-vi-revival-trance",
         "status": "ok",
-        "snippet": "FINAL FANTASY Deluxe Commander Kit - Revival Trance"
+        "snippet": "FINAL FANTASY Commander Deck - FINAL FANTASY VI Revival Trance"
       },
       "limit-break": {
-        "price": 92.1,
-        "price_low": 110.0,
-        "url": "https://www.tcgplayer.com/product/641711/magic-final-fantasy-deluxe-commander-kit-limit-break",
+        "price": 63.36,
+        "price_low": 59.75,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/618904/magic-final-fantasy-commander-deck-final-fantasy-vii-limit-break",
         "status": "ok",
-        "snippet": "FINAL FANTASY Deluxe Commander Kit - Limit Break"
+        "snippet": "FINAL FANTASY Commander Deck - FINAL FANTASY VII Limit Break"
       },
       "counter-blitz": {
-        "price": 89.12,
-        "price_low": 95.99,
-        "url": "https://www.tcgplayer.com/product/641714/magic-final-fantasy-deluxe-commander-kit-counter-blitz",
+        "price": 51.75,
+        "price_low": 40.24,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/618905/magic-final-fantasy-commander-deck-final-fantasy-x-counter-blitz",
         "status": "ok",
-        "snippet": "FINAL FANTASY Deluxe Commander Kit - Counter Blitz"
+        "snippet": "FINAL FANTASY Commander Deck - FINAL FANTASY X Counter Blitz"
       },
       "scions-and-spellcraft": {
-        "price": 83.62,
-        "price_low": 93.99,
-        "url": "https://www.tcgplayer.com/product/641713/magic-final-fantasy-deluxe-commander-kit-scions-spellcraft",
+        "price": 64.26,
+        "price_low": 55.47,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/618906/magic-final-fantasy-commander-deck-final-fantasy-xiv-scions-spellcraft",
         "status": "ok",
-        "snippet": "FINAL FANTASY Deluxe Commander Kit - Scions & Spellcraft"
+        "snippet": "FINAL FANTASY Commander Deck - FINAL FANTASY XIV Scions & Spellcraft"
       },
       "jeskai-striker": {
-        "price": null,
-        "price_low": null,
-        "url": "https://www.tcgplayer.com/product/691159/magic-tarkir-dragonstorm-commander-kit-jeskai-striker",
-        "status": "tcgcsv-no-market-price",
-        "snippet": "Tarkir: Dragonstorm Commander Kit - Jeskai Striker"
+        "price": 30.36,
+        "price_low": 30.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/619665/magic-tarkir-dragonstorm-commander-deck-jeskai-striker",
+        "status": "ok",
+        "snippet": "Tarkir: Dragonstorm Commander Deck - Jeskai Striker"
       },
       "abzan-armor": {
-        "price": null,
-        "price_low": null,
-        "url": "https://www.tcgplayer.com/product/691158/magic-tarkir-dragonstorm-commander-kit-abzan-armor",
-        "status": "tcgcsv-no-market-price",
-        "snippet": "Tarkir: Dragonstorm Commander Kit - Abzan Armor"
+        "price": 38.06,
+        "price_low": 38.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/619664/magic-tarkir-dragonstorm-commander-deck-abzan-armor",
+        "status": "ok",
+        "snippet": "Tarkir: Dragonstorm Commander Deck - Abzan Armor"
       },
       "sultai-arisen": {
-        "price": null,
-        "price_low": null,
-        "url": "https://www.tcgplayer.com/product/691152/magic-tarkir-dragonstorm-commander-kit-sultai-arisen",
-        "status": "tcgcsv-no-market-price",
-        "snippet": "Tarkir: Dragonstorm Commander Kit - Sultai Arisen"
+        "price": 51.68,
+        "price_low": 45.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/619666/magic-tarkir-dragonstorm-commander-deck-sultai-arisen",
+        "status": "ok",
+        "snippet": "Tarkir: Dragonstorm Commander Deck - Sultai Arisen"
       },
       "mardu-surge": {
-        "price": null,
-        "price_low": null,
-        "url": "https://www.tcgplayer.com/product/691163/magic-tarkir-dragonstorm-commander-kit-mardu-surge",
-        "status": "tcgcsv-no-market-price",
-        "snippet": "Tarkir: Dragonstorm Commander Kit - Mardu Surge"
+        "price": 41.78,
+        "price_low": 35.74,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/619667/magic-tarkir-dragonstorm-commander-deck-mardu-surge",
+        "status": "ok",
+        "snippet": "Tarkir: Dragonstorm Commander Deck - Mardu Surge"
       },
       "temur-roar": {
-        "price": 105.0,
-        "price_low": 106.99,
-        "url": "https://www.tcgplayer.com/product/691162/magic-tarkir-dragonstorm-commander-kit-temur-roar",
+        "price": 52.56,
+        "price_low": 45.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/619668/magic-tarkir-dragonstorm-commander-deck-temur-roar",
         "status": "ok",
-        "snippet": "Tarkir: Dragonstorm Commander Kit - Temur Roar"
+        "snippet": "Tarkir: Dragonstorm Commander Deck - Temur Roar"
       },
       "living-energy": {
         "price": 26.68,
         "price_low": 25.75,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/604258/magic-aetherdrift-commander-deck-living-energy",
         "status": "ok",
         "snippet": "Aetherdrift Commander Deck - Living Energy"
@@ -1482,6 +1502,7 @@
       "eternal-might": {
         "price": 37.65,
         "price_low": 35.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/604259/magic-aetherdrift-commander-deck-eternal-might",
         "status": "ok",
         "snippet": "Aetherdrift Commander Deck - Eternal Might"
@@ -1489,6 +1510,7 @@
       "miracle-worker": {
         "price": 54.47,
         "price_low": 47.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557253/magic-duskmourn-house-of-horror-commander-deck-miracle-worker",
         "status": "ok",
         "snippet": "Duskmourn: House of Horror Commander Deck - Miracle Worker"
@@ -1496,6 +1518,7 @@
       "death-toll": {
         "price": 41.64,
         "price_low": 35.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557254/magic-duskmourn-house-of-horror-commander-deck-death-toll",
         "status": "ok",
         "snippet": "Duskmourn: House of Horror Commander Deck - Death Toll"
@@ -1503,6 +1526,7 @@
       "jump-scare": {
         "price": 44.03,
         "price_low": 34.19,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557255/magic-duskmourn-house-of-horror-commander-deck-jump-scare",
         "status": "ok",
         "snippet": "Duskmourn: House of Horror Commander Deck - Jump Scare!"
@@ -1510,6 +1534,7 @@
       "endless-punishment": {
         "price": 139.44,
         "price_low": 127.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557256/magic-duskmourn-house-of-horror-commander-deck-endless-punishment",
         "status": "ok",
         "snippet": "Duskmourn: House of Horror Commander Deck - Endless Punishment"
@@ -1517,6 +1542,7 @@
       "family-matters": {
         "price": 30.86,
         "price_low": 28.78,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541247/magic-bloomburrow-commander-deck-family-matters",
         "status": "ok",
         "snippet": "Bloomburrow Commander Deck - Family Matters"
@@ -1524,6 +1550,7 @@
       "squirreled-away": {
         "price": 48.92,
         "price_low": 46.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541249/magic-bloomburrow-commander-deck-squirreled-away",
         "status": "ok",
         "snippet": "Bloomburrow Commander Deck - Squirreled Away"
@@ -1531,6 +1558,7 @@
       "animated-army": {
         "price": 46.25,
         "price_low": 42.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541246/magic-bloomburrow-commander-deck-animated-army",
         "status": "ok",
         "snippet": "Bloomburrow Commander Deck - Animated Army"
@@ -1538,6 +1566,7 @@
       "peace-offering-blb": {
         "price": 55.1,
         "price_low": 49.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541248/magic-bloomburrow-commander-deck-peace-offering",
         "status": "ok",
         "snippet": "Bloomburrow Commander Deck - Peace Offering"
@@ -1559,6 +1588,7 @@
       "creative-energy": {
         "price": 41.5,
         "price_low": 35.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541194/magic-modern-horizons-3-commander-deck-creative-energy",
         "status": "ok",
         "snippet": "Modern Horizons 3 Commander Deck - Creative Energy"
@@ -1566,6 +1596,7 @@
       "eldrazi-incursion": {
         "price": 123.76,
         "price_low": 110.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541195/magic-modern-horizons-3-commander-deck-eldrazi-incursion",
         "status": "ok",
         "snippet": "Modern Horizons 3 Commander Deck - Eldrazi Incursion"
@@ -1573,6 +1604,7 @@
       "graveyard-overdrive": {
         "price": 43.22,
         "price_low": 42.95,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541192/magic-modern-horizons-3-commander-deck-graveyard-overdrive",
         "status": "ok",
         "snippet": "Modern Horizons 3 Commander Deck - Graveyard Overdrive"
@@ -1580,6 +1612,7 @@
       "tricky-terrain": {
         "price": 55.57,
         "price_low": 55.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541193/magic-modern-horizons-3-commander-deck-tricky-terrain",
         "status": "ok",
         "snippet": "Modern Horizons 3 Commander Deck - Tricky Terrain"
@@ -1587,6 +1620,7 @@
       "most-wanted": {
         "price": 109.56,
         "price_low": 100.58,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541103/magic-outlaws-of-thunder-junction-commander-deck-most-wanted",
         "status": "ok",
         "snippet": "Outlaws of Thunder Junction Commander Deck - Most Wanted"
@@ -1594,6 +1628,7 @@
       "grand-larceny": {
         "price": 180.76,
         "price_low": 179.25,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541102/magic-outlaws-of-thunder-junction-commander-deck-grand-larceny",
         "status": "ok",
         "snippet": "Outlaws of Thunder Junction Commander Deck - Grand Larceny"
@@ -1601,6 +1636,7 @@
       "quick-draw": {
         "price": 167.21,
         "price_low": 184.1,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541099/magic-outlaws-of-thunder-junction-commander-deck-quick-draw",
         "status": "ok",
         "snippet": "Outlaws of Thunder Junction Commander Deck - Quick Draw"
@@ -1608,6 +1644,7 @@
       "desert-bloom": {
         "price": 82.97,
         "price_low": 71.69,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541100/magic-outlaws-of-thunder-junction-commander-deck-desert-bloom",
         "status": "ok",
         "snippet": "Outlaws of Thunder Junction Commander Deck - Desert Bloom"
@@ -1615,6 +1652,7 @@
       "scrappy-survivors": {
         "price": 68.99,
         "price_low": 65.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/522899/magic-universes-beyond-fallout-scrappy-survivors-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Fallout - Scrappy Survivors Commander Deck"
@@ -1622,6 +1660,7 @@
       "mutant-menace": {
         "price": 158.64,
         "price_low": 151.86,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/522902/magic-universes-beyond-fallout-mutant-menace-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Fallout - Mutant Menace Commander Deck"
@@ -1629,6 +1668,7 @@
       "hail-caesar": {
         "price": 88.8,
         "price_low": 79.98,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/522903/magic-universes-beyond-fallout-hail-caesar-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Fallout - Hail, Caesar Commander Deck"
@@ -1636,6 +1676,7 @@
       "science": {
         "price": 47.29,
         "price_low": 32.79,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/522905/magic-universes-beyond-fallout-science-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Fallout - Science! Commander Deck"
@@ -1643,6 +1684,7 @@
       "deep-clue-sea": {
         "price": 61.54,
         "price_low": 64.95,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/529979/magic-murders-at-karlov-manor-commander-deck-deep-clue-sea",
         "status": "ok",
         "snippet": "Murders at Karlov Manor Commander Deck - Deep Clue Sea"
@@ -1650,6 +1692,7 @@
       "revenant-recon": {
         "price": 82.17,
         "price_low": 85.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/529978/magic-murders-at-karlov-manor-commander-deck-revenant-recon",
         "status": "ok",
         "snippet": "Murders at Karlov Manor Commander Deck - Revenant Recon"
@@ -1657,6 +1700,7 @@
       "blame-game": {
         "price": 81.93,
         "price_low": 69.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/529980/magic-murders-at-karlov-manor-commander-deck-blame-game",
         "status": "ok",
         "snippet": "Murders at Karlov Manor Commander Deck - Blame Game"
@@ -1664,6 +1708,7 @@
       "deadly-disguise": {
         "price": 79.73,
         "price_low": 66.49,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/529977/magic-murders-at-karlov-manor-commander-deck-deadly-disguise",
         "status": "ok",
         "snippet": "Murders at Karlov Manor Commander Deck - Deadly Disguise"
@@ -1671,6 +1716,7 @@
       "ahoy-mateys": {
         "price": 38.44,
         "price_low": 33.31,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/517513/magic-the-lost-caverns-of-ixalan-commander-deck-ahoy-mateys",
         "status": "ok",
         "snippet": "The Lost Caverns of Ixalan Commander Deck - Ahoy Mateys"
@@ -1678,6 +1724,7 @@
       "veloci-ramp-tor": {
         "price": 90.11,
         "price_low": 84.29,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/517516/magic-the-lost-caverns-of-ixalan-commander-deck-veloci-ramp-tor",
         "status": "ok",
         "snippet": "The Lost Caverns of Ixalan Commander Deck - Veloci-Ramp-Tor"
@@ -1685,6 +1732,7 @@
       "blood-rites": {
         "price": 69.01,
         "price_low": 65.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/517514/magic-the-lost-caverns-of-ixalan-commander-deck-blood-rites",
         "status": "ok",
         "snippet": "The Lost Caverns of Ixalan Commander Deck - Blood Rites"
@@ -1692,6 +1740,7 @@
       "explorers-of-the-deep": {
         "price": 61.35,
         "price_low": 58.95,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/517515/magic-the-lost-caverns-of-ixalan-commander-deck-explorers-of-the-deep",
         "status": "ok",
         "snippet": "The Lost Caverns of Ixalan Commander Deck - Explorers of the Deep"
@@ -1699,6 +1748,7 @@
       "blast-from-the-past": {
         "price": 41.46,
         "price_low": 35.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496071/magic-universes-beyond-doctor-who-blast-from-the-past-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Doctor Who - Blast From the Past Commander Deck"
@@ -1706,6 +1756,7 @@
       "timey-wimey": {
         "price": 120.93,
         "price_low": 113.44,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496072/magic-universes-beyond-doctor-who-timey-wimey-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Doctor Who - Timey-Wimey Commander Deck"
@@ -1713,6 +1764,7 @@
       "paradox-power": {
         "price": 43.91,
         "price_low": 38.31,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496073/magic-universes-beyond-doctor-who-paradox-power-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Doctor Who - Paradox Power Commander Deck"
@@ -1720,6 +1772,7 @@
       "masters-of-evil": {
         "price": 80.84,
         "price_low": 80.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496070/magic-universes-beyond-doctor-who-masters-of-evil-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Doctor Who - Masters of Evil Commander Deck"
@@ -1727,6 +1780,7 @@
       "virtue-and-valor": {
         "price": 74.33,
         "price_low": 87.19,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496044/magic-wilds-of-eldraine-commander-deck-virtue-and-valor",
         "status": "ok",
         "snippet": "Wilds of Eldraine Commander Deck - Virtue and Valor"
@@ -1734,6 +1788,7 @@
       "fae-dominion": {
         "price": 220.39,
         "price_low": 218.9,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496043/magic-wilds-of-eldraine-commander-deck-fae-dominion",
         "status": "ok",
         "snippet": "Wilds of Eldraine Commander Deck - Fae Dominion"
@@ -1755,6 +1810,7 @@
       "sliver-swarm": {
         "price": 309.98,
         "price_low": 300.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484933/magic-commander-masters-commander-deck-sliver-swarm",
         "status": "ok",
         "snippet": "Commander Masters Commander Deck - Sliver Swarm"
@@ -1762,6 +1818,7 @@
       "eldrazi-unbound": {
         "price": 394.87,
         "price_low": 333.35,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484931/magic-commander-masters-commander-deck-eldrazi-unbound",
         "status": "ok",
         "snippet": "Commander Masters Commander Deck - Eldrazi Unbound"
@@ -1769,6 +1826,7 @@
       "enduring-enchantments": {
         "price": 171.08,
         "price_low": 185.46,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484932/magic-commander-masters-commander-deck-enduring-enchantments",
         "status": "ok",
         "snippet": "Commander Masters Commander Deck - Enduring Enchantments"
@@ -1776,6 +1834,7 @@
       "planeswalker-party": {
         "price": 101.36,
         "price_low": 88.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484930/magic-commander-masters-commander-deck-planeswalker-party",
         "status": "ok",
         "snippet": "Commander Masters Commander Deck - Planeswalker Party"
@@ -1783,6 +1842,7 @@
       "the-hosts-of-mordor": {
         "price": 81.25,
         "price_low": 65.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/488293/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-deck-the-hosts-of-mordor",
         "status": "ok",
         "snippet": "The Lord of the Rings: Tales of Middle-earth Commander Deck - The Hosts of Mordor"
@@ -1790,6 +1850,7 @@
       "food-and-fellowship": {
         "price": 65.06,
         "price_low": 60.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/488294/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-deck-food-and-fellowship",
         "status": "ok",
         "snippet": "The Lord of the Rings: Tales of Middle-earth Commander Deck - Food and Fellowship"
@@ -1797,6 +1858,7 @@
       "elven-council": {
         "price": 46.56,
         "price_low": 46.25,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/488295/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-deck-elven-council",
         "status": "ok",
         "snippet": "The Lord of the Rings: Tales of Middle-earth Commander Deck - Elven Council"
@@ -1804,6 +1866,7 @@
       "riders-of-rohan": {
         "price": 49.64,
         "price_low": 42.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/488296/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-deck-riders-of-rohan",
         "status": "ok",
         "snippet": "The Lord of the Rings: Tales of Middle-earth Commander Deck - Riders of Rohan"
@@ -1811,6 +1874,7 @@
       "call-for-backup": {
         "price": 78.66,
         "price_low": 70.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484587/magic-march-of-the-machine-commander-deck-call-for-backup",
         "status": "ok",
         "snippet": "March of the Machine Commander Deck - Call For Backup"
@@ -1818,6 +1882,7 @@
       "divine-convocation": {
         "price": 71.54,
         "price_low": 65.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484588/magic-march-of-the-machine-commander-deck-divine-convocation",
         "status": "ok",
         "snippet": "March of the Machine Commander Deck - Divine Convocation"
@@ -1825,6 +1890,7 @@
       "growing-threat": {
         "price": 85.73,
         "price_low": 75.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484590/magic-march-of-the-machine-commander-deck-growing-threat",
         "status": "ok",
         "snippet": "March of the Machine Commander Deck - Growing Threat"
@@ -1832,6 +1898,7 @@
       "cavalry-charge": {
         "price": 137.09,
         "price_low": 130.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484589/magic-march-of-the-machine-commander-deck-cavalry-charge",
         "status": "ok",
         "snippet": "March of the Machine Commander Deck - Cavalry Charge"
@@ -1839,6 +1906,7 @@
       "tinker-time": {
         "price": 39.7,
         "price_low": 36.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484591/magic-march-of-the-machine-commander-deck-tinker-time",
         "status": "ok",
         "snippet": "March of the Machine Commander Deck - Tinker Time"
@@ -1846,6 +1914,7 @@
       "rebellion-rising": {
         "price": 84.58,
         "price_low": 89.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/475567/magic-phyrexia-all-will-be-one-commander-deck-rebellion-rising",
         "status": "ok",
         "snippet": "Phyrexia: All Will Be One Commander Deck - Rebellion Rising"
@@ -1853,6 +1922,7 @@
       "corrupting-influence": {
         "price": 199.02,
         "price_low": 239.95,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/475566/magic-phyrexia-all-will-be-one-commander-deck-corrupting-influence",
         "status": "ok",
         "snippet": "Phyrexia: All Will Be One Commander Deck - Corrupting Influence"
@@ -1860,6 +1930,7 @@
       "urzas-iron-alliance": {
         "price": 152.62,
         "price_low": 149.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/449722/magic-the-brothers-war-commander-deck-urza-s-iron-alliance",
         "status": "ok",
         "snippet": "The Brothers' War Commander Deck - Urza's Iron Alliance"
@@ -1867,6 +1938,7 @@
       "mishras-burnished-banner": {
         "price": 86.82,
         "price_low": 76.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/449723/magic-the-brothers-war-commander-deck-mishra-s-burnished-banner",
         "status": "ok",
         "snippet": "The Brothers' War Commander Deck - Mishra's Burnished Banner"
@@ -1874,6 +1946,7 @@
       "forces-of-the-imperium": {
         "price": 321.83,
         "price_low": 335.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/272320/magic-universes-beyond-warhammer-40-000-forces-of-the-imperium-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Warhammer 40,000 - Forces of the Imperium Commander Deck"
@@ -1881,6 +1954,7 @@
       "necron-dynasties": {
         "price": 371.43,
         "price_low": 393.95,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/272308/magic-universes-beyond-warhammer-40-000-necron-dynasties-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Warhammer 40,000 - Necron Dynasties Commander Deck"
@@ -1888,6 +1962,7 @@
       "tyranid-swarm": {
         "price": 313.15,
         "price_low": 334.97,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/272314/magic-universes-beyond-warhammer-40-000-tyranid-swarm-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Warhammer 40,000 - Tyranid Swarm Commander Deck"
@@ -1895,6 +1970,7 @@
       "the-ruinous-powers": {
         "price": 216.42,
         "price_low": 204.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/272315/magic-universes-beyond-warhammer-40-000-the-ruinous-powers-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Warhammer 40,000 - The Ruinous Powers Commander Deck"
@@ -1902,6 +1978,7 @@
       "legends-legacy": {
         "price": 104.45,
         "price_low": 129.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/279817/magic-dominaria-united-commander-deck-legends-legacy",
         "status": "ok",
         "snippet": "Dominaria United Commander Deck - Legends' Legacy"
@@ -1909,6 +1986,7 @@
       "painbow": {
         "price": 90.95,
         "price_low": 110.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/279816/magic-dominaria-united-commander-deck-painbow",
         "status": "ok",
         "snippet": "Dominaria United Commander Deck - Painbow"
@@ -1916,6 +1994,7 @@
       "party-time": {
         "price": 184.39,
         "price_low": 190.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/267025/magic-commander-legends-battle-for-baldur-s-gate-party-time-commander-deck",
         "status": "ok",
         "snippet": "Commander Legends: Battle for Baldur's Gate - Party Time Commander Deck"
@@ -1923,6 +2002,7 @@
       "mind-flayarrrs": {
         "price": 296.61,
         "price_low": 309.95,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/267027/magic-commander-legends-battle-for-baldur-s-gate-mind-flayarrrs-commander-deck",
         "status": "ok",
         "snippet": "Commander Legends: Battle for Baldur's Gate - Mind Flayarrrs Commander Deck"
@@ -1930,6 +2010,7 @@
       "exit-from-exile": {
         "price": 139.54,
         "price_low": 130.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/267031/magic-commander-legends-battle-for-baldur-s-gate-exit-from-exile-commander-deck",
         "status": "ok",
         "snippet": "Commander Legends: Battle for Baldur's Gate - Exit from Exile Commander Deck"
@@ -1937,6 +2018,7 @@
       "draconic-dissent": {
         "price": 158.92,
         "price_low": 169.95,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/267030/magic-commander-legends-battle-for-baldur-s-gate-draconic-dissent-commander-deck",
         "status": "ok",
         "snippet": "Commander Legends: Battle for Baldur's Gate - Draconic Dissent Commander Deck"
@@ -1944,6 +2026,7 @@
       "obscura-operation": {
         "price": 68.85,
         "price_low": 64.38,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/265392/magic-streets-of-new-capenna-commander-deck-obscura-operation",
         "status": "ok",
         "snippet": "Streets of New Capenna Commander Deck - Obscura Operation"
@@ -1951,6 +2034,7 @@
       "maestros-massacre": {
         "price": 72.07,
         "price_low": 70.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/265393/magic-streets-of-new-capenna-commander-deck-maestros-massacre",
         "status": "ok",
         "snippet": "Streets of New Capenna Commander Deck - Maestros Massacre"
@@ -1958,6 +2042,7 @@
       "riveteers-rampage": {
         "price": 112.98,
         "price_low": 130.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/265394/magic-streets-of-new-capenna-commander-deck-riveteers-rampage",
         "status": "ok",
         "snippet": "Streets of New Capenna Commander Deck - Riveteers Rampage"
@@ -1965,6 +2050,7 @@
       "cabaretti-cacophony": {
         "price": 83.72,
         "price_low": 100.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/265395/magic-streets-of-new-capenna-commander-deck-cabaretti-cacophony",
         "status": "ok",
         "snippet": "Streets of New Capenna Commander Deck - Cabaretti Cacophony"
@@ -1972,6 +2058,7 @@
       "bedecked-brokers": {
         "price": 70.62,
         "price_low": 50.04,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/265396/magic-streets-of-new-capenna-commander-deck-bedecked-brokers",
         "status": "ok",
         "snippet": "Streets of New Capenna Commander Deck - Bedecked Brokers"
@@ -1979,6 +2066,7 @@
       "upgrades-unleashed": {
         "price": 80.21,
         "price_low": 70.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/262520/magic-kamigawa-neon-dynasty-commander-deck-upgrades-unleashed",
         "status": "ok",
         "snippet": "Kamigawa: Neon Dynasty Commander Deck - Upgrades Unleashed"
@@ -1986,6 +2074,7 @@
       "buckle-up": {
         "price": 99.06,
         "price_low": 89.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/262517/magic-kamigawa-neon-dynasty-commander-deck-buckle-up",
         "status": "ok",
         "snippet": "Kamigawa: Neon Dynasty Commander Deck - Buckle Up"
@@ -2035,6 +2124,7 @@
       "spirit-squadron": {
         "price": 73.29,
         "price_low": 69.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/246465/magic-innistrad-crimson-vow-commander-deck-spirit-squadron",
         "status": "ok",
         "snippet": "Innistrad: Crimson Vow Commander Deck - Spirit Squadron"
@@ -2042,6 +2132,7 @@
       "coven-counters": {
         "price": 55.03,
         "price_low": 50.0,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/246460/magic-innistrad-midnight-hunt-commander-deck-coven-counters",
         "status": "ok",
         "snippet": "Innistrad: Midnight Hunt Commander Deck - Coven Counters"
@@ -2049,6 +2140,7 @@
       "undead-unleashed": {
         "price": 133.28,
         "price_low": 139.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/246461/magic-innistrad-midnight-hunt-commander-deck-undead-unleashed",
         "status": "ok",
         "snippet": "Innistrad: Midnight Hunt Commander Deck - Undead Unleashed"
@@ -2056,6 +2148,7 @@
       "aura-of-courage": {
         "price": 80.63,
         "price_low": 79.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/238759/magic-adventures-in-the-forgotten-realms-aura-of-courage-commander-deck",
         "status": "ok",
         "snippet": "Adventures in the Forgotten Realms - Aura of Courage Commander Deck"
@@ -2063,6 +2156,7 @@
       "dungeons-of-death": {
         "price": 88.78,
         "price_low": 86.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/238757/magic-adventures-in-the-forgotten-realms-dungeons-of-death-commander-deck",
         "status": "ok",
         "snippet": "Adventures in the Forgotten Realms - Dungeons of Death Commander Deck"
@@ -2070,6 +2164,7 @@
       "draconic-rage": {
         "price": 113.9,
         "price_low": 113.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/238754/magic-adventures-in-the-forgotten-realms-draconic-rage-commander-deck",
         "status": "ok",
         "snippet": "Adventures in the Forgotten Realms - Draconic Rage Commander Deck"
@@ -2077,6 +2172,7 @@
       "planar-portal": {
         "price": 119.67,
         "price_low": 209.99,
+        "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/238755/magic-adventures-in-the-forgotten-realms-planar-portal-commander-deck",
         "status": "ok",
         "snippet": "Adventures in the Forgotten Realms - Planar Portal Commander Deck"
@@ -2116,6 +2212,214 @@
         "status": "tcgcsv-no-product-match",
         "snippet": "group=Commander: Secrets of Strixhaven"
       }
+    }
+  },
+  "bundles": {
+    "secrets-of-strixhaven-bundle": {
+      "name": "Secrets of Strixhaven Commander Deck Case",
+      "set": "Secrets of Strixhaven",
+      "deck_ids": [
+        "quandrix-unlimited",
+        "silverquill-influence",
+        "prismari-artistry",
+        "lorehold-spirit",
+        "witherbloom-pestilence"
+      ],
+      "deck_count": 5,
+      "price": 216.34,
+      "price_source": "Market",
+      "individual_total": 256.16,
+      "savings": 39.82,
+      "url": "https://www.tcgplayer.com/product/675572/magic-secrets-of-strixhaven-commander-deck-case",
+      "snippet": "Secrets of Strixhaven Commander Deck Case"
+    },
+    "edge-of-eternities-bundle": {
+      "name": "Edge of Eternities Commander Deck Case",
+      "set": "Edge of Eternities",
+      "deck_ids": [
+        "counter-intelligence",
+        "world-shaper"
+      ],
+      "deck_count": 2,
+      "price": 124.87,
+      "price_source": "Market",
+      "individual_total": 74.05,
+      "savings": -50.82,
+      "url": "https://www.tcgplayer.com/product/619691/magic-edge-of-eternities-commander-deck-case",
+      "snippet": "Edge of Eternities Commander Deck Case"
+    },
+    "tarkir-dragonstorm-bundle": {
+      "name": "Tarkir: Dragonstorm Commander Deck Case",
+      "set": "Tarkir: Dragonstorm",
+      "deck_ids": [
+        "jeskai-striker",
+        "abzan-armor",
+        "sultai-arisen",
+        "mardu-surge",
+        "temur-roar"
+      ],
+      "deck_count": 5,
+      "price": 201.55,
+      "price_source": "Market",
+      "individual_total": 214.44,
+      "savings": 12.89,
+      "url": "https://www.tcgplayer.com/product/619669/magic-tarkir-dragonstorm-commander-deck-case",
+      "snippet": "Tarkir: Dragonstorm Commander Deck Case"
+    },
+    "fallout-commander-bundle": {
+      "name": "Universes Beyond: Fallout Commander Deck Case",
+      "set": "Fallout Commander",
+      "deck_ids": [
+        "scrappy-survivors",
+        "mutant-menace",
+        "hail-caesar",
+        "science"
+      ],
+      "deck_count": 4,
+      "price": 293.97,
+      "price_source": "Market",
+      "individual_total": 363.72,
+      "savings": 69.75,
+      "url": "https://www.tcgplayer.com/product/524616/magic-universes-beyond-fallout-commander-deck-case",
+      "snippet": "Universes Beyond: Fallout Commander Deck Case"
+    },
+    "murders-at-karlov-manor-bundle": {
+      "name": "Murders at Karlov Manor Commander Deck Case",
+      "set": "Murders at Karlov Manor",
+      "deck_ids": [
+        "deep-clue-sea",
+        "revenant-recon",
+        "blame-game",
+        "deadly-disguise"
+      ],
+      "deck_count": 4,
+      "price": 257.85,
+      "price_source": "Market",
+      "individual_total": 305.37,
+      "savings": 47.52,
+      "url": "https://www.tcgplayer.com/product/529981/magic-murders-at-karlov-manor-commander-deck-case",
+      "snippet": "Murders at Karlov Manor Commander Deck Case"
+    },
+    "the-lost-caverns-of-ixalan-bundle": {
+      "name": "The Lost Caverns of Ixalan Commander Deck Case",
+      "set": "The Lost Caverns of Ixalan",
+      "deck_ids": [
+        "ahoy-mateys",
+        "veloci-ramp-tor",
+        "blood-rites",
+        "explorers-of-the-deep"
+      ],
+      "deck_count": 4,
+      "price": 204.73,
+      "price_source": "Market",
+      "individual_total": 258.91,
+      "savings": 54.18,
+      "url": "https://www.tcgplayer.com/product/517517/magic-the-lost-caverns-of-ixalan-commander-deck-case",
+      "snippet": "The Lost Caverns of Ixalan Commander Deck Case"
+    },
+    "wilds-of-eldraine-bundle": {
+      "name": "Wilds of Eldraine Commander Deck Case",
+      "set": "Wilds of Eldraine",
+      "deck_ids": [
+        "virtue-and-valor",
+        "fae-dominion",
+        "peace-offering-woe",
+        "faerie-schemes"
+      ],
+      "deck_count": 4,
+      "price": 485.19,
+      "price_source": "Market",
+      "individual_total": 294.72,
+      "savings": -190.47,
+      "url": "https://www.tcgplayer.com/product/509473/magic-wilds-of-eldraine-commander-deck-case",
+      "snippet": "Wilds of Eldraine Commander Deck Case"
+    },
+    "commander-masters-bundle": {
+      "name": "Commander Masters Commander Decks [Set of 4]",
+      "set": "Commander Masters",
+      "deck_ids": [
+        "sliver-swarm",
+        "eldrazi-unbound",
+        "enduring-enchantments",
+        "planeswalker-party"
+      ],
+      "deck_count": 4,
+      "price": 729.23,
+      "price_source": "Market",
+      "individual_total": 977.29,
+      "savings": 248.06,
+      "url": "https://www.tcgplayer.com/product/484934/magic-commander-masters-commander-decks-set-of-4",
+      "snippet": "Commander Masters Commander Decks [Set of 4]"
+    },
+    "the-lord-of-the-rings-tales-of-middle-earth-bundle": {
+      "name": "The Lord of the Rings: Tales of Middle-earth Commander Decks [Set of 4]",
+      "set": "The Lord of the Rings: Tales of Middle-earth",
+      "deck_ids": [
+        "the-hosts-of-mordor",
+        "food-and-fellowship",
+        "elven-council",
+        "riders-of-rohan"
+      ],
+      "deck_count": 4,
+      "price": 215.95,
+      "price_source": "Market",
+      "individual_total": 242.51,
+      "savings": 26.56,
+      "url": "https://www.tcgplayer.com/product/488297/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-decks-set-of-4",
+      "snippet": "The Lord of the Rings: Tales of Middle-earth Commander Decks [Set of 4]"
+    },
+    "march-of-the-machine-bundle": {
+      "name": "March of the Machine Commander Decks [Set of 5]",
+      "set": "March of the Machine",
+      "deck_ids": [
+        "call-for-backup",
+        "divine-convocation",
+        "growing-threat",
+        "cavalry-charge",
+        "tinker-time"
+      ],
+      "deck_count": 5,
+      "price": 315.63,
+      "price_source": "Market",
+      "individual_total": 412.72,
+      "savings": 97.09,
+      "url": "https://www.tcgplayer.com/product/484593/magic-march-of-the-machine-commander-decks-set-of-5",
+      "snippet": "March of the Machine Commander Decks [Set of 5]"
+    },
+    "warhammer-40-000-commander-bundle": {
+      "name": "Universes Beyond: Warhammer 40,000 - Commander Deck Case",
+      "set": "Warhammer 40,000 Commander",
+      "deck_ids": [
+        "forces-of-the-imperium",
+        "necron-dynasties",
+        "tyranid-swarm",
+        "the-ruinous-powers"
+      ],
+      "deck_count": 4,
+      "price": 1058.75,
+      "price_source": "Market",
+      "individual_total": 1222.83,
+      "savings": 164.08,
+      "url": "https://www.tcgplayer.com/product/272321/magic-universes-beyond-warhammer-40-000-commander-deck-case",
+      "snippet": "Universes Beyond: Warhammer 40,000 - Commander Deck Case"
+    },
+    "strixhaven-school-of-mages-commander-2021-bundle": {
+      "name": "Secrets of Strixhaven Commander Deck Case",
+      "set": "Strixhaven: School of Mages (Commander 2021)",
+      "deck_ids": [
+        "silverquill-statement",
+        "prismari-performance",
+        "witherbloom-witchcraft",
+        "lorehold-legacies",
+        "quantum-quandrix"
+      ],
+      "deck_count": 5,
+      "price": 216.34,
+      "price_source": "Market",
+      "individual_total": null,
+      "savings": null,
+      "url": "https://www.tcgplayer.com/product/675572/magic-secrets-of-strixhaven-commander-deck-case",
+      "snippet": "Secrets of Strixhaven Commander Deck Case"
     }
   }
 }
