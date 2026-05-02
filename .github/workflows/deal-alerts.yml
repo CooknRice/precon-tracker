@@ -13,6 +13,11 @@ permissions:
   contents: read
   issues: write
 
+# Opt into Node.js 24 for reusable actions (checkout, etc.) ahead of
+# GitHub's June 2026 deprecation of Node 20.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   alert:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
