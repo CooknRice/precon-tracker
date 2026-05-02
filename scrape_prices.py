@@ -169,10 +169,9 @@ def pick_product_for_deck(
 ) -> dict | None:
     """Find the product that's most likely a precon deck, not a single card.
 
-    When `prices` is supplied, products priced below PRICE_FLOOR are
-    deprioritised (still considered as a last-resort fallback, but only
-    if no plausibly-priced precon match exists). This avoids wasting the
-    matched-product slot on a same-named single card.
+    When `prices` is supplied, products with a real listed price beat
+    products with no price — and full "Commander Deck" SKUs beat the
+    smaller "Commander Kit" SKUs that often have no market price.
     """
     deck_norm = norm(deck_name)
     if not deck_norm:
@@ -192,22 +191,88 @@ def pick_product_for_deck(
             kw in pname_lower for kw in ("deck", "kit", "precon", "commander", "bundle")
         )
 
-        # Price-floor signal: products priced below the floor are almost
-        # always single cards. Demote them so a real precon wins ties.
+        # Bundles (Case/Bundle/Set-of) are tracked separately; never pick
+        # them as the single-deck match.
+        is_bundle = any(
+            kw in pname_lower for kw in (" case", "bundle", "set of", "5-pack", "5 pack", "all decks", "deck set")
+        )
+
+        # Score the product type: prefer "Deck" over "Kit" because
+        # Commander Decks are the canonical precon and Kits often have
+        # no market price (and are a different cheaper product).
+        is_deck = "deck" in pname_lower
+        is_kit_only = "kit" in pname_lower and not is_deck
+
+        # Price signals — needs a row in `prices` to evaluate.
+        has_any_price = False
         passes_floor = True
         if prices is not None:
             row = prices.get(p.get("productId"))
-            market = row.get("marketPrice") if row else None
-            if market is not None and market < PRICE_FLOOR:
-                passes_floor = False
+            if row:
+                market = row.get("marketPrice")
+                low = row.get("lowPrice")
+                mid = row.get("midPrice")
+                # Any one of these counts; we'll fall back at read time too.
+                has_any_price = any(v is not None for v in (market, low, mid))
+                effective = market if market is not None else (low if low is not None else mid)
+                if effective is not None and effective < PRICE_FLOOR:
+                    passes_floor = False
 
-        # Sortable score: floor-passing > precon-named > exact > shortest.
-        score = (passes_floor, is_precon_named, is_exact, -len(pname))
+        # Sortable score (higher first):
+        #   - not a bundle (those are tracked separately)
+        #   - not a kit-only (prefer real Deck SKU)
+        #   - has any price (don't pick a price-less SKU when one is priced)
+        #   - passes floor (single-card sanity check)
+        #   - is precon-named (deck/kit/commander/bundle)
+        #   - is exact name match
+        #   - shorter name
+        score = (
+            not is_bundle,
+            not is_kit_only,
+            has_any_price,
+            passes_floor,
+            is_precon_named,
+            is_exact,
+            -len(pname),
+        )
         candidates.append((score, p))
 
     if not candidates:
         return None
 
+    candidates.sort(key=lambda x: x[0], reverse=True)
+    return candidates[0][1]
+
+
+def find_bundle_in_products(products: list, set_name: str) -> dict | None:
+    """Pick the most likely 'set bundle' product (case / set-of-N / bundle).
+
+    Bundle products contain all precons in a set. Their names typically
+    include keywords like 'Case', 'Bundle', 'Set of 5', 'Deck Set', etc.
+    We exclude card sleeves, tokens, and other non-bundle accessories.
+    """
+    BUNDLE_KEYWORDS = ("commander deck case", "commander kit case", "deck case",
+                       "decks bundle", "deck bundle", "deck set", "set of 5",
+                       "set of 4", "all decks", "5-pack", "5 pack", "all 5", "all 4",
+                       "complete set", "commander collection")
+    EXCLUDE_KEYWORDS = ("token", "sleeve", "playmat", "binder", "deck box", "card box")
+
+    candidates = []
+    for p in products:
+        name = (p.get("name") or "")
+        nl = name.lower()
+        if any(x in nl for x in EXCLUDE_KEYWORDS):
+            continue
+        # Must look like a multi-deck bundle, not a single deck.
+        match_kw = next((k for k in BUNDLE_KEYWORDS if k in nl), None)
+        if not match_kw:
+            continue
+        # Score: prefer "case" matches (canonical), then longer keyword matches.
+        score = ("case" in nl, "bundle" in nl, len(match_kw), -len(name))
+        candidates.append((score, p))
+
+    if not candidates:
+        return None
     candidates.sort(key=lambda x: x[0], reverse=True)
     return candidates[0][1]
 
@@ -233,7 +298,13 @@ def tcg_product_url(product_id: int, product_name: str) -> str:
     return f"https://www.tcgplayer.com/product/{product_id}/magic-{slug}" if slug else f"https://www.tcgplayer.com/product/{product_id}"
 
 
-def fetch_all_tcgcsv(decks: list) -> dict:
+def fetch_all_tcgcsv(decks: list) -> tuple[dict, dict]:
+    """Returns (per_deck_results, bundles_by_set).
+
+    bundles_by_set maps set name → bundle info (price/url/deck_ids/etc.)
+    A bundle is a "Commander Deck Case" / "Set of N" SKU that contains
+    every precon from the same set.
+    """
     session = make_session(TCGCSV_UA)
 
     print("Loading TCGCSV Magic groups list...", flush=True)
@@ -308,44 +379,108 @@ def fetch_all_tcgcsv(decks: list) -> dict:
             continue
 
         pid = product["productId"]
-        price_row = gc["prices"].get(pid)
-        market = price_row.get("marketPrice") if price_row else None
-        low = price_row.get("lowPrice") if price_row else None
+        price_row = gc["prices"].get(pid) or {}
+        market = price_row.get("marketPrice")
+        low = price_row.get("lowPrice")
+        mid = price_row.get("midPrice")
         url = tcg_product_url(pid, product.get("name", ""))
+
+        # Effective price: prefer marketPrice; fall back to lowPrice (the
+        # cheapest currently-listed copy), then midPrice. Some newer or
+        # niche products (e.g. Tarkir Dragonstorm Commander Kits) have no
+        # marketPrice yet but plenty of low/mid pricing.
+        effective_price = market if market is not None else (low if low is not None else mid)
+        price_source = "Market" if market is not None else ("Low" if low is not None else ("Mid" if mid is not None else None))
 
         # Price-floor sanity check: precons are never < $5. If the matched
         # product is, we almost certainly hit a single card with the same
         # name (e.g. "Cloud's Limit Break" instead of the Limit Break deck).
-        if market is not None and market < PRICE_FLOOR:
+        if effective_price is not None and effective_price < PRICE_FLOOR:
             results[deck_id] = {
                 "price": None, "price_low": None,
                 "url": fallback_url,
                 "status": "tcgcsv-likely-single",
-                "snippet": f"rejected: {product.get('name')} (Market ${float(market):.2f})",
+                "snippet": f"rejected: {product.get('name')} ({price_source} ${float(effective_price):.2f})",
             }
-            print(f"[{i:3}/{len(decks)}] {deck_name:<36} TCG ------  (rejected ${float(market):.2f}: likely single card)", flush=True)
+            print(f"[{i:3}/{len(decks)}] {deck_name:<36} TCG ------  (rejected ${float(effective_price):.2f}: likely single card)", flush=True)
             continue
 
-        if market is not None:
+        if effective_price is not None:
             results[deck_id] = {
-                "price": float(market),
+                "price": float(effective_price),
                 "price_low": float(low) if low is not None else None,
+                "price_source": price_source,  # "Market" | "Low" | "Mid"
                 "url": url,
-                "status": "ok",
+                "status": "ok" if price_source == "Market" else f"ok-{price_source.lower()}-fallback",
                 "snippet": product.get("name"),
             }
-            low_str = f" / low ${float(low):.2f}" if low else ""
-            print(f"[{i:3}/{len(decks)}] {deck_name:<36} TCG ${float(market):>6.2f}  (Market{low_str})", flush=True)
+            low_str = f" / low ${float(low):.2f}" if low and price_source != "Low" else ""
+            print(f"[{i:3}/{len(decks)}] {deck_name:<36} TCG ${float(effective_price):>6.2f}  ({price_source}{low_str})", flush=True)
         else:
             results[deck_id] = {
                 "price": None, "price_low": None,
                 "url": url,
-                "status": "tcgcsv-no-market-price",
+                "status": "tcgcsv-no-price",
                 "snippet": product.get("name"),
             }
-            print(f"[{i:3}/{len(decks)}] {deck_name:<36} TCG ------  (no market price)", flush=True)
+            print(f"[{i:3}/{len(decks)}] {deck_name:<36} TCG ------  (no price data)", flush=True)
 
-    return results
+    # ----------------------------------------------------------------
+    # Bundle pass — for each group that contains 2+ of our decks, look
+    # for a "set bundle" SKU (Case / Bundle / Set of N) and price it.
+    # ----------------------------------------------------------------
+    print("\n=== Phase 1b: TCGPlayer set bundles ===", flush=True)
+    bundles: dict[str, dict] = {}
+    deck_by_id = {d["id"]: d for d in decks}
+    deck_ids_by_set: dict[str, list] = {}
+    for d in decks:
+        deck_ids_by_set.setdefault(d.get("set", ""), []).append(d["id"])
+
+    for set_name, deck_ids in deck_ids_by_set.items():
+        if len(deck_ids) < 2:
+            continue  # bundles only make sense for sets with multiple precons
+        group = pick_group_for_set(groups, set_name)
+        if not group:
+            continue
+        gc = group_cache.get(group["groupId"]) or ensure_group(group)
+        if gc.get("error"):
+            continue
+        bundle_product = find_bundle_in_products(gc["products"], set_name)
+        if not bundle_product:
+            continue
+        bpid = bundle_product["productId"]
+        prow = gc["prices"].get(bpid) or {}
+        market = prow.get("marketPrice")
+        low = prow.get("lowPrice")
+        mid = prow.get("midPrice")
+        eff = market if market is not None else (low if low is not None else mid)
+        src = "Market" if market is not None else ("Low" if low is not None else ("Mid" if mid is not None else None))
+        if eff is None:
+            print(f"  [{set_name}] bundle found but no price: {bundle_product.get('name')}", flush=True)
+            continue
+        # Sum of individual deck prices in this set, for "saves $X" math.
+        individual_total = sum(
+            (results.get(did, {}).get("price") or 0) for did in deck_ids
+        )
+        savings = individual_total - eff if individual_total > 0 else None
+        bundle_id = re.sub(r"[^a-z0-9]+", "-", set_name.lower()).strip("-") + "-bundle"
+        bundles[bundle_id] = {
+            "name": bundle_product.get("name"),
+            "set": set_name,
+            "deck_ids": deck_ids,
+            "deck_count": len(deck_ids),
+            "price": float(eff),
+            "price_source": src,
+            "individual_total": round(individual_total, 2) if individual_total else None,
+            "savings": round(savings, 2) if savings is not None else None,
+            "url": tcg_product_url(bpid, bundle_product.get("name", "")),
+            "snippet": bundle_product.get("name"),
+        }
+        sav_str = f"  saves ${savings:.2f}" if savings and savings > 0 else ""
+        print(f"  [{set_name}] {bundle_product.get('name')} → ${eff:.2f}{sav_str}", flush=True)
+
+    print(f"\nFound {len(bundles)} set bundle{'s' if len(bundles) != 1 else ''}", flush=True)
+    return results, bundles
 
 
 # -------------------------------------------------------------------------
@@ -440,7 +575,7 @@ def main() -> None:
     print(f"Loaded {len(decks)} decks\n", flush=True)
 
     print("=== Phase 1: TCGCSV → TCGPlayer ===", flush=True)
-    tcg_results = fetch_all_tcgcsv(decks)
+    tcg_results, bundles = fetch_all_tcgcsv(decks)
 
     print("\n=== Phase 2: Zulus Games ===", flush=True)
     zulus_session = make_session(USER_AGENTS[0])
@@ -473,6 +608,7 @@ def main() -> None:
             "zulus": zulus_results,
             "tcgplayer": tcg_results,
         },
+        "bundles": bundles,
     }
     out_path.write_text(json.dumps(output, indent=2))
 
@@ -485,6 +621,7 @@ def main() -> None:
     print(f"\nWrote {out_path}")
     print(f"TCGPlayer: {tcg_hits}/{len(decks)} hits  (rejected {rejected} as likely singles)")
     print(f"Zulus:     {zu_hits}/{len(decks)} hits")
+    print(f"Bundles:   {len(bundles)} sets")
 
 
 def update_history(decks: list, tcg_results: dict, zulus_results: dict) -> None:
