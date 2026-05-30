@@ -1599,7 +1599,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   // Live crack value (sum of singles) from the scraper, if present.
   function getCrackValue(d) {
     const c = LIVE_PRICES?.crack?.[d.id];
-    if (!c || c.value == null) return null;
+    if (!c || (c.tcg == null && c.cardkingdom == null)) return null;
     return c;
   }
 
@@ -1950,8 +1950,12 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const crack = getCrackValue(d);
     let singlesLine;
     if (crack) {
-      const worth = ep != null && crack.value > ep;
-      singlesLine = `<span class="crack-value${worth ? " worth" : ""}"><strong>Singles ~$${crack.value.toFixed(0)}</strong> live${worth ? ' <span class="crack-flag">▲ worth parting out</span>' : ""}</span>`;
+      const best = Math.max(crack.tcg || 0, crack.cardkingdom || 0);
+      const worth = ep != null && best > ep;
+      const parts = [];
+      if (crack.tcg != null) parts.push(`TCG ~$${crack.tcg.toFixed(0)}`);
+      if (crack.cardkingdom != null) parts.push(`CK ~$${crack.cardkingdom.toFixed(0)}`);
+      singlesLine = `<span class="crack-value${worth ? " worth" : ""}"><strong>Singles (NM):</strong> ${parts.join(" · ")}${worth ? ' <span class="crack-flag">▲ worth parting out</span>' : ""}</span>`;
     } else if (d.singlesValue) {
       singlesLine = `<span><strong>Singles</strong> ~$${d.singlesValue.toFixed(0)}</span>`;
     } else {
@@ -2139,7 +2143,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         const cls = (powers[i] === maxPower && maxPower >= 0) ? "best" : "";
         return `<span class="${cls}">${d.powerScore != null ? d.powerScore.toFixed(1) + " " + (d.powerBracket || "") : "—"}</span>`;
       })],
-      ["Singles", decks.map(d => d.singlesValue ? `~$${d.singlesValue}` : "—")],
+      ["Singles (NM)", decks.map(d => { const c = getCrackValue(d); if (c) { const p = []; if (c.tcg != null) p.push(`TCG $${c.tcg.toFixed(0)}`); if (c.cardkingdom != null) p.push(`CK $${c.cardkingdom.toFixed(0)}`); return p.join(" · "); } return d.singlesValue ? `~$${d.singlesValue} est.` : "—"; })],
       ["Strategy", decks.map(d => `<span style="font-size:12px; line-height:1.45;">${escapeHtml(d.desc)}</span>`)],
     ];
 
