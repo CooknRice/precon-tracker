@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Local Claude Code config (machine-specific, not for the repo)
+.claude/
+
+# Editor / Python junk
+__pycache__/
+*.pyc
+
+# Local backups created during development
+*.realbak
+*.bak
+*.bak[0-9]

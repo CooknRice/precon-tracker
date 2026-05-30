@@ -1,0 +1,14 @@
+{
+  "name": "The Precon Ledger",
+  "short_name": "Precon Ledger",
+  "description": "MTG Commander preconstructed deck price tracker with live prices, history charts, and buy signals.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#15120e",
+  "theme_color": "#15120e",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

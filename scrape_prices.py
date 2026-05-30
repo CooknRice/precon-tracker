@@ -565,6 +565,127 @@ def fetch_zulus(deck_name: str, session: requests.Session) -> dict:
 
 
 # -------------------------------------------------------------------------
+# Crack value (sum of singles) via MTGJSON decklists + Scryfall prices
+# -------------------------------------------------------------------------
+
+MTGJSON_BASE = "https://mtgjson.com/api/v5"
+SCRYFALL_COLLECTION = "https://api.scryfall.com/cards/collection"
+SCRYFALL_BATCH = 75  # max identifiers per Scryfall collection request
+
+
+def build_deck_mtgjson_map(decks: list, session: requests.Session) -> dict:
+    """Map each of our deck ids → MTGJSON deck fileName by normalized name.
+
+    Only considers MTGJSON decks whose type contains 'Commander' so we don't
+    accidentally match theme/sample decks.
+    """
+    try:
+        data = fetch_json(f"{MTGJSON_BASE}/DeckList.json", session)
+    except Exception as e:
+        print(f"  crack: couldn't load MTGJSON DeckList: {e}", flush=True)
+        return {}
+    mtg_decks = data.get("data", [])
+    by_norm = {}
+    for m in mtg_decks:
+        if "commander" not in (m.get("type") or "").lower():
+            continue
+        by_norm.setdefault(norm(m.get("name") or ""), m.get("fileName"))
+    mapping = {}
+    for d in decks:
+        fn = by_norm.get(norm(d["name"]))
+        if fn:
+            mapping[d["id"]] = fn
+    return mapping
+
+
+def fetch_json(url: str, session: requests.Session) -> dict:
+    r = session.get(url, timeout=TIMEOUT)
+    r.raise_for_status()
+    return r.json()
+
+
+def fetch_crack_values(decks: list, session: requests.Session) -> dict:
+    """Compute per-deck 'crack value' = sum of mainboard+commander singles.
+
+    Pipeline: MTGJSON decklist (which cards) → Scryfall (current USD price).
+    Resilient: unmatched decks and unpriced cards are skipped, not fatal.
+    """
+    deck_map = build_deck_mtgjson_map(decks, session)
+    print(f"  crack: matched {len(deck_map)}/{len(decks)} decks to MTGJSON", flush=True)
+    if not deck_map:
+        return {}
+
+    # 1. Pull each deck's card list (scryfallId + count). Collect unique ids.
+    deck_cards: dict[str, list] = {}
+    all_ids: set[str] = set()
+    for i, d in enumerate(decks, 1):
+        fn = deck_map.get(d["id"])
+        if not fn:
+            continue
+        try:
+            dj = fetch_json(f"{MTGJSON_BASE}/decks/{fn}.json", session)
+        except Exception as e:
+            print(f"  crack: [{d['id']}] deck fetch failed: {e}", flush=True)
+            continue
+        body = dj.get("data", {})
+        cards = []
+        for board in ("commander", "mainBoard"):
+            for c in body.get(board) or []:
+                sid = (c.get("identifiers") or {}).get("scryfallId")
+                cnt = c.get("count") or 1
+                if sid:
+                    cards.append((sid, cnt))
+                    all_ids.add(sid)
+        deck_cards[d["id"]] = cards
+        time.sleep(0.1)
+
+    # 2. Price every unique card via Scryfall's collection endpoint.
+    price_by_id: dict[str, float] = {}
+    ids = list(all_ids)
+    scry_headers = {
+        "User-Agent": TCGCSV_UA,
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
+    for start in range(0, len(ids), SCRYFALL_BATCH):
+        chunk = ids[start:start + SCRYFALL_BATCH]
+        payload = {"identifiers": [{"id": x} for x in chunk]}
+        try:
+            r = session.post(SCRYFALL_COLLECTION, json=payload, headers=scry_headers, timeout=TIMEOUT)
+            r.raise_for_status()
+            for card in r.json().get("data", []):
+                usd = (card.get("prices") or {}).get("usd")
+                if usd is not None:
+                    price_by_id[card.get("id")] = float(usd)
+        except Exception as e:
+            print(f"  crack: Scryfall batch {start//SCRYFALL_BATCH} failed: {e}", flush=True)
+        time.sleep(0.1)  # Scryfall asks for ~50-100ms between requests
+
+    # 3. Sum per deck.
+    results: dict[str, dict] = {}
+    for did, cards in deck_cards.items():
+        total = 0.0
+        priced = 0
+        missing = 0
+        for sid, cnt in cards:
+            p = price_by_id.get(sid)
+            if p is None:
+                missing += 1
+            else:
+                total += p * cnt
+                priced += 1
+        if priced:
+            results[did] = {
+                "value": round(total, 2),
+                "card_count": priced + missing,
+                "priced": priced,
+                "missing": missing,
+            }
+    print(f"  crack: priced {len(results)} decks", flush=True)
+    return results
+
+
+# -------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------
 
@@ -600,6 +721,13 @@ def main() -> None:
         for deck in decks
     }
 
+    print("\n=== Phase 3: Crack value (MTGJSON + Scryfall) ===", flush=True)
+    crack_results = {}
+    try:
+        crack_results = fetch_crack_values(decks, make_session(TCGCSV_UA))
+    except Exception as e:
+        print(f"Crack value phase failed (non-fatal): {e}", flush=True)
+
     output = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "deck_count": len(decks),
@@ -609,6 +737,7 @@ def main() -> None:
             "tcgplayer": tcg_results,
         },
         "bundles": bundles,
+        "crack": crack_results,
     }
     out_path.write_text(json.dumps(output, indent=2))
 
@@ -622,6 +751,7 @@ def main() -> None:
     print(f"TCGPlayer: {tcg_hits}/{len(decks)} hits  (rejected {rejected} as likely singles)")
     print(f"Zulus:     {zu_hits}/{len(decks)} hits")
     print(f"Bundles:   {len(bundles)} sets")
+    print(f"Crack val: {len(crack_results)} decks priced")
 
 
 def update_history(decks: list, tcg_results: dict, zulus_results: dict) -> None:
