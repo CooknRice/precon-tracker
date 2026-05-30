@@ -9,6 +9,10 @@
 <link rel="preload" as="fetch" href="./decks.json" crossorigin>
 <link rel="preload" as="fetch" href="./prices.json" crossorigin>
 <link rel="prefetch" href="./prices_history.json">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#15120e">
+<link rel="apple-touch-icon" href="./icon.svg">
+<link rel="icon" type="image/svg+xml" href="./icon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -928,6 +932,153 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   font-size: 10px;
   letter-spacing: 0.04em;
 }
+
+/* ---------- Light (parchment) theme ---------- */
+[data-theme="light"] {
+  --paper: #f3ead4;
+  --paper-deep: #fbf6e7;
+  --paper-line: #ddd0b2;
+  --ink: #2c2416;
+  --ink-soft: #4c4029;
+  --ink-muted: #6f6044;
+  --ink-faded: #9c8c6a;
+  --burgundy: #9d2f44;
+  --burgundy-soft: #b0405a;
+  --gold: #936812;
+  --gold-bright: #b3852a;
+  --sage: #4d6a35;
+  --deal-bg: #efe4c4;
+  --owned-bg: #e7eed6;
+  --w: #c9b878; --u: #3f7fb5; --b: #6a6168; --r: #c0572f; --g: #5a803f; --c: #8a8470;
+}
+[data-theme="light"] .vendor-btn { background: #efe6cf; }
+[data-theme="light"] .price-live-dot { color: #2f9e52; }
+
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--paper-line);
+  color: var(--ink-soft);
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  transition: all 0.12s;
+}
+.theme-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ---------- Buy-signal chip + curve tag (signals row) ---------- */
+.signals-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.buy-signal {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid currentColor;
+}
+.buy-signal.buy { color: #3ec66a; }
+.buy-signal.ok { color: var(--gold-bright); }
+.buy-signal.hold { color: var(--ink-muted); }
+.curve-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  color: var(--ink-muted);
+}
+.curve-tag.dip { color: var(--sage); border-color: var(--sage); }
+.curve-tag.new { color: var(--u); border-color: var(--u); }
+.curve-tag.mature { color: var(--gold); border-color: var(--gold); }
+.curve-tag.stable { color: var(--ink-soft); border-color: var(--ink-faded); }
+
+/* ---------- 90-day range / near-low ---------- */
+.price-range {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+  letter-spacing: 0.02em;
+}
+.price-range.near-low { color: var(--sage); }
+.price-range.near-low strong { color: var(--sage); }
+
+/* ---------- Best deals section ---------- */
+.best-deals {
+  background: linear-gradient(180deg, var(--deal-bg), var(--paper-deep));
+  border: 1px solid var(--gold);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.best-deals-head {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--gold-bright);
+  margin-bottom: 12px;
+}
+.best-deals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+}
+.best-deal {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+  background: var(--paper-deep);
+  border: 1px solid var(--paper-line);
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.12s;
+  font-family: var(--font-ui);
+}
+.best-deal:hover { border-color: var(--gold-bright); transform: translateY(-1px); }
+.bd-name { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--ink); }
+.bd-price { font-family: var(--font-mono); font-size: 13px; color: var(--burgundy); font-weight: 600; }
+.bd-disc { color: var(--gold-bright); font-size: 11px; margin-left: 4px; }
+.bd-low { font-family: var(--font-mono); font-size: 10px; color: var(--sage); }
+
+/* ---------- Price target (watched cards) ---------- */
+.target-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+.target-row label { display: inline-flex; align-items: center; gap: 4px; }
+.target-input {
+  width: 56px;
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 3px 5px;
+}
+.target-row.hit { color: var(--sage); }
+.target-hit { color: var(--sage); font-weight: 600; }
+.card.target-hit { box-shadow: inset 0 0 0 1px var(--sage); }
+
+/* ---------- Crack value ---------- */
+.crack-value {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+.crack-value strong { color: var(--ink-soft); }
+.crack-value.worth strong { color: var(--sage); }
+.crack-value .crack-flag { color: var(--sage); }
 </style>
 </head>
 <body>
@@ -940,12 +1091,18 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       <p class="tagline">A curated index of every MTG Commander preconstructed deck from the last five years, with live TCGPlayer Market prices refreshed daily.</p>
     </div>
     <div class="meta-line">
+      <div style="margin-bottom:6px;"><button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle light or dark theme" title="Toggle light/dark theme">◐</button></div>
       <div>Last verified · <strong id="lastUpdated">April 23, 2026</strong></div>
       <div>Coverage · <strong id="coverageRange">Apr 2021 — Apr 2026</strong></div>
       <div>Tracked decks · <strong id="totalTracked">—</strong></div>
     </div>
   </div>
 </header>
+
+<section id="bestDeals" class="best-deals" hidden>
+  <div class="best-deals-head">🔥 Best deals right now</div>
+  <div class="best-deals-grid" id="bestDealsGrid"></div>
+</section>
 
 <div id="staleBanner" class="stale-banner" role="status"></div>
 <section class="stats">
@@ -1113,6 +1270,17 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 // Renders, filters, sorts, and persists owned state via window.storage when available
 
 (() => {
+  // Apply saved theme ASAP to avoid a flash of the wrong theme on load.
+  // Handles three cases synchronously: explicit "light" stored, explicit
+  // "dark" stored (leave default), or nothing stored → fall back to the OS
+  // preference so light-OS users don't flash dark-then-light.
+  try {
+    const savedTheme = JSON.parse(localStorage.getItem("precon-theme"));
+    const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+    if (savedTheme === "light" || (savedTheme == null && prefersLight)) {
+      document.documentElement.dataset.theme = "light";
+    }
+  } catch (e) {}
   const $ = id => document.getElementById(id);
   const grid = $("deckGrid");
   const searchInput = $("search");
@@ -1144,6 +1312,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   let ownedSet = new Set();
   let watchSet = new Set();
   let compareSet = new Set();
+  let targets = {};   // { deck_id: targetPrice } for watched-deck alerts
 
   // ---------- Live prices config ----------
   // The tracker tries to load prices.json from these sources in order.
@@ -1276,6 +1445,30 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   }
   async function saveWatched() { await saveKey("watched", [...watchSet]); }
 
+  async function loadTargets() {
+    const o = await loadKey("targets");
+    if (o && typeof o === "object" && !Array.isArray(o)) targets = o;
+  }
+  async function saveTargets() { await saveKey("targets", targets); }
+
+  // ---------- Theme ----------
+  function applyTheme(t) {
+    if (t === "light") document.documentElement.dataset.theme = "light";
+    else delete document.documentElement.dataset.theme;
+  }
+  async function loadTheme() {
+    let t = await loadKey("theme");
+    if (t !== "light" && t !== "dark") {
+      t = (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+    }
+    applyTheme(t);
+  }
+  async function toggleTheme() {
+    const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+    applyTheme(next);
+    await saveKey("theme", next);
+  }
+
   // ---------- Filtering ----------
   function filterDecks() {
     const q = searchInput.value.trim().toLowerCase();
@@ -1344,6 +1537,70 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     if (!ep || !d.msrp) return 0;
     const pct = ((d.msrp - ep) / d.msrp) * 100;
     return pct > 0 ? pct : 0;
+  }
+
+  // ---------- Buying intelligence ----------
+  // 90-day price stats from history: low/high/current + where current sits.
+  function getPriceStats(d) {
+    const series = (PRICE_HISTORY && PRICE_HISTORY[d.id]) || [];
+    const pts = series.map(s => s.tcg).filter(v => typeof v === "number");
+    if (pts.length < 2) return null;
+    const low = Math.min(...pts), high = Math.max(...pts), now = pts[pts.length - 1];
+    const range = high - low;
+    const posInRange = range > 0 ? (now - low) / range : 0;  // 0 = at low, 1 = at high
+    const recent = pts.slice(-7);
+    const trend = recent.length >= 2 && recent[0] > 0 ? (recent[recent.length - 1] - recent[0]) / recent[0] : 0;
+    return { low, high, now, posInRange, trend, days: pts.length };
+  }
+
+  function isNearLow(d) {
+    const ep = effectivePrice(d);
+    const stats = getPriceStats(d);
+    if (ep == null || !stats) return false;
+    return ep <= stats.low * 1.05;
+  }
+
+  // Composite buy signal: blends discount-vs-MSRP, position-in-history, trend.
+  function buySignal(d) {
+    const ep = effectivePrice(d);
+    if (ep == null) return null;
+    const reasons = [];
+    let score = 0;
+    const disc = discountPct(d);
+    if (disc >= 25) { score += 2; reasons.push(`${disc.toFixed(0)}% below MSRP`); }
+    else if (disc >= 12) { score += 1; reasons.push(`${disc.toFixed(0)}% below MSRP`); }
+    const stats = getPriceStats(d);
+    if (stats) {
+      if (ep <= stats.low * 1.05) { score += 2; reasons.push("near 90-day low"); }
+      else if (stats.posInRange <= 0.35) { score += 1; reasons.push("low in 90-day range"); }
+      if (stats.trend <= -0.03) { score += 1; reasons.push("trending down"); }
+      else if (stats.trend >= 0.05) { score -= 1; reasons.push("trending up"); }
+    }
+    let level = "hold";
+    if (score >= 3) level = "buy";
+    else if (score >= 1) level = "ok";
+    if (reasons.length === 0) reasons.push("near MSRP, no discount");
+    return { level, score, reasons };
+  }
+
+  // Where a deck sits on the release price curve, by age since release.
+  function curvePosition(d) {
+    if (!d.releaseDate) return null;
+    const released = new Date(d.releaseDate).getTime();
+    if (isNaN(released)) return null;
+    const ageDays = (Date.now() - released) / 86400000;
+    if (ageDays < 0) return { label: "Preorder", cls: "new" };
+    if (ageDays < 14) return { label: "Just released", cls: "new" };
+    if (ageDays < 70) return { label: "Post-release dip", cls: "dip" };
+    if (ageDays < 182) return { label: "Stabilizing", cls: "stable" };
+    return { label: "Maturing ↑", cls: "mature" };
+  }
+
+  // Live crack value (sum of singles) from the scraper, if present.
+  function getCrackValue(d) {
+    const c = LIVE_PRICES?.crack?.[d.id];
+    if (!c || c.value == null) return null;
+    return c;
   }
 
   // ---------- Rendering ----------
@@ -1592,10 +1849,17 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const isComparing = compareSet.has(d.id);
     const pct = discountPct(d);
     const isDeal = pct >= 20;
+    const ep = effectivePrice(d);
+    const sig = buySignal(d);
+    const curve = curvePosition(d);
+    const stats = getPriceStats(d);
+    const target = targets[d.id];
+    const belowTarget = target != null && ep != null && ep <= target;
     const classes = ["card"];
     if (isOwned) classes.push("owned");
     else if (isDeal) classes.push("deal");
     if (isWatching) classes.push("watching");
+    if (belowTarget) classes.push("target-hit");
 
     const commanderLine = d.commander
       ? `<div class="card-commander">${escapeHtml(d.commander)}${d.partner ? ` &amp; ${escapeHtml(d.partner)}` : ""}</div>`
@@ -1622,7 +1886,14 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       const delta = (live && zulus.price < live.price)
         ? ` <span style="color:var(--sage);">(saves $${(live.price - zulus.price).toFixed(2)})</span>`
         : "";
-      zulusLine = `<div class="price-zulus${cheaperClass}">Zulus · <a href="${zulus.url}" target="_blank" rel="noopener noreferrer">$${zulus.price.toFixed(2)}</a>${delta}</div>`;
+      zulusLine = `<div class="price-zulus${cheaperClass}">Zulus · <a href="${escapeHtml(zulus.url)}" target="_blank" rel="noopener noreferrer">$${zulus.price.toFixed(2)}</a>${delta}</div>`;
+    }
+
+    // 90-day range / near-low line, shown above the Zulus line in every branch.
+    if (stats) {
+      const nearLow = ep != null && ep <= stats.low * 1.05;
+      const rangeLine = `<div class="price-range${nearLow ? " near-low" : ""}">90d $${stats.low.toFixed(0)}–$${stats.high.toFixed(0)}${nearLow ? " · <strong>near low</strong>" : ""}</div>`;
+      zulusLine = rangeLine + zulusLine;
     }
 
     // Price display — three-layer priority:
@@ -1676,9 +1947,16 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         ${zulusLine}`;
     }
 
-    const singlesLine = d.singlesValue
-      ? `<span><strong>Singles</strong> ~$${d.singlesValue.toFixed(0)}</span>`
-      : "";
+    const crack = getCrackValue(d);
+    let singlesLine;
+    if (crack) {
+      const worth = ep != null && crack.value > ep;
+      singlesLine = `<span class="crack-value${worth ? " worth" : ""}"><strong>Singles ~$${crack.value.toFixed(0)}</strong> live${worth ? ' <span class="crack-flag">▲ worth parting out</span>' : ""}</span>`;
+    } else if (d.singlesValue) {
+      singlesLine = `<span><strong>Singles</strong> ~$${d.singlesValue.toFixed(0)}</span>`;
+    } else {
+      singlesLine = "";
+    }
 
     const metaBits = [singlesLine].filter(Boolean).join("");
 
@@ -1712,7 +1990,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     // deep-links to the exact product page; otherwise falls back to a search.
     const vendorBtns = vendors.map(v => {
       const href = (v.key === "tcg" && live?.url) ? live.url : v.url(d);
-      return `<a class="vendor-btn" href="${href}" target="_blank" rel="noopener noreferrer" title="${v.label}">${v.label}</a>`;
+      return `<a class="vendor-btn" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" title="${v.label}">${v.label}</a>`;
     }).join("");
 
     // Set-bundle note: if this deck is part of a known TCGPlayer bundle
@@ -1726,10 +2004,23 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         : "";
       bundleNote = `
         <div class="bundle-note">
-          <span><span class="bundle-label">Set bundle</span> · all ${bundle.deck_count} decks · <a href="${bundle.url}" target="_blank" rel="noopener noreferrer">$${bundle.price.toFixed(2)}</a></span>
+          <span><span class="bundle-label">Set bundle</span> · all ${bundle.deck_count} decks · <a href="${escapeHtml(bundle.url)}" target="_blank" rel="noopener noreferrer">$${bundle.price.toFixed(2)}</a></span>
           ${savings}
         </div>`;
     }
+
+    // Signals row: buy-signal chip + release-curve tag.
+    const sigLabels = { buy: "🟢 Good buy", ok: "🟡 Fair", hold: "🔴 Hold" };
+    const sigChip = sig ? `<span class="buy-signal ${sig.level}" title="${escapeHtml(sig.reasons.join(" · "))}">${sigLabels[sig.level]}</span>` : "";
+    const curveTag = curve ? `<span class="curve-tag ${curve.cls}">${curve.label}</span>` : "";
+    const signalsRow = (sigChip || curveTag) ? `<div class="signals-row">${sigChip}${curveTag}</div>` : "";
+
+    // Price-target input (watched cards only).
+    const targetLine = isWatching ? `
+        <div class="target-row${belowTarget ? " hit" : ""}">
+          <label>Alert below $<input type="number" class="target-input" data-target="${d.id}" value="${target != null ? target : ""}" min="0" step="1" placeholder="—"></label>
+          ${belowTarget ? '<span class="target-hit">▼ below target!</span>' : ""}
+        </div>` : "";
 
     return `
       <article class="${classes.join(" ")}" data-id="${d.id}">
@@ -1743,12 +2034,14 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
           <div class="card-colors">${manaPips(d.colors)}</div>
         </div>
         ${commanderLine}
+        ${signalsRow}
         <p class="card-desc">${escapeHtml(d.desc)}</p>
         ${metaBits ? `<div class="card-meta">${metaBits}</div>` : ""}
         ${powerLine}
         ${priceBlock}
         ${bundleNote}
         <div class="vendor-row">${vendorBtns}</div>
+        ${targetLine}
         <label class="compare-toggle">
           <input type="checkbox" data-compare="${d.id}" ${isComparing ? 'checked' : ''}>
           Add to compare
@@ -1771,6 +2064,30 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     }
 
     grid.innerHTML = sorted.map(renderCard).join("");
+  }
+
+  // ---------- Best deals ----------
+  function renderBestDeals() {
+    const el = $("bestDeals"), dgrid = $("bestDealsGrid");
+    if (!el || !dgrid) return;
+    const scored = PRECONS.map(d => {
+      const ep = effectivePrice(d);
+      if (ep == null) return null;
+      const disc = discountPct(d);
+      const st = getPriceStats(d);
+      const nearLow = st ? (ep <= st.low * 1.05) : false;
+      return { d, ep, disc, nearLow, rank: disc + (nearLow ? 15 : 0) };
+    }).filter(Boolean).filter(x => x.disc >= 10 || x.nearLow);
+    scored.sort((a, b) => b.rank - a.rank);
+    const top = scored.slice(0, 5);
+    if (top.length === 0) { el.hidden = true; return; }
+    el.hidden = false;
+    dgrid.innerHTML = top.map(x => `
+      <button type="button" class="best-deal" data-deal-id="${x.d.id}">
+        <span class="bd-name">${escapeHtml(x.d.name)}</span>
+        <span class="bd-price">$${x.ep.toFixed(2)}${x.disc > 0 ? `<span class="bd-disc">${x.disc.toFixed(0)}% off</span>` : ""}</span>
+        ${x.nearLow ? '<span class="bd-low">near 90d low</span>' : ""}
+      </button>`).join("");
   }
 
   // ---------- Compare view ----------
@@ -1898,7 +2215,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const owned = PRECONS.filter(d => ownedSet.has(d.id));
     $("statOwned").textContent = owned.length;
     const totalMsrp = owned.reduce((sum, d) => sum + (d.msrp || 0), 0);
-    $("statOwnedValue").textContent = `$${totalMsrp.toFixed(0)} paid at MSRP`;
+    const ownedNow = owned.reduce((sum, d) => sum + (effectivePrice(d) || 0), 0);
+    $("statOwnedValue").textContent = owned.length
+      ? `$${totalMsrp.toFixed(0)} MSRP · ~$${ownedNow.toFixed(0)} now`
+      : "— paid at MSRP";
 
     const withPricing = PRECONS.filter(d => effectivePrice(d) != null && d.msrp);
     const bestDeal = withPricing.reduce((best, d) => {
@@ -2030,7 +2350,16 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       if (card) openChart(card.dataset.id);
     });
 
-    grid.addEventListener("change", e => {
+    grid.addEventListener("change", async e => {
+      const tInput = e.target.closest("input[data-target]");
+      if (tInput) {
+        const id = tInput.dataset.target;
+        const val = parseFloat(tInput.value);
+        if (!isNaN(val) && val > 0) targets[id] = val; else delete targets[id];
+        await saveTargets();
+        renderGrid();
+        return;
+      }
       const cb = e.target.closest("input[data-compare]");
       if (!cb) return;
       const id = cb.dataset.compare;
@@ -2089,6 +2418,12 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       if (chartModal.classList.contains("visible")) chartModal.classList.remove("visible");
     });
 
+    $("themeToggle").addEventListener("click", toggleTheme);
+    $("bestDeals").addEventListener("click", e => {
+      const btn = e.target.closest("[data-deal-id]");
+      if (btn) openChart(btn.dataset.dealId);
+    });
+
     // The footer link goes to a generic issue form; per-card "report" links
     // (added below) prefill with deck context. Both open in a new tab.
   }
@@ -2096,6 +2431,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   // ---------- Init ----------
   async function init() {
     wireEvents();
+    await loadTheme();
     try {
       // Decks are required for any render; fetch in parallel with everything
       // else but don't render until we have them.
@@ -2103,12 +2439,14 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         loadDecks(),
         loadOwned(),
         loadWatched(),
+        loadTargets(),
         loadLivePrices().catch(() => null),
         loadHistory().catch(() => null),
       ]);
       readUrlState();
       updateStaleBanner();
       renderStats();
+      renderBestDeals();
       renderGrid();
       renderCompareBar();
     } catch (e) {
@@ -2116,6 +2454,11 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       grid.innerHTML = `<div class="empty" role="alert">Couldn't load the deck archive. Refresh to retry, or check your connection.</div>`;
       resultCount.textContent = "Load failed";
     }
+  }
+
+  // Register service worker for offline / installable PWA.
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
   }
 
   init();
