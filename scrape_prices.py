@@ -576,21 +576,40 @@ def fetch_zulus(deck_name: str, session: requests.Session) -> dict:
 MTGJSON_BASE = "https://mtgjson.com/api/v5"
 ALLPRICES_URL = f"{MTGJSON_BASE}/AllPricesToday.json.gz"
 
+# Manual deck_id -> MTGJSON fileName overrides for decks whose names don't
+# match by normalization. MTGJSON lists the Final Fantasy commander decks
+# only under variant names like "Limit Break (FINAL FANTASY VII)" plus a
+# separate "...Collector's Edition" SKU; we pin the non-collector file.
+# (Verified: each resolves to a real decklist that prices ~100/100 cards.)
+# The remaining unmatched decks — Animus Antiquity, Master of Keys
+# (Assassin's Creed), Faerie Schemes (Wilds of Eldraine), Take Flight
+# (Starter Commander) — are simply absent from MTGJSON, so no override
+# is possible until they're catalogued there.
+DECK_FILE_OVERRIDES = {
+    "revival-trance": "RevivalTranceFinalFantasyVi_FIC",
+    "limit-break": "LimitBreakFinalFantasyVii_FIC",
+    "counter-blitz": "CounterBlitzFinalFantasyX_FIC",
+    "scions-and-spellcraft": "ScionsSpellcraftFinalFantasyXiv_FIC",
+}
+
 
 def build_deck_mtgjson_map(decks: list, session: requests.Session) -> dict:
-    """Map each of our deck ids → MTGJSON deck fileName by normalized name.
+    """Map each of our deck ids → MTGJSON deck fileName.
 
-    Only considers MTGJSON decks whose type contains 'Commander' so we don't
-    accidentally match theme/sample decks.
+    First by normalized-name match (Commander-type decks only, so we don't
+    grab theme/sample decks), then apply DECK_FILE_OVERRIDES for the
+    name-mismatch cases.
     """
     try:
         data = fetch_json(f"{MTGJSON_BASE}/DeckList.json", session)
     except Exception as e:
         print(f"  crack: couldn't load MTGJSON DeckList: {e}", flush=True)
-        return {}
+        return dict(DECK_FILE_OVERRIDES)  # overrides still usable offline-ish
     mtg_decks = data.get("data", [])
     by_norm = {}
+    valid_files = set()
     for m in mtg_decks:
+        valid_files.add(m.get("fileName"))
         if "commander" not in (m.get("type") or "").lower():
             continue
         by_norm.setdefault(norm(m.get("name") or ""), m.get("fileName"))
@@ -599,6 +618,13 @@ def build_deck_mtgjson_map(decks: list, session: requests.Session) -> dict:
         fn = by_norm.get(norm(d["name"]))
         if fn:
             mapping[d["id"]] = fn
+    # Apply overrides, but only if the target file actually exists in the
+    # current DeckList (guards against a renamed/removed MTGJSON file).
+    for did, fn in DECK_FILE_OVERRIDES.items():
+        if fn in valid_files:
+            mapping[did] = fn
+        else:
+            print(f"  crack: override file missing in MTGJSON: {fn}", flush=True)
     return mapping
 
 

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-30T19:21:20.794451+00:00",
+  "updated_at": "2026-05-30T19:42:16.005980+00:00",
   "deck_count": 111,
   "vendors": {
     "cardkingdom": {
@@ -2491,6 +2491,34 @@
       "cardkingdom": 101.86,
       "card_count": 90,
       "priced": 90,
+      "missing": 0
+    },
+    "revival-trance": {
+      "tcg": 49.78,
+      "cardkingdom": 112.36,
+      "card_count": 99,
+      "priced": 99,
+      "missing": 0
+    },
+    "limit-break": {
+      "tcg": 71.1,
+      "cardkingdom": 129.85,
+      "card_count": 100,
+      "priced": 100,
+      "missing": 0
+    },
+    "counter-blitz": {
+      "tcg": 65.71,
+      "cardkingdom": 128.13,
+      "card_count": 100,
+      "priced": 100,
+      "missing": 0
+    },
+    "scions-and-spellcraft": {
+      "tcg": 65.5,
+      "cardkingdom": 134.73,
+      "card_count": 98,
+      "priced": 98,
       "missing": 0
     },
     "jeskai-striker": {
