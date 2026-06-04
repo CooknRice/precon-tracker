@@ -1,7 +1,7 @@
 // Service worker for The Precon Ledger — offline + installable PWA.
 // Strategy: stale-while-revalidate. Serve from cache instantly, refresh in
 // the background. Only caches same-origin GET requests (skips CDN fonts).
-const CACHE = "precon-ledger-v2";
+const CACHE = "precon-ledger-v3";
 const ASSETS = [
   "./",
   "./index.html",

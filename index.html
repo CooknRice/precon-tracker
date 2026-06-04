@@ -1045,6 +1045,14 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .bd-disc { color: var(--gold-bright); font-size: 11px; margin-left: 4px; }
 .bd-low { font-family: var(--font-mono); font-size: 10px; color: var(--sage); }
 
+/* Crack-arbitrage section — distinct from price deals */
+.crack-deals { border-color: var(--sage); background: linear-gradient(180deg, var(--owned-bg), var(--paper-deep)); }
+.crack-deals .best-deals-head { color: #8fb36a; }
+.crack-deals-note { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); margin-top: 10px; line-height: 1.5; }
+.bd-margin { color: #8fb36a; font-weight: 600; }
+.bd-crackline { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
+.bd-crackline .bd-sealed { color: var(--burgundy); }
+
 /* ---------- Price target (watched cards) ---------- */
 .target-row {
   display: flex;
@@ -1102,6 +1110,12 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 <section id="bestDeals" class="best-deals" hidden>
   <div class="best-deals-head">🔥 Best deals right now</div>
   <div class="best-deals-grid" id="bestDealsGrid"></div>
+</section>
+
+<section id="crackDeals" class="best-deals crack-deals" hidden>
+  <div class="best-deals-head">💎 Best value to crack · singles worth more than sealed</div>
+  <div class="best-deals-grid" id="crackDealsGrid"></div>
+  <div class="crack-deals-note">Singles priced at Near Mint (best of TCGPlayer / Card Kingdom) vs the live sealed price. Cracking means selling the cards individually — fees, condition, and sell-through times not included.</div>
 </section>
 
 <div id="staleBanner" class="stale-banner" role="status"></div>
@@ -1184,6 +1198,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     <button type="button" class="scope-chip" id="watchOnlyChip" aria-pressed="false">★ Watching only</button>
   </div>
   <div class="filter-group">
+    <label class="filter-label">Alerts</label>
+    <button type="button" class="scope-chip" id="exportAlertsBtn" title="Download targets.json from your watchlist + price targets, to commit for daily Discord/GitHub alerts">⤓ Export alerts</button>
+  </div>
+  <div class="filter-group">
     <label class="filter-label" style="opacity:0;">Reset</label>
     <button class="reset-btn" id="resetBtn">Reset filters</button>
   </div>
@@ -1197,6 +1215,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       <option value="releaseDesc">Newest first</option>
       <option value="releaseAsc">Oldest first</option>
       <option value="discount">Biggest discount</option>
+      <option value="crackValue">Best value to crack (singles − sealed)</option>
 
       <option value="priceAsc">Price, low → high</option>
       <option value="priceDesc">Price, high → low</option>
@@ -1451,6 +1470,27 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   }
   async function saveTargets() { await saveKey("targets", targets); }
 
+  // Export watchlist + targets as targets.json for the daily alert workflow.
+  // The user commits this file to the repo; deal-alerts.yml reads it.
+  function exportAlerts() {
+    const payload = {
+      _comment: "Personalized alert config consumed by deal-alerts.yml. 'watched' = deck ids to alert on any drop; 'targets' = deck id -> price, alert fires when live TCG price <= it. Regenerate anytime via the site's 'Export alerts' button.",
+      watched: [...watchSet].sort(),
+      targets: targets,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2) + "\n"], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "targets.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    const n = watchSet.size, t = Object.keys(targets).length;
+    alert(`Downloaded targets.json — ${n} watched deck${n === 1 ? "" : "s"}, ${t} price target${t === 1 ? "" : "s"}.\n\nNext: drop this file into your repo (replace the existing targets.json), commit, and push. The daily alert workflow will use it. Set a DISCORD_WEBHOOK_URL secret to get Discord pings.`);
+  }
+
   // ---------- Theme ----------
   function applyTheme(t) {
     if (t === "light") document.documentElement.dataset.theme = "light";
@@ -1511,6 +1551,11 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         return copy.sort((a, b) => (effectivePrice(b) ?? 0) - (effectivePrice(a) ?? 0));
       case "discount":
         return copy.sort((a, b) => discountPct(b) - discountPct(a));
+      case "crackValue": {
+        // Highest singles-minus-sealed margin first; decks w/o data sink.
+        const m = d => { const a = crackArbitrage(d); return a ? a.margin : -Infinity; };
+        return copy.sort((a, b) => (m(b)) - (m(a)) || a.name.localeCompare(b.name));
+      }
       case "powerDesc":
         // Unscored decks sink to bottom
         return copy.sort((a, b) => (b.powerScore ?? -1) - (a.powerScore ?? -1) || a.name.localeCompare(b.name));
@@ -1601,6 +1646,26 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const c = LIVE_PRICES?.crack?.[d.id];
     if (!c || (c.tcg == null && c.cardkingdom == null)) return null;
     return c;
+  }
+
+  // Crack arbitrage: how much MORE the singles are worth than the sealed
+  // deck costs. Uses the BEST (highest) of the two vendor singles totals
+  // vs the sealed effective price. Returns null when we can't compute both.
+  // { margin: $, pct: %, best: $, vendor: 'TCGPlayer'|'Card Kingdom', sealed: $ }
+  function crackArbitrage(d) {
+    const c = getCrackValue(d);
+    const sealed = effectivePrice(d);
+    if (!c || sealed == null || sealed <= 0) return null;
+    const tcg = c.tcg ?? -Infinity;
+    const ck = c.cardkingdom ?? -Infinity;
+    const best = Math.max(tcg, ck);
+    if (!isFinite(best)) return null;
+    const vendor = best === ck ? "Card Kingdom" : "TCGPlayer";
+    return {
+      margin: best - sealed,
+      pct: ((best - sealed) / sealed) * 100,
+      best, vendor, sealed,
+    };
   }
 
   // ---------- Rendering ----------
@@ -2094,6 +2159,27 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       </button>`).join("");
   }
 
+  // ---------- Crack-value arbitrage ----------
+  function renderCrackDeals() {
+    const el = $("crackDeals"), cgrid = $("crackDealsGrid");
+    if (!el || !cgrid) return;
+    const scored = PRECONS.map(d => {
+      const a = crackArbitrage(d);
+      return a ? { d, ...a } : null;
+    }).filter(Boolean)
+      .filter(x => x.margin > 0)          // only decks worth more cracked than sealed
+      .sort((a, b) => b.margin - a.margin);
+    const top = scored.slice(0, 6);
+    if (top.length === 0) { el.hidden = true; return; }
+    el.hidden = false;
+    cgrid.innerHTML = top.map(x => `
+      <button type="button" class="best-deal" data-deal-id="${x.d.id}">
+        <span class="bd-name">${escapeHtml(x.d.name)}</span>
+        <span class="bd-price"><span class="bd-margin">+$${x.margin.toFixed(0)}</span> <span style="color:var(--ink-faded);">(${x.pct.toFixed(0)}%)</span></span>
+        <span class="bd-crackline">singles $${x.best.toFixed(0)} ${x.vendor === "Card Kingdom" ? "CK" : "TCG"} vs <span class="bd-sealed">$${x.sealed.toFixed(0)} sealed</span></span>
+      </button>`).join("");
+  }
+
   // ---------- Compare view ----------
   function renderCompareBar() {
     if (compareSet.size === 0) {
@@ -2423,9 +2509,13 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     });
 
     $("themeToggle").addEventListener("click", toggleTheme);
-    $("bestDeals").addEventListener("click", e => {
-      const btn = e.target.closest("[data-deal-id]");
-      if (btn) openChart(btn.dataset.dealId);
+    $("exportAlertsBtn").addEventListener("click", exportAlerts);
+    // Both deal sections open the price chart when a card is clicked.
+    ["bestDeals", "crackDeals"].forEach(id => {
+      $(id).addEventListener("click", e => {
+        const btn = e.target.closest("[data-deal-id]");
+        if (btn) openChart(btn.dataset.dealId);
+      });
     });
 
     // The footer link goes to a generic issue form; per-card "report" links
@@ -2451,6 +2541,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       updateStaleBanner();
       renderStats();
       renderBestDeals();
+      renderCrackDeals();
       renderGrid();
       renderCompareBar();
     } catch (e) {

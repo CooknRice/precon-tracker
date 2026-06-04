@@ -29,69 +29,95 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Detect price drops
+      - name: Detect price drops & personalized alerts
         id: detect
         env:
-          DROP_THRESHOLD: '15'  # percent
+          DROP_THRESHOLD: '15'         # global: alert any deck dropping >= this %
+          WATCHED_DROP_THRESHOLD: '5'  # watched decks: more sensitive
         run: |
           python - <<'PY'
           import json, os, subprocess, sys
-          threshold = float(os.environ["DROP_THRESHOLD"])
+          gthresh = float(os.environ["DROP_THRESHOLD"])
+          wthresh = float(os.environ["WATCHED_DROP_THRESHOLD"])
 
-          # Pull yesterday's prices_history.json (HEAD~1) for comparison.
-          try:
-              prev_blob = subprocess.check_output(
-                  ["git", "show", "HEAD~1:prices_history.json"],
-                  stderr=subprocess.DEVNULL,
-              ).decode()
-              prev = json.loads(prev_blob).get("decks", {})
-          except subprocess.CalledProcessError:
-              prev = {}
+          def latest_tcg(series):
+              return series[-1].get("tcg") if series else None
+          def prev_tcg(series):
+              return series[-2].get("tcg") if len(series) >= 2 else None
 
           curr = json.load(open("prices_history.json")).get("decks", {})
           decks = {d["id"]: d for d in json.load(open("decks.json"))}
 
-          drops = []
-          for did, series in curr.items():
-              if len(series) < 2:
-                  continue
-              today = series[-1].get("tcg")
-              # Compare to whatever the most recent prior entry was.
-              yesterday = series[-2].get("tcg") if len(series) >= 2 else None
-              if today is None or yesterday is None or yesterday <= 0:
-                  continue
-              pct = (yesterday - today) / yesterday * 100
-              if pct >= threshold:
-                  d = decks.get(did, {})
-                  drops.append({
-                      "id": did,
-                      "name": d.get("name", did),
-                      "set": d.get("set", ""),
-                      "before": yesterday,
-                      "after": today,
-                      "pct": pct,
-                  })
+          # Personalized config (optional file). watched = ids; targets = id->price.
+          watched, targets = [], {}
+          try:
+              cfg = json.load(open("targets.json"))
+              watched = cfg.get("watched") or []
+              targets = cfg.get("targets") or {}
+          except (FileNotFoundError, json.JSONDecodeError):
+              pass
+          watched = set(watched)
 
-          drops.sort(key=lambda x: -x["pct"])
-          if not drops:
-              print("No drops above threshold.")
+          def name_of(did): return decks.get(did, {}).get("name", did)
+          def set_of(did): return decks.get(did, {}).get("set", "")
+
+          global_drops, watched_drops, target_hits = [], [], []
+
+          for did, series in curr.items():
+              today = latest_tcg(series)
+              yest = prev_tcg(series)
+              # Target hit: live price at/below the user's target (needs today's price only).
+              tgt = targets.get(did)
+              if today is not None and tgt is not None and today <= float(tgt):
+                  target_hits.append({"id": did, "name": name_of(did), "set": set_of(did),
+                                      "price": today, "target": float(tgt)})
+              # Drop detection needs a prior data point.
+              if today is None or yest is None or yest <= 0:
+                  continue
+              pct = (yest - today) / yest * 100
+              if did in watched and pct >= wthresh:
+                  watched_drops.append({"id": did, "name": name_of(did), "set": set_of(did),
+                                        "before": yest, "after": today, "pct": pct})
+              elif pct >= gthresh:
+                  global_drops.append({"id": did, "name": name_of(did), "set": set_of(did),
+                                       "before": yest, "after": today, "pct": pct})
+
+          global_drops.sort(key=lambda x: -x["pct"])
+          watched_drops.sort(key=lambda x: -x["pct"])
+          target_hits.sort(key=lambda x: x["price"] - x["target"])
+
+          total = len(global_drops) + len(watched_drops) + len(target_hits)
+          if total == 0:
+              print("Nothing to alert.")
               with open(os.environ["GITHUB_OUTPUT"], "a") as gh:
                   gh.write("found=0\n")
               sys.exit(0)
 
-          print(f"Found {len(drops)} drops:")
-          lines = []
-          for d in drops:
-              lines.append(f"- **{d['name']}** ({d['set']}) — ${d['before']:.2f} → **${d['after']:.2f}** ({d['pct']:.0f}% off)")
-              print(f"  {d['name']}: ${d['before']:.2f} -> ${d['after']:.2f} ({d['pct']:.0f}%)")
+          sections = []
+          if target_hits:
+              rows = "\n".join(f"- 🎯 **{d['name']}** ({d['set']}) hit your target: **${d['price']:.2f}** (target ${d['target']:.2f})" for d in target_hits)
+              sections.append("### Price targets reached\n" + rows)
+          if watched_drops:
+              rows = "\n".join(f"- ⭐ **{d['name']}** ({d['set']}) — ${d['before']:.2f} → **${d['after']:.2f}** ({d['pct']:.0f}% down)" for d in watched_drops)
+              sections.append("### Watched decks dropping\n" + rows)
+          if global_drops:
+              rows = "\n".join(f"- **{d['name']}** ({d['set']}) — ${d['before']:.2f} → **${d['after']:.2f}** ({d['pct']:.0f}% down)" for d in global_drops)
+              sections.append(f"### Other decks down >{int(gthresh)}%\n" + rows)
 
-          body = "Daily price-drop alert. The following precons dropped by more than {0}% since the last scrape:\n\n{1}\n\n_Auto-generated by deal-alerts.yml_".format(int(threshold), "\n".join(lines))
-          title = f"Price drops · {len(drops)} deck{'s' if len(drops) != 1 else ''}"
+          body = "\n\n".join(sections) + "\n\n_Auto-generated by deal-alerts.yml_"
+          # Title leads with the most personal signal.
+          if target_hits:
+              title = f"🎯 {len(target_hits)} price target{'s' if len(target_hits)!=1 else ''} hit"
+          elif watched_drops:
+              title = f"⭐ {len(watched_drops)} watched deck{'s' if len(watched_drops)!=1 else ''} dropping"
+          else:
+              title = f"Price drops · {len(global_drops)} deck{'s' if len(global_drops)!=1 else ''}"
 
+          print(f"target_hits={len(target_hits)} watched_drops={len(watched_drops)} global_drops={len(global_drops)}")
           with open("alert_body.md", "w") as f:
               f.write(body)
           with open(os.environ["GITHUB_OUTPUT"], "a") as gh:
-              gh.write(f"found={len(drops)}\n")
+              gh.write(f"found={total}\n")
               gh.write(f"title={title}\n")
           PY
 
