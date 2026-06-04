@@ -1,0 +1,5 @@
+{
+  "_comment": "Personalized alert config for the daily deal-alerts workflow. Edit by hand, or use the 'Export alerts' button on the site to download a fresh copy from your browser watchlist/targets, then commit it. 'watched' = deck ids you want any drop alerts for. 'targets' = deck id -> price; alert fires when the live TCG price is at or below it.",
+  "watched": [],
+  "targets": {}
+}
