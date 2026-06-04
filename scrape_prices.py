@@ -575,6 +575,10 @@ def fetch_zulus(deck_name: str, session: requests.Session) -> dict:
 
 MTGJSON_BASE = "https://mtgjson.com/api/v5"
 ALLPRICES_URL = f"{MTGJSON_BASE}/AllPricesToday.json.gz"
+# TCGPlayer has no buylist in MTGJSON, so we estimate the "crack to sell"
+# value at this fraction of TCG retail (typical net after marketplace/direct
+# fees and the buyer discount). Card Kingdom uses its REAL buylist instead.
+TCG_SELL_RATE = 0.70
 
 # Manual deck_id -> MTGJSON fileName overrides for decks whose names don't
 # match by normalization. MTGJSON lists the Final Fantasy commander decks
@@ -700,30 +704,48 @@ def fetch_crack_values(decks: list, session: requests.Session) -> dict:
     price_by_uuid: dict = {}
     for u in need_uuids:
         paper = (pdata.get(u) or {}).get("paper", {})
-        tcg = _latest_price((((paper.get("tcgplayer") or {}).get("retail") or {}).get("normal")))
-        ck = _latest_price((((paper.get("cardkingdom") or {}).get("retail") or {}).get("normal")))
-        price_by_uuid[u] = (tcg, ck)
+        ckp = paper.get("cardkingdom") or {}
+        tcgp = paper.get("tcgplayer") or {}
+        tcg_retail = _latest_price(((tcgp.get("retail") or {}).get("normal")))
+        ck_retail = _latest_price(((ckp.get("retail") or {}).get("normal")))
+        ck_buylist = _latest_price(((ckp.get("buylist") or {}).get("normal")))
+        price_by_uuid[u] = (tcg_retail, ck_retail, ck_buylist)
     del allp, pdata  # free ~50MB promptly
 
-    # 3. Sum per deck for each vendor.
+    # 3. Sum per deck. Two sides:
+    #    BUY  = retail (what the cards cost to acquire) — tcg + cardkingdom.
+    #    SELL = what you'd get cracking to sell:
+    #             - cardkingdom: REAL Card Kingdom buylist (only ~60% of cards
+    #               are buyable; bulk commons/basics are genuinely $0 sell).
+    #             - tcgplayer: estimated at TCG_SELL_RATE of TCG retail, since
+    #               MTGJSON carries no TCGPlayer buylist. Clearly flagged.
     results: dict = {}
     for did, cards in deck_cards.items():
-        tcg_total = ck_total = 0.0
+        tcg_buy = ck_buy = 0.0
+        tcg_sell_est = ck_sell = 0.0
         tcg_n = ck_n = missing = 0
         for u, cnt in cards:
-            tcg, ck = price_by_uuid.get(u, (None, None))
-            if tcg is not None:
-                tcg_total += tcg * cnt
+            tcg_r, ck_r, ck_bl = price_by_uuid.get(u, (None, None, None))
+            if tcg_r is not None:
+                tcg_buy += tcg_r * cnt
+                tcg_sell_est += tcg_r * TCG_SELL_RATE * cnt
                 tcg_n += 1
-            if ck is not None:
-                ck_total += ck * cnt
+            if ck_r is not None:
+                ck_buy += ck_r * cnt
                 ck_n += 1
-            if tcg is None and ck is None:
+            if ck_bl is not None:
+                ck_sell += ck_bl * cnt  # cards CK won't buy simply add $0
+            if tcg_r is None and ck_r is None:
                 missing += 1
         if tcg_n or ck_n:
             results[did] = {
-                "tcg": round(tcg_total, 2) if tcg_n else None,
-                "cardkingdom": round(ck_total, 2) if ck_n else None,
+                # BUY side (retail) — unchanged keys for back-compat.
+                "tcg": round(tcg_buy, 2) if tcg_n else None,
+                "cardkingdom": round(ck_buy, 2) if ck_n else None,
+                # SELL side.
+                "sell_tcg": round(tcg_sell_est, 2) if tcg_n else None,
+                "sell_cardkingdom": round(ck_sell, 2) if ck_sell > 0 else None,
+                "sell_tcg_estimated": True,  # TCG sell is a 70%-of-retail estimate
                 "card_count": len(cards),
                 "priced": max(tcg_n, ck_n),
                 "missing": missing,
