@@ -1113,9 +1113,9 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 </section>
 
 <section id="crackDeals" class="best-deals crack-deals" hidden>
-  <div class="best-deals-head">💎 Best value to crack · singles worth more than sealed</div>
+  <div class="best-deals-head">💎 Best value to crack · net profit if you crack &amp; sell</div>
   <div class="best-deals-grid" id="crackDealsGrid"></div>
-  <div class="crack-deals-note">Singles priced at Near Mint (best of TCGPlayer / Card Kingdom) vs the live sealed price. Cracking means selling the cards individually — fees, condition, and sell-through times not included.</div>
+  <div class="crack-deals-note">Net = realistic <strong>sell</strong> value of the singles minus the live sealed price. Sell value uses Card Kingdom's real buylist where available; TCGPlayer sell is estimated at 70% of retail (<strong>*</strong>) since no TCG buylist feed exists. Excludes shipping, fees, card condition, and the time/effort to actually sell ~100 singles — treat as an upper bound.</div>
 </section>
 
 <div id="staleBanner" class="stale-banner" role="status"></div>
@@ -1648,23 +1648,44 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     return c;
   }
 
-  // Crack arbitrage: how much MORE the singles are worth than the sealed
-  // deck costs. Uses the BEST (highest) of the two vendor singles totals
-  // vs the sealed effective price. Returns null when we can't compute both.
-  // { margin: $, pct: %, best: $, vendor: 'TCGPlayer'|'Card Kingdom', sealed: $ }
-  function crackArbitrage(d) {
+  // Singles BUY value (retail — what the cards cost to acquire). Returns the
+  // best (highest) of the two vendors' retail totals, or null.
+  function crackBuyValue(d) {
     const c = getCrackValue(d);
-    const sealed = effectivePrice(d);
-    if (!c || sealed == null || sealed <= 0) return null;
-    const tcg = c.tcg ?? -Infinity;
-    const ck = c.cardkingdom ?? -Infinity;
-    const best = Math.max(tcg, ck);
+    if (!c) return null;
+    const tcg = c.tcg, ck = c.cardkingdom;
+    const best = Math.max(tcg ?? -Infinity, ck ?? -Infinity);
+    if (!isFinite(best)) return null;
+    return { value: best, vendor: best === ck ? "Card Kingdom" : "TCGPlayer", tcg, ck };
+  }
+
+  // Singles SELL value (crack-to-sell — what you'd actually receive). Card
+  // Kingdom is REAL buylist; TCGPlayer is an estimate (~70% of retail). We
+  // surface the best realistic sell number plus whether it's estimated.
+  function crackSellValue(d) {
+    const c = getCrackValue(d);
+    if (!c) return null;
+    const ck = c.sell_cardkingdom;        // real CK buylist
+    const tcg = c.sell_tcg;               // estimated
+    const best = Math.max(ck ?? -Infinity, tcg ?? -Infinity);
     if (!isFinite(best)) return null;
     const vendor = best === ck ? "Card Kingdom" : "TCGPlayer";
+    return { value: best, vendor, ck, tcg, estimated: vendor === "TCGPlayer" };
+  }
+
+  // Crack arbitrage = realistic NET profit from cracking and SELLING the
+  // singles, vs buying the sealed deck. Uses the SELL value (not retail), so
+  // it answers "would cracking actually make me money?" — not the inflated
+  // retail comparison. { margin, pct, sell, sealed, vendor, estimated }
+  function crackArbitrage(d) {
+    const sell = crackSellValue(d);
+    const sealed = effectivePrice(d);
+    if (!sell || sealed == null || sealed <= 0) return null;
     return {
-      margin: best - sealed,
-      pct: ((best - sealed) / sealed) * 100,
-      best, vendor, sealed,
+      margin: sell.value - sealed,
+      pct: ((sell.value - sealed) / sealed) * 100,
+      sell: sell.value, sealed,
+      vendor: sell.vendor, estimated: sell.estimated,
     };
   }
 
@@ -2015,12 +2036,14 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const crack = getCrackValue(d);
     let singlesLine;
     if (crack) {
-      const best = Math.max(crack.tcg || 0, crack.cardkingdom || 0);
-      const worth = ep != null && best > ep;
-      const parts = [];
-      if (crack.tcg != null) parts.push(`TCG ~$${crack.tcg.toFixed(0)}`);
-      if (crack.cardkingdom != null) parts.push(`CK ~$${crack.cardkingdom.toFixed(0)}`);
-      singlesLine = `<span class="crack-value${worth ? " worth" : ""}"><strong>Singles (NM):</strong> ${parts.join(" · ")}${worth ? ' <span class="crack-flag">▲ worth parting out</span>' : ""}</span>`;
+      const buy = crackBuyValue(d);
+      const sell = crackSellValue(d);
+      // Profitable to crack only if you'd SELL for more than the sealed price.
+      const worth = ep != null && sell && sell.value > ep;
+      const buyStr = buy ? `buy ~$${buy.value.toFixed(0)}` : "";
+      const sellStr = sell ? `sell ~$${sell.value.toFixed(0)}${sell.estimated ? "*" : ""}` : "";
+      const both = [buyStr, sellStr].filter(Boolean).join(" / ");
+      singlesLine = `<span class="crack-value${worth ? " worth" : ""}"><strong>Singles (NM):</strong> ${both}${worth ? ' <span class="crack-flag">▲ profit to crack</span>' : ""}</span>`;
     } else if (d.singlesValue) {
       singlesLine = `<span><strong>Singles</strong> ~$${d.singlesValue.toFixed(0)}</span>`;
     } else {
@@ -2175,8 +2198,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     cgrid.innerHTML = top.map(x => `
       <button type="button" class="best-deal" data-deal-id="${x.d.id}">
         <span class="bd-name">${escapeHtml(x.d.name)}</span>
-        <span class="bd-price"><span class="bd-margin">+$${x.margin.toFixed(0)}</span> <span style="color:var(--ink-faded);">(${x.pct.toFixed(0)}%)</span></span>
-        <span class="bd-crackline">singles $${x.best.toFixed(0)} ${x.vendor === "Card Kingdom" ? "CK" : "TCG"} vs <span class="bd-sealed">$${x.sealed.toFixed(0)} sealed</span></span>
+        <span class="bd-price"><span class="bd-margin">+$${x.margin.toFixed(0)}</span> <span style="color:var(--ink-faded);">net (${x.pct.toFixed(0)}%)</span></span>
+        <span class="bd-crackline">sell $${x.sell.toFixed(0)} ${x.vendor === "Card Kingdom" ? "CK buylist" : "TCG est*"} vs <span class="bd-sealed">$${x.sealed.toFixed(0)} sealed</span></span>
       </button>`).join("");
   }
 
@@ -2229,7 +2252,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         const cls = (powers[i] === maxPower && maxPower >= 0) ? "best" : "";
         return `<span class="${cls}">${d.powerScore != null ? d.powerScore.toFixed(1) + " " + (d.powerBracket || "") : "—"}</span>`;
       })],
-      ["Singles (NM)", decks.map(d => { const c = getCrackValue(d); if (c) { const p = []; if (c.tcg != null) p.push(`TCG $${c.tcg.toFixed(0)}`); if (c.cardkingdom != null) p.push(`CK $${c.cardkingdom.toFixed(0)}`); return p.join(" · "); } return d.singlesValue ? `~$${d.singlesValue} est.` : "—"; })],
+      ["Singles · buy (NM)", decks.map(d => { const b = crackBuyValue(d); if (b) { const p = []; if (b.tcg != null) p.push(`TCG $${b.tcg.toFixed(0)}`); if (b.ck != null) p.push(`CK $${b.ck.toFixed(0)}`); return p.join(" · "); } return d.singlesValue ? `~$${d.singlesValue} est.` : "—"; })],
+      ["Singles · sell", decks.map(d => { const sv = crackSellValue(d); if (sv) { const p = []; if (sv.ck != null) p.push(`CK $${sv.ck.toFixed(0)}`); if (sv.tcg != null) p.push(`TCG $${sv.tcg.toFixed(0)}*`); return p.join(" · "); } return "—"; })],
       ["Strategy", decks.map(d => `<span style="font-size:12px; line-height:1.45;">${escapeHtml(d.desc)}</span>`)],
     ];
 
