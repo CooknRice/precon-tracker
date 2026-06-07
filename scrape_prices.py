@@ -755,6 +755,111 @@ def fetch_crack_values(decks: list, session: requests.Session) -> dict:
 
 
 # -------------------------------------------------------------------------
+# Sealed box prices (Play/Draft, Collector, Jumpstart) per set
+# -------------------------------------------------------------------------
+
+def _clean_set_name(s: str) -> str:
+    """Strip 'Commander' qualifier and parenthetical years so a deck's set
+    ('Bloomburrow Commander') matches the main box group ('Bloomburrow')."""
+    s = re.sub(r"\(.*?\)", "", s or "")
+    s = re.sub(r"\bcommander\b", "", s, flags=re.I)
+    return s.strip(" :-")
+
+
+def find_main_set_group(groups: list, set_name: str) -> dict | None:
+    """Find the canonical main-set group for box products (NOT the
+    'Commander:' / 'Art Series' / 'Promo' groups)."""
+    toks = tokenize(_clean_set_name(set_name))
+    if not toks:
+        return None
+    best = None
+    for g in groups:
+        gn = g.get("name") or ""
+        gl = gn.lower()
+        if any(x in gl for x in ("commander", "art series", "promo pack", "minimal packaging")):
+            continue
+        if toks.issubset(tokenize(gn)):
+            if best is None or len(gn) < len(best.get("name") or ""):
+                best = g
+    return best
+
+
+def _classify_box(name: str) -> str | None:
+    """Map a product name to one of our 3 tracked box types, or None.
+    Excludes cases/master cases (bulk) and singles packs."""
+    l = (name or "").lower()
+    if "case" in l or "master" in l or "sample" in l or "omega" in l:
+        return None
+    if "collector booster display" in l:
+        return "collector"
+    if "play booster display" in l:
+        return "play"
+    # Older sets used Draft/Set Booster displays before Play Boosters (2024).
+    if "draft booster display" in l or "set booster display" in l:
+        return "play"
+    if "jumpstart" in l and "display" in l:
+        return "jumpstart"
+    return None
+
+# Human labels for the 3 box types.
+BOX_TYPE_LABELS = {"play": "Booster Box", "collector": "Collector Booster Box", "jumpstart": "Jumpstart Box"}
+
+
+def fetch_box_prices(decks: list, session: requests.Session, groups: list) -> dict:
+    """For each unique set among the decks, find its main-set group and price
+    the Play/Collector/Jumpstart boxes. Returns { set_name: [ {type, label,
+    name, price, price_low, price_source, url} ] }.
+    Resilient: sets with no boxes (Commander-only products) are simply omitted.
+    """
+    sets = sorted({d.get("set", "") for d in decks if d.get("set")})
+    out: dict = {}
+    for set_name in sets:
+        g = find_main_set_group(groups, set_name)
+        if not g:
+            continue
+        try:
+            prods = fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/{g['groupId']}/products", session).get("results", [])
+            prices = flatten_prices(fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/{g['groupId']}/prices", session).get("results", []))
+        except Exception as e:
+            print(f"  boxes: [{set_name}] fetch failed: {e}", flush=True)
+            continue
+        # Pick one product per box type (first match; they're unique per set).
+        picked: dict = {}
+        for p in prods:
+            t = _classify_box(p.get("name") or "")
+            if t and t not in picked:
+                picked[t] = p
+        rows = []
+        for t, p in picked.items():
+            pid = p["productId"]
+            row = prices.get(pid) or {}
+            market = row.get("marketPrice")
+            low = row.get("lowPrice")
+            mid = row.get("midPrice")
+            eff = market if market is not None else (low if low is not None else mid)
+            if eff is None:
+                continue
+            src = "Market" if market is not None else ("Low" if low is not None else "Mid")
+            rows.append({
+                "type": t,
+                "label": BOX_TYPE_LABELS[t],
+                "name": p.get("name"),
+                "price": float(eff),
+                "price_low": float(low) if low is not None else None,
+                "price_source": src,
+                "url": tcg_product_url(pid, p.get("name", "")),
+            })
+        if rows:
+            # Stable order: play, collector, jumpstart.
+            order = {"play": 0, "collector": 1, "jumpstart": 2}
+            rows.sort(key=lambda r: order.get(r["type"], 9))
+            out[set_name] = rows
+        time.sleep(0.3)
+    print(f"  boxes: {len(out)} sets with sealed boxes", flush=True)
+    return out
+
+
+# -------------------------------------------------------------------------
 # Main
 # -------------------------------------------------------------------------
 
@@ -797,6 +902,15 @@ def main() -> None:
     except Exception as e:
         print(f"Crack value phase failed (non-fatal): {e}", flush=True)
 
+    print("\n=== Phase 4: Sealed box prices (per set) ===", flush=True)
+    box_results = {}
+    try:
+        box_session = make_session(TCGCSV_UA)
+        box_groups = load_magic_groups(box_session)
+        box_results = fetch_box_prices(decks, box_session, box_groups)
+    except Exception as e:
+        print(f"Box price phase failed (non-fatal): {e}", flush=True)
+
     output = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "deck_count": len(decks),
@@ -807,6 +921,7 @@ def main() -> None:
         },
         "bundles": bundles,
         "crack": crack_results,
+        "boxes": box_results,
     }
     out_path.write_text(json.dumps(output, indent=2))
 
@@ -821,6 +936,7 @@ def main() -> None:
     print(f"Zulus:     {zu_hits}/{len(decks)} hits")
     print(f"Bundles:   {len(bundles)} sets")
     print(f"Crack val: {len(crack_results)} decks priced")
+    print(f"Boxes:     {len(box_results)} sets with sealed boxes")
 
 
 def update_history(decks: list, tcg_results: dict, zulus_results: dict) -> None:

@@ -1050,6 +1050,30 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .crack-deals .best-deals-head { color: #8fb36a; }
 .crack-deals-note { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); margin-top: 10px; line-height: 1.5; }
 .bd-margin { color: #8fb36a; font-weight: 600; }
+
+/* Sealed box section */
+.box-section { border: 1px solid var(--paper-line); background: var(--paper-deep); margin-bottom: 24px; }
+.box-toggle {
+  width: 100%; text-align: left; background: transparent; border: none;
+  color: var(--ink); font-family: var(--font-mono); font-size: 13px;
+  padding: 14px 18px; cursor: pointer; letter-spacing: 0.04em;
+}
+.box-toggle:hover { color: var(--gold-bright); }
+.box-toggle-hint { color: var(--ink-faded); font-size: 11px; text-transform: none; }
+.box-body { padding: 4px 18px 18px; }
+.box-set { border-top: 1px solid var(--paper-line); padding: 12px 0; }
+.box-set-name { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+.box-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.box-item {
+  display: flex; flex-direction: column; gap: 3px;
+  background: var(--paper); border: 1px solid var(--paper-line);
+  padding: 10px 12px; text-decoration: none; transition: all 0.12s;
+}
+.box-item:hover { border-color: var(--gold-bright); transform: translateY(-1px); }
+.box-item-type { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-muted); }
+.box-item-price { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--burgundy); }
+.box-item-low { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); }
+.box-spark { margin-top: 2px; }
 .bd-crackline { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
 .bd-crackline .bd-sealed { color: var(--burgundy); }
 
@@ -1205,6 +1229,13 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     <label class="filter-label" style="opacity:0;">Reset</label>
     <button class="reset-btn" id="resetBtn">Reset filters</button>
   </div>
+</section>
+
+<section id="boxSection" class="box-section" hidden>
+  <button type="button" id="boxToggle" class="box-toggle" aria-expanded="false">
+    📦 Sealed booster boxes <span class="box-toggle-hint">(prices by set · click to expand)</span>
+  </button>
+  <div id="boxBody" class="box-body" hidden></div>
 </section>
 
 <div class="count-line">
@@ -1646,6 +1677,11 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const c = LIVE_PRICES?.crack?.[d.id];
     if (!c || (c.tcg == null && c.cardkingdom == null)) return null;
     return c;
+  }
+
+  // Sealed-box prices keyed by set name, from the scraper. { set: [box,...] }
+  function getBoxes() {
+    return LIVE_PRICES?.boxes || null;
   }
 
   // Singles BUY value (retail — what the cards cost to acquire). Returns the
@@ -2203,6 +2239,30 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       </button>`).join("");
   }
 
+  // ---------- Sealed boxes ----------
+  function renderBoxes() {
+    const sec = $("boxSection"), body = $("boxBody");
+    if (!sec || !body) return;
+    const boxes = getBoxes();
+    if (!boxes || Object.keys(boxes).length === 0) { sec.hidden = true; return; }
+    sec.hidden = false;
+    // Sort sets newest-first using the release date of any deck in that set.
+    const setDate = {};
+    for (const d of PRECONS) {
+      if (d.set && (!setDate[d.set] || d.releaseDate > setDate[d.set])) setDate[d.set] = d.releaseDate;
+    }
+    const setNames = Object.keys(boxes).sort((a, b) => (setDate[b] || "").localeCompare(setDate[a] || ""));
+    body.innerHTML = setNames.map(sn => {
+      const items = boxes[sn].map(b => `
+        <a class="box-item" href="${b.url}" target="_blank" rel="noopener noreferrer">
+          <span class="box-item-type">${escapeHtml(b.label)}</span>
+          <span class="box-item-price">$${b.price.toFixed(2)}</span>
+          ${b.price_low != null ? `<span class="box-item-low">low $${b.price_low.toFixed(2)}</span>` : ""}
+        </a>`).join("");
+      return `<div class="box-set"><div class="box-set-name">${escapeHtml(sn)}</div><div class="box-grid">${items}</div></div>`;
+    }).join("");
+  }
+
   // ---------- Compare view ----------
   function renderCompareBar() {
     if (compareSet.size === 0) {
@@ -2541,6 +2601,13 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         if (btn) openChart(btn.dataset.dealId);
       });
     });
+    // Sealed-box section is collapsible.
+    $("boxToggle").addEventListener("click", () => {
+      const body = $("boxBody");
+      const open = body.hidden;
+      body.hidden = !open;
+      $("boxToggle").setAttribute("aria-expanded", open ? "true" : "false");
+    });
 
     // The footer link goes to a generic issue form; per-card "report" links
     // (added below) prefill with deck context. Both open in a new tab.
@@ -2566,6 +2633,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       renderStats();
       renderBestDeals();
       renderCrackDeals();
+      renderBoxes();
       renderGrid();
       renderCompareBar();
     } catch (e) {
