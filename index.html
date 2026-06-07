@@ -1073,6 +1073,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .box-item-type { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-muted); }
 .box-item-price { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--burgundy); }
 .box-item-low { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); }
+.box-item { cursor: pointer; }
+.box-item-link { font-family: var(--font-mono); font-size: 10px; color: var(--gold); text-decoration: none; margin-top: 2px; }
+.box-item-link:hover { color: var(--gold-bright); text-decoration: underline; }
+.box-item .sparkline { margin-left: 4px; }
 .box-spark { margin-top: 2px; }
 .bd-crackline { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
 .bd-crackline .bd-sealed { color: var(--burgundy); }
@@ -1373,6 +1377,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   const LIVE_PRICES_LOCAL_URL = "./prices.json";  // works when HTML is served from same folder
   let LIVE_PRICES = null;  // populated by loadLivePrices(); null = unavailable
   let PRICE_HISTORY = null;  // populated by loadHistory(); { deck_id: [{date, tcg, zulus}, ...] }
+  let BOX_HISTORY = null;    // populated by loadHistory(); { "<set>::<type>": [{date, price}, ...] }
   let PRECONS = [];        // populated by loadDecks() from decks.json
 
   async function loadDecks() {
@@ -1387,6 +1392,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       if (!res.ok) return;
       const data = await res.json();
       PRICE_HISTORY = data && data.decks ? data.decks : null;
+      BOX_HISTORY = data && data.boxes ? data.boxes : null;
     } catch (e) {
       // History is optional — built up over time by the scraper.
     }
@@ -1833,38 +1839,37 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   }
 
   // State for the chart modal (which deck, which time range).
-  let chartCurrentDeck = null;
   let chartCurrentRange = "all";
+  // Generic chart source: an array of {date, price} plus the field name to
+  // read. Decks read 'tcg' from PRICE_HISTORY; boxes read 'price' from
+  // BOX_HISTORY. renderChart works off this regardless of source.
+  let chartCurrentRaw = [];   // full series (array of {date, <field>})
+  let chartCurrentField = "tcg";
 
   function renderChart() {
-    const deck = chartCurrentDeck;
     const wrap = $("chartCanvasWrap");
     const empty = $("chartEmpty");
-    if (!deck) return;
 
-    let series = (PRICE_HISTORY && PRICE_HISTORY[deck.id]) || [];
+    let series = chartCurrentRaw || [];
 
     // Trim to selected window
     if (chartCurrentRange !== "all") {
       const days = parseInt(chartCurrentRange, 10);
       const cutoff = Date.now() - days * 86400000;
-      series = series.filter(s => new Date(s.date).getTime() >= cutoff);
-    }
-
-    // Fall back to all available if the window is too narrow to plot anything.
-    if (series.length < 2 && chartCurrentRange !== "all") {
-      series = (PRICE_HISTORY && PRICE_HISTORY[deck.id]) || [];
+      const trimmed = series.filter(s => new Date(s.date).getTime() >= cutoff);
+      // Fall back to all available if the window is too narrow to plot.
+      series = trimmed.length >= 2 ? trimmed : series;
     }
 
     const points = series
-      .map(s => ({ date: s.date, price: s.tcg }))
+      .map(s => ({ date: s.date, price: s[chartCurrentField] }))
       .filter(p => typeof p.price === "number");
 
     if (points.length < 2) {
       wrap.innerHTML = "";
       empty.classList.add("visible");
       empty.textContent = points.length === 0
-        ? "No live price history yet for this deck."
+        ? "No live price history yet."
         : `Only ${points.length} data point so far — come back in a few days as the daily scraper builds up history.`;
       $("chartPriceNow").textContent = points[0] ? `$${points[0].price.toFixed(2)}` : "—";
       $("chartDelta").textContent = "—";
@@ -1926,7 +1931,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     ).join("");
 
     wrap.innerHTML = `
-      <svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Price history chart for ${escapeHtml(deck.name)}">
+      <svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Price history chart">
         ${gridLines}
         <path class="price-area" d="${areaPath}"/>
         <path class="price-line" d="${linePath}"/>
@@ -1936,13 +1941,13 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       </svg>`;
   }
 
-  function openChart(deckId, range = "all") {
-    const deck = PRECONS.find(d => d.id === deckId);
-    if (!deck) return;
-    chartCurrentDeck = deck;
+  // Shared modal opener — sets title/subtitle, range buttons, renders.
+  function showChartModal(title, subtitle, raw, field, range) {
+    chartCurrentRaw = raw || [];
+    chartCurrentField = field;
     chartCurrentRange = range;
-    $("chartModalTitle").textContent = deck.name;
-    $("chartSubtitle").textContent = `${deck.set} · TCGPlayer Market`;
+    $("chartModalTitle").textContent = title;
+    $("chartSubtitle").textContent = subtitle;
     document.querySelectorAll("#chartModal .range-btn").forEach(b => {
       const on = b.dataset.range === String(range);
       b.classList.toggle("active", on);
@@ -1950,6 +1955,20 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     });
     renderChart();
     $("chartModal").classList.add("visible");
+  }
+
+  function openChart(deckId, range = "all") {
+    const deck = PRECONS.find(d => d.id === deckId);
+    if (!deck) return;
+    const raw = (PRICE_HISTORY && PRICE_HISTORY[deck.id]) || [];
+    showChartModal(deck.name, `${deck.set} · TCGPlayer Market`, raw, "tcg", range);
+  }
+
+  // Open the chart for a sealed box, keyed "<set>::<type>" in BOX_HISTORY.
+  function openBoxChart(setName, type, label, range = "all") {
+    const key = `${setName}::${type}`;
+    const raw = (BOX_HISTORY && BOX_HISTORY[key]) || [];
+    showChartModal(`${setName} — ${label}`, "Sealed box · TCGPlayer Market", raw, "price", range);
   }
 
   // Build a prefilled "report a problem" GitHub Issue URL for one deck.
@@ -2253,12 +2272,20 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     }
     const setNames = Object.keys(boxes).sort((a, b) => (setDate[b] || "").localeCompare(setDate[a] || ""));
     body.innerHTML = setNames.map(sn => {
-      const items = boxes[sn].map(b => `
-        <a class="box-item" href="${b.url}" target="_blank" rel="noopener noreferrer">
+      const items = boxes[sn].map(b => {
+        // Sparkline from this box's history series, if available.
+        const hist = BOX_HISTORY && BOX_HISTORY[`${sn}::${b.type}`];
+        const spark = (hist && hist.length >= 2)
+          ? sparklineSvg(hist.map(s => ({ tcg: s.price })))   // sparklineSvg reads .tcg
+          : "";
+        return `
+        <div class="box-item" data-box-set="${escapeHtml(sn)}" data-box-type="${b.type}" data-box-label="${escapeHtml(b.label)}" role="button" tabindex="0" title="Click for price history">
           <span class="box-item-type">${escapeHtml(b.label)}</span>
-          <span class="box-item-price">$${b.price.toFixed(2)}</span>
+          <span class="box-item-price">$${b.price.toFixed(2)} ${spark}</span>
           ${b.price_low != null ? `<span class="box-item-low">low $${b.price_low.toFixed(2)}</span>` : ""}
-        </a>`).join("");
+          <a class="box-item-link" href="${b.url}" target="_blank" rel="noopener noreferrer">view on TCGPlayer →</a>
+        </div>`;
+      }).join("");
       return `<div class="box-set"><div class="box-set-name">${escapeHtml(sn)}</div><div class="box-grid">${items}</div></div>`;
     }).join("");
   }
@@ -2607,6 +2634,17 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       const open = body.hidden;
       body.hidden = !open;
       $("boxToggle").setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    // Box item → open its price-history chart (but let the TCGPlayer link work).
+    $("boxBody").addEventListener("click", e => {
+      if (e.target.closest(".box-item-link")) return;  // let the real link navigate
+      const item = e.target.closest(".box-item");
+      if (item) openBoxChart(item.dataset.boxSet, item.dataset.boxType, item.dataset.boxLabel);
+    });
+    $("boxBody").addEventListener("keydown", e => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const item = e.target.closest(".box-item");
+      if (item) { e.preventDefault(); openBoxChart(item.dataset.boxSet, item.dataset.boxType, item.dataset.boxLabel); }
     });
 
     // The footer link goes to a generic issue form; per-card "report" links

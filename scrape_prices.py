@@ -925,7 +925,7 @@ def main() -> None:
     }
     out_path.write_text(json.dumps(output, indent=2))
 
-    update_history(decks, tcg_results, zulus_results)
+    update_history(decks, tcg_results, zulus_results, box_results)
 
     tcg_hits = sum(1 for v in tcg_results.values() if v.get("price") is not None)
     zu_hits = sum(1 for v in zulus_results.values() if v.get("price") is not None)
@@ -939,12 +939,14 @@ def main() -> None:
     print(f"Boxes:     {len(box_results)} sets with sealed boxes")
 
 
-def update_history(decks: list, tcg_results: dict, zulus_results: dict) -> None:
+def update_history(decks: list, tcg_results: dict, zulus_results: dict, box_results: dict | None = None) -> None:
     """Append today's prices to prices_history.json and trim to HISTORY_DAYS.
 
-    File shape: { "decks": { deck_id: [{date: 'YYYY-MM-DD', tcg: 49.99, zulus: 47.50}, ...] } }
+    File shape:
+      { "decks": { deck_id: [{date, tcg, zulus}, ...] },
+        "boxes": { "<set>::<type>": [{date, price}, ...] } }
     Skips appending if today's prices match the most-recent entry's, so the
-    file stays small for decks that don't move much.
+    file stays small for items that don't move much.
     """
     history_path = Path(__file__).parent / "prices_history.json"
     today = datetime.now(timezone.utc).date().isoformat()
@@ -989,15 +991,39 @@ def update_history(decks: list, tcg_results: dict, zulus_results: dict) -> None:
             series = series[-HISTORY_DAYS:]
         decks_history[did] = series
 
+    # ---- Box history: keyed "<set>::<type>", one {date, price} series each ----
+    boxes_history = history.get("boxes") if isinstance(history.get("boxes"), dict) else {}
+    if box_results:
+        for set_name, rows in box_results.items():
+            for r in rows:
+                price = r.get("price")
+                if price is None:
+                    continue
+                key = f"{set_name}::{r.get('type')}"
+                series = boxes_history.get(key, [])
+                new_entry = {"date": today, "price": round(float(price), 2)}
+                if series and series[-1].get("date") == today:
+                    series[-1] = new_entry
+                else:
+                    prev = series[-1] if series else None
+                    if not (prev and prev.get("price") == new_entry["price"]):
+                        series.append(new_entry)
+                if len(series) > HISTORY_DAYS:
+                    series = series[-HISTORY_DAYS:]
+                boxes_history[key] = series
+
     history = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "window_days": HISTORY_DAYS,
         "decks": decks_history,
+        "boxes": boxes_history,
     }
     history_path.write_text(json.dumps(history, separators=(",", ":")))
     sample_lens = [len(v) for v in decks_history.values()]
     if sample_lens:
-        print(f"History: {len(decks_history)} decks, max {max(sample_lens)} / median {sorted(sample_lens)[len(sample_lens)//2]} entries")
+        print(f"History: {len(decks_history)} decks, max {max(sample_lens)} / median {sorted(sample_lens)[len(sample_lens)//2]} entries", flush=True)
+    if boxes_history:
+        print(f"History: {len(boxes_history)} box series tracked", flush=True)
 
 
 if __name__ == "__main__":
