@@ -74,6 +74,13 @@ def test_history_shape():
             for k in ("tcg", "zulus"):
                 if k in entry:
                     assert isinstance(entry[k], (int, float)) and entry[k] > 0
+    # Box history (optional key): keyed "<set>::<type>", entries {date, price}.
+    for key, series in (history.get("boxes") or {}).items():
+        assert "::" in key, f"bad box history key: {key}"
+        assert isinstance(series, list)
+        for entry in series:
+            assert "date" in entry and re.fullmatch(r"\d{4}-\d{2}-\d{2}", entry["date"])
+            assert isinstance(entry.get("price"), (int, float)) and entry["price"] > 0
 
 
 if __name__ == "__main__":
