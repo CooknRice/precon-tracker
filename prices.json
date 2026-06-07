@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-07T15:00:11.651378+00:00",
+  "updated_at": "2026-06-07T17:45:50.407841+00:00",
   "deck_count": 111,
   "vendors": {
     "cardkingdom": {
@@ -3493,5 +3493,567 @@
       "priced": 81,
       "missing": 2
     }
+  },
+  "boxes": {
+    "Adventures in the Forgotten Realms": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Adventures in the Forgotten Realms - Set Booster Display",
+        "price": 257.0,
+        "price_low": 273.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/238739/magic-adventures-in-the-forgotten-realms-set-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Adventures in the Forgotten Realms - Collector Booster Display",
+        "price": 302.5,
+        "price_low": 290.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/238745/magic-adventures-in-the-forgotten-realms-collector-booster-display"
+      }
+    ],
+    "Aetherdrift Commander": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Aetherdrift - Play Booster Display",
+        "price": 106.67,
+        "price_low": 100.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/604250/magic-aetherdrift-play-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Aetherdrift - Collector Booster Display",
+        "price": 255.13,
+        "price_low": 246.39,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/604253/magic-aetherdrift-collector-booster-display"
+      }
+    ],
+    "Assassin's Creed": [
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Universes Beyond: Assassin's Creed - Collector Booster Display",
+        "price": 394.55,
+        "price_low": 388.91,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/541225/magic-universes-beyond-assassin-s-creed-collector-booster-display"
+      }
+    ],
+    "Bloomburrow Commander": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Bloomburrow - Play Booster Display",
+        "price": 150.99,
+        "price_low": 149.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/541235/magic-bloomburrow-play-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Bloomburrow - Collector Booster Display",
+        "price": 878.5,
+        "price_low": 940.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/541238/magic-bloomburrow-collector-booster-display"
+      }
+    ],
+    "Commander: Final Fantasy": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "FINAL FANTASY - Play Booster Display",
+        "price": 201.35,
+        "price_low": 193.46,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/618890/magic-final-fantasy-play-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "FINAL FANTASY - Collector Booster Display",
+        "price": 1178.11,
+        "price_low": 1180.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/618893/magic-final-fantasy-collector-booster-display"
+      }
+    ],
+    "Doctor Who Commander": [
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Universes Beyond: Doctor Who - Collector Booster Display",
+        "price": 593.99,
+        "price_low": 577.49,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/496076/magic-universes-beyond-doctor-who-collector-booster-display"
+      }
+    ],
+    "Dominaria United": [
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Dominaria United - Collector Booster Display",
+        "price": 297.9,
+        "price_low": 289.95,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/275412/magic-dominaria-united-collector-booster-display"
+      },
+      {
+        "type": "jumpstart",
+        "label": "Jumpstart Box",
+        "name": "Dominaria United - Jumpstart Booster Display",
+        "price": 75.74,
+        "price_low": 69.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/275428/magic-dominaria-united-jumpstart-booster-display"
+      }
+    ],
+    "Duskmourn: House of Horror": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Duskmourn: House of Horror - Play Booster Display",
+        "price": 144.77,
+        "price_low": 140.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/557241/magic-duskmourn-house-of-horror-play-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Duskmourn: House of Horror - Collector Booster Display",
+        "price": 588.03,
+        "price_low": 649.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/557244/magic-duskmourn-house-of-horror-collector-booster-display"
+      }
+    ],
+    "Edge of Eternities": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Edge of Eternities - Play Booster Display",
+        "price": 127.67,
+        "price_low": 126.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/619674/magic-edge-of-eternities-play-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Edge of Eternities - Collector Booster Display",
+        "price": 584.7,
+        "price_low": 589.97,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/619672/magic-edge-of-eternities-collector-booster-display"
+      }
+    ],
+    "Fallout Commander": [
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Universes Beyond: Fallout - Collector Booster Display",
+        "price": 1577.9,
+        "price_low": 1899.9,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/523185/magic-universes-beyond-fallout-collector-booster-display"
+      }
+    ],
+    "Innistrad: Crimson Vow": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Innistrad: Crimson Vow - Set Booster Display",
+        "price": 195.01,
+        "price_low": 198.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/246470/magic-innistrad-crimson-vow-set-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Innistrad: Crimson Vow - Collector Booster Display",
+        "price": 215.49,
+        "price_low": 230.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/246457/magic-innistrad-crimson-vow-collector-booster-display"
+      }
+    ],
+    "Innistrad: Midnight Hunt": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Innistrad: Midnight Hunt - Set Booster Display",
+        "price": 158.45,
+        "price_low": 152.95,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/244389/magic-innistrad-midnight-hunt-set-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Innistrad: Midnight Hunt - Collector Booster Display",
+        "price": 201.8,
+        "price_low": 199.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/244384/magic-innistrad-midnight-hunt-collector-booster-display"
+      }
+    ],
+    "Kamigawa: Neon Dynasty": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Kamigawa: Neon Dynasty - Set Booster Display",
+        "price": 297.29,
+        "price_low": 309.95,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/257560/magic-kamigawa-neon-dynasty-set-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Kamigawa: Neon Dynasty - Collector Booster Display",
+        "price": 482.55,
+        "price_low": 489.96,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/257563/magic-kamigawa-neon-dynasty-collector-booster-display"
+      }
+    ],
+    "Lorwyn Eclipsed": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Lorwyn Eclipsed - Play Booster Display",
+        "price": 115.69,
+        "price_low": 109.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/656312/magic-lorwyn-eclipsed-play-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Lorwyn Eclipsed - Collector Booster Display",
+        "price": 395.86,
+        "price_low": 389.97,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/656322/magic-lorwyn-eclipsed-collector-booster-display"
+      }
+    ],
+    "March of the Machine": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "March of the Machine - Set Booster Display",
+        "price": 214.8,
+        "price_low": 237.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/475579/magic-march-of-the-machine-set-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "March of the Machine - Collector Booster Display",
+        "price": 650.84,
+        "price_low": 700.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/475584/magic-march-of-the-machine-collector-booster-display"
+      },
+      {
+        "type": "jumpstart",
+        "label": "Jumpstart Box",
+        "name": "March of the Machine - Jumpstart Booster Display",
+        "price": 113.66,
+        "price_low": 190.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/475582/magic-march-of-the-machine-jumpstart-booster-display"
+      }
+    ],
+    "Modern Horizons 3": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Modern Horizons 3 - Play Booster Display",
+        "price": 258.87,
+        "price_low": 249.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/541164/magic-modern-horizons-3-play-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Modern Horizons 3 - Collector Booster Display",
+        "price": 690.0,
+        "price_low": 685.01,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/541179/magic-modern-horizons-3-collector-booster-display"
+      }
+    ],
+    "Murders at Karlov Manor": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Murders at Karlov Manor - Play Booster Display",
+        "price": 124.64,
+        "price_low": 123.85,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/529964/magic-murders-at-karlov-manor-play-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Murders at Karlov Manor - Collector Booster Display",
+        "price": 343.88,
+        "price_low": 333.97,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/529968/magic-murders-at-karlov-manor-collector-booster-display"
+      }
+    ],
+    "Outlaws of Thunder Junction": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Outlaws of Thunder Junction - Play Booster Display",
+        "price": 151.45,
+        "price_low": 147.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/541084/magic-outlaws-of-thunder-junction-play-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Outlaws of Thunder Junction - Collector Booster Display",
+        "price": 394.52,
+        "price_low": 399.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/541090/magic-outlaws-of-thunder-junction-collector-booster-display"
+      }
+    ],
+    "Phyrexia: All Will Be One": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Phyrexia: All Will Be One - Set Booster Display",
+        "price": 210.43,
+        "price_low": 205.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/451872/magic-phyrexia-all-will-be-one-set-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Phyrexia: All Will Be One - Collector Booster Display",
+        "price": 821.42,
+        "price_low": 839.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/451880/magic-phyrexia-all-will-be-one-collector-booster-display"
+      },
+      {
+        "type": "jumpstart",
+        "label": "Jumpstart Box",
+        "name": "Phyrexia: All Will Be One - Jumpstart Booster Display",
+        "price": 132.81,
+        "price_low": 169.69,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/451876/magic-phyrexia-all-will-be-one-jumpstart-booster-display"
+      }
+    ],
+    "Secrets of Strixhaven": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Secrets of Strixhaven - Play Booster Display",
+        "price": 141.23,
+        "price_low": 132.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/675555/magic-secrets-of-strixhaven-play-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Secrets of Strixhaven - Collector Booster Display",
+        "price": 469.95,
+        "price_low": 467.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/675558/magic-secrets-of-strixhaven-collector-booster-display"
+      }
+    ],
+    "Streets of New Capenna": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Streets of New Capenna - Set Booster Display",
+        "price": 168.51,
+        "price_low": 156.95,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/264763/magic-streets-of-new-capenna-set-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Streets of New Capenna - Collector Booster Display",
+        "price": 239.54,
+        "price_low": 239.9,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/264767/magic-streets-of-new-capenna-collector-booster-display"
+      }
+    ],
+    "Strixhaven: School of Mages (Commander 2021)": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Strixhaven: School of Mages - Set Booster Display",
+        "price": 186.59,
+        "price_low": 181.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/233229/magic-strixhaven-school-of-mages-set-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Strixhaven: School of Mages - Collector Booster Display",
+        "price": 611.13,
+        "price_low": 632.98,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/233232/magic-strixhaven-school-of-mages-collector-booster-display"
+      }
+    ],
+    "Tarkir: Dragonstorm": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Tarkir: Dragonstorm - Play Booster Display",
+        "price": 131.82,
+        "price_low": 129.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/619645/magic-tarkir-dragonstorm-play-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Tarkir: Dragonstorm - Collector Booster Display",
+        "price": 406.84,
+        "price_low": 400.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/619649/magic-tarkir-dragonstorm-collector-booster-display"
+      }
+    ],
+    "Teenage Mutant Ninja Turtles": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Teenage Mutant Ninja Turtles - Play Booster Display",
+        "price": 105.31,
+        "price_low": 100.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/657849/magic-teenage-mutant-ninja-turtles-play-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Teenage Mutant Ninja Turtles - Collector Booster Display",
+        "price": 430.09,
+        "price_low": 449.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/657852/magic-teenage-mutant-ninja-turtles-collector-booster-display"
+      }
+    ],
+    "The Brothers' War": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "The Brothers' War - Set Booster Display",
+        "price": 311.56,
+        "price_low": 335.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/282230/magic-the-brothers-war-set-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "The Brothers' War - Collector Booster Display",
+        "price": 536.97,
+        "price_low": 580.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/282224/magic-the-brothers-war-collector-booster-display"
+      },
+      {
+        "type": "jumpstart",
+        "label": "Jumpstart Box",
+        "name": "The Brothers' War - Jumpstart Booster Display",
+        "price": 84.81,
+        "price_low": 79.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/449719/magic-the-brothers-war-jumpstart-booster-display"
+      }
+    ],
+    "The Lord of the Rings: Tales of Middle-earth": [
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Universes Beyond: The Lord of the Rings: Tales of Middle-earth - Collector Booster Display",
+        "price": 1529.52,
+        "price_low": 1775.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/484912/magic-universes-beyond-the-lord-of-the-rings-tales-of-middle-earth-collector-booster-display"
+      },
+      {
+        "type": "jumpstart",
+        "label": "Jumpstart Box",
+        "name": "The Lord of the Rings: Tales of Middle-earth - Jumpstart Vol. 2 Booster Display",
+        "price": 278.19,
+        "price_low": 275.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/515921/magic-the-lord-of-the-rings-tales-of-middle-earth-jumpstart-vol-2-booster-display"
+      }
+    ],
+    "The Lost Caverns of Ixalan": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "The Lost Caverns of Ixalan - Draft Booster Display",
+        "price": 192.44,
+        "price_low": 189.35,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/516619/magic-the-lost-caverns-of-ixalan-draft-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "The Lost Caverns of Ixalan - Collector Booster Display",
+        "price": 851.4,
+        "price_low": 899.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/516614/magic-the-lost-caverns-of-ixalan-collector-booster-display"
+      }
+    ],
+    "Wilds of Eldraine": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Wilds of Eldraine - Draft Booster Display",
+        "price": 310.6,
+        "price_low": 290.35,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/496035/magic-wilds-of-eldraine-draft-booster-display"
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Wilds of Eldraine - Collector Booster Display",
+        "price": 956.12,
+        "price_low": 988.95,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/496041/magic-wilds-of-eldraine-collector-booster-display"
+      }
+    ]
   }
 }
