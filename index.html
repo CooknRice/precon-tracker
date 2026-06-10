@@ -1583,9 +1583,9 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       case "releaseDesc":
         return copy.sort((a, b) => b.releaseDate.localeCompare(a.releaseDate));
       case "priceAsc":
-        return copy.sort((a, b) => (effectivePrice(a) ?? 999) - (effectivePrice(b) ?? 999));
+        return copy.sort((a, b) => (effectivePrice(a) ?? Infinity) - (effectivePrice(b) ?? Infinity));
       case "priceDesc":
-        return copy.sort((a, b) => (effectivePrice(b) ?? 0) - (effectivePrice(a) ?? 0));
+        return copy.sort((a, b) => (effectivePrice(b) ?? -Infinity) - (effectivePrice(a) ?? -Infinity));
       case "discount":
         return copy.sort((a, b) => discountPct(b) - discountPct(a));
       case "crackValue": {
@@ -1616,7 +1616,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
   function discountPct(d) {
     const ep = effectivePrice(d);
-    if (!ep || !d.msrp) return 0;
+    if (ep == null || !d.msrp) return 0;  // ep==null only; a real $0 stays visible
     const pct = ((d.msrp - ep) / d.msrp) * 100;
     return pct > 0 ? pct : 0;
   }
@@ -1701,18 +1701,23 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     return { value: best, vendor: best === ck ? "Card Kingdom" : "TCGPlayer", tcg, ck };
   }
 
-  // Singles SELL value (crack-to-sell — what you'd actually receive). Card
-  // Kingdom is REAL buylist; TCGPlayer is an estimate (~70% of retail). We
-  // surface the best realistic sell number plus whether it's estimated.
+  // Singles SELL value (crack-to-sell — what you'd actually receive).
+  // Card Kingdom is a REAL buylist; TCGPlayer is an estimate (~70% of retail).
+  // PREFER the real CK buylist whenever present so "net profit" reflects
+  // realizable value, and fall back to the TCG estimate only when CK is
+  // missing. (Using max() made the estimate win ~always, overstating profit.)
   function crackSellValue(d) {
     const c = getCrackValue(d);
     if (!c) return null;
     const ck = c.sell_cardkingdom;        // real CK buylist
-    const tcg = c.sell_tcg;               // estimated
-    const best = Math.max(ck ?? -Infinity, tcg ?? -Infinity);
-    if (!isFinite(best)) return null;
-    const vendor = best === ck ? "Card Kingdom" : "TCGPlayer";
-    return { value: best, vendor, ck, tcg, estimated: vendor === "TCGPlayer" };
+    const tcg = c.sell_tcg;               // estimated (70% of retail)
+    if (ck != null) {
+      return { value: ck, vendor: "Card Kingdom", ck, tcg, estimated: false };
+    }
+    if (tcg != null) {
+      return { value: tcg, vendor: "TCGPlayer", ck, tcg, estimated: true };
+    }
+    return null;
   }
 
   // Crack arbitrage = realistic NET profit from cracking and SELLING the
@@ -1748,6 +1753,13 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     return String(s).replace(/[&<>"']/g, ch => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     }[ch]));
+  }
+
+  // Allow only http(s) URLs in href attributes (blocks javascript:/data:
+  // scheme injection). Defense-in-depth: URLs are scraper-generated today,
+  // but this makes every link safe regardless of data source.
+  function safeUrl(u) {
+    return /^https?:\/\//i.test(u || "") ? escapeHtml(u) : "#";
   }
 
   // Inline SVG sparkline. Trend determines colour: down=sage, up=burgundy, flat=gold.
@@ -1881,7 +1893,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
     // Header: current price + delta vs window start
     const first = points[0].price, last = points[points.length - 1].price;
-    const deltaPct = ((last - first) / first) * 100;
+    const deltaPct = first > 0 ? ((last - first) / first) * 100 : 0;
     $("chartPriceNow").textContent = `$${last.toFixed(2)}`;
     const deltaEl = $("chartDelta");
     const sign = deltaPct >= 0 ? "+" : "";
@@ -2027,7 +2039,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       const delta = (live && zulus.price < live.price)
         ? ` <span style="color:var(--sage);">(saves $${(live.price - zulus.price).toFixed(2)})</span>`
         : "";
-      zulusLine = `<div class="price-zulus${cheaperClass}">Zulus · <a href="${escapeHtml(zulus.url)}" target="_blank" rel="noopener noreferrer">$${zulus.price.toFixed(2)}</a>${delta}</div>`;
+      zulusLine = `<div class="price-zulus${cheaperClass}">Zulus · <a href="${safeUrl(zulus.url)}" target="_blank" rel="noopener noreferrer">$${zulus.price.toFixed(2)}</a>${delta}</div>`;
     }
 
     // 90-day range / near-low line, shown above the Zulus line in every branch.
@@ -2137,7 +2149,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     // deep-links to the exact product page; otherwise falls back to a search.
     const vendorBtns = vendors.map(v => {
       const href = (v.key === "tcg" && live?.url) ? live.url : v.url(d);
-      return `<a class="vendor-btn" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" title="${v.label}">${v.label}</a>`;
+      return `<a class="vendor-btn" href="${safeUrl(href)}" target="_blank" rel="noopener noreferrer" title="${v.label}">${v.label}</a>`;
     }).join("");
 
     // Set-bundle note: if this deck is part of a known TCGPlayer bundle
@@ -2151,7 +2163,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         : "";
       bundleNote = `
         <div class="bundle-note">
-          <span><span class="bundle-label">Set bundle</span> · all ${bundle.deck_count} decks · <a href="${escapeHtml(bundle.url)}" target="_blank" rel="noopener noreferrer">$${bundle.price.toFixed(2)}</a></span>
+          <span><span class="bundle-label">Set bundle</span> · all ${bundle.deck_count} decks · <a href="${safeUrl(bundle.url)}" target="_blank" rel="noopener noreferrer">$${bundle.price.toFixed(2)}</a></span>
           ${savings}
         </div>`;
     }
@@ -2279,11 +2291,11 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
           ? sparklineSvg(hist.map(s => ({ tcg: s.price })))   // sparklineSvg reads .tcg
           : "";
         return `
-        <div class="box-item" data-box-set="${escapeHtml(sn)}" data-box-type="${b.type}" data-box-label="${escapeHtml(b.label)}" role="button" tabindex="0" title="Click for price history">
+        <div class="box-item" data-box-set="${escapeHtml(sn)}" data-box-type="${escapeHtml(b.type)}" data-box-label="${escapeHtml(b.label)}" role="button" tabindex="0" title="Click for price history">
           <span class="box-item-type">${escapeHtml(b.label)}</span>
           <span class="box-item-price">$${b.price.toFixed(2)} ${spark}</span>
           ${b.price_low != null ? `<span class="box-item-low">low $${b.price_low.toFixed(2)}</span>` : ""}
-          <a class="box-item-link" href="${b.url}" target="_blank" rel="noopener noreferrer">view on TCGPlayer →</a>
+          <a class="box-item-link" href="${safeUrl(b.url)}" target="_blank" rel="noopener noreferrer">view on TCGPlayer →</a>
         </div>`;
       }).join("");
       return `<div class="box-set"><div class="box-set-name">${escapeHtml(sn)}</div><div class="box-grid">${items}</div></div>`;
@@ -2643,6 +2655,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     });
     $("boxBody").addEventListener("keydown", e => {
       if (e.key !== "Enter" && e.key !== " ") return;
+      if (e.target.closest(".box-item-link")) return;  // let the real link activate (matches click handler)
       const item = e.target.closest(".box-item");
       if (item) { e.preventDefault(); openBoxChart(item.dataset.boxSet, item.dataset.boxType, item.dataset.boxLabel); }
     });
