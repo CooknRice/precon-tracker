@@ -136,8 +136,11 @@ def pick_group_for_set(groups: list, deck_set: str) -> dict | None:
     # all of these to appear in the group's name token set.
     required = deck_tokens - SEMI_NOISE
     if not required:
-        # Set name was nothing but noise words — give up cleanly.
-        return None
+        # Set name is nothing but noise words (e.g. "Starter Commander
+        # Decks" -> {starter, decks, commander}, all SEMI_NOISE). Don't give
+        # up — fall back to the full token set so a same-named group can
+        # still match instead of silently dropping the whole set's pricing.
+        required = deck_tokens
 
     # First pass: full token-set containment.
     candidates = []
@@ -321,26 +324,29 @@ def fetch_all_tcgcsv(decks: list) -> tuple[dict, dict]:
 
     def ensure_group(group: dict) -> dict:
         gid = group["groupId"]
-        if gid in group_cache:
-            return group_cache[gid]
+        cached = group_cache.get(gid)
+        # Reuse only SUCCESSFUL results. A cached error is NOT reused, so a
+        # transient failure on one deck's pass doesn't permanently zero the
+        # group for every later deck/bundle that needs it — they retry.
+        if cached is not None and not cached.get("error"):
+            return cached
+        # Fetch products and prices independently so a price-only failure
+        # still yields product data (and vice versa).
+        result = {"name": group.get("name"), "products": [], "prices": {}, "error": None}
+        errs = []
         try:
-            prod_data = fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/{gid}/products", session)
-            price_data = fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/{gid}/prices", session)
-            group_cache[gid] = {
-                "name": group.get("name"),
-                "products": prod_data.get("results", []),
-                "prices": flatten_prices(price_data.get("results", [])),
-                "error": None,
-            }
-            time.sleep(0.3)
+            result["products"] = fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/{gid}/products", session).get("results", [])
         except Exception as e:
-            group_cache[gid] = {
-                "name": group.get("name"),
-                "products": [],
-                "prices": {},
-                "error": str(e),
-            }
-        return group_cache[gid]
+            errs.append(f"products: {e}")
+        try:
+            result["prices"] = flatten_prices(fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/{gid}/prices", session).get("results", []))
+        except Exception as e:
+            errs.append(f"prices: {e}")
+        if errs:
+            result["error"] = "; ".join(errs)
+        time.sleep(0.3)
+        group_cache[gid] = result
+        return result
 
     results: dict[str, dict] = {}
     for i, deck in enumerate(decks, 1):
@@ -460,11 +466,19 @@ def fetch_all_tcgcsv(decks: list) -> tuple[dict, dict]:
         if eff is None:
             print(f"  [{set_name}] bundle found but no price: {bundle_product.get('name')}", flush=True)
             continue
-        # Sum of individual deck prices in this set, for "saves $X" math.
-        individual_total = sum(
-            (results.get(did, {}).get("price") or 0) for did in deck_ids
-        )
-        savings = individual_total - eff if individual_total > 0 else None
+        # Sum of individual deck prices, for "saves $X" math. Only meaningful
+        # when EVERY member deck is priced — otherwise unpriced decks count as
+        # $0 and understate the total (yielding a misleading/negative savings).
+        member_prices = [results.get(did, {}).get("price") for did in deck_ids]
+        all_priced = all(p is not None for p in member_prices)
+        if all_priced:
+            individual_total = sum(member_prices)
+            raw_savings = individual_total - eff
+            # Clamp: only report a positive saving (bundle cheaper than parts).
+            savings = raw_savings if raw_savings > 0 else None
+        else:
+            individual_total = None  # partial coverage → don't claim a total
+            savings = None
         bundle_id = re.sub(r"[^a-z0-9]+", "-", set_name.lower()).strip("-") + "-bundle"
         bundles[bundle_id] = {
             "name": bundle_product.get("name"),
@@ -473,7 +487,7 @@ def fetch_all_tcgcsv(decks: list) -> tuple[dict, dict]:
             "deck_count": len(deck_ids),
             "price": float(eff),
             "price_source": src,
-            "individual_total": round(individual_total, 2) if individual_total else None,
+            "individual_total": round(individual_total, 2) if individual_total is not None else None,
             "savings": round(savings, 2) if savings is not None else None,
             "url": tcg_product_url(bpid, bundle_product.get("name", "")),
             "snippet": bundle_product.get("name"),
@@ -646,11 +660,22 @@ def fetch_gz_json(url: str, session: requests.Session) -> dict:
         return json.load(f)
 
 
+_ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
 def _latest_price(byday) -> float | None:
-    """Most-recent dated price from an MTGJSON {date: price} map, or None."""
+    """Most-recent dated price from an MTGJSON {date: price} map, or None.
+
+    MTGJSON keys are zero-padded ISO dates, so lexicographic max == latest.
+    We still filter to well-formed ISO keys so a stray malformed key can't be
+    chosen as the 'latest'.
+    """
     if not byday:
         return None
-    val = byday[max(byday.keys())]
+    keys = [k for k in byday.keys() if _ISO_DATE.match(str(k))]
+    if not keys:
+        return None
+    val = byday[max(keys)]
     return float(val) if val is not None else None
 
 
@@ -768,17 +793,42 @@ def _clean_set_name(s: str) -> str:
 
 def find_main_set_group(groups: list, set_name: str) -> dict | None:
     """Find the canonical main-set group for box products (NOT the
-    'Commander:' / 'Art Series' / 'Promo' groups)."""
-    toks = tokenize(_clean_set_name(set_name))
+    'Commander:' / 'Art Series' / 'Promo' groups).
+
+    Matching is two-stage to avoid a short cleaned set name (e.g.
+    'Commander Masters' -> {masters}) subset-matching an unrelated superset
+    group ('Masters 25'):
+      1. Prefer an exact normalized-name match.
+      2. Otherwise require a *bidirectional* token match — set tokens are a
+         subset of group tokens AND the group's tokens (minus generic noise)
+         are a subset of the set tokens — so the group can't carry extra
+         distinguishing words like '25' that the set doesn't have.
+    """
+    cleaned = _clean_set_name(set_name)
+    toks = tokenize(cleaned)
     if not toks:
         return None
+    set_norm = norm(cleaned)
+
+    def eligible(g):
+        gl = (g.get("name") or "").lower()
+        return not any(x in gl for x in ("commander", "art series", "promo pack", "minimal packaging"))
+
+    # Stage 1: exact normalized-name match wins outright.
+    for g in groups:
+        if eligible(g) and norm(_clean_set_name(g.get("name") or "")) == set_norm:
+            return g
+
+    # Stage 2: bidirectional token containment.
     best = None
     for g in groups:
-        gn = g.get("name") or ""
-        gl = gn.lower()
-        if any(x in gl for x in ("commander", "art series", "promo pack", "minimal packaging")):
+        if not eligible(g):
             continue
-        if toks.issubset(tokenize(gn)):
+        gtoks = tokenize(g.get("name") or "")
+        # set ⊆ group  AND  group-extra-tokens ⊆ set (no extra distinguishing
+        # words on the group side, e.g. a year/number the set lacks).
+        if toks.issubset(gtoks) and (gtoks - SEMI_NOISE).issubset(toks):
+            gn = g.get("name") or ""
             if best is None or len(gn) < len(best.get("name") or ""):
                 best = g
     return best
@@ -788,7 +838,10 @@ def _classify_box(name: str) -> str | None:
     """Map a product name to one of our 3 tracked box types, or None.
     Excludes cases/master cases (bulk) and singles packs."""
     l = (name or "").lower()
-    if "case" in l or "master" in l or "sample" in l or "omega" in l:
+    # Exclude bulk SKUs. Use the compound "master case" (not a bare "master",
+    # which is a substring of set names like Double Masters / Commander Masters
+    # and would wrongly drop their real boxes).
+    if "case" in l or "master case" in l or "sample" in l or "omega" in l:
         return None
     if "collector booster display" in l:
         return "collector"
@@ -823,23 +876,31 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list) -> di
         except Exception as e:
             print(f"  boxes: [{set_name}] fetch failed: {e}", flush=True)
             continue
-        # Pick one product per box type (first match; they're unique per set).
-        picked: dict = {}
+        # Collect ALL candidates per box type, then pick the first one that
+        # actually has a usable price — so a same-type SKU with no price doesn't
+        # shadow a priced one.
+        candidates: dict = {}
         for p in prods:
             t = _classify_box(p.get("name") or "")
-            if t and t not in picked:
-                picked[t] = p
+            if t:
+                candidates.setdefault(t, []).append(p)
         rows = []
-        for t, p in picked.items():
-            pid = p["productId"]
-            row = prices.get(pid) or {}
-            market = row.get("marketPrice")
-            low = row.get("lowPrice")
-            mid = row.get("midPrice")
-            eff = market if market is not None else (low if low is not None else mid)
-            if eff is None:
+        for t, plist in candidates.items():
+            chosen = None
+            for p in plist:
+                row = prices.get(p["productId"]) or {}
+                market = row.get("marketPrice")
+                low = row.get("lowPrice")
+                mid = row.get("midPrice")
+                eff = market if market is not None else (low if low is not None else mid)
+                if eff is not None:
+                    src = "Market" if market is not None else ("Low" if low is not None else "Mid")
+                    chosen = (p, eff, low, src)
+                    break
+            if not chosen:
                 continue
-            src = "Market" if market is not None else ("Low" if low is not None else "Mid")
+            p, eff, low, src = chosen
+            pid = p["productId"]
             rows.append({
                 "type": t,
                 "label": BOX_TYPE_LABELS[t],
@@ -970,8 +1031,6 @@ def update_history(decks: list, tcg_results: dict, zulus_results: dict, box_resu
             continue  # nothing to record
 
         series = decks_history.get(did, [])
-        # If today's entry already exists, replace it (re-runs in same day).
-        # Otherwise compare to the previous entry; only append when changed.
         new_entry = {"date": today}
         if tcg_price is not None:
             new_entry["tcg"] = round(float(tcg_price), 2)
@@ -979,7 +1038,11 @@ def update_history(decks: list, tcg_results: dict, zulus_results: dict, box_resu
             new_entry["zulus"] = round(float(zu_price), 2)
 
         if series and series[-1].get("date") == today:
-            series[-1] = new_entry
+            # Same-day rerun: MERGE, don't replace. new_entry only carries the
+            # vendors that returned a price this run, so a transient single-
+            # vendor failure on a rerun must not wipe a value captured earlier
+            # today. update() overlays present keys and preserves the rest.
+            series[-1].update(new_entry)
         else:
             prev = series[-1] if series else None
             same = prev and prev.get("tcg") == new_entry.get("tcg") and prev.get("zulus") == new_entry.get("zulus")

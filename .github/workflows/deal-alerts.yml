@@ -13,10 +13,13 @@ permissions:
   contents: read
   issues: write
 
-# Opt into Node.js 24 for reusable actions (checkout, etc.) ahead of
-# GitHub's June 2026 deprecation of Node 20.
+# Job-/workflow-level env. DISCORD_WEBHOOK_URL must live here (not in the
+# step's own env) so a step-level `if:` can read it — a step `if:` cannot see
+# that same step's env block. Secrets can't be referenced directly in `if:`,
+# so this indirection through env is the standard pattern.
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
 jobs:
   alert:
@@ -36,14 +39,28 @@ jobs:
           WATCHED_DROP_THRESHOLD: '5'  # watched decks: more sensitive
         run: |
           python - <<'PY'
-          import json, os, subprocess, sys
+          import json, os, sys
+          from datetime import date
           gthresh = float(os.environ["DROP_THRESHOLD"])
           wthresh = float(os.environ["WATCHED_DROP_THRESHOLD"])
+          today_iso = date.today().isoformat()
 
-          def latest_tcg(series):
-              return series[-1].get("tcg") if series else None
+          # History entries are appended only when the price CHANGES, so the
+          # series is sparse. We make the comparison date-aware:
+          #   - "today" = the last entry, but ONLY if it's actually from today's
+          #     run (else there's no fresh data point — skip the deck).
+          #   - "yesterday" = the most recent entry strictly before today.
+          def today_tcg(series):
+              if series and series[-1].get("date") == today_iso:
+                  return series[-1].get("tcg")
+              return None
           def prev_tcg(series):
-              return series[-2].get("tcg") if len(series) >= 2 else None
+              for e in reversed(series[:-1]) if series else []:
+                  if e.get("tcg") is not None:
+                      return e.get("tcg")
+              return None
+          def prev_date(series):
+              return series[-2].get("date") if len(series) >= 2 else None
 
           curr = json.load(open("prices_history.json")).get("decks", {})
           decks = {d["id"]: d for d in json.load(open("decks.json"))}
@@ -64,23 +81,26 @@ jobs:
           global_drops, watched_drops, target_hits = [], [], []
 
           for did, series in curr.items():
-              today = latest_tcg(series)
-              yest = prev_tcg(series)
-              # Target hit: live price at/below the user's target (needs today's price only).
+              today = today_tcg(series)        # None unless there's a fresh entry today
+              # Target hit: only fire on a FRESH price at/below the user's target.
               tgt = targets.get(did)
               if today is not None and tgt is not None and today <= float(tgt):
                   target_hits.append({"id": did, "name": name_of(did), "set": set_of(did),
                                       "price": today, "target": float(tgt)})
-              # Drop detection needs a prior data point.
-              if today is None or yest is None or yest <= 0:
+              # Drop detection needs a fresh today price + a prior data point.
+              if today is None:
+                  continue
+              yest = prev_tcg(series)
+              if yest is None or yest <= 0:
                   continue
               pct = (yest - today) / yest * 100
+              since = prev_date(series)
               if did in watched and pct >= wthresh:
                   watched_drops.append({"id": did, "name": name_of(did), "set": set_of(did),
-                                        "before": yest, "after": today, "pct": pct})
+                                        "before": yest, "after": today, "pct": pct, "since": since})
               elif pct >= gthresh:
                   global_drops.append({"id": did, "name": name_of(did), "set": set_of(did),
-                                       "before": yest, "after": today, "pct": pct})
+                                       "before": yest, "after": today, "pct": pct, "since": since})
 
           global_drops.sort(key=lambda x: -x["pct"])
           watched_drops.sort(key=lambda x: -x["pct"])
@@ -97,11 +117,12 @@ jobs:
           if target_hits:
               rows = "\n".join(f"- 🎯 **{d['name']}** ({d['set']}) hit your target: **${d['price']:.2f}** (target ${d['target']:.2f})" for d in target_hits)
               sections.append("### Price targets reached\n" + rows)
+          def _since(d): return f" since {d['since']}" if d.get("since") else ""
           if watched_drops:
-              rows = "\n".join(f"- ⭐ **{d['name']}** ({d['set']}) — ${d['before']:.2f} → **${d['after']:.2f}** ({d['pct']:.0f}% down)" for d in watched_drops)
+              rows = "\n".join(f"- ⭐ **{d['name']}** ({d['set']}) — ${d['before']:.2f} → **${d['after']:.2f}** ({d['pct']:.0f}% down{_since(d)})" for d in watched_drops)
               sections.append("### Watched decks dropping\n" + rows)
           if global_drops:
-              rows = "\n".join(f"- **{d['name']}** ({d['set']}) — ${d['before']:.2f} → **${d['after']:.2f}** ({d['pct']:.0f}% down)" for d in global_drops)
+              rows = "\n".join(f"- **{d['name']}** ({d['set']}) — ${d['before']:.2f} → **${d['after']:.2f}** ({d['pct']:.0f}% down{_since(d)})" for d in global_drops)
               sections.append(f"### Other decks down >{int(gthresh)}%\n" + rows)
 
           body = "\n\n".join(sections) + "\n\n_Auto-generated by deal-alerts.yml_"
@@ -121,20 +142,26 @@ jobs:
               gh.write(f"title={title}\n")
           PY
 
-      - name: Open GitHub Issue
+      - name: Open or update GitHub Issue
         if: steps.detect.outputs.found != '0'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue create \
-            --title "${{ steps.detect.outputs.title }}" \
-            --body-file alert_body.md \
-            --label deal-alert
+          # Dedup: reuse the most recent open deal-alert issue (comment on it)
+          # instead of spawning a new one every run, to avoid notification noise.
+          existing=$(gh issue list --label deal-alert --state open --limit 1 --json number --jq '.[0].number' 2>/dev/null || echo "")
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file alert_body.md
+            gh issue edit "$existing" --title "${{ steps.detect.outputs.title }}"
+          else
+            gh issue create \
+              --title "${{ steps.detect.outputs.title }}" \
+              --body-file alert_body.md \
+              --label deal-alert
+          fi
 
       - name: Discord webhook (optional)
         if: steps.detect.outputs.found != '0' && env.DISCORD_WEBHOOK_URL != ''
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           BODY=$(jq -Rs '{content: .}' < alert_body.md)
           curl -fsS -X POST -H "Content-Type: application/json" -d "$BODY" "$DISCORD_WEBHOOK_URL"

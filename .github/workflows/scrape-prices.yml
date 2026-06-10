@@ -16,6 +16,12 @@ permissions:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
+# Queue (don't cancel) so a manual run can't race a scheduled run on the
+# commit/push of prices.json.
+concurrency:
+  group: scrape-prices
+  cancel-in-progress: false
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
@@ -49,18 +55,22 @@ jobs:
         run: python scrape_prices.py
 
       - name: Validate prices.json
-        # Refuse to commit a corrupt or empty file. Checks: parses as JSON,
-        # has the expected top-level shape, and at least one TCG hit (so a
-        # totally-blank scrape doesn't overwrite a previously-good file).
+        # Refuse to commit a corrupt or partial scrape. Phases 3/4 (crack/boxes)
+        # are non-fatal in the scraper, so guard their output here too: a run
+        # that silently wipes singles or box pricing must not overwrite good data.
         run: |
           python - <<'PY'
-          import json, sys
+          import json
           data = json.load(open("prices.json"))
           assert "vendors" in data and "tcgplayer" in data["vendors"], "missing tcgplayer vendor"
           tcg = data["vendors"]["tcgplayer"]
           hits = sum(1 for v in tcg.values() if v.get("price") is not None)
-          assert hits > 0, f"zero TCG hits — refusing to commit ({len(tcg)} decks attempted)"
-          print(f"prices.json OK: {hits}/{len(tcg)} TCG hits")
+          assert hits > 50, f"only {hits} TCG hits — refusing to commit a likely-broken scrape"
+          crack = data.get("crack", {})
+          assert len(crack) > 50, f"only {len(crack)} crack entries — singles pricing likely broke"
+          boxes = data.get("boxes", {})
+          assert len(boxes) > 10, f"only {len(boxes)} box sets — box pricing likely broke"
+          print(f"prices.json OK: {hits} TCG hits, {len(crack)} crack, {len(boxes)} box sets")
           PY
 
       - name: Commit updated prices.json

@@ -58,6 +58,48 @@ def test_prices_shape():
                 assert entry["price"] > 0, f"{vendor}/{did} non-positive price {entry['price']}"
 
 
+def test_crack_shape():
+    """crack map: keys are real deck ids; buy/sell numbers non-negative;
+    sell never exceeds buy for the same vendor."""
+    prices = load("prices.json")
+    deck_ids = {d["id"] for d in load("decks.json")}
+    crack = prices.get("crack", {})
+    for did, c in crack.items():
+        assert did in deck_ids, f"crack has stale deck id: {did}"
+        for k in ("tcg", "cardkingdom", "sell_tcg", "sell_cardkingdom"):
+            v = c.get(k)
+            if v is not None:
+                assert isinstance(v, (int, float)) and v >= 0, f"crack {did}.{k} bad: {v}"
+        # Sell must not exceed buy for the same vendor (economically impossible).
+        if c.get("sell_cardkingdom") is not None and c.get("cardkingdom") is not None:
+            assert c["sell_cardkingdom"] <= c["cardkingdom"] + 1e-6, f"crack {did}: CK sell > buy"
+
+
+def test_bundles_shape():
+    """bundles: deck_ids reference real decks; price positive; savings>0 or null."""
+    prices = load("prices.json")
+    deck_ids = {d["id"] for d in load("decks.json")}
+    for bid, b in prices.get("bundles", {}).items():
+        assert isinstance(b.get("price"), (int, float)) and b["price"] > 0, f"bundle {bid} bad price"
+        for did in b.get("deck_ids", []):
+            assert did in deck_ids, f"bundle {bid} references unknown deck {did}"
+        if b.get("savings") is not None:
+            assert b["savings"] > 0, f"bundle {bid} non-positive savings stored: {b['savings']}"
+
+
+def test_boxes_shape():
+    """boxes: each entry has type/price; price positive; no duplicate type per set."""
+    prices = load("prices.json")
+    valid_types = {"play", "collector", "jumpstart"}
+    for set_name, rows in prices.get("boxes", {}).items():
+        seen = set()
+        for r in rows:
+            assert r.get("type") in valid_types, f"box {set_name} bad type {r.get('type')}"
+            assert r["type"] not in seen, f"box {set_name} duplicate type {r['type']}"
+            seen.add(r["type"])
+            assert isinstance(r.get("price"), (int, float)) and r["price"] > 0, f"box {set_name} bad price"
+
+
 def test_history_shape():
     """If prices_history.json exists, it has the expected shape."""
     p = ROOT / "prices_history.json"
