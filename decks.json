@@ -1,5 +1,86 @@
 [
   {
+    "id": "avengers-assemble",
+    "scryCheckSlug": "avengers-assemble",
+    "name": "Avengers Assemble",
+    "set": "Marvel Super Heroes",
+    "setType": "ub",
+    "releaseDate": "2026-06-26",
+    "colors": [
+      "W",
+      "U",
+      "R"
+    ],
+    "commander": "Captain America, Team Leader",
+    "desc": "Jeskai Heroes team-up: rally a squad, suit them up with Equipment, and pile on +1/+1 counters. Captain America throws his shield to repeatedly buff and protect the team.",
+    "msrp": 64.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-06-26",
+    "power": 3.0
+  },
+  {
+    "id": "wakanda-forever",
+    "scryCheckSlug": "wakanda-forever",
+    "name": "Wakanda Forever",
+    "set": "Marvel Super Heroes",
+    "setType": "ub",
+    "releaseDate": "2026-06-26",
+    "colors": [
+      "G",
+      "W"
+    ],
+    "commander": "T'Challa, the Black Panther",
+    "desc": "Selesnya Wakandan forces grind value through creatures and support abilities, building a resilient board on the path to victory.",
+    "msrp": 64.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-06-26",
+    "power": 3.0
+  },
+  {
+    "id": "the-fantastic-four",
+    "scryCheckSlug": "the-fantastic-four",
+    "name": "The Fantastic Four",
+    "set": "Marvel Super Heroes",
+    "setType": "ub",
+    "releaseDate": "2026-06-26",
+    "colors": [
+      "W",
+      "U",
+      "R",
+      "G"
+    ],
+    "commander": "Mister Fantastic",
+    "partner": "Invisible Woman",
+    "desc": "Four-color (no black) noncreature-spell engine: Invisible Woman's Walls hold the line while you push scientific innovation, then the team launches a heavy counterattack. Pick any of the four members to lead.",
+    "msrp": 64.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-06-26",
+    "power": 3.0
+  },
+  {
+    "id": "doom-prevails",
+    "scryCheckSlug": "doom-prevails",
+    "name": "Doom Prevails",
+    "set": "Marvel Super Heroes",
+    "setType": "ub",
+    "releaseDate": "2026-06-26",
+    "colors": [
+      "U",
+      "B",
+      "R"
+    ],
+    "commander": "Doctor Doom, King of Latveria",
+    "desc": "Grixis villains scheme with connive to grow units and drain opponents. Loki offers an alternate build for deceptive, copy-the-best-villain tactics.",
+    "msrp": 64.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-06-26",
+    "power": 3.0
+  },
+  {
     "id": "quandrix-unlimited",
     "scryCheckSlug": "quandrix-unlimited",
     "name": "Quandrix Unlimited",
