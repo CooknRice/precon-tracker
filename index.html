@@ -241,6 +241,8 @@ h1.title em { font-style: normal; color: var(--burgundy); font-weight: 600; }
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
 }
 .sort-select {
   background: transparent;
@@ -252,6 +254,7 @@ h1.title em { font-style: normal; color: var(--burgundy); font-weight: 600; }
   color: var(--ink-soft);
   cursor: pointer;
   padding: 4px 8px;
+  max-width: 100%;
 }
 .grid {
   display: grid;
@@ -979,7 +982,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 [data-theme="light"] .card-name,
 [data-theme="light"] .bd-name,
 [data-theme="light"] .box-set-name,
-[data-theme="light"] .card-name { color: #2c2416; }
+[data-theme="light"] .staple-row-name,
+[data-theme="light"] .dod-name { color: #2c2416; }
 
 .theme-toggle {
   background: transparent;
@@ -1032,6 +1036,79 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 }
 .price-range.near-low { color: var(--sage); }
 .price-range.near-low strong { color: var(--sage); }
+.price-forecast { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); margin-top: 3px; }
+.price-forecast.up { color: var(--burgundy-soft); }
+.price-forecast.down { color: var(--sage); }
+.price-forecast .fc-band { color: var(--ink-faded); }
+
+/* ---------- Portfolio ---------- */
+.portfolio {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 24px;
+}
+.portfolio-head { font-family: var(--font-ui); font-size: 13px; font-weight: 600; color: var(--ink-soft); margin-bottom: 12px; }
+.portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.pf-stat { background: var(--surface-2); border-radius: var(--radius-sm); padding: 12px 14px; }
+.pf-label { font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-faded); margin-bottom: 6px; }
+.pf-val { font-family: var(--font-ui); font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+.pf-sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); margin-top: 3px; }
+.pf-val.up { color: #5ad487; }
+.pf-val.down { color: var(--burgundy); }
+
+/* ---------- Staple finder ---------- */
+.staple-finder {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 24px;
+}
+.staple-head {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+.staple-input {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--ink);
+}
+.staple-input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(198,154,62,0.18); }
+.staple-results { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.staple-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: var(--surface-2); border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm); padding: 9px 12px; cursor: pointer;
+  transition: border-color 0.12s, transform 0.12s;
+}
+.staple-row:hover { border-color: var(--gold-bright); transform: translateY(-1px); }
+.staple-row-name { font-family: var(--font-ui); font-size: 14px; font-weight: 600; color: #f5efe2; }
+.staple-row-set { font-family: var(--font-mono); font-size: 10px; color: var(--ink-muted); margin-top: 2px; }
+.staple-row-price { font-family: var(--font-ui); font-size: 15px; font-weight: 700; color: var(--burgundy); white-space: nowrap; }
+.staple-empty { font-family: var(--font-mono); font-size: 12px; color: var(--ink-faded); padding: 4px 2px; }
+.staple-cardname { color: var(--gold-bright); }
+
+/* ---------- Unified feed kind badges ---------- */
+.uf-item { position: relative; }
+.uf-kind {
+  font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 2px 7px; border-radius: var(--radius-pill); align-self: flex-start;
+  margin-bottom: 2px;
+}
+.uf-kind.uf-deck { background: rgba(109,168,219,0.16); color: var(--u); }
+.uf-kind.uf-box { background: rgba(228,185,84,0.16); color: var(--gold-bright); }
+.uf-kind.uf-bundle { background: rgba(110,138,85,0.16); color: #9bbb78; }
 
 /* ---------- Deal of the Day ---------- */
 .deal-of-day {
@@ -1156,6 +1233,9 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .box-item-type { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-muted); }
 .box-item-price { font-family: var(--font-ui); font-size: 19px; font-weight: 700; letter-spacing: -0.02em; color: var(--burgundy); }
 .box-item-low { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); }
+.box-ev { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
+.box-ev.good { color: #8fb36a; }
+.box-ev-note { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); padding: 10px 18px 14px; line-height: 1.5; }
 .box-item { cursor: pointer; }
 .box-item-link { font-family: var(--font-mono); font-size: 10px; color: var(--gold); text-decoration: none; margin-top: 2px; }
 .box-item-link:hover { color: var(--gold-bright); text-decoration: underline; }
@@ -1198,6 +1278,15 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .crack-value strong { color: var(--ink-soft); }
 .crack-value.worth strong { color: var(--sage); }
 .crack-value .crack-flag { color: var(--sage); }
+.chase-cards {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-faded);
+  margin-top: 3px;
+  line-height: 1.5;
+}
+.chase-cards .chase-price { color: var(--ink-muted); }
+.chase-cards .chase-share { color: var(--gold); }
 </style>
 </head>
 <body>
@@ -1219,6 +1308,17 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 </header>
 
 <section id="dealOfDay" class="deal-of-day" hidden></section>
+
+<section id="stapleFinder" class="staple-finder" hidden>
+  <div class="staple-head">🔎 Find the cheapest precon with a card</div>
+  <input type="text" id="stapleInput" class="staple-input" placeholder="Card name — e.g. Sol Ring, Cyclonic Rift, Smothering Tithe…" autocomplete="off">
+  <div id="stapleResults" class="staple-results"></div>
+</section>
+
+<section id="unifiedFeed" class="best-deals" hidden>
+  <div class="best-deals-head">🏆 Best buys across everything · decks, boxes &amp; bundles</div>
+  <div class="best-deals-grid" id="unifiedFeedGrid"></div>
+</section>
 
 <section id="bestDeals" class="best-deals" hidden>
   <div class="best-deals-head">🔥 Best deals right now</div>
@@ -1258,6 +1358,11 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     <div id="liveStatus" class="live-status">loading…</div>
     <div class="stat-sub">from TCGPlayer Market, updated daily</div>
   </div>
+</section>
+
+<section id="portfolio" class="portfolio" hidden>
+  <div class="portfolio-head">📊 Your collection</div>
+  <div class="portfolio-grid" id="portfolioGrid"></div>
 </section>
 
 <section class="filters">
@@ -1325,6 +1430,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     📦 Sealed booster boxes <span class="box-toggle-hint">(prices by set · click to expand)</span>
   </button>
   <div id="boxBody" class="box-body" hidden></div>
+  <div class="box-ev-note" id="boxEvNote" hidden><strong>*</strong> "est. singles" is the expected total singles value of a box, computed from MTGJSON's published pack model (slot weights × current TCGPlayer prices). It's a statistical average — any individual box varies widely — and excludes the value of cards you can't easily sell, fees, and your time. Treat it as a ballpark, not a guarantee.</div>
 </section>
 
 <div class="count-line">
@@ -1463,12 +1569,24 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   let LIVE_PRICES = null;  // populated by loadLivePrices(); null = unavailable
   let PRICE_HISTORY = null;  // populated by loadHistory(); { deck_id: [{date, tcg, zulus}, ...] }
   let BOX_HISTORY = null;    // populated by loadHistory(); { "<set>::<type>": [{date, price}, ...] }
+  let CARD_INDEX = null;    // populated by loadCardIndex(); { normName: {name, decks:[ids]} }
   let PRECONS = [];        // populated by loadDecks() from decks.json
 
   async function loadDecks() {
     const res = await fetch("./decks.json", { cache: "no-cache" });
     if (!res.ok) throw new Error(`decks.json HTTP ${res.status}`);
     PRECONS = await res.json();
+  }
+
+  async function loadCardIndex() {
+    try {
+      const res = await fetch("./cards_index.json", { cache: "no-cache" });
+      if (!res.ok) return;
+      const data = await res.json();
+      CARD_INDEX = data && data.cards ? data.cards : null;
+    } catch (e) {
+      // Optional — staple finder just stays hidden if absent.
+    }
   }
 
   async function loadHistory() {
@@ -1761,6 +1879,45 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     if (ageDays < 70) return { label: "Post-release dip", cls: "dip" };
     if (ageDays < 182) return { label: "Stabilizing", cls: "stable" };
     return { label: "Maturing ↑", cls: "mature" };
+  }
+
+  // F7: at the lowest price across all recorded history (not just "near").
+  // Our history is the full tracked window, so low == all-time-tracked low.
+  function isAllTimeLow(d) {
+    const ep = effectivePrice(d);
+    const st = getPriceStats(d);
+    if (ep == null || !st || st.days < 7) return false;  // need enough history
+    return ep <= st.low * 1.01;
+  }
+
+  // F5: naive price projection ~30 days out, from the recent linear trend,
+  // damped (markets mean-revert; raw extrapolation overshoots). Returns
+  // { proj, lowB, highB, dirn } or null when history is too thin.
+  function priceForecast(d) {
+    const series = (PRICE_HISTORY && PRICE_HISTORY[d.id]) || [];
+    const pts = series.map(s => s.tcg).filter(v => typeof v === "number");
+    if (pts.length < 8) return null;            // need a few weeks of data
+    const ep = effectivePrice(d);
+    if (ep == null) return null;
+    const recent = pts.slice(-14);
+    const n = recent.length;
+    // Least-squares slope per day over the recent window.
+    const xs = recent.map((_, i) => i);
+    const mx = xs.reduce((a, b) => a + b, 0) / n;
+    const my = recent.reduce((a, b) => a + b, 0) / n;
+    let num = 0, den = 0;
+    for (let i = 0; i < n; i++) { num += (xs[i] - mx) * (recent[i] - my); den += (xs[i] - mx) ** 2; }
+    const slope = den ? num / den : 0;
+    const damp = 0.5;                            // halve raw extrapolation
+    const proj = Math.max(0, ep + slope * 30 * damp);
+    // Confidence band from recent volatility (std dev of day-over-day moves).
+    const diffs = [];
+    for (let i = 1; i < recent.length; i++) diffs.push(recent[i] - recent[i - 1]);
+    const md = diffs.reduce((a, b) => a + b, 0) / (diffs.length || 1);
+    const variance = diffs.reduce((a, b) => a + (b - md) ** 2, 0) / (diffs.length || 1);
+    const band = Math.sqrt(variance) * 5;       // ~5-day-ish spread
+    const dirn = proj > ep * 1.03 ? "up" : proj < ep * 0.97 ? "down" : "flat";
+    return { proj, lowB: Math.max(0, proj - band), highB: proj + band, dirn, now: ep };
   }
 
   // Live crack value (sum of singles) from the scraper, if present.
@@ -2127,11 +2284,21 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       zulusLine = `<div class="price-zulus${cheaperClass}">Zulus · <a href="${safeUrl(zulus.url)}" target="_blank" rel="noopener noreferrer">$${zulus.price.toFixed(2)}</a>${delta}</div>`;
     }
 
-    // 90-day range / near-low line, shown above the Zulus line in every branch.
+    // 90-day range / near-low / all-time-low line, above the Zulus line.
     if (stats) {
-      const nearLow = ep != null && ep <= stats.low * 1.05;
-      const rangeLine = `<div class="price-range${nearLow ? " near-low" : ""}">90d $${stats.low.toFixed(0)}–$${stats.high.toFixed(0)}${nearLow ? " · <strong>near low</strong>" : ""}</div>`;
+      const atLow = isAllTimeLow(d);
+      const nearLow = !atLow && ep != null && ep <= stats.low * 1.05;
+      const flag = atLow ? ' · <strong>★ all-time low</strong>'
+                 : nearLow ? ' · <strong>near low</strong>' : '';
+      const rangeLine = `<div class="price-range${(atLow || nearLow) ? " near-low" : ""}">${stats.days}d $${stats.low.toFixed(0)}–$${stats.high.toFixed(0)}${flag}</div>`;
       zulusLine = rangeLine + zulusLine;
+    }
+
+    // F5: forecast line (only when we have enough history to be meaningful).
+    const fc = priceForecast(d);
+    if (fc) {
+      const arrow = fc.dirn === "up" ? "↑" : fc.dirn === "down" ? "↓" : "→";
+      zulusLine += `<div class="price-forecast ${fc.dirn}">~30d: ${arrow} $${fc.proj.toFixed(0)} <span class="fc-band">($${fc.lowB.toFixed(0)}–$${fc.highB.toFixed(0)})</span></div>`;
     }
 
     // Price display — three-layer priority:
@@ -2195,7 +2362,16 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       const buyStr = buy ? `buy ~$${buy.value.toFixed(0)}` : "";
       const sellStr = sell ? `sell ~$${sell.value.toFixed(0)}${sell.estimated ? "*" : ""}` : "";
       const both = [buyStr, sellStr].filter(Boolean).join(" / ");
-      singlesLine = `<span class="crack-value${worth ? " worth" : ""}"><strong>Singles (NM):</strong> ${both}${worth ? ' <span class="crack-flag">▲ profit to crack</span>' : ""}</span>`;
+      // Chase-card breakdown: the few cards driving most of the value.
+      let chase = "";
+      if (Array.isArray(crack.top_cards) && crack.top_cards.length && buy && buy.value > 0) {
+        const top = crack.top_cards.slice(0, 3);
+        const topSum = top.reduce((s, c) => s + (c.price || 0), 0);
+        const share = Math.round((topSum / buy.value) * 100);
+        const items = top.map(c => `${escapeHtml(c.name)} <span class="chase-price">$${c.price.toFixed(0)}</span>`).join(", ");
+        chase = `<div class="chase-cards">Top cards: ${items}${share >= 25 ? ` <span class="chase-share">· ${share}% of value</span>` : ""}</div>`;
+      }
+      singlesLine = `<span class="crack-value${worth ? " worth" : ""}"><strong>Singles (NM):</strong> ${both}${worth ? ' <span class="crack-flag">▲ profit to crack</span>' : ""}</span>${chase}`;
     } else if (d.singlesValue) {
       singlesLine = `<span><strong>Singles</strong> ~$${d.singlesValue.toFixed(0)}</span>`;
     } else {
@@ -2312,6 +2488,47 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     grid.innerHTML = sorted.map(renderCard).join("");
   }
 
+  // ---------- Staple finder (reverse card -> cheapest precon) ----------
+  function renderStapleResults(query) {
+    const box = $("stapleResults");
+    if (!box) return;
+    const q = (query || "").trim().toLowerCase();
+    if (q.length < 3) { box.innerHTML = q ? '<div class="staple-empty">Keep typing…</div>' : ""; return; }
+    if (!CARD_INDEX) { box.innerHTML = '<div class="staple-empty">Card index loads after the next daily scrape.</div>'; return; }
+
+    const qn = q.replace(/[^a-z0-9]+/g, "");
+    // Find matching card entries: exact-normalized first, then substring.
+    let matches = [];
+    const exact = CARD_INDEX[qn];
+    if (exact) matches.push(exact);
+    for (const [k, v] of Object.entries(CARD_INDEX)) {
+      if (v === exact) continue;
+      if (k.includes(qn)) matches.push(v);
+      if (matches.length >= 6) break;
+    }
+    if (matches.length === 0) { box.innerHTML = `<div class="staple-empty">No tracked precon contains a card matching “${escapeHtml(query)}”.</div>`; return; }
+
+    // Use the single best (shortest-name) match's decks; rank by sealed price.
+    matches.sort((a, b) => a.name.length - b.name.length);
+    const card = matches[0];
+    const byId = Object.fromEntries(PRECONS.map(d => [d.id, d]));
+    const decks = (card.decks || [])
+      .map(id => byId[id]).filter(Boolean)
+      .map(d => ({ d, ep: effectivePrice(d) }))
+      .sort((a, b) => (a.ep ?? Infinity) - (b.ep ?? Infinity));
+    if (decks.length === 0) { box.innerHTML = `<div class="staple-empty">No priced precon currently lists ${escapeHtml(card.name)}.</div>`; return; }
+
+    const head = `<div class="staple-empty">Cheapest precons containing <span class="staple-cardname">${escapeHtml(card.name)}</span>:</div>`;
+    box.innerHTML = head + decks.map(({ d, ep }) => `
+      <div class="staple-row" data-staple-id="${d.id}">
+        <div>
+          <div class="staple-row-name">${escapeHtml(d.name)}</div>
+          <div class="staple-row-set">${escapeHtml(d.set)}</div>
+        </div>
+        <div class="staple-row-price">${ep != null ? "$" + ep.toFixed(2) : "—"}</div>
+      </div>`).join("");
+  }
+
   // ---------- Deal of the Day ----------
   // Smart-blend score across every signal we track, picking the single best
   // buy. Re-evaluated on each load against the daily-refreshed data, so the
@@ -2382,6 +2599,60 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       </div>`;
   }
 
+  // ---------- F6: Unified best-value feed (decks + boxes + bundles) ----------
+  function renderUnifiedFeed() {
+    const el = $("unifiedFeed"), grid = $("unifiedFeedGrid");
+    if (!el || !grid) return;
+    const items = [];
+
+    // Decks: value = discount% + near-low bonus + crack net.
+    for (const d of PRECONS) {
+      const ep = effectivePrice(d);
+      if (ep == null) continue;
+      const disc = discountPct(d);
+      const arb = crackArbitrage(d);
+      const atLow = isAllTimeLow(d), nearLow = isNearLow(d);
+      let score = disc + (atLow ? 25 : nearLow ? 15 : 0) + (arb && arb.margin > 0 ? Math.min(arb.margin, 30) * 0.4 : 0);
+      if (score < 8) continue;
+      const tag = disc >= 12 ? `${disc.toFixed(0)}% off` : atLow ? "all-time low" : nearLow ? "near low" : "good value";
+      items.push({ kind: "deck", id: d.id, name: d.name, price: ep, tag, score });
+    }
+
+    // Boxes: value = EV over price (how much singles exceed box cost).
+    const boxes = getBoxes() || {};
+    for (const [sn, rows] of Object.entries(boxes)) {
+      for (const b of rows) {
+        if (typeof b.ev !== "number" || !b.price) continue;
+        const ratio = b.ev / b.price;          // >1 means singles beat box price
+        const score = (ratio - 1) * 60;         // scale into the same ballpark
+        if (score < 8) continue;
+        items.push({ kind: "box", id: `${sn}::${b.type}`, name: `${sn} — ${b.label}`, price: b.price,
+                     tag: `EV ≈ $${b.ev.toFixed(0)}`, score });
+      }
+    }
+
+    // Bundles: value = savings vs buying decks individually.
+    for (const [bid, b] of Object.entries(LIVE_PRICES?.bundles || {})) {
+      if (!b.savings || b.savings <= 0) continue;
+      const score = Math.min(b.savings, 80) * 0.5;
+      if (score < 8) continue;
+      items.push({ kind: "bundle", id: bid, name: b.name || b.set, price: b.price,
+                   tag: `saves $${b.savings.toFixed(0)}`, score });
+    }
+
+    items.sort((a, b) => b.score - a.score);
+    const top = items.slice(0, 8);
+    if (top.length === 0) { el.hidden = true; return; }
+    el.hidden = false;
+    const kindLabel = { deck: "Deck", box: "Box", bundle: "Bundle" };
+    grid.innerHTML = top.map(x => `
+      <button type="button" class="best-deal uf-item" data-uf-kind="${x.kind}" data-uf-id="${escapeHtml(x.id)}">
+        <span class="uf-kind uf-${x.kind}">${kindLabel[x.kind]}</span>
+        <span class="bd-name">${escapeHtml(x.name)}</span>
+        <span class="bd-price">$${x.price.toFixed(2)} <span class="bd-disc">${x.tag}</span></span>
+      </button>`).join("");
+  }
+
   // ---------- Best deals ----------
   function renderBestDeals() {
     const el = $("bestDeals"), dgrid = $("bestDealsGrid");
@@ -2447,16 +2718,27 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         const spark = (hist && hist.length >= 2)
           ? sparklineSvg(hist.map(s => ({ tcg: s.price })))   // sparklineSvg reads .tcg
           : "";
+        // Expected-value estimate line (when computed). Green when EV beats
+        // the box price (cracking ~breaks even/profits), muted otherwise.
+        let evLine = "";
+        if (typeof b.ev === "number") {
+          const good = b.ev >= b.price;
+          evLine = `<span class="box-ev${good ? " good" : ""}">est. singles ≈ $${b.ev.toFixed(0)}*</span>`;
+        }
         return `
         <div class="box-item" data-box-set="${escapeHtml(sn)}" data-box-type="${escapeHtml(b.type)}" data-box-label="${escapeHtml(b.label)}" role="button" tabindex="0" title="Click for price history">
           <span class="box-item-type">${escapeHtml(b.label)}</span>
           <span class="box-item-price">$${b.price.toFixed(2)} ${spark}</span>
           ${b.price_low != null ? `<span class="box-item-low">low $${b.price_low.toFixed(2)}</span>` : ""}
+          ${evLine}
           <a class="box-item-link" href="${safeUrl(b.url)}" target="_blank" rel="noopener noreferrer">view on TCGPlayer →</a>
         </div>`;
       }).join("");
       return `<div class="box-set"><div class="box-set-name">${escapeHtml(sn)}</div><div class="box-grid">${items}</div></div>`;
     }).join("");
+    // Show the EV methodology note only if at least one box has an EV.
+    const anyEv = Object.values(boxes).some(rows => rows.some(r => typeof r.ev === "number"));
+    const note = $("boxEvNote"); if (note) note.hidden = !anyEv;
   }
 
   // ---------- Compare view ----------
@@ -2576,6 +2858,30 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   }
 
   // ---------- Stats ----------
+  // F4: collection portfolio panel — value now vs MSRP paid + gain/loss.
+  function renderPortfolio() {
+    const el = $("portfolio"), grid = $("portfolioGrid");
+    if (!el || !grid) return;
+    const owned = PRECONS.filter(d => ownedSet.has(d.id));
+    if (owned.length === 0) { el.hidden = true; return; }
+    const msrp = owned.reduce((s, d) => s + (d.msrp || 0), 0);
+    const now = owned.reduce((s, d) => s + (effectivePrice(d) || 0), 0);
+    const singles = owned.reduce((s, d) => {
+      const c = getCrackValue(d); return s + (c && c.tcg ? c.tcg : 0);
+    }, 0);
+    const delta = now - msrp;
+    const deltaPct = msrp > 0 ? (delta / msrp) * 100 : 0;
+    const dirn = delta > 0.5 ? "up" : delta < -0.5 ? "down" : "";
+    const sign = delta >= 0 ? "+" : "−";
+    el.hidden = false;
+    grid.innerHTML = `
+      <div class="pf-stat"><div class="pf-label">Decks owned</div><div class="pf-val">${owned.length}</div></div>
+      <div class="pf-stat"><div class="pf-label">Market value now</div><div class="pf-val">$${now.toFixed(0)}</div><div class="pf-sub">sealed, live TCG</div></div>
+      <div class="pf-stat"><div class="pf-label">Paid at MSRP</div><div class="pf-val">$${msrp.toFixed(0)}</div></div>
+      <div class="pf-stat"><div class="pf-label">vs MSRP</div><div class="pf-val ${dirn}">${sign}$${Math.abs(delta).toFixed(0)}</div><div class="pf-sub">${sign}${Math.abs(deltaPct).toFixed(0)}%</div></div>
+      <div class="pf-stat"><div class="pf-label">Singles value</div><div class="pf-val">$${singles.toFixed(0)}</div><div class="pf-sub">if cracked (retail)</div></div>`;
+  }
+
   function renderStats() {
     $("statTotal").textContent = PRECONS.length;
     const sets = new Set(PRECONS.map(d => d.set));
@@ -2694,6 +3000,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         if (ownedSet.has(id)) ownedSet.delete(id); else ownedSet.add(id);
         await saveOwned();
         renderStats();
+        renderPortfolio();
         renderGrid();
         return;
       }
@@ -2797,6 +3104,29 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         if (btn) openChart(btn.dataset.dealId);
       });
     });
+    // Unified feed: deck items open the deck chart; box items open the box
+    // chart (id is "<set>::<type>"); bundles just deep-link via the deck list.
+    $("unifiedFeed").addEventListener("click", e => {
+      const btn = e.target.closest("[data-uf-kind]");
+      if (!btn) return;
+      const kind = btn.dataset.ufKind, id = btn.dataset.ufId;
+      if (kind === "deck") openChart(id);
+      else if (kind === "box") {
+        const [sn, type] = id.split("::");
+        const label = (getBoxes()?.[sn] || []).find(b => b.type === type)?.label || "Box";
+        openBoxChart(sn, type, label);
+      }
+      // bundles: no per-item chart; clicking is a no-op for now.
+    });
+    // Staple finder: live search + click a result to open that deck's chart.
+    const stapleInput = $("stapleInput");
+    if (stapleInput) {
+      stapleInput.addEventListener("input", e => renderStapleResults(e.target.value));
+      $("stapleResults").addEventListener("click", e => {
+        const row = e.target.closest("[data-staple-id]");
+        if (row) openChart(row.dataset.stapleId);
+      });
+    }
     // Sealed-box section is collapsible.
     $("boxToggle").addEventListener("click", () => {
       const body = $("boxBody");
@@ -2835,14 +3165,18 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         loadTargets(),
         loadLivePrices().catch(() => null),
         loadHistory().catch(() => null),
+        loadCardIndex().catch(() => null),
       ]);
       readUrlState();
       updateStaleBanner();
       renderStats();
       renderDealOfDay();
+      renderUnifiedFeed();
       renderBestDeals();
       renderCrackDeals();
       renderBoxes();
+      renderPortfolio();
+      if (CARD_INDEX) $("stapleFinder").hidden = false;
       renderGrid();
       renderCompareBar();
     } catch (e) {
