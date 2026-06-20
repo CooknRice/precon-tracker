@@ -1,11 +1,11 @@
-// Service worker for The Precon Ledger — offline + installable PWA.
+// Service worker for MTG Tracker — offline + installable PWA.
 //
 // Two strategies, chosen per request:
 //   - DATA (*.json): network-FIRST. Always try the network so daily price
 //     updates show immediately; fall back to cache only when offline.
 //     (Stale-while-revalidate caused day-old prices/box-history to show.)
 //   - SHELL (html, icons, manifest): stale-while-revalidate for instant load.
-const CACHE = "precon-ledger-v4";
+const CACHE = "mtg-tracker-v5";
 const SHELL = [
   "./",
   "./index.html",
