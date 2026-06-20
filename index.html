@@ -788,6 +788,17 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .price-zulus a { color: var(--ink-soft); text-decoration: none; }
 .price-zulus a:hover { color: var(--gold); }
 .price-zulus.cheaper { color: var(--burgundy-soft); font-weight: 500; }
+.price-zulus .vendor-oos { color: var(--ink-faded); }
+.price-best {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sage);
+  margin-top: 6px;
+}
+.price-best a { color: var(--sage); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--sage) 40%, transparent); }
+.price-best a:hover { color: var(--gold); }
+.price-best .price-best-save { color: var(--ink-muted); font-weight: 400; }
 
 /* Sparkline */
 .sparkline {
@@ -1235,6 +1246,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .box-item-low { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); }
 .box-ev { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
 .box-ev.good { color: #8fb36a; }
+.box-ck { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
+.box-ck.cheaper { color: var(--sage); font-weight: 600; }
 .box-ev-note { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); padding: 10px 18px 14px; line-height: 1.5; }
 .box-item { cursor: pointer; }
 .box-item-link { font-family: var(--font-mono); font-size: 10px; color: var(--gold); text-decoration: none; margin-top: 2px; }
@@ -1635,6 +1648,31 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const z = LIVE_PRICES.vendors.zulus?.[deck.id];
     if (!z?.price) return null;
     return { price: z.price, url: z.url };
+  }
+
+  // Card Kingdom sealed-deck price (from CK's free public pricelist API).
+  // Returns { price, url, qty, buy } or null. qty is CK's in-stock count.
+  function getCardKingdom(deck) {
+    if (!LIVE_PRICES) return null;
+    const c = LIVE_PRICES.vendors.cardkingdom?.[deck.id];
+    if (!c?.price) return null;
+    return { price: c.price, url: c.url, qty: c.qty ?? null, buy: c.buy ?? null };
+  }
+
+  // Cheapest place to actually BUY the sealed deck right now, across the vendors
+  // we track: TCGPlayer Market, Zulus, and Card Kingdom retail (in-stock only).
+  // Returns { best:{vendor,price,url}, all:[...sorted asc] } or null.
+  function bestVendorPrice(deck) {
+    const opts = [];
+    const live = getLivePrice(deck);
+    if (live?.price) opts.push({ vendor: "TCGPlayer", price: live.price, url: live.url });
+    const zu = getZulusPrice(deck);
+    if (zu?.price) opts.push({ vendor: "Zulus", price: zu.price, url: zu.url });
+    const ck = getCardKingdom(deck);
+    if (ck?.price && (ck.qty == null || ck.qty > 0)) opts.push({ vendor: "Card Kingdom", price: ck.price, url: ck.url });
+    if (!opts.length) return null;
+    opts.sort((a, b) => a.price - b.price);
+    return { best: opts[0], all: opts };
   }
 
   function getHistory(deck) {
@@ -2284,7 +2322,18 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       zulusLine = `<div class="price-zulus${cheaperClass}">Zulus · <a href="${safeUrl(zulus.url)}" target="_blank" rel="noopener noreferrer">$${zulus.price.toFixed(2)}</a>${delta}</div>`;
     }
 
-    // 90-day range / near-low / all-time-low line, above the Zulus line.
+    // Card Kingdom second-vendor row (re-enabled via CK's free public
+    // pricelist API). Highlight when CK beats the live TCGPlayer price.
+    const ck = getCardKingdom(d);
+    if (ck) {
+      const oos = (ck.qty != null && ck.qty <= 0);
+      const cheaper = !oos && live && ck.price < live.price;
+      const note = oos ? ' <span class="vendor-oos">(out of stock)</span>'
+                 : cheaper ? ` <span style="color:var(--sage);">(saves $${(live.price - ck.price).toFixed(2)})</span>` : "";
+      zulusLine += `<div class="price-zulus${cheaper ? " cheaper" : ""}">Card Kingdom · <a href="${safeUrl(ck.url)}" target="_blank" rel="noopener noreferrer">$${ck.price.toFixed(2)}</a>${note}</div>`;
+    }
+
+    // 90-day range / near-low / all-time-low line, above the vendor lines.
     if (stats) {
       const atLow = isAllTimeLow(d);
       const nearLow = !atLow && ep != null && ep <= stats.low * 1.05;
@@ -2299,6 +2348,16 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     if (fc) {
       const arrow = fc.dirn === "up" ? "↑" : fc.dirn === "down" ? "↓" : "→";
       zulusLine += `<div class="price-forecast ${fc.dirn}">~30d: ${arrow} $${fc.proj.toFixed(0)} <span class="fc-band">($${fc.lowB.toFixed(0)}–$${fc.highB.toFixed(0)})</span></div>`;
+    }
+
+    // Best price across all in-stock vendors (TCGPlayer / Zulus / Card Kingdom).
+    // Headlines the cheapest place to actually buy the sealed deck right now.
+    const bv = bestVendorPrice(d);
+    if (bv && bv.all.length >= 2) {
+      const spread = bv.all[bv.all.length - 1].price - bv.best.price;
+      if (spread >= 0.5) {
+        zulusLine = `<div class="price-best">🏆 Best of ${bv.all.length}: <a href="${safeUrl(bv.best.url)}" target="_blank" rel="noopener noreferrer">$${bv.best.price.toFixed(2)}</a> @ ${bv.best.vendor} <span class="price-best-save">save $${spread.toFixed(2)}</span></div>` + zulusLine;
+      }
     }
 
     // Price display — three-layer priority:
@@ -2725,13 +2784,26 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
           const good = b.ev >= b.price;
           evLine = `<span class="box-ev${good ? " good" : ""}">est. singles ≈ $${b.ev.toFixed(0)}*</span>`;
         }
+        // Card Kingdom second vendor for the box (retail + stock).
+        let ckLine = "";
+        if (typeof b.ck_price === "number") {
+          const oos = (b.ck_qty != null && b.ck_qty <= 0);
+          const cheaper = !oos && b.ck_price < b.price;
+          const tail = oos ? " (out of stock)" : cheaper ? ` · save $${(b.price - b.ck_price).toFixed(2)}` : "";
+          ckLine = `<span class="box-ck${cheaper ? " cheaper" : ""}">CK $${b.ck_price.toFixed(2)}${tail}</span>`;
+        }
+        const ckLink = b.ck_url
+          ? `<a class="box-item-link" href="${safeUrl(b.ck_url)}" target="_blank" rel="noopener noreferrer">view on Card Kingdom →</a>`
+          : "";
         return `
         <div class="box-item" data-box-set="${escapeHtml(sn)}" data-box-type="${escapeHtml(b.type)}" data-box-label="${escapeHtml(b.label)}" role="button" tabindex="0" title="Click for price history">
           <span class="box-item-type">${escapeHtml(b.label)}</span>
           <span class="box-item-price">$${b.price.toFixed(2)} ${spark}</span>
-          ${b.price_low != null ? `<span class="box-item-low">low $${b.price_low.toFixed(2)}</span>` : ""}
+          ${b.price_low != null ? `<span class="box-item-low">TCG low $${b.price_low.toFixed(2)}</span>` : ""}
+          ${ckLine}
           ${evLine}
           <a class="box-item-link" href="${safeUrl(b.url)}" target="_blank" rel="noopener noreferrer">view on TCGPlayer →</a>
+          ${ckLink}
         </div>`;
       }).join("");
       return `<div class="box-set"><div class="box-set-name">${escapeHtml(sn)}</div><div class="box-grid">${items}</div></div>`;

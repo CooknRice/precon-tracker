@@ -174,6 +174,44 @@ def test_cards_index():
         assert len(decks) == len(set(decks)), f"card {key!r} has duplicate deck ids"
 
 
+def test_vendors_cardkingdom():
+    """CK vendor map (re-enabled via CK's public pricelist API): keys are real
+    deck ids; price positive-or-null; url present; status from a known set."""
+    prices = load("prices.json")
+    deck_ids = {d["id"] for d in load("decks.json")}
+    ck = prices["vendors"].get("cardkingdom", {})
+    assert ck, "vendors.cardkingdom missing"
+    ok_status = {"ok", "out-of-stock", "no-match", "unavailable", "disabled-in-v1.5"}
+    for did, e in ck.items():
+        assert did in deck_ids, f"CK has stale deck id {did}"
+        assert "url" in e, f"CK {did} missing url"
+        if e.get("status") is not None:
+            assert e["status"] in ok_status, f"CK {did} bad status {e['status']}"
+        p = e.get("price")
+        if p is not None:
+            assert isinstance(p, (int, float)) and p > 0, f"CK {did} bad price {p}"
+        if e.get("buy") is not None:
+            assert isinstance(e["buy"], (int, float)) and e["buy"] >= 0, f"CK {did} bad buy"
+        if e.get("qty") is not None:
+            assert isinstance(e["qty"], int) and e["qty"] >= 0, f"CK {did} bad qty"
+
+
+def test_boxes_ck():
+    """CK box prices (when present): positive number; qty int>=0; http url."""
+    prices = load("prices.json")
+    for set_name, rows in prices.get("boxes", {}).items():
+        for r in rows:
+            if r.get("ck_price") is not None:
+                assert isinstance(r["ck_price"], (int, float)) and r["ck_price"] > 0, \
+                    f"box {set_name}/{r.get('type')} bad ck_price {r['ck_price']}"
+            if r.get("ck_qty") is not None:
+                assert isinstance(r["ck_qty"], int) and r["ck_qty"] >= 0, \
+                    f"box {set_name}/{r.get('type')} bad ck_qty"
+            if r.get("ck_url") is not None:
+                assert isinstance(r["ck_url"], str) and r["ck_url"].startswith("http"), \
+                    f"box {set_name}/{r.get('type')} bad ck_url"
+
+
 if __name__ == "__main__":
     tests = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     failures = 0
