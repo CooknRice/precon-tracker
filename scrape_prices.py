@@ -711,8 +711,12 @@ def fetch_crack_values(decks: list, session: requests.Session) -> dict:
             for c in body.get(board) or []:
                 u = c.get("uuid")
                 cnt = c.get("count") or 1
+                nm = c.get("name")
+                # Skip basic lands from the reverse index / chase list — they're
+                # noise ("which precon has Forest?" is not a useful query).
+                is_basic = (c.get("type") or "").startswith("Basic")
                 if u:
-                    cards.append((u, cnt))
+                    cards.append((u, cnt, nm, is_basic))
                     need_uuids.add(u)
         deck_cards[d["id"]] = cards
         time.sleep(0.05)
@@ -745,11 +749,14 @@ def fetch_crack_values(decks: list, session: requests.Session) -> dict:
     #             - tcgplayer: estimated at TCG_SELL_RATE of TCG retail, since
     #               MTGJSON carries no TCGPlayer buylist. Clearly flagged.
     results: dict = {}
+    card_index: dict = {}   # normalized card name -> {"name": display, "decks": [ids]}
     for did, cards in deck_cards.items():
         tcg_buy = ck_buy = 0.0
         tcg_sell_est = ck_sell = 0.0
         tcg_n = ck_n = missing = 0
-        for u, cnt in cards:
+        contributors = []   # (unit_tcg_price, name) for top-cards ranking
+        seen_names = set()  # dedupe for the reverse index (per deck)
+        for u, cnt, nm, is_basic in cards:
             tcg_r, ck_r, ck_bl = price_by_uuid.get(u, (None, None, None))
             if tcg_r is not None:
                 tcg_buy += tcg_r * cnt
@@ -762,7 +769,20 @@ def fetch_crack_values(decks: list, session: requests.Session) -> dict:
                 ck_sell += ck_bl * cnt  # cards CK won't buy simply add $0
             if tcg_r is None and ck_r is None:
                 missing += 1
+            # Chase-card tracking (use TCG retail as the value yardstick).
+            if nm and not is_basic and tcg_r is not None:
+                contributors.append((tcg_r, nm))
+            # Reverse index: which decks contain this (non-basic) card.
+            if nm and not is_basic:
+                key = norm(nm)
+                if key and key not in seen_names:
+                    seen_names.add(key)
+                    entry = card_index.setdefault(key, {"name": nm, "decks": []})
+                    entry["decks"].append(did)
         if tcg_n or ck_n:
+            # Top 4 chase cards by unit price.
+            contributors.sort(key=lambda x: -x[0])
+            top_cards = [{"name": nm, "price": round(p, 2)} for p, nm in contributors[:4]]
             results[did] = {
                 # BUY side (retail) — unchanged keys for back-compat.
                 "tcg": round(tcg_buy, 2) if tcg_n else None,
@@ -774,8 +794,11 @@ def fetch_crack_values(decks: list, session: requests.Session) -> dict:
                 "card_count": len(cards),
                 "priced": max(tcg_n, ck_n),
                 "missing": missing,
+                "top_cards": top_cards,
             }
     print(f"  crack: priced {len(results)} decks", flush=True)
+    # Stash the reverse index on the function so main() can write it out.
+    fetch_crack_values.card_index = card_index
     return results
 
 
@@ -857,14 +880,133 @@ def _classify_box(name: str) -> str | None:
 # Human labels for the 3 box types.
 BOX_TYPE_LABELS = {"play": "Booster Box", "collector": "Collector Booster Box", "jumpstart": "Jumpstart Box"}
 
+# Packs per display box, by our box type and MTGJSON booster key.
+BOX_PACKS = {"play": 30, "collector": 12, "jumpstart": 24}
+BOX_BOOSTER_KEY = {"play": "play", "collector": "collector", "jumpstart": "jumpstart"}
+
+
+def _build_setcode_map(session: requests.Session) -> dict:
+    """normalized set name -> MTGJSON set code, from SetList.json."""
+    try:
+        data = fetch_json(f"{MTGJSON_BASE}/SetList.json", session)
+    except Exception as e:
+        print(f"  ev: couldn't load SetList: {e}", flush=True)
+        return {}
+    out = {}
+    for s in data.get("data", []):
+        code = s.get("code")
+        nm = s.get("name")
+        if code and nm:
+            out[norm(nm)] = code
+    return out
+
+
+def _pack_ev_from_booster(booster_cfg: dict, price_of_uuid) -> float | None:
+    """Expected value of ONE pack using MTGJSON's published booster model.
+
+    booster_cfg has:
+      - 'boosters': list of {weight, contents:{sheetName: count}}
+      - 'boostersTotalWeight': sum of weights
+      - 'sheets': {sheetName: {'totalWeight':N, 'cards':{uuid:weight}, ...}}
+    EV = sum over booster configs (weighted) of sum over sheet slots of
+         (count * expected card price on that sheet).
+    price_of_uuid(uuid) returns a float price or None (treated as 0).
+    """
+    sheets = booster_cfg.get("sheets") or {}
+    boosters = booster_cfg.get("boosters") or []
+    total_w = booster_cfg.get("boostersTotalWeight") or sum(b.get("weight", 0) for b in boosters)
+    if not boosters or not total_w:
+        return None
+
+    # Pre-compute expected price per sheet (one pull from that sheet).
+    sheet_ev = {}
+    for name, sh in sheets.items():
+        cards = sh.get("cards") or {}
+        sw = sh.get("totalWeight") or sum(cards.values())
+        if not sw:
+            sheet_ev[name] = 0.0
+            continue
+        acc = 0.0
+        for uuid, w in cards.items():
+            p = price_of_uuid(uuid)
+            if p:
+                acc += (w / sw) * p
+        sheet_ev[name] = acc
+
+    ev = 0.0
+    for b in boosters:
+        bw = b.get("weight", 0)
+        if not bw:
+            continue
+        pack = 0.0
+        for sheet_name, count in (b.get("contents") or {}).items():
+            pack += sheet_ev.get(sheet_name, 0.0) * count
+        ev += (bw / total_w) * pack
+    return ev
+
+
+def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session, want_types: set) -> dict:
+    """Return {box_type: ev_per_box} for the given set, using MTGJSON's set
+    file (booster config + per-card foil/nonfoil prices). Estimate — see the
+    UI note. Returns {} when the set/booster/price data isn't available."""
+    code = setcode_map.get(norm(_clean_set_name(set_name))) or setcode_map.get(norm(set_name))
+    if not code:
+        return {}
+    try:
+        sdata = fetch_json(f"{MTGJSON_BASE}/{code}.json", session).get("data", {})
+    except Exception:
+        return {}
+    booster = sdata.get("booster") or {}
+    if not booster:
+        return {}
+    # Price map: uuid -> best of (nonfoil, foil) TCG retail. Sheets reference
+    # specific finishes via separate uuids in modern sets, so a single lookup
+    # by uuid against both finishes is the safe approximation.
+    prices = {}
+    for c in sdata.get("cards", []):
+        u = c.get("uuid")
+        if u:
+            prices[u] = c  # placeholder; real price comes from AllPrices below
+    # We need actual prices: pull AllPricesToday once (cached on the function).
+    allp = getattr(compute_box_ev, "_allp", None)
+    if allp is None:
+        try:
+            allp = fetch_gz_json(ALLPRICES_URL, session).get("data", {})
+        except Exception:
+            return {}
+        compute_box_ev._allp = allp
+
+    def price_of(uuid):
+        paper = (allp.get(uuid) or {}).get("paper", {})
+        tcg = (paper.get("tcgplayer") or {}).get("retail") or {}
+        nf = _latest_price(tcg.get("normal"))
+        fo = _latest_price(tcg.get("foil"))
+        # A sheet uuid is finish-specific; take whichever finish is priced.
+        return nf if nf is not None else fo
+
+    out = {}
+    for t in want_types:
+        bkey = BOX_BOOSTER_KEY.get(t)
+        cfg = booster.get(bkey) if bkey else None
+        if not cfg:
+            continue
+        pack_ev = _pack_ev_from_booster(cfg, price_of)
+        if pack_ev is None:
+            continue
+        out[t] = round(pack_ev * BOX_PACKS.get(t, 1), 2)
+    return out
+
 
 def fetch_box_prices(decks: list, session: requests.Session, groups: list) -> dict:
     """For each unique set among the decks, find its main-set group and price
     the Play/Collector/Jumpstart boxes. Returns { set_name: [ {type, label,
-    name, price, price_low, price_source, url} ] }.
+    name, price, price_low, price_source, url, ev} ] }.
+    `ev` is an Expected-Value ESTIMATE of the singles in a box, from MTGJSON's
+    published booster model (omitted when the model/prices aren't available).
     Resilient: sets with no boxes (Commander-only products) are simply omitted.
     """
     sets = sorted({d.get("set", "") for d in decks if d.get("set")})
+    setcode_map = _build_setcode_map(session)
     out: dict = {}
     for set_name in sets:
         g = find_main_set_group(groups, set_name)
@@ -911,12 +1053,22 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list) -> di
                 "url": tcg_product_url(pid, p.get("name", "")),
             })
         if rows:
+            # Expected-value estimate per box type (best-effort).
+            try:
+                ev_map = compute_box_ev(set_name, setcode_map, session, {r["type"] for r in rows})
+            except Exception as e:
+                print(f"  ev: [{set_name}] failed: {e}", flush=True)
+                ev_map = {}
+            for r in rows:
+                if r["type"] in ev_map:
+                    r["ev"] = ev_map[r["type"]]
             # Stable order: play, collector, jumpstart.
             order = {"play": 0, "collector": 1, "jumpstart": 2}
             rows.sort(key=lambda r: order.get(r["type"], 9))
             out[set_name] = rows
         time.sleep(0.3)
-    print(f"  boxes: {len(out)} sets with sealed boxes", flush=True)
+    n_ev = sum(1 for rows in out.values() for r in rows if r.get("ev") is not None)
+    print(f"  boxes: {len(out)} sets with sealed boxes ({n_ev} box EVs computed)", flush=True)
     return out
 
 
@@ -985,6 +1137,18 @@ def main() -> None:
         "boxes": box_results,
     }
     out_path.write_text(json.dumps(output, indent=2))
+
+    # Reverse card->decks index (F2: "cheapest precon containing card X").
+    # Kept in its own file so prices.json stays lean. Only emitted when the
+    # crack phase built it; otherwise leave any existing index untouched.
+    card_index = getattr(fetch_crack_values, "card_index", None)
+    if card_index:
+        idx_path = Path(__file__).parent / "cards_index.json"
+        idx_path.write_text(json.dumps({
+            "updated_at": output["updated_at"],
+            "cards": card_index,
+        }, separators=(",", ":")))
+        print(f"Cards idx: {len(card_index)} unique cards across decks", flush=True)
 
     update_history(decks, tcg_results, zulus_results, box_results)
 

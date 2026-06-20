@@ -125,6 +125,55 @@ def test_history_shape():
             assert isinstance(entry.get("price"), (int, float)) and entry["price"] > 0
 
 
+def test_crack_top_cards():
+    """top_cards (chase-card breakdown, F1): list of {name, price}, prices
+    positive and sorted descending, capped at a small N."""
+    prices = load("prices.json")
+    for did, c in prices.get("crack", {}).items():
+        tc = c.get("top_cards")
+        if tc is None:
+            continue
+        assert isinstance(tc, list), f"crack {did}.top_cards not a list"
+        assert len(tc) <= 4, f"crack {did}.top_cards too long: {len(tc)}"
+        prev = None
+        for card in tc:
+            assert isinstance(card.get("name"), str) and card["name"], f"crack {did} top card missing name"
+            p = card.get("price")
+            assert isinstance(p, (int, float)) and p > 0, f"crack {did} top card bad price {p}"
+            if prev is not None:
+                assert p <= prev + 1e-6, f"crack {did} top_cards not sorted desc"
+            prev = p
+
+
+def test_boxes_ev():
+    """box EV (F3): when present, a positive number labeled as an estimate."""
+    prices = load("prices.json")
+    for set_name, rows in prices.get("boxes", {}).items():
+        for r in rows:
+            if "ev" in r and r["ev"] is not None:
+                assert isinstance(r["ev"], (int, float)) and r["ev"] > 0, \
+                    f"box {set_name}/{r.get('type')} bad ev {r['ev']}"
+
+
+def test_cards_index():
+    """cards_index.json (F2 reverse staple finder): if present, maps card name
+    keys to {name, decks:[real deck ids]}."""
+    p = ROOT / "cards_index.json"
+    if not p.exists():
+        return  # produced alongside prices.json by the scraper
+    idx = json.loads(p.read_text())
+    cards = idx.get("cards")
+    assert isinstance(cards, dict) and cards, "cards_index has no cards map"
+    deck_ids = {d["id"] for d in load("decks.json")}
+    for key, entry in cards.items():
+        assert isinstance(entry.get("name"), str) and entry["name"], f"card {key!r} missing name"
+        decks = entry.get("decks")
+        assert isinstance(decks, list) and decks, f"card {key!r} has no decks"
+        for did in decks:
+            assert did in deck_ids, f"card {key!r} references unknown deck {did}"
+        assert len(decks) == len(set(decks)), f"card {key!r} has duplicate deck ids"
+
+
 if __name__ == "__main__":
     tests = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     failures = 0
