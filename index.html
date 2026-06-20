@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Precon Ledger · MTG Commander Deck Price Tracker</title>
+<title>MTG Tracker · Commander Precon, Sealed Box & Bundle Prices</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="fetch" href="./decks.json" crossorigin>
@@ -1308,8 +1308,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 <header>
   <div class="title-block">
     <div>
-      <h1 class="title">The <em>Precon</em> Ledger</h1>
-      <p class="tagline">A curated index of every MTG Commander preconstructed deck from the last five years, with live TCGPlayer Market prices refreshed daily.</p>
+      <h1 class="title"><em>MTG</em> Tracker</h1>
+      <p class="tagline">Live prices for every MTG Commander precon, sealed booster box, and set bundle from the last five years — refreshed daily across TCGPlayer, Card Kingdom &amp; Zulus.</p>
     </div>
     <div class="meta-line">
       <div style="margin-bottom:6px;"><button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle light or dark theme" title="Toggle light/dark theme">◐</button></div>
@@ -1524,7 +1524,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 </div>
 
 <script>
-// Precon Ledger — app logic
+// MTG Tracker — app logic
 // Renders, filters, sorts, and persists owned state via window.storage when available
 
 (() => {
@@ -2271,7 +2271,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       `**ID:** \`${deck.id}\``,
       `**What's wrong?** (e.g. wrong commander, missing deck, broken price, typo)`,
       "",
-      "<!-- Add details here. Auto-prefilled from the Precon Ledger. -->",
+      "<!-- Add details here. Auto-prefilled from MTG Tracker. -->",
     ].join("\n");
     return `https://github.com/${REPO_SLUG}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}&labels=data-fix`;
   }

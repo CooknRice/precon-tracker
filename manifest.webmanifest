@@ -1,7 +1,7 @@
 {
-  "name": "The Precon Ledger",
-  "short_name": "Precon Ledger",
-  "description": "MTG Commander preconstructed deck price tracker with live prices, history charts, and buy signals.",
+  "name": "MTG Tracker",
+  "short_name": "MTG Tracker",
+  "description": "MTG price tracker for Commander precons, sealed booster boxes, and bundles — live multi-vendor prices, history charts, and buy signals.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
