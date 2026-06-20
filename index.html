@@ -1033,6 +1033,61 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .price-range.near-low { color: var(--sage); }
 .price-range.near-low strong { color: var(--sage); }
 
+/* ---------- Deal of the Day ---------- */
+.deal-of-day {
+  background: var(--surface);
+  border: 1px solid rgba(228,185,84,0.45);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.deal-of-day:hover { border-color: var(--gold-bright); transform: translateY(-2px); }
+.dod-flag {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1a1308;
+  background: var(--gold-bright);
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+.dod-main { flex: 1; min-width: 200px; }
+.dod-name {
+  font-family: var(--font-ui);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #f5efe2;
+  line-height: 1.15;
+}
+.dod-why {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+.dod-why .dod-sep { color: var(--ink-faded); margin: 0 7px; }
+.dod-price { text-align: right; white-space: nowrap; }
+.dod-price-now {
+  font-family: var(--font-ui);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--burgundy);
+  line-height: 1;
+}
+.dod-price-sub { font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); margin-top: 4px; }
+.dod-price-sub .dod-msrp { text-decoration: line-through; color: var(--ink-faded); }
+
 /* ---------- Best deals section ---------- */
 .best-deals {
   background: var(--surface);
@@ -1162,6 +1217,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     </div>
   </div>
 </header>
+
+<section id="dealOfDay" class="deal-of-day" hidden></section>
 
 <section id="bestDeals" class="best-deals" hidden>
   <div class="best-deals-head">🔥 Best deals right now</div>
@@ -2255,6 +2312,76 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     grid.innerHTML = sorted.map(renderCard).join("");
   }
 
+  // ---------- Deal of the Day ----------
+  // Smart-blend score across every signal we track, picking the single best
+  // buy. Re-evaluated on each load against the daily-refreshed data, so the
+  // pick naturally changes day to day. Components (each capped so no single
+  // factor dominates):
+  //   - discount vs MSRP        (player value)
+  //   - nearness to 90-day low  (timing: "won't get cheaper")
+  //   - cross-vendor savings    (Zulus cheaper than TCG)
+  //   - downward trend          (still falling)
+  //   - crack-to-sell margin    (speculator upside)
+  function dealScore(d) {
+    const ep = effectivePrice(d);
+    if (ep == null) return null;
+    const reasons = [];
+    let score = 0;
+
+    const disc = discountPct(d);
+    if (disc > 0) { score += Math.min(disc, 50) * 0.8; }      // up to 40 pts
+    if (disc >= 12) reasons.push(`${disc.toFixed(0)}% below MSRP`);
+
+    const stats = getPriceStats(d);
+    if (stats) {
+      if (ep <= stats.low * 1.02) { score += 25; reasons.push("at its 90-day low"); }
+      else if (ep <= stats.low * 1.05) { score += 18; reasons.push("near 90-day low"); }
+      else if (stats.posInRange <= 0.35) { score += 8; reasons.push("low in 90-day range"); }
+      if (stats.trend <= -0.05) { score += 8; reasons.push("trending down"); }
+    }
+
+    const zu = getZulusPrice(d), live = getLivePrice(d);
+    if (zu && live && zu.price < live.price) {
+      const save = live.price - zu.price;
+      score += Math.min(save, 15);
+      reasons.push(`$${save.toFixed(2)} cheaper at Zulus`);
+    }
+
+    const arb = crackArbitrage(d);   // sell value − sealed (net profit to crack)
+    if (arb && arb.margin > 0) {
+      score += Math.min(arb.margin, 30) * 0.5;   // up to 15 pts
+      reasons.push(`+$${arb.margin.toFixed(0)} crack-to-sell`);
+    }
+
+    return { d, ep, score, disc, reasons };
+  }
+
+  function renderDealOfDay() {
+    const el = $("dealOfDay");
+    if (!el) return;
+    const scored = PRECONS.map(dealScore).filter(Boolean)
+      .filter(x => x.score > 0)
+      .sort((a, b) => b.score - a.score);
+    if (scored.length === 0) { el.hidden = true; return; }
+    const top = scored[0];
+    const d = top.d;
+    // Top 3 reasons keep the line readable.
+    const why = top.reasons.slice(0, 3).join('<span class="dod-sep">·</span>') || "best overall value today";
+    const msrp = d.msrp ? `<span class="dod-msrp">$${d.msrp.toFixed(2)}</span> MSRP` : "";
+    el.hidden = false;
+    el.dataset.dealId = d.id;
+    el.innerHTML = `
+      <span class="dod-flag">★ Deal of the day</span>
+      <div class="dod-main">
+        <div class="dod-name">${escapeHtml(d.name)}</div>
+        <div class="dod-why">${why}</div>
+      </div>
+      <div class="dod-price">
+        <div class="dod-price-now">$${top.ep.toFixed(2)}</div>
+        <div class="dod-price-sub">${msrp}</div>
+      </div>`;
+  }
+
   // ---------- Best deals ----------
   function renderBestDeals() {
     const el = $("bestDeals"), dgrid = $("bestDealsGrid");
@@ -2663,8 +2790,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
     $("themeToggle").addEventListener("click", toggleTheme);
     $("exportAlertsBtn").addEventListener("click", exportAlerts);
-    // Both deal sections open the price chart when a card is clicked.
-    ["bestDeals", "crackDeals"].forEach(id => {
+    // Deal sections + the deal-of-day banner open the price chart on click.
+    ["dealOfDay", "bestDeals", "crackDeals"].forEach(id => {
       $(id).addEventListener("click", e => {
         const btn = e.target.closest("[data-deal-id]");
         if (btn) openChart(btn.dataset.dealId);
@@ -2712,6 +2839,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       readUrlState();
       updateStaleBanner();
       renderStats();
+      renderDealOfDay();
       renderBestDeals();
       renderCrackDeals();
       renderBoxes();
