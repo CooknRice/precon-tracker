@@ -997,7 +997,155 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session, 
     return out
 
 
-def fetch_box_prices(decks: list, session: requests.Session, groups: list) -> dict:
+# ---------- Card Kingdom sealed pricelist (free public API) ----------
+# CK's HTML storefront is Cloudflare-challenged (403 to bots), but they serve a
+# free, no-auth JSON pricelist of sealed product — the intended programmatic
+# surface, and a known MTGJSON upstream. We use it as a real second vendor for
+# the precon DECKS (re-enabling the cardkingdom column) and for the sealed BOXES
+# we already track via TCGPlayer. Singles come from MTGJSON, so we skip CK's
+# (66 MB) singles pricelist and fetch only the small (~0.5 MB) sealed one.
+CK_SEALED_URL = "https://api.cardkingdom.com/api/sealed_pricelist"
+CK_WEB_BASE = "https://www.cardkingdom.com"
+
+
+def _ck_price(v) -> float | None:
+    """CK prices arrive as strings like '54.99'; '0.00'/missing means none."""
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return None
+    return f if f > 0 else None
+
+
+def _classify_ck_box(name: str) -> str | None:
+    """Map a Card Kingdom sealed product name to one of our 3 box types, or None.
+    CK naming differs from TCGPlayer's (uses 'Booster Box', not 'Display')."""
+    l = (name or "").lower()
+    if ("case" in l or "pack" in l or "prerelease" in l or "fat pack" in l
+            or "bundle" in l or "commander deck" in l or "sample" in l):
+        return None
+    if "collector booster box" in l:
+        return "collector"
+    if "jumpstart" in l and "box" in l:
+        return "jumpstart"
+    # Play / Draft / Set boosters, and the oldest sets' plain "Booster Box",
+    # all map to our generic "play" booster box.
+    if ("play booster box" in l or "draft booster box" in l
+            or "set booster box" in l or "booster box" in l):
+        return "play"
+    return None
+
+
+def _ck_deck_name(name: str) -> str:
+    """Extract the deck's own name from a CK commander-deck product, e.g.
+    'Bloomburrow Commander Deck - Animated Army' -> 'Animated Army'."""
+    if " - " in name:
+        return name.split(" - ", 1)[1]
+    return re.sub(r".*commander decks?\s*", "", name, flags=re.I)
+
+
+def _index_ck_sealed(data: list) -> dict:
+    """Pure indexer (no network) so it can be unit-tested. Splits CK sealed SKUs
+    into a deck list and a box index keyed by normalized edition + box type."""
+    decks_idx = []
+    boxes_idx: dict = {}
+    for item in data:
+        name = item.get("name") or ""
+        ed_norm = norm(item.get("edition") or "")
+        retail = _ck_price(item.get("price_retail"))
+        buy = _ck_price(item.get("price_buy"))
+        qty = item.get("qty_retail") or 0
+        qty_buy = item.get("qty_buying") or 0
+        rel = (item.get("url") or "").lstrip("/")
+        url = f"{CK_WEB_BASE}/{rel}" if rel else CK_WEB_BASE
+        if "commander deck" in name.lower():
+            decks_idx.append({
+                "name_norm": norm(_ck_deck_name(name)), "edition_norm": ed_norm,
+                "retail": retail, "qty": qty, "buy": buy, "qty_buy": qty_buy,
+                "url": url, "raw": name,
+            })
+            continue
+        t = _classify_ck_box(name)
+        if not t:
+            continue
+        cand = {"retail": retail, "qty": qty, "buy": buy, "qty_buy": qty_buy,
+                "url": url, "name": name}
+        slot = boxes_idx.setdefault(ed_norm, {})
+        prev = slot.get(t)
+        # Prefer a priced, in-stock candidate over an unpriced / out-of-stock one.
+        better = (prev is None
+                  or (prev.get("retail") is None and retail is not None)
+                  or (retail is not None and (prev.get("qty") or 0) == 0 and (qty or 0) > 0))
+        if better:
+            slot[t] = cand
+    return {"decks": decks_idx, "boxes": boxes_idx}
+
+
+def fetch_ck_sealed(session: requests.Session) -> dict:
+    """Fetch + index CK's sealed pricelist. Returns {"decks": [...], "boxes":
+    {edition_norm: {type: {...}}}}. Cached; empty dict on failure (non-fatal)."""
+    cached = getattr(fetch_ck_sealed, "_cache", None)
+    if cached is not None:
+        return cached
+    try:
+        data = fetch_json(CK_SEALED_URL, session).get("data", [])
+    except Exception as e:
+        print(f"  CK: sealed pricelist fetch failed (non-fatal): {e}", flush=True)
+        fetch_ck_sealed._cache = {}
+        return {}
+    out = _index_ck_sealed(data)
+    fetch_ck_sealed._cache = out
+    print(f"  CK: {len(out['decks'])} commander-deck SKUs, "
+          f"{len(out['boxes'])} sets with boxes", flush=True)
+    return out
+
+
+def match_ck_decks(decks: list, ck_decks: list) -> dict:
+    """Match each precon to a CK commander-deck SKU → vendor records keyed by
+    deck id: {price, url, status, qty, buy}. Conservative to avoid false
+    positives: requires the precon name to equal/contain the CK deck-name; when
+    several candidates remain, requires the set to correspond (or a unique hit).
+    Unmatched decks get a CK search link with status 'no-match'."""
+    out = {}
+    for d in decks:
+        did = d["id"]
+        dn = norm(d["name"])
+        ds = norm(d.get("set", ""))
+        search = (f"{CK_WEB_BASE}/catalog/search?filter%5Bname%5D="
+                  f"{urllib.parse.quote(d['name'])}&filter%5Btab%5D=product")
+        cands = [c for c in ck_decks if dn and c["name_norm"]
+                 and (dn == c["name_norm"] or dn in c["name_norm"] or c["name_norm"] in dn)]
+        set_ok = lambda c: ds and (ds in c["edition_norm"] or c["edition_norm"] in ds)
+        exact_set = [c for c in cands if dn == c["name_norm"] and set_ok(c)]
+        exact = [c for c in cands if dn == c["name_norm"]]
+        set_match = [c for c in cands if set_ok(c)]
+        pick = exact_set or exact or set_match or (cands if len(cands) == 1 else [])
+        chosen = pick[0] if pick else None
+        if chosen:
+            out[did] = {
+                "price": chosen["retail"],
+                "url": chosen["url"],
+                "status": "ok" if chosen["retail"] is not None else "out-of-stock",
+                "qty": chosen["qty"],
+                "buy": chosen["buy"],
+            }
+        else:
+            out[did] = {"price": None, "url": search, "status": "no-match"}
+    n = sum(1 for v in out.values() if v.get("price") is not None)
+    print(f"  CK: matched {n}/{len(decks)} decks to a live CK price", flush=True)
+    return out
+
+
+def _ck_box_for(ck_boxes: dict, set_name: str, box_type: str) -> dict | None:
+    """Look up the CK box record for a (set, type), exact normalized edition
+    match only (box editions track the main set name closely)."""
+    if not ck_boxes:
+        return None
+    return (ck_boxes.get(norm(set_name)) or {}).get(box_type)
+
+
+def fetch_box_prices(decks: list, session: requests.Session, groups: list,
+                     ck_boxes: dict | None = None) -> dict:
     """For each unique set among the decks, find its main-set group and price
     the Play/Collector/Jumpstart boxes. Returns { set_name: [ {type, label,
     name, price, price_low, price_source, url, ev} ] }.
@@ -1062,6 +1210,13 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list) -> di
             for r in rows:
                 if r["type"] in ev_map:
                     r["ev"] = ev_map[r["type"]]
+                # Card Kingdom as a second box vendor (retail + stock + buylist).
+                ck = _ck_box_for(ck_boxes, set_name, r["type"])
+                if ck and ck.get("retail") is not None:
+                    r["ck_price"] = ck["retail"]
+                    r["ck_qty"] = ck.get("qty") or 0
+                    r["ck_url"] = ck.get("url")
+                    r["ck_buy"] = ck.get("buy")
             # Stable order: play, collector, jumpstart.
             order = {"play": 0, "collector": 1, "jumpstart": 2}
             rows.sort(key=lambda r: order.get(r["type"], 9))
@@ -1097,16 +1252,25 @@ def main() -> None:
             print(f"[{i:3}/{len(decks)}] {name:<36} Zulus ${zu['price']:>6.2f}", flush=True)
         time.sleep(POLITE_SLEEP + random.uniform(0, 0.3))
 
-    # Card Kingdom: empty per-deck record retained only for HTML compatibility.
-    ck_results = {
-        deck["id"]: {
-            "price": None,
-            "url": f"https://www.cardkingdom.com/catalog/search?filter%5Bname%5D={urllib.parse.quote(deck['name'])}&filter%5Btab%5D=product",
-            "status": "disabled-in-v1.5",
-            "snippet": None,
+    print("\n=== Phase 2.5: Card Kingdom (free sealed pricelist API) ===", flush=True)
+    ck_sealed = {}
+    ck_results = {}
+    try:
+        ck_session = make_session(TCGCSV_UA)
+        ck_sealed = fetch_ck_sealed(ck_session)
+        ck_results = match_ck_decks(decks, ck_sealed.get("decks", []))
+    except Exception as e:
+        print(f"Card Kingdom phase failed (non-fatal): {e}", flush=True)
+    if not ck_results:
+        # Keep a per-deck record (search link) so the frontend stays happy.
+        ck_results = {
+            deck["id"]: {
+                "price": None,
+                "url": f"https://www.cardkingdom.com/catalog/search?filter%5Bname%5D={urllib.parse.quote(deck['name'])}&filter%5Btab%5D=product",
+                "status": "unavailable",
+            }
+            for deck in decks
         }
-        for deck in decks
-    }
 
     print("\n=== Phase 3: Crack value (MTGJSON dual-vendor, NM) ===", flush=True)
     crack_results = {}
@@ -1120,7 +1284,8 @@ def main() -> None:
     try:
         box_session = make_session(TCGCSV_UA)
         box_groups = load_magic_groups(box_session)
-        box_results = fetch_box_prices(decks, box_session, box_groups)
+        box_results = fetch_box_prices(decks, box_session, box_groups,
+                                       ck_boxes=ck_sealed.get("boxes"))
     except Exception as e:
         print(f"Box price phase failed (non-fatal): {e}", flush=True)
 
