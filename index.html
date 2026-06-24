@@ -11,8 +11,9 @@
 <link rel="prefetch" href="./prices_history.json">
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#15120e">
-<link rel="apple-touch-icon" href="./icon.svg">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="icon" type="image/svg+xml" href="./icon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -28,6 +29,9 @@
   --gold: #c69a3e;           /* warm antique gold */
   --gold-bright: #e4b954;
   --sage: #6e8a55;           /* owned/sage accent */
+  --success: #5ad487;        /* positive green text (savings, gains, good EV) */
+  --live: #3ec66a;           /* "Live" data-tier indicator */
+  --ink-strong: #f5efe2;     /* brightest text — deck/box/deal names */
   --deal-bg: #2c2518;        /* warm dark umber for deal cards */
   --owned-bg: #1f2a1c;       /* deep moss for owned */
   --w: #e8dcb0;
@@ -140,7 +144,7 @@ h1.title em { font-style: normal; color: var(--burgundy); font-weight: 600; }
 .live-status.ok { color: var(--ink-soft); }
 .live-status.offline { color: var(--ink-faded); font-style: italic; }
 .live-status .live-dot {
-  color: #3ec66a;
+  color: var(--live);
   margin-right: 6px;
   animation: livepulse 2s ease-in-out infinite;
 }
@@ -284,7 +288,7 @@ h1.title em { font-style: normal; color: var(--burgundy); font-weight: 600; }
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: -0.02em;
-  color: #f5efe2;
+  color: var(--ink-strong);
 }
 .card-name em { font-style: italic; font-weight: 500; }
 .card-set {
@@ -381,7 +385,7 @@ h1.title em { font-style: normal; color: var(--burgundy); font-weight: 600; }
   color: var(--ink-faded);
 }
 .price-live-dot {
-  color: #3ec66a;
+  color: var(--live);
   font-size: 10px;
   margin-left: 6px;
   animation: livepulse 2s ease-in-out infinite;
@@ -520,7 +524,7 @@ h1.title em { font-style: normal; color: var(--burgundy); font-weight: 600; }
 }
 .vendor-btn.local {
   border-color: var(--sage);
-  color: #a8c08a;
+  color: var(--success);
 }
 .vendor-btn.local:hover {
   background: var(--sage);
@@ -788,7 +792,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .price-zulus a { color: var(--ink-soft); text-decoration: none; }
 .price-zulus a:hover { color: var(--gold); }
 .price-zulus.cheaper { color: var(--burgundy-soft); font-weight: 500; }
-.price-zulus .vendor-oos { color: var(--ink-faded); }
+.price-zulus .vendor-oos { color: var(--ink-muted); }
 .price-best {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -981,6 +985,9 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   --gold: #936812;
   --gold-bright: #b3852a;
   --sage: #4d6a35;
+  --success: #2f7d3f;
+  --live: #2f9e52;
+  --ink-strong: #2c2416;
   --deal-bg: #efe4c4;
   --owned-bg: #e7eed6;
   --w: #c9b878; --u: #3f7fb5; --b: #6a6168; --r: #c0572f; --g: #5a803f; --c: #8a8470;
@@ -990,11 +997,27 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   --hairline: rgba(44,36,22,0.12);
 }
 [data-theme="light"] .price-live-dot { color: #2f9e52; }
-[data-theme="light"] .card-name,
-[data-theme="light"] .bd-name,
-[data-theme="light"] .box-set-name,
-[data-theme="light"] .staple-row-name,
-[data-theme="light"] .dod-name { color: #2c2416; }
+/* Light-mode contrast overrides for elements with tinted/colored backgrounds
+   (names now flip automatically via --ink-strong). */
+[data-theme="light"] .discount-badge { color: #6e4e0a; }
+[data-theme="light"] .stale-banner { color: #8a3a1a; }
+[data-theme="light"] .curve-tag.new { color: #2f6da3; }
+
+/* Visible keyboard focus for all custom controls (mouse focus stays clean). */
+.own-toggle:focus-visible, .watch-toggle:focus-visible, .theme-toggle:focus-visible,
+.reset-btn:focus-visible, .bracket-chip:focus-visible, .scope-chip:focus-visible,
+.vendor-btn:focus-visible, .best-deal:focus-visible, .box-item:focus-visible,
+.range-btn:focus-visible, .box-toggle:focus-visible, .color-btn:focus-visible,
+.staple-row:focus-visible, .deal-of-day:focus-visible, .compare-toggle:focus-visible,
+.compare-modal-close:focus-visible, .uf-item:focus-visible, .sort-select:focus-visible,
+.search-input:focus-visible, .staple-input:focus-visible, .power-scan:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 2px;
+}
+/* Larger touch targets on coarse pointers (phones/tablets). */
+@media (pointer: coarse) {
+  .own-toggle, .watch-toggle, .theme-toggle, .color-btn { min-width: 40px; min-height: 40px; }
+}
 
 .theme-toggle {
   background: transparent;
@@ -1019,7 +1042,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   padding: 3px 10px;
   border-radius: var(--radius-pill);
 }
-.buy-signal.buy { color: #5ad487; background: rgba(62,198,106,0.14); }
+.buy-signal.buy { color: var(--success); background: rgba(62,198,106,0.14); }
 .buy-signal.ok { color: var(--gold-bright); background: rgba(228,185,84,0.14); }
 .buy-signal.hold { color: var(--ink-muted); background: rgba(237,227,202,0.06); }
 .curve-tag {
@@ -1032,7 +1055,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   background: rgba(237,227,202,0.06);
   color: var(--ink-soft);
 }
-.curve-tag.dip { color: #9bbb78; background: rgba(110,138,85,0.14); }
+.curve-tag.dip { color: var(--success); background: rgba(110,138,85,0.14); }
 .curve-tag.new { color: var(--u); background: rgba(109,168,219,0.14); }
 .curve-tag.mature { color: var(--gold-bright); background: rgba(228,185,84,0.12); }
 .curve-tag.stable { color: var(--ink-soft); }
@@ -1066,7 +1089,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .pf-label { font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-faded); margin-bottom: 6px; }
 .pf-val { font-family: var(--font-ui); font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
 .pf-sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); margin-top: 3px; }
-.pf-val.up { color: #5ad487; }
+.pf-val.up { color: var(--success); }
 .pf-val.down { color: var(--burgundy); }
 
 /* ---------- Staple finder ---------- */
@@ -1103,7 +1126,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   transition: border-color 0.12s, transform 0.12s;
 }
 .staple-row:hover { border-color: var(--gold-bright); transform: translateY(-1px); }
-.staple-row-name { font-family: var(--font-ui); font-size: 14px; font-weight: 600; color: #f5efe2; }
+.staple-row-name { font-family: var(--font-ui); font-size: 14px; font-weight: 600; color: var(--ink-strong); }
 .staple-row-set { font-family: var(--font-mono); font-size: 10px; color: var(--ink-muted); margin-top: 2px; }
 .staple-row-price { font-family: var(--font-ui); font-size: 15px; font-weight: 700; color: var(--burgundy); white-space: nowrap; }
 .staple-empty { font-family: var(--font-mono); font-size: 12px; color: var(--ink-faded); padding: 4px 2px; }
@@ -1119,7 +1142,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 }
 .uf-kind.uf-deck { background: rgba(109,168,219,0.16); color: var(--u); }
 .uf-kind.uf-box { background: rgba(228,185,84,0.16); color: var(--gold-bright); }
-.uf-kind.uf-bundle { background: rgba(110,138,85,0.16); color: #9bbb78; }
+.uf-kind.uf-bundle { background: rgba(110,138,85,0.16); color: var(--success); }
 
 /* ---------- Deal of the Day ---------- */
 .deal-of-day {
@@ -1154,7 +1177,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: #f5efe2;
+  color: var(--ink-strong);
   line-height: 1.15;
 }
 .dod-why {
@@ -1211,16 +1234,16 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   border-radius: var(--radius-sm);
 }
 .best-deal:hover { border-color: var(--gold-bright); transform: translateY(-2px); }
-.bd-name { font-family: var(--font-ui); font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: #f5efe2; }
+.bd-name { font-family: var(--font-ui); font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink-strong); }
 .bd-price { font-family: var(--font-ui); font-size: 14px; color: var(--burgundy); font-weight: 700; }
 .bd-disc { color: var(--gold-bright); font-size: 11px; margin-left: 4px; font-weight: 600; }
 .bd-low { font-family: var(--font-mono); font-size: 10px; color: var(--sage); }
 
 /* Crack-arbitrage section — distinct from price deals */
 .crack-deals { border-color: rgba(110,138,85,0.4); background: var(--surface); }
-.crack-deals .best-deals-head { color: #8fb36a; }
+.crack-deals .best-deals-head { color: var(--success); }
 .crack-deals-note { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); margin-top: 10px; line-height: 1.5; }
-.bd-margin { color: #8fb36a; font-weight: 600; }
+.bd-margin { color: var(--success); font-weight: 600; }
 
 /* Sealed box section */
 .box-section { border: 1px solid var(--hairline); background: var(--surface); border-radius: var(--radius); margin-bottom: 24px; }
@@ -1233,7 +1256,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .box-toggle-hint { color: var(--ink-faded); font-size: 11px; font-weight: 400; text-transform: none; }
 .box-body { padding: 4px 18px 18px; }
 .box-set { border-top: 1px solid var(--hairline); padding: 14px 0; }
-.box-set-name { font-family: var(--font-ui); font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: #f5efe2; margin-bottom: 10px; }
+.box-set-name { font-family: var(--font-ui); font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink-strong); margin-bottom: 10px; }
 .box-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
 .box-item {
   display: flex; flex-direction: column; gap: 3px;
@@ -1245,7 +1268,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .box-item-price { font-family: var(--font-ui); font-size: 19px; font-weight: 700; letter-spacing: -0.02em; color: var(--burgundy); }
 .box-item-low { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); }
 .box-ev { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
-.box-ev.good { color: #8fb36a; }
+.box-ev.good { color: var(--success); }
 .box-ck { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
 .box-ck.cheaper { color: var(--sage); font-weight: 600; }
 .box-ev-note { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); padding: 10px 18px 14px; line-height: 1.5; }
@@ -1514,7 +1537,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
 <footer>
   <div>
-    <div>Prices come from three tiers, best-first: <em style="color:#3ec66a;">Live</em> (TCGPlayer Market, refreshed daily via a GitHub Action scraper) → <em style="color:var(--gold);">Snapshot</em> (verified research from April 2026) → <em style="color:var(--ink-muted);">MSRP reference</em>.</div>
+    <div>Prices come from three tiers, best-first: <em style="color:var(--live);">Live</em> (TCGPlayer Market, refreshed daily via a GitHub Action scraper) → <em style="color:var(--gold);">Snapshot</em> (verified research from April 2026) → <em style="color:var(--ink-muted);">MSRP reference</em>.</div>
     <div style="margin-top:6px;">Power scores from <a href="https://scrycheck.com/precons" target="_blank" rel="noopener" style="color:var(--gold);">ScryCheck</a> — rule-based analysis, 93% bracket accuracy against 252 reference decks. 108 of 111 decks scored inline. Brackets follow Wizards' official system (<em>B1 casual → B5 cEDH</em>).</div>
     <div style="margin-top:6px;">Vendor: TCGPlayer.</div>
   </div>
@@ -1533,7 +1556,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   // "dark" stored (leave default), or nothing stored → fall back to the OS
   // preference so light-OS users don't flash dark-then-light.
   try {
-    const savedTheme = JSON.parse(localStorage.getItem("precon-theme"));
+    const _tRaw = localStorage.getItem("precon-theme");
+    const savedTheme = (_tRaw === "light" || _tRaw === "dark") ? _tRaw : (_tRaw ? JSON.parse(_tRaw) : null);
     const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
     if (savedTheme === "light" || (savedTheme == null && prefersLight)) {
       document.documentElement.dataset.theme = "light";
@@ -1584,11 +1608,17 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   let BOX_HISTORY = null;    // populated by loadHistory(); { "<set>::<type>": [{date, price}, ...] }
   let CARD_INDEX = null;    // populated by loadCardIndex(); { normName: {name, decks:[ids]} }
   let PRECONS = [];        // populated by loadDecks() from decks.json
+  let lastFocused = null;  // element to restore focus to when a modal closes
+  function restoreFocus() { if (lastFocused && lastFocused.focus) { try { lastFocused.focus(); } catch (e) {} } lastFocused = null; }
 
   async function loadDecks() {
     const res = await fetch("./decks.json", { cache: "no-cache" });
     if (!res.ok) throw new Error(`decks.json HTTP ${res.status}`);
-    PRECONS = await res.json();
+    const data = await res.json();
+    // Enforce the deck-id slug invariant at load time. Ids are interpolated raw
+    // into data-* attributes throughout; dropping any non-slug id keeps that
+    // safe without escaping every call site.
+    PRECONS = (Array.isArray(data) ? data : []).filter(d => d && /^[a-z0-9-]+$/.test(d.id || ""));
   }
 
   async function loadCardIndex() {
@@ -1709,7 +1739,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     try {
       if (window.storage && window.storage.get) {
         const result = await window.storage.get(key);
-        if (result && result.value) return JSON.parse(result.value);
+        if (result && result.value != null) return JSON.parse(result.value);
       }
     } catch (e) { /* fall through */ }
     try {
@@ -1744,7 +1774,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
   async function loadTargets() {
     const o = await loadKey("targets");
-    if (o && typeof o === "object" && !Array.isArray(o)) targets = o;
+    if (o && typeof o === "object" && !Array.isArray(o)) {
+      targets = {};
+      for (const k in o) { const v = Number(o[k]); if (Number.isFinite(v) && v > 0) targets[k] = v; }
+    }
   }
   async function saveTargets() { await saveKey("targets", targets); }
 
@@ -1871,8 +1904,20 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const low = Math.min(...pts), high = Math.max(...pts), now = pts[pts.length - 1];
     const range = high - low;
     const posInRange = range > 0 ? (now - low) / range : 0;  // 0 = at low, 1 = at high
+    // Trend over the recent window as a relative change, via a least-squares
+    // slope (less endpoint-sensitive than first-vs-last) normalized by the mean.
     const recent = pts.slice(-7);
-    const trend = recent.length >= 2 && recent[0] > 0 ? (recent[recent.length - 1] - recent[0]) / recent[0] : 0;
+    let trend = 0;
+    if (recent.length >= 3) {
+      const nn = recent.length, mx = (nn - 1) / 2;
+      const my = recent.reduce((a, b) => a + b, 0) / nn;
+      let num = 0, den = 0;
+      for (let i = 0; i < nn; i++) { num += (i - mx) * (recent[i] - my); den += (i - mx) ** 2; }
+      const slope = den ? num / den : 0;            // per sample
+      trend = my > 0 ? (slope * (nn - 1)) / my : 0; // relative change across window
+    } else if (recent.length === 2 && recent[0] > 0) {
+      trend = (recent[1] - recent[0]) / recent[0];
+    }
     return { low, high, now, posInRange, trend, days: pts.length };
   }
 
@@ -1933,24 +1978,27 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   // { proj, lowB, highB, dirn } or null when history is too thin.
   function priceForecast(d) {
     const series = (PRICE_HISTORY && PRICE_HISTORY[d.id]) || [];
-    const pts = series.map(s => s.tcg).filter(v => typeof v === "number");
-    if (pts.length < 8) return null;            // need a few weeks of data
+    // Keep date + price together so the slope is per-DAY, not per-sample
+    // (history entries are only written on price changes, not daily).
+    const withTcg = series.filter(s => typeof s.tcg === "number" && s.date);
+    if (withTcg.length < 8) return null;        // need a few weeks of data
     const ep = effectivePrice(d);
     if (ep == null) return null;
-    const recent = pts.slice(-14);
+    const recent = withTcg.slice(-14);
     const n = recent.length;
-    // Least-squares slope per day over the recent window.
-    const xs = recent.map((_, i) => i);
+    const t0 = new Date(recent[0].date).getTime();
+    const xs = recent.map(s => (new Date(s.date).getTime() - t0) / 86400000); // days
+    const ys = recent.map(s => s.tcg);
     const mx = xs.reduce((a, b) => a + b, 0) / n;
-    const my = recent.reduce((a, b) => a + b, 0) / n;
+    const my = ys.reduce((a, b) => a + b, 0) / n;
     let num = 0, den = 0;
-    for (let i = 0; i < n; i++) { num += (xs[i] - mx) * (recent[i] - my); den += (xs[i] - mx) ** 2; }
-    const slope = den ? num / den : 0;
+    for (let i = 0; i < n; i++) { num += (xs[i] - mx) * (ys[i] - my); den += (xs[i] - mx) ** 2; }
+    const slope = den ? num / den : 0;          // dollars per day
     const damp = 0.5;                            // halve raw extrapolation
     const proj = Math.max(0, ep + slope * 30 * damp);
-    // Confidence band from recent volatility (std dev of day-over-day moves).
+    // Confidence band from recent volatility (std dev of step-to-step moves).
     const diffs = [];
-    for (let i = 1; i < recent.length; i++) diffs.push(recent[i] - recent[i - 1]);
+    for (let i = 1; i < ys.length; i++) diffs.push(ys[i] - ys[i - 1]);
     const md = diffs.reduce((a, b) => a + b, 0) / (diffs.length || 1);
     const variance = diffs.reduce((a, b) => a + (b - md) ** 2, 0) / (diffs.length || 1);
     const band = Math.sqrt(variance) * 5;       // ~5-day-ish spread
@@ -1978,7 +2026,9 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const tcg = c.tcg, ck = c.cardkingdom;
     const best = Math.max(tcg ?? -Infinity, ck ?? -Infinity);
     if (!isFinite(best)) return null;
-    return { value: best, vendor: best === ck ? "Card Kingdom" : "TCGPlayer", tcg, ck };
+    // Deterministic vendor label, including the rare exact-tie case.
+    const vendor = (ck != null && (tcg == null || ck >= tcg)) ? "Card Kingdom" : "TCGPlayer";
+    return { value: best, vendor, tcg, ck };
   }
 
   // Singles SELL value (crack-to-sell — what you'd actually receive).
@@ -1991,11 +2041,18 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     if (!c) return null;
     const ck = c.sell_cardkingdom;        // real CK buylist
     const tcg = c.sell_tcg;               // estimated (70% of retail)
-    if (ck != null) {
+    // Prefer the REAL CK buylist — but only when its coverage is meaningful.
+    // CK buylists ~60% of cards, and on some decks lists just a couple, which
+    // collapses to a near-zero total that would wrongly read as "sell ~$5".
+    // When CK is implausibly low vs the TCG estimate, use the estimate instead.
+    if (ck != null && (tcg == null || ck >= tcg * 0.3)) {
       return { value: ck, vendor: "Card Kingdom", ck, tcg, estimated: false };
     }
     if (tcg != null) {
       return { value: tcg, vendor: "TCGPlayer", ck, tcg, estimated: true };
+    }
+    if (ck != null) {
+      return { value: ck, vendor: "Card Kingdom", ck, tcg, estimated: false };
     }
     return null;
   }
@@ -2018,14 +2075,21 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
   // ---------- Rendering ----------
   function formatDate(iso) {
-    const [y, m] = iso.split("-");
+    if (!iso) return "";
+    const [y, m] = String(iso).split("-");
     const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    return `${months[parseInt(m)-1]} ${y}`;
+    const mi = parseInt(m, 10);
+    return (Number.isFinite(mi) && mi >= 1 && mi <= 12) ? `${months[mi - 1]} ${y}` : (y || "");
   }
 
   function manaPips(colors) {
     if (!colors || colors.length === 0) return '<span class="mana-pip pip-c">C</span>';
-    return colors.map(c => `<span class="mana-pip pip-${c.toLowerCase()}">${c}</span>`).join("");
+    // Whitelist WUBRGC so a malformed color can't inject a class or markup.
+    return colors.map(c => {
+      const t = String(c).toUpperCase();
+      if (!/^[WUBRGC]$/.test(t)) return "";
+      return `<span class="mana-pip pip-${t.toLowerCase()}">${t}</span>`;
+    }).join("");
   }
 
   function escapeHtml(s) {
@@ -2246,7 +2310,9 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       b.setAttribute("aria-selected", on ? "true" : "false");
     });
     renderChart();
+    lastFocused = document.activeElement;
     $("chartModal").classList.add("visible");
+    $("chartModalClose").focus();
   }
 
   function openChart(deckId, range = "all") {
@@ -2354,7 +2420,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     // Headlines the cheapest place to actually buy the sealed deck right now.
     const bv = bestVendorPrice(d);
     if (bv && bv.all.length >= 2) {
-      const spread = bv.all[bv.all.length - 1].price - bv.best.price;
+      // Savings vs the next-cheapest vendor (runner-up), not the priciest.
+      const spread = bv.all[1].price - bv.best.price;
       if (spread >= 0.5) {
         zulusLine = `<div class="price-best">🏆 Best of ${bv.all.length}: <a href="${safeUrl(bv.best.url)}" target="_blank" rel="noopener noreferrer">$${bv.best.price.toFixed(2)}</a> @ ${bv.best.vendor} <span class="price-best-save">save $${spread.toFixed(2)}</span></div>` + zulusLine;
       }
@@ -2443,7 +2510,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     // 24 decks have baked-in scores from ScryCheck's published per-precon pages (April 2026).
     // For the remaining 87, we link directly to their ScryCheck analysis page.
     const scryCheckUrl = d.scryCheckSlug
-      ? `https://scrycheck.com/precons/${d.scryCheckSlug}`
+      ? `https://scrycheck.com/precons/${encodeURIComponent(d.scryCheckSlug)}`
       : "https://scrycheck.com/precons";
 
     let powerLine;
@@ -2456,12 +2523,12 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
           <span class="power-score">${d.powerScore.toFixed(1)}</span>
           <span class="power-divider">/ 10</span>
           <span class="power-bracket ${bClass}">${d.powerBracket}</span>
-          <a class="power-scan" href="${scryCheckUrl}" target="_blank" rel="noopener noreferrer" title="Full ScryCheck analysis">details →</a>
+          <a class="power-scan" href="${safeUrl(scryCheckUrl)}" target="_blank" rel="noopener noreferrer" title="Full ScryCheck analysis">details →</a>
         </div>`;
     } else {
       powerLine = `
         <div class="power-row">
-          <a class="power-scan" href="${scryCheckUrl}" target="_blank" rel="noopener noreferrer" title="View power analysis on ScryCheck">⚡ Analyze on ScryCheck →</a>
+          <a class="power-scan" href="${safeUrl(scryCheckUrl)}" target="_blank" rel="noopener noreferrer" title="View power analysis on ScryCheck">⚡ Analyze on ScryCheck →</a>
         </div>`;
     }
 
@@ -2497,7 +2564,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     // Price-target input (watched cards only).
     const targetLine = isWatching ? `
         <div class="target-row${belowTarget ? " hit" : ""}">
-          <label>Alert below $<input type="number" class="target-input" data-target="${d.id}" value="${target != null ? target : ""}" min="0" step="1" placeholder="—"></label>
+          <label>Alert below $<input type="number" class="target-input" data-target="${d.id}" value="${target != null ? (Number(target) || "") : ""}" min="0" step="1" placeholder="—"></label>
           ${belowTarget ? '<span class="target-hit">▼ below target!</span>' : ""}
         </div>` : "";
 
@@ -2579,7 +2646,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
     const head = `<div class="staple-empty">Cheapest precons containing <span class="staple-cardname">${escapeHtml(card.name)}</span>:</div>`;
     box.innerHTML = head + decks.map(({ d, ep }) => `
-      <div class="staple-row" data-staple-id="${d.id}">
+      <div class="staple-row" data-staple-id="${escapeHtml(d.id)}" role="button" tabindex="0" aria-label="View price history for ${escapeHtml(d.name)}">
         <div>
           <div class="staple-row-name">${escapeHtml(d.name)}</div>
           <div class="staple-row-set">${escapeHtml(d.set)}</div>
@@ -2646,6 +2713,9 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const msrp = d.msrp ? `<span class="dod-msrp">$${d.msrp.toFixed(2)}</span> MSRP` : "";
     el.hidden = false;
     el.dataset.dealId = d.id;
+    el.setAttribute("role", "button");
+    el.setAttribute("tabindex", "0");
+    el.setAttribute("aria-label", "View price history for " + d.name);
     el.innerHTML = `
       <span class="dod-flag">★ Deal of the day</span>
       <div class="dod-main">
@@ -2799,7 +2869,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         <div class="box-item" data-box-set="${escapeHtml(sn)}" data-box-type="${escapeHtml(b.type)}" data-box-label="${escapeHtml(b.label)}" role="button" tabindex="0" title="Click for price history">
           <span class="box-item-type">${escapeHtml(b.label)}</span>
           <span class="box-item-price">$${b.price.toFixed(2)} ${spark}</span>
-          ${b.price_low != null ? `<span class="box-item-low">TCG low $${b.price_low.toFixed(2)}</span>` : ""}
+          ${(b.price_low != null && b.price_low < b.price) ? `<span class="box-item-low">TCG low $${b.price_low.toFixed(2)}</span>` : ""}
           ${ckLine}
           ${evLine}
           <a class="box-item-link" href="${safeUrl(b.url)}" target="_blank" rel="noopener noreferrer">view on TCGPlayer →</a>
@@ -2871,7 +2941,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       `<tr><th>${label}</th>${cells.map(c => `<td>${c}</td>`).join("")}</tr>`
     ).join("");
 
-    compareTableWrap.innerHTML = `<table class="compare-table"><thead><tr><th></th>${headers}</tr></thead><tbody>${body}</tbody></table>`;
+    compareTableWrap.innerHTML = `<div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="compare-table"><thead><tr><th></th>${headers}</tr></thead><tbody>${body}</tbody></table></div>`;
   }
 
   // ---------- URL state (shareable filters) ----------
@@ -3133,21 +3203,24 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     });
     $("compareOpen").addEventListener("click", () => {
       renderCompareModal();
+      lastFocused = document.activeElement;
       compareModal.classList.add("visible");
+      $("compareModalClose").focus();
     });
     $("compareModalClose").addEventListener("click", () => {
       compareModal.classList.remove("visible");
+      restoreFocus();
     });
     compareModal.addEventListener("click", e => {
       // Click on the dim backdrop (not the inner panel) closes the modal.
-      if (e.target === compareModal) compareModal.classList.remove("visible");
+      if (e.target === compareModal) { compareModal.classList.remove("visible"); restoreFocus(); }
     });
 
     // Chart modal close + range buttons + ESC
     const chartModal = $("chartModal");
-    $("chartModalClose").addEventListener("click", () => chartModal.classList.remove("visible"));
+    $("chartModalClose").addEventListener("click", () => { chartModal.classList.remove("visible"); restoreFocus(); });
     chartModal.addEventListener("click", e => {
-      if (e.target === chartModal) chartModal.classList.remove("visible");
+      if (e.target === chartModal) { chartModal.classList.remove("visible"); restoreFocus(); }
     });
     chartModal.querySelectorAll(".range-btn").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -3163,17 +3236,25 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
     document.addEventListener("keydown", e => {
       if (e.key !== "Escape") return;
-      if (compareModal.classList.contains("visible")) compareModal.classList.remove("visible");
-      if (chartModal.classList.contains("visible")) chartModal.classList.remove("visible");
+      const wasOpen = compareModal.classList.contains("visible") || chartModal.classList.contains("visible");
+      compareModal.classList.remove("visible");
+      chartModal.classList.remove("visible");
+      if (wasOpen) restoreFocus();
     });
 
     $("themeToggle").addEventListener("click", toggleTheme);
     $("exportAlertsBtn").addEventListener("click", exportAlerts);
     // Deal sections + the deal-of-day banner open the price chart on click.
     ["dealOfDay", "bestDeals", "crackDeals"].forEach(id => {
-      $(id).addEventListener("click", e => {
+      const root = $(id);
+      root.addEventListener("click", e => {
         const btn = e.target.closest("[data-deal-id]");
         if (btn) openChart(btn.dataset.dealId);
+      });
+      root.addEventListener("keydown", e => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        const btn = e.target.closest("[data-deal-id]");
+        if (btn) { e.preventDefault(); openChart(btn.dataset.dealId); }
       });
     });
     // Unified feed: deck items open the deck chart; box items open the box
@@ -3194,9 +3275,15 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const stapleInput = $("stapleInput");
     if (stapleInput) {
       stapleInput.addEventListener("input", e => renderStapleResults(e.target.value));
-      $("stapleResults").addEventListener("click", e => {
+      const sr = $("stapleResults");
+      sr.addEventListener("click", e => {
         const row = e.target.closest("[data-staple-id]");
         if (row) openChart(row.dataset.stapleId);
+      });
+      sr.addEventListener("keydown", e => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        const row = e.target.closest("[data-staple-id]");
+        if (row) { e.preventDefault(); openChart(row.dataset.stapleId); }
       });
     }
     // Sealed-box section is collapsible.

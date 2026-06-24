@@ -73,6 +73,17 @@ def test_crack_shape():
         # Sell must not exceed buy for the same vendor (economically impossible).
         if c.get("sell_cardkingdom") is not None and c.get("cardkingdom") is not None:
             assert c["sell_cardkingdom"] <= c["cardkingdom"] + 1e-6, f"crack {did}: CK sell > buy"
+        if c.get("sell_tcg") is not None and c.get("tcg") is not None:
+            assert c["sell_tcg"] <= c["tcg"] + 1e-6, f"crack {did}: TCG sell > buy"
+
+
+def test_prices_schema():
+    """prices.json validates against prices.schema.json (the machine-generated
+    file most likely to drift)."""
+    schema_path = ROOT / "prices.schema.json"
+    if not schema_path.exists():
+        return
+    jsonschema.validate(load("prices.json"), json.loads(schema_path.read_text()))
 
 
 def test_bundles_shape():
@@ -85,6 +96,11 @@ def test_bundles_shape():
             assert did in deck_ids, f"bundle {bid} references unknown deck {did}"
         if b.get("savings") is not None:
             assert b["savings"] > 0, f"bundle {bid} non-positive savings stored: {b['savings']}"
+        # Savings arithmetic must be self-consistent when a total is recorded.
+        if b.get("savings") is not None and b.get("individual_total") is not None:
+            expected = round(b["individual_total"] - b["price"], 2)
+            assert abs(expected - b["savings"]) <= 0.02, \
+                f"bundle {bid} savings {b['savings']} != total-price {expected}"
 
 
 def test_boxes_shape():
@@ -111,17 +127,25 @@ def test_history_shape():
     for did, series in history["decks"].items():
         assert did in deck_ids, f"history has stale deck id: {did}"
         assert isinstance(series, list)
+        prev_date = None
         for entry in series:
             assert "date" in entry and re.fullmatch(r"\d{4}-\d{2}-\d{2}", entry["date"])
-            for k in ("tcg", "zulus"):
+            assert prev_date is None or entry["date"] > prev_date, \
+                f"history {did}: dates not strictly increasing ({prev_date} -> {entry['date']})"
+            prev_date = entry["date"]
+            for k in ("tcg", "zulus", "ck", "best"):
                 if k in entry:
                     assert isinstance(entry[k], (int, float)) and entry[k] > 0
     # Box history (optional key): keyed "<set>::<type>", entries {date, price}.
     for key, series in (history.get("boxes") or {}).items():
         assert "::" in key, f"bad box history key: {key}"
         assert isinstance(series, list)
+        prev_date = None
         for entry in series:
             assert "date" in entry and re.fullmatch(r"\d{4}-\d{2}-\d{2}", entry["date"])
+            assert prev_date is None or entry["date"] > prev_date, \
+                f"box history {key}: dates not strictly increasing"
+            prev_date = entry["date"]
             assert isinstance(entry.get("price"), (int, float)) and entry["price"] > 0
 
 
@@ -181,12 +205,13 @@ def test_vendors_cardkingdom():
     deck_ids = {d["id"] for d in load("decks.json")}
     ck = prices["vendors"].get("cardkingdom", {})
     assert ck, "vendors.cardkingdom missing"
-    ok_status = {"ok", "out-of-stock", "no-match", "unavailable", "disabled-in-v1.5"}
     for did, e in ck.items():
         assert did in deck_ids, f"CK has stale deck id {did}"
         assert "url" in e, f"CK {did} missing url"
+        # Status is informational — assert it's a non-empty string rather than a
+        # brittle whitelist that drifts from the scraper's actual values.
         if e.get("status") is not None:
-            assert e["status"] in ok_status, f"CK {did} bad status {e['status']}"
+            assert isinstance(e["status"], str) and e["status"], f"CK {did} bad status {e['status']!r}"
         p = e.get("price")
         if p is not None:
             assert isinstance(p, (int, float)) and p > 0, f"CK {did} bad price {p}"
@@ -210,6 +235,15 @@ def test_boxes_ck():
             if r.get("ck_url") is not None:
                 assert isinstance(r["ck_url"], str) and r["ck_url"].startswith("http"), \
                     f"box {set_name}/{r.get('type')} bad ck_url"
+            if r.get("ck_buy") is not None:
+                assert isinstance(r["ck_buy"], (int, float)) and r["ck_buy"] >= 0, \
+                    f"box {set_name}/{r.get('type')} bad ck_buy {r['ck_buy']}"
+            # Sanity: CK retail and TCG market should be in the same ballpark
+            # (a mismatched product would be wildly off).
+            if r.get("ck_price") is not None and r.get("price"):
+                ratio = r["ck_price"] / r["price"]
+                assert 0.2 <= ratio <= 5.0, \
+                    f"box {set_name}/{r.get('type')} CK/TCG ratio {ratio:.2f} out of range"
 
 
 if __name__ == "__main__":

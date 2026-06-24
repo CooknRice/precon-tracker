@@ -11,6 +11,9 @@ const SHELL = [
   "./index.html",
   "./manifest.webmanifest",
   "./icon.svg",
+  "./icon-192.png",
+  "./icon-512.png",
+  "./apple-touch-icon.png",
 ];
 // Same-origin paths treated as live data → network-first.
 const DATA_RE = /\.json(\?.*)?$/i;
@@ -53,16 +56,19 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // STALE-WHILE-REVALIDATE for the app shell.
+  // STALE-WHILE-REVALIDATE for the app shell. Ignore the query string on
+  // lookups so filter/share URLs (e.g. ?nosw, ?color=) resolve offline, and
+  // for navigations fall back to the cached index.html shell when offline.
+  const isNav = req.mode === "navigate";
   event.respondWith(
     caches.open(CACHE).then(async (cache) => {
-      const cached = await cache.match(req);
+      const cached = await cache.match(req, { ignoreSearch: true });
       const network = fetch(req)
         .then((res) => {
           if (res && res.status === 200) cache.put(req, res.clone());
           return res;
         })
-        .catch(() => cached);
+        .catch(() => cached || (isNav ? cache.match("./index.html") : undefined));
       return cached || network;
     })
   );

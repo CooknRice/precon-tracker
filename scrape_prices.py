@@ -27,6 +27,7 @@ import json
 import random
 import re
 import time
+import traceback
 import urllib.parse
 from datetime import datetime, timezone
 from pathlib import Path
@@ -42,6 +43,9 @@ TCGCSV_UA = "precon-tracker/1.5 (+https://github.com/CooknRice/precon-tracker)"
 POLITE_SLEEP = 1.2
 PRICE_FLOOR = 5.0  # USD; any "deck" priced below this is rejected as a single
 HISTORY_DAYS = 90  # rolling window of price snapshots kept per deck
+# Below this many TCGPlayer hits a run is treated as degraded: the scraper
+# refuses to overwrite an existing good prices.json / pollute history.
+MIN_TCG_HITS = 50
 
 USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
@@ -102,12 +106,20 @@ def fetch_tcgcsv_json(path: str, session: requests.Session) -> dict:
     url = f"{TCGCSV_BASE}/{path}"
     r = session.get(url, timeout=TIMEOUT)
     r.raise_for_status()
-    return r.json()
+    data = r.json()
+    # Guard against an HTTP-200 non-JSON / wrong-shape body (e.g. a Cloudflare
+    # interstitial) sneaking past raise_for_status as valid-but-useless data.
+    if not isinstance(data, dict):
+        raise ValueError(f"TCGCSV {path}: expected a JSON object, got {type(data).__name__}")
+    return data
 
 
 def load_magic_groups(session: requests.Session) -> list:
     data = fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/groups", session)
-    return data.get("results", [])
+    results = data.get("results")
+    if not isinstance(results, list):
+        raise ValueError("TCGCSV groups: 'results' missing or not a list")
+    return results
 
 
 def score_group(group: dict) -> tuple:
@@ -282,6 +294,18 @@ def find_bundle_in_products(products: list, set_name: str) -> dict | None:
     return candidates[0][1]
 
 
+def _bundle_claimed_count(name: str) -> int | None:
+    """If a bundle name advertises how many decks it holds ('Set of 5',
+    'All 4', '5-pack'), return that count so savings math can verify it
+    matches the decks we actually have. None when not stated."""
+    m = re.search(r"set of (\d+)|all (\d+)|(\d+)\s*[- ]?pack", (name or "").lower())
+    if m:
+        for g in m.groups():
+            if g:
+                return int(g)
+    return None
+
+
 def flatten_prices(price_results: list) -> dict:
     """Reduce TCGCSV price rows to one record per productId. Prefer 'Normal'."""
     by_pid: dict[int, dict] = {}
@@ -318,6 +342,11 @@ def fetch_all_tcgcsv(decks: list) -> tuple[dict, dict]:
     except Exception as e:
         print(f"  FATAL: couldn't load groups list: {e}", flush=True)
         groups = []
+    # Zero groups => the source is down/blocked; abort before we produce a file
+    # full of no-match decks (the coverage gate would refuse it anyway, but
+    # failing here is louder and avoids wasted downstream work).
+    if not groups:
+        raise SystemExit("Aborting: TCGCSV returned 0 Magic groups (source down or blocked).")
     print(f"  {len(groups)} Magic groups loaded\n", flush=True)
 
     group_cache: dict[int, dict] = {}
@@ -344,7 +373,7 @@ def fetch_all_tcgcsv(decks: list) -> tuple[dict, dict]:
             errs.append(f"prices: {e}")
         if errs:
             result["error"] = "; ".join(errs)
-        time.sleep(0.3)
+        time.sleep(0.3 + random.uniform(0, 0.2))  # jittered politeness
         group_cache[gid] = result
         return result
 
@@ -471,7 +500,11 @@ def fetch_all_tcgcsv(decks: list) -> tuple[dict, dict]:
         # $0 and understate the total (yielding a misleading/negative savings).
         member_prices = [results.get(did, {}).get("price") for did in deck_ids]
         all_priced = all(p is not None for p in member_prices)
-        if all_priced:
+        # If the bundle name advertises a deck count, only trust the savings math
+        # when it matches the decks we have (else we'd compare mismatched sets).
+        claimed = _bundle_claimed_count(bundle_product.get("name") or "")
+        count_ok = claimed is None or claimed == len(deck_ids)
+        if all_priced and count_ok:
             individual_total = sum(member_prices)
             raw_savings = individual_total - eff
             # Clamp: only report a positive saving (bundle cheaper than parts).
@@ -679,6 +712,17 @@ def _latest_price(byday) -> float | None:
     return float(val) if val is not None else None
 
 
+def _get_allprices(session: requests.Session) -> dict:
+    """Download + parse MTGJSON AllPricesToday ONCE per run (it's ~60MB gz /
+    hundreds of MB decompressed). Cached on the function so the crack phase and
+    the box-EV phase share a single download instead of fetching it twice."""
+    cached = getattr(_get_allprices, "_data", None)
+    if cached is None:
+        cached = fetch_gz_json(ALLPRICES_URL, session).get("data", {})
+        _get_allprices._data = cached
+    return cached
+
+
 def fetch_crack_values(decks: list, session: requests.Session) -> dict:
     """Per-deck 'crack value' = sum of every card's Near Mint retail price,
     computed separately for TCGPlayer and Card Kingdom.
@@ -725,11 +769,10 @@ def fetch_crack_values(decks: list, session: requests.Session) -> dict:
     #    vendors, normal/non-foil retail = Near Mint).
     print(f"  crack: downloading MTGJSON prices ({len(need_uuids)} unique cards)...", flush=True)
     try:
-        allp = fetch_gz_json(ALLPRICES_URL, session)
+        pdata = _get_allprices(session)
     except Exception as e:
         print(f"  crack: price file download failed: {e}", flush=True)
         return {}
-    pdata = allp.get("data", allp)
     price_by_uuid: dict = {}
     for u in need_uuids:
         paper = (pdata.get(u) or {}).get("paper", {})
@@ -739,7 +782,7 @@ def fetch_crack_values(decks: list, session: requests.Session) -> dict:
         ck_retail = _latest_price(((ckp.get("retail") or {}).get("normal")))
         ck_buylist = _latest_price(((ckp.get("buylist") or {}).get("normal")))
         price_by_uuid[u] = (tcg_retail, ck_retail, ck_buylist)
-    del allp, pdata  # free ~50MB promptly
+    # Keep the AllPrices cache (shared with the box-EV phase); don't free it.
 
     # 3. Sum per deck. Two sides:
     #    BUY  = retail (what the cards cost to acquire) — tcg + cardkingdom.
@@ -769,9 +812,12 @@ def fetch_crack_values(decks: list, session: requests.Session) -> dict:
                 ck_sell += ck_bl * cnt  # cards CK won't buy simply add $0
             if tcg_r is None and ck_r is None:
                 missing += 1
-            # Chase-card tracking (use TCG retail as the value yardstick).
-            if nm and not is_basic and tcg_r is not None:
-                contributors.append((tcg_r, nm))
+            # Chase-card tracking: TCG retail is the yardstick, but fall back to
+            # CK retail for cards TCGPlayer doesn't price so CK-only chases show.
+            if nm and not is_basic:
+                val = tcg_r if tcg_r is not None else ck_r
+                if val is not None:
+                    contributors.append((val, nm))
             # Reverse index: which decks contain this (non-basic) card.
             if nm and not is_basic:
                 key = norm(nm)
@@ -806,6 +852,15 @@ def fetch_crack_values(decks: list, session: requests.Session) -> dict:
 # Sealed box prices (Play/Draft, Collector, Jumpstart) per set
 # -------------------------------------------------------------------------
 
+# Draftable "Commander" sets that have their own booster boxes (unlike the
+# precon-only Commander products attached to a main set).
+DRAFTABLE_COMMANDER = {
+    "commandermasters",
+    "commanderlegends",
+    "commanderlegendsbattleforbaldursgate",
+}
+
+
 def _clean_set_name(s: str) -> str:
     """Strip 'Commander' qualifier and parenthetical years so a deck's set
     ('Bloomburrow Commander') matches the main box group ('Bloomburrow')."""
@@ -827,6 +882,15 @@ def find_main_set_group(groups: list, set_name: str) -> dict | None:
          are a subset of the set tokens — so the group can't carry extra
          distinguishing words like '25' that the set doesn't have.
     """
+    # A few "Commander X" sets ARE draftable and carry their own booster boxes;
+    # their group name legitimately contains 'commander', so match them by exact
+    # (uncleaned) name before the generic 'commander'-excluding logic below.
+    raw_norm = norm(set_name)
+    if raw_norm in DRAFTABLE_COMMANDER:
+        for g in groups:
+            if norm(g.get("name") or "") == raw_norm:
+                return g
+
     cleaned = _clean_set_name(set_name)
     toks = tokenize(cleaned)
     if not toks:
@@ -863,18 +927,24 @@ def _classify_box(name: str) -> str | None:
     l = (name or "").lower()
     # Exclude bulk SKUs. Use the compound "master case" (not a bare "master",
     # which is a substring of set names like Double Masters / Commander Masters
-    # and would wrongly drop their real boxes).
+    # and would wrongly drop their real boxes). "case" also drops "Booster Box
+    # Case" before the box check below.
     if "case" in l or "master case" in l or "sample" in l or "omega" in l:
         return None
-    if "collector booster display" in l:
+    if "booster pack" in l:
+        return None  # single pack, not a box
+    # A box/display unit. TCGPlayer labels these "Display" for recent sets but
+    # "Booster Box" for some older ones (e.g. Commander Masters) — accept both.
+    if "display" not in l and "booster box" not in l:
+        return None
+    if "collector booster" in l:
         return "collector"
-    if "play booster display" in l:
-        return "play"
-    # Older sets used Draft/Set Booster displays before Play Boosters (2024).
-    if "draft booster display" in l or "set booster display" in l:
-        return "play"
-    if "jumpstart" in l and "display" in l:
+    if "jumpstart" in l:
         return "jumpstart"
+    # Play / Draft / Set boosters all map to our generic "play" box type
+    # (Draft/Set predate Play Boosters, introduced 2024).
+    if "play booster" in l or "draft booster" in l or "set booster" in l:
+        return "play"
     return None
 
 # Human labels for the 3 box types.
@@ -901,39 +971,50 @@ def _build_setcode_map(session: requests.Session) -> dict:
     return out
 
 
-def _pack_ev_from_booster(booster_cfg: dict, price_of_uuid) -> float | None:
+def _pack_ev_from_booster(booster_cfg: dict, price_of_uuid):
     """Expected value of ONE pack using MTGJSON's published booster model.
 
     booster_cfg has:
       - 'boosters': list of {weight, contents:{sheetName: count}}
       - 'boostersTotalWeight': sum of weights
-      - 'sheets': {sheetName: {'totalWeight':N, 'cards':{uuid:weight}, ...}}
+      - 'sheets': {sheetName: {'totalWeight':N, 'foil':bool, 'cards':{uuid:weight}}}
     EV = sum over booster configs (weighted) of sum over sheet slots of
          (count * expected card price on that sheet).
-    price_of_uuid(uuid) returns a float price or None (treated as 0).
+    price_of_uuid(uuid, is_foil) returns a float price or None (treated as 0).
+    A sheet's `foil` flag selects the foil finish for the SAME card uuids.
+    Returns (ev, coverage) where coverage is the weighted fraction of pack slots
+    that resolved to a real price (low coverage => unreliable EV).
     """
     sheets = booster_cfg.get("sheets") or {}
     boosters = booster_cfg.get("boosters") or []
     total_w = booster_cfg.get("boostersTotalWeight") or sum(b.get("weight", 0) for b in boosters)
     if not boosters or not total_w:
-        return None
+        return None, 0.0
 
-    # Pre-compute expected price per sheet (one pull from that sheet).
+    # Per-sheet expected price + the fraction of that sheet's weight that priced.
     sheet_ev = {}
+    sheet_cov = {}
     for name, sh in sheets.items():
         cards = sh.get("cards") or {}
         sw = sh.get("totalWeight") or sum(cards.values())
+        is_foil = bool(sh.get("foil"))
         if not sw:
             sheet_ev[name] = 0.0
+            sheet_cov[name] = 0.0
             continue
         acc = 0.0
+        priced_w = 0.0
         for uuid, w in cards.items():
-            p = price_of_uuid(uuid)
+            p = price_of_uuid(uuid, is_foil)
             if p:
                 acc += (w / sw) * p
+                priced_w += w
         sheet_ev[name] = acc
+        sheet_cov[name] = priced_w / sw
 
     ev = 0.0
+    cov_num = 0.0
+    cov_den = 0.0
     for b in boosters:
         bw = b.get("weight", 0)
         if not bw:
@@ -941,8 +1022,11 @@ def _pack_ev_from_booster(booster_cfg: dict, price_of_uuid) -> float | None:
         pack = 0.0
         for sheet_name, count in (b.get("contents") or {}).items():
             pack += sheet_ev.get(sheet_name, 0.0) * count
+            cov_num += (bw / total_w) * count * sheet_cov.get(sheet_name, 0.0)
+            cov_den += (bw / total_w) * count
         ev += (bw / total_w) * pack
-    return ev
+    coverage = (cov_num / cov_den) if cov_den else 0.0
+    return ev, coverage
 
 
 def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session, want_types: set) -> dict:
@@ -954,44 +1038,42 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session, 
         return {}
     try:
         sdata = fetch_json(f"{MTGJSON_BASE}/{code}.json", session).get("data", {})
-    except Exception:
+    except Exception as e:
+        print(f"  ev: [{set_name}] set file {code}.json fetch failed: {e}", flush=True)
         return {}
     booster = sdata.get("booster") or {}
     if not booster:
         return {}
-    # Price map: uuid -> best of (nonfoil, foil) TCG retail. Sheets reference
-    # specific finishes via separate uuids in modern sets, so a single lookup
-    # by uuid against both finishes is the safe approximation.
-    prices = {}
-    for c in sdata.get("cards", []):
-        u = c.get("uuid")
-        if u:
-            prices[u] = c  # placeholder; real price comes from AllPrices below
-    # We need actual prices: pull AllPricesToday once (cached on the function).
-    allp = getattr(compute_box_ev, "_allp", None)
-    if allp is None:
-        try:
-            allp = fetch_gz_json(ALLPRICES_URL, session).get("data", {})
-        except Exception:
-            return {}
-        compute_box_ev._allp = allp
+    # Shared AllPricesToday (one download per run, reused from the crack phase).
+    try:
+        allp = _get_allprices(session)
+    except Exception as e:
+        print(f"  ev: AllPrices download failed: {e}", flush=True)
+        return {}
 
-    def price_of(uuid):
+    def price_of(uuid, is_foil=False):
         paper = (allp.get(uuid) or {}).get("paper", {})
         tcg = (paper.get("tcgplayer") or {}).get("retail") or {}
         nf = _latest_price(tcg.get("normal"))
         fo = _latest_price(tcg.get("foil"))
-        # A sheet uuid is finish-specific; take whichever finish is priced.
+        # Foil sheets reference the same uuids; price the requested finish,
+        # falling back to the other finish only when the requested one is absent.
+        if is_foil:
+            return fo if fo is not None else nf
         return nf if nf is not None else fo
 
     out = {}
     for t in want_types:
         bkey = BOX_BOOSTER_KEY.get(t)
         cfg = booster.get(bkey) if bkey else None
+        # Pre-2024 sets predate Play Boosters: their box is a Draft/Set booster.
+        if not cfg and t == "play":
+            cfg = booster.get("draft") or booster.get("set")
         if not cfg:
             continue
-        pack_ev = _pack_ev_from_booster(cfg, price_of)
-        if pack_ev is None:
+        pack_ev, coverage = _pack_ev_from_booster(cfg, price_of)
+        # Skip publishing a misleadingly-low EV when most slots had no price.
+        if pack_ev is None or coverage < 0.5:
             continue
         out[t] = round(pack_ev * BOX_PACKS.get(t, 1), 2)
     return out
@@ -1058,11 +1140,17 @@ def _index_ck_sealed(data: list) -> dict:
         qty_buy = item.get("qty_buying") or 0
         rel = (item.get("url") or "").lstrip("/")
         url = f"{CK_WEB_BASE}/{rel}" if rel else CK_WEB_BASE
-        if "commander deck" in name.lower():
+        low = name.lower()
+        if "commander deck" in low:
+            # Skip multi-deck SKUs (displays/cases/"set of N") — not a single deck.
+            if any(k in low for k in ("display", "case", "set of", "bundle")):
+                continue
+            # Flag premium re-printings so matching can deprioritize them.
+            premium = any(k in low for k in ("collector", "game edition", "gift", "starter kit"))
             decks_idx.append({
                 "name_norm": norm(_ck_deck_name(name)), "edition_norm": ed_norm,
                 "retail": retail, "qty": qty, "buy": buy, "qty_buy": qty_buy,
-                "url": url, "raw": name,
+                "url": url, "raw": name, "premium": premium,
             })
             continue
         t = _classify_ck_box(name)
@@ -1100,6 +1188,22 @@ def fetch_ck_sealed(session: requests.Session) -> dict:
     return out
 
 
+def _pick_ck(cands: list) -> dict | None:
+    """Choose the best CK SKU among candidates: regular printing over premium
+    (Collector's/Game Edition), in-stock over out-of-stock, then cheapest retail.
+    Deterministic regardless of the API's list order."""
+    if not cands:
+        return None
+    def key(c):
+        return (
+            1 if c.get("premium") else 0,
+            0 if (c.get("qty") or 0) > 0 else 1,
+            c["retail"] if c.get("retail") is not None else float("inf"),
+            c.get("name_norm") or "",
+        )
+    return sorted(cands, key=key)[0]
+
+
 def match_ck_decks(decks: list, ck_decks: list) -> dict:
     """Match each precon to a CK commander-deck SKU → vendor records keyed by
     deck id: {price, url, status, qty, buy}. Conservative to avoid false
@@ -1119,8 +1223,10 @@ def match_ck_decks(decks: list, ck_decks: list) -> dict:
         exact_set = [c for c in cands if dn == c["name_norm"] and set_ok(c)]
         exact = [c for c in cands if dn == c["name_norm"]]
         set_match = [c for c in cands if set_ok(c)]
-        pick = exact_set or exact or set_match or (cands if len(cands) == 1 else [])
-        chosen = pick[0] if pick else None
+        # Single-candidate fallback only when it's name-exact or the set matches —
+        # never auto-accept a bare cross-set substring hit.
+        loose = cands if (len(cands) == 1 and (cands[0]["name_norm"] == dn or set_ok(cands[0]))) else []
+        chosen = _pick_ck(exact_set or exact or set_match or loose)
         if chosen:
             out[did] = {
                 "price": chosen["retail"],
@@ -1137,11 +1243,14 @@ def match_ck_decks(decks: list, ck_decks: list) -> dict:
 
 
 def _ck_box_for(ck_boxes: dict, set_name: str, box_type: str) -> dict | None:
-    """Look up the CK box record for a (set, type), exact normalized edition
-    match only (box editions track the main set name closely)."""
+    """Look up the CK box record for a (set, type). CK box editions track the
+    main set name (e.g. 'Bloomburrow'), but our box phase iterates the decks'
+    set field which may carry 'Commander'/parentheticals ('Bloomburrow
+    Commander'). Match the cleaned name first, then the raw name as fallback."""
     if not ck_boxes:
         return None
-    return (ck_boxes.get(norm(set_name)) or {}).get(box_type)
+    key = norm(_clean_set_name(set_name))
+    return (ck_boxes.get(key) or ck_boxes.get(norm(set_name)) or {}).get(box_type)
 
 
 def fetch_box_prices(decks: list, session: requests.Session, groups: list,
@@ -1165,6 +1274,7 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
             prices = flatten_prices(fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/{g['groupId']}/prices", session).get("results", []))
         except Exception as e:
             print(f"  boxes: [{set_name}] fetch failed: {e}", flush=True)
+            time.sleep(0.3)  # stay polite even on the error path
             continue
         # Collect ALL candidates per box type, then pick the first one that
         # actually has a usable price — so a same-type SKU with no price doesn't
@@ -1221,7 +1331,7 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
             order = {"play": 0, "collector": 1, "jumpstart": 2}
             rows.sort(key=lambda r: order.get(r["type"], 9))
             out[set_name] = rows
-        time.sleep(0.3)
+        time.sleep(0.3 + random.uniform(0, 0.2))  # jittered politeness
     n_ev = sum(1 for rows in out.values() for r in rows if r.get("ev") is not None)
     print(f"  boxes: {len(out)} sets with sealed boxes ({n_ev} box EVs computed)", flush=True)
     return out
@@ -1246,9 +1356,16 @@ def main() -> None:
     for i, deck in enumerate(decks, 1):
         did = deck["id"]
         name = deck["name"]
-        zu = fetch_zulus(name, zulus_session)
+        try:
+            zu = fetch_zulus(name, zulus_session)
+        except Exception as e:
+            # One deck's unexpected error must not discard the whole run (TCG
+            # already succeeded). Log loudly so real bugs are still visible.
+            zu = {"price": None, "url": None, "status": f"error-{type(e).__name__}"}
+            print(f"[{i:3}/{len(decks)}] {name:<36} Zulus ERROR: {e}", flush=True)
+            traceback.print_exc()
         zulus_results[did] = zu
-        if zu["price"]:
+        if zu.get("price"):
             print(f"[{i:3}/{len(decks)}] {name:<36} Zulus ${zu['price']:>6.2f}", flush=True)
         time.sleep(POLITE_SLEEP + random.uniform(0, 0.3))
 
@@ -1278,6 +1395,7 @@ def main() -> None:
         crack_results = fetch_crack_values(decks, make_session(TCGCSV_UA))
     except Exception as e:
         print(f"Crack value phase failed (non-fatal): {e}", flush=True)
+        traceback.print_exc()
 
     print("\n=== Phase 4: Sealed box prices (per set) ===", flush=True)
     box_results = {}
@@ -1288,6 +1406,15 @@ def main() -> None:
                                        ck_boxes=ck_sealed.get("boxes"))
     except Exception as e:
         print(f"Box price phase failed (non-fatal): {e}", flush=True)
+        traceback.print_exc()
+
+    # --- Coverage gate: never let a degraded run clobber good data ----------
+    tcg_hits = sum(1 for v in tcg_results.values() if v.get("price") is not None)
+    healthy = tcg_hits >= MIN_TCG_HITS
+    if not healthy and out_path.exists():
+        raise SystemExit(
+            f"Refusing to overwrite prices.json: only {tcg_hits} TCG hits "
+            f"(min {MIN_TCG_HITS}) — likely a degraded scrape.")
 
     output = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
@@ -1301,23 +1428,41 @@ def main() -> None:
         "crack": crack_results,
         "boxes": box_results,
     }
-    out_path.write_text(json.dumps(output, indent=2))
+    # Atomic write: never leave a half-written prices.json on crash/disk-full.
+    tmp_path = out_path.parent / (out_path.name + ".tmp")
+    tmp_path.write_text(json.dumps(output, indent=2))
+    tmp_path.replace(out_path)
 
     # Reverse card->decks index (F2: "cheapest precon containing card X").
-    # Kept in its own file so prices.json stays lean. Only emitted when the
-    # crack phase built it; otherwise leave any existing index untouched.
+    # Kept in its own file so prices.json stays lean. Only emitted on a healthy
+    # run, and never shrink a good index to a much smaller one (partial crack).
     card_index = getattr(fetch_crack_values, "card_index", None)
-    if card_index:
+    if card_index and healthy:
         idx_path = Path(__file__).parent / "cards_index.json"
-        idx_path.write_text(json.dumps({
-            "updated_at": output["updated_at"],
-            "cards": card_index,
-        }, separators=(",", ":")))
-        print(f"Cards idx: {len(card_index)} unique cards across decks", flush=True)
+        prev_n = 0
+        if idx_path.exists():
+            try:
+                prev_n = len(json.loads(idx_path.read_text()).get("cards", {}))
+            except (json.JSONDecodeError, OSError):
+                prev_n = 0
+        if len(card_index) >= prev_n * 0.5:
+            tmp_idx = idx_path.parent / (idx_path.name + ".tmp")
+            tmp_idx.write_text(json.dumps({
+                "updated_at": output["updated_at"],
+                "cards": card_index,
+            }, separators=(",", ":")))
+            tmp_idx.replace(idx_path)
+            print(f"Cards idx: {len(card_index)} unique cards across decks", flush=True)
+        else:
+            print(f"Skipping cards_index: {len(card_index)} < half of existing {prev_n}", flush=True)
 
-    update_history(decks, tcg_results, zulus_results, box_results)
+    # History is part of the same process: only record on a healthy run so a
+    # partial scrape can't permanently pollute the rolling series.
+    if healthy:
+        update_history(decks, tcg_results, zulus_results, box_results, ck_results)
+    else:
+        print("Skipping history update (degraded run).", flush=True)
 
-    tcg_hits = sum(1 for v in tcg_results.values() if v.get("price") is not None)
     zu_hits = sum(1 for v in zulus_results.values() if v.get("price") is not None)
     rejected = sum(1 for v in tcg_results.values() if v.get("status") == "tcgcsv-likely-single")
 
@@ -1329,17 +1474,20 @@ def main() -> None:
     print(f"Boxes:     {len(box_results)} sets with sealed boxes")
 
 
-def update_history(decks: list, tcg_results: dict, zulus_results: dict, box_results: dict | None = None) -> None:
+def update_history(decks: list, tcg_results: dict, zulus_results: dict,
+                   box_results: dict | None = None, ck_results: dict | None = None) -> None:
     """Append today's prices to prices_history.json and trim to HISTORY_DAYS.
 
     File shape:
-      { "decks": { deck_id: [{date, tcg, zulus}, ...] },
+      { "decks": { deck_id: [{date, tcg, zulus, ck, best}, ...] },
         "boxes": { "<set>::<type>": [{date, price}, ...] } }
-    Skips appending if today's prices match the most-recent entry's, so the
-    file stays small for items that don't move much.
+    `best` is the cheapest available vendor price that day (drives alerts).
+    Skips appending if today's present-vendor prices match the most-recent
+    entry's, so the file stays small for items that don't move much.
     """
     history_path = Path(__file__).parent / "prices_history.json"
     today = datetime.now(timezone.utc).date().isoformat()
+    ck_results = ck_results or {}
 
     if history_path.exists():
         try:
@@ -1356,7 +1504,8 @@ def update_history(decks: list, tcg_results: dict, zulus_results: dict, box_resu
         did = deck["id"]
         tcg_price = tcg_results.get(did, {}).get("price")
         zu_price = zulus_results.get(did, {}).get("price")
-        if tcg_price is None and zu_price is None:
+        ck_price = ck_results.get(did, {}).get("price")
+        if tcg_price is None and zu_price is None and ck_price is None:
             continue  # nothing to record
 
         series = decks_history.get(did, [])
@@ -1365,16 +1514,23 @@ def update_history(decks: list, tcg_results: dict, zulus_results: dict, box_resu
             new_entry["tcg"] = round(float(tcg_price), 2)
         if zu_price is not None:
             new_entry["zulus"] = round(float(zu_price), 2)
+        if ck_price is not None:
+            new_entry["ck"] = round(float(ck_price), 2)
+        avail = [p for p in (tcg_price, zu_price, ck_price) if p is not None]
+        if avail:
+            new_entry["best"] = round(float(min(avail)), 2)
 
         if series and series[-1].get("date") == today:
-            # Same-day rerun: MERGE, don't replace. new_entry only carries the
-            # vendors that returned a price this run, so a transient single-
-            # vendor failure on a rerun must not wipe a value captured earlier
-            # today. update() overlays present keys and preserves the rest.
+            # Same-day rerun: MERGE, don't replace, so a transient single-vendor
+            # failure on a rerun doesn't wipe a value captured earlier today.
             series[-1].update(new_entry)
         else:
             prev = series[-1] if series else None
-            same = prev and prev.get("tcg") == new_entry.get("tcg") and prev.get("zulus") == new_entry.get("zulus")
+            # Compare only the vendors PRESENT today: a vendor that simply went
+            # missing this run must not look like a price change (which would
+            # churn the rolling window with duplicate-ish entries).
+            present = [k for k in new_entry if k != "date"]
+            same = prev is not None and bool(present) and all(prev.get(k) == new_entry.get(k) for k in present)
             if not same:
                 series.append(new_entry)
 
@@ -1395,7 +1551,7 @@ def update_history(decks: list, tcg_results: dict, zulus_results: dict, box_resu
                 series = boxes_history.get(key, [])
                 new_entry = {"date": today, "price": round(float(price), 2)}
                 if series and series[-1].get("date") == today:
-                    series[-1] = new_entry
+                    series[-1].update(new_entry)  # merge (symmetry with deck branch)
                 else:
                     prev = series[-1] if series else None
                     if not (prev and prev.get("price") == new_entry["price"]):

@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "prices.json — machine-generated daily by scrape_prices.py",
+  "type": "object",
+  "required": ["updated_at", "vendors", "crack", "boxes", "bundles"],
+  "properties": {
+    "updated_at": { "type": "string" },
+    "deck_count": { "type": "integer", "minimum": 0 },
+    "vendors": {
+      "type": "object",
+      "required": ["tcgplayer", "cardkingdom", "zulus"],
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "price": { "type": ["number", "null"], "minimum": 0 },
+            "url": { "type": ["string", "null"] },
+            "status": { "type": "string" },
+            "qty": { "type": "integer", "minimum": 0 },
+            "buy": { "type": ["number", "null"], "minimum": 0 }
+          }
+        }
+      }
+    },
+    "crack": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "tcg": { "type": ["number", "null"], "minimum": 0 },
+          "cardkingdom": { "type": ["number", "null"], "minimum": 0 },
+          "sell_tcg": { "type": ["number", "null"], "minimum": 0 },
+          "sell_cardkingdom": { "type": ["number", "null"], "minimum": 0 },
+          "sell_tcg_estimated": { "type": "boolean" },
+          "card_count": { "type": "integer", "minimum": 0 },
+          "priced": { "type": "integer", "minimum": 0 },
+          "missing": { "type": "integer", "minimum": 0 },
+          "top_cards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "price"],
+              "properties": {
+                "name": { "type": "string" },
+                "price": { "type": "number", "minimum": 0 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "boxes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["type", "price"],
+          "properties": {
+            "type": { "type": "string", "enum": ["play", "collector", "jumpstart"] },
+            "label": { "type": "string" },
+            "price": { "type": "number", "exclusiveMinimum": 0 },
+            "price_low": { "type": ["number", "null"], "minimum": 0 },
+            "ev": { "type": "number", "minimum": 0 },
+            "ck_price": { "type": ["number", "null"], "minimum": 0 },
+            "ck_qty": { "type": "integer", "minimum": 0 },
+            "ck_url": { "type": ["string", "null"] },
+            "ck_buy": { "type": ["number", "null"], "minimum": 0 }
+          }
+        }
+      }
+    },
+    "bundles": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["price", "deck_ids"],
+        "properties": {
+          "price": { "type": "number", "exclusiveMinimum": 0 },
+          "deck_ids": { "type": "array", "items": { "type": "string" } },
+          "deck_count": { "type": "integer", "minimum": 0 },
+          "individual_total": { "type": ["number", "null"], "minimum": 0 },
+          "savings": { "type": ["number", "null"], "exclusiveMinimum": 0 }
+        }
+      }
+    }
+  }
+}
