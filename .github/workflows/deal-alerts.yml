@@ -46,21 +46,24 @@ jobs:
           today_iso = date.today().isoformat()
 
           # History entries are appended only when the price CHANGES, so the
-          # series is sparse. We make the comparison date-aware:
-          #   - "today" = the last entry, but ONLY if it's actually from today's
-          #     run (else there's no fresh data point — skip the deck).
-          #   - "yesterday" = the most recent entry strictly before today.
-          def today_tcg(series):
+          # series is sparse. We make the comparison date-aware and compare the
+          # BEST available vendor price (cheapest of TCG/CK/Zulus), falling back
+          # to tcg for older entries that predate the `best` field:
+          #   - "today" = the last entry, but ONLY if it's from today's run.
+          #   - "prev"  = the most recent priced entry strictly before today,
+          #     returned WITH its date so `since` can't disagree.
+          def _price(e):
+              v = e.get("best")
+              return v if v is not None else e.get("tcg")
+          def today_best(series):
               if series and series[-1].get("date") == today_iso:
-                  return series[-1].get("tcg")
+                  return _price(series[-1])
               return None
-          def prev_tcg(series):
+          def prev_best(series):
               for e in reversed(series[:-1]) if series else []:
-                  if e.get("tcg") is not None:
-                      return e.get("tcg")
-              return None
-          def prev_date(series):
-              return series[-2].get("date") if len(series) >= 2 else None
+                  if _price(e) is not None:
+                      return _price(e), e.get("date")
+              return None, None
 
           curr = json.load(open("prices_history.json")).get("decks", {})
           decks = {d["id"]: d for d in json.load(open("decks.json"))}
@@ -81,7 +84,7 @@ jobs:
           global_drops, watched_drops, target_hits = [], [], []
 
           for did, series in curr.items():
-              today = today_tcg(series)        # None unless there's a fresh entry today
+              today = today_best(series)       # None unless there's a fresh entry today
               # Target hit: only fire on a FRESH price at/below the user's target.
               tgt = targets.get(did)
               if today is not None and tgt is not None and today <= float(tgt):
@@ -90,11 +93,10 @@ jobs:
               # Drop detection needs a fresh today price + a prior data point.
               if today is None:
                   continue
-              yest = prev_tcg(series)
+              yest, since = prev_best(series)
               if yest is None or yest <= 0:
                   continue
               pct = (yest - today) / yest * 100
-              since = prev_date(series)
               if did in watched and pct >= wthresh:
                   watched_drops.append({"id": did, "name": name_of(did), "set": set_of(did),
                                         "before": yest, "after": today, "pct": pct, "since": since})
@@ -146,16 +148,19 @@ jobs:
         if: steps.detect.outputs.found != '0'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Pass the title through env (not ${{ }} shell substitution) so a deck
+          # name with shell metacharacters can't be injected into the command.
+          TITLE: ${{ steps.detect.outputs.title }}
         run: |
           # Dedup: reuse the most recent open deal-alert issue (comment on it)
           # instead of spawning a new one every run, to avoid notification noise.
           existing=$(gh issue list --label deal-alert --state open --limit 1 --json number --jq '.[0].number' 2>/dev/null || echo "")
           if [ -n "$existing" ]; then
             gh issue comment "$existing" --body-file alert_body.md
-            gh issue edit "$existing" --title "${{ steps.detect.outputs.title }}"
+            gh issue edit "$existing" --title "$TITLE"
           else
             gh issue create \
-              --title "${{ steps.detect.outputs.title }}" \
+              --title "$TITLE" \
               --body-file alert_body.md \
               --label deal-alert
           fi

@@ -24,7 +24,8 @@
       "colors": {
         "type": "array",
         "items": { "enum": ["W", "U", "B", "R", "G", "C"] },
-        "uniqueItems": true
+        "uniqueItems": true,
+        "minItems": 1
       },
       "commander": { "type": "string" },
       "partner": { "type": "string" },

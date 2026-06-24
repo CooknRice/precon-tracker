@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-24T15:39:53.046633+00:00",
+  "updated_at": "2026-06-24T18:18:56.462038+00:00",
   "deck_count": 115,
   "vendors": {
     "cardkingdom": {
@@ -28,7 +28,7 @@
         "price": 104.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/marvel-super-heroes-commander-deck-doom-prevails",
         "status": "ok",
-        "qty": 0,
+        "qty": 1,
         "buy": null
       },
       "quandrix-unlimited": {
@@ -91,7 +91,7 @@
         "price": 42.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/edge-of-eternities-commander-deck-counter-intelligence",
         "status": "ok",
-        "qty": 13,
+        "qty": 11,
         "buy": 35.0
       },
       "world-shaper": {
@@ -133,7 +133,7 @@
         "price": 39.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/tarkir-dragonstorm-commander-deck-jeskai-striker",
         "status": "ok",
-        "qty": 19,
+        "qty": 17,
         "buy": 26.0
       },
       "abzan-armor": {
@@ -255,7 +255,7 @@
         "price": 139.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/modern-horizons-3-commander-deck-eldrazi-incursion",
         "status": "ok",
-        "qty": 0,
+        "qty": 2,
         "buy": 91.0
       },
       "graveyard-overdrive": {
@@ -276,56 +276,56 @@
         "price": 119.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/outlaws-of-thunder-junction-commander-deck-most-wanted",
         "status": "ok",
-        "qty": 1,
+        "qty": 2,
         "buy": 78.0
       },
       "grand-larceny": {
         "price": 199.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/outlaws-of-thunder-junction-commander-deck-grand-larceny",
         "status": "ok",
-        "qty": 0,
+        "qty": 1,
         "buy": 130.0
       },
       "quick-draw": {
         "price": 189.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/outlaws-of-thunder-junction-commander-deck-quick-draw",
         "status": "ok",
-        "qty": 3,
+        "qty": 4,
         "buy": 123.0
       },
       "desert-bloom": {
         "price": 109.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/outlaws-of-thunder-junction-commander-deck-desert-bloom",
         "status": "ok",
-        "qty": 2,
+        "qty": 3,
         "buy": 71.0
       },
       "scrappy-survivors": {
         "price": 79.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/universes-beyond-fallout-commander-deck-scrappy-survivors",
         "status": "ok",
-        "qty": 0,
+        "qty": 1,
         "buy": 52.0
       },
       "mutant-menace": {
         "price": 199.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/universes-beyond-fallout-commander-deck-mutant-menace",
         "status": "ok",
-        "qty": 0,
+        "qty": 1,
         "buy": 130.0
       },
       "hail-caesar": {
         "price": 89.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/universes-beyond-fallout-commander-deck-hail-caesar",
         "status": "ok",
-        "qty": 0,
+        "qty": 1,
         "buy": 58.0
       },
       "science": {
         "price": 54.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/universes-beyond-fallout-commander-deck-science",
         "status": "ok",
-        "qty": 1,
+        "qty": 2,
         "buy": 35.0
       },
       "deep-clue-sea": {
@@ -470,7 +470,7 @@
         "price": 89.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/the-lord-of-the-rings-tales-of-middle-earth-commander-deck-the-hosts-of-mordor",
         "status": "ok",
-        "qty": 19,
+        "qty": 18,
         "buy": 58.0
       },
       "food-and-fellowship": {
@@ -673,7 +673,7 @@
         "price": 109.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/kamigawa-neon-dynasty-commander-deck-buckle-up",
         "status": "ok",
-        "qty": 9,
+        "qty": 8,
         "buy": 71.0
       },
       "take-flight": {
@@ -2705,16 +2705,16 @@
           "price": 22.53
         },
         {
+          "name": "Quantum Misalignment",
+          "price": 15.99
+        },
+        {
           "name": "Galactus, Devourer of Worlds",
           "price": 14.5
         },
         {
           "name": "Seize the Day",
           "price": 13.75
-        },
-        {
-          "name": "Human Torch",
-          "price": 10.25
         }
       ]
     },
@@ -2741,8 +2741,8 @@
           "price": 19.15
         },
         {
-          "name": "Kindred Dominance",
-          "price": 12.3
+          "name": "Black Market Connections",
+          "price": 13.99
         }
       ]
     },
@@ -5748,13 +5748,14 @@
       {
         "type": "play",
         "label": "Booster Box",
-        "name": "Adventures in the Forgotten Realms - Set Booster Display",
-        "price": 269.27,
-        "price_low": 281.01,
+        "name": "Adventures in the Forgotten Realms - Draft Booster Box",
+        "price": 215.03,
+        "price_low": 215.0,
         "price_source": "Market",
-        "url": "https://www.tcgplayer.com/product/238739/magic-adventures-in-the-forgotten-realms-set-booster-display",
+        "url": "https://www.tcgplayer.com/product/238730/magic-adventures-in-the-forgotten-realms-draft-booster-box",
+        "ev": 176.57,
         "ck_price": 279.99,
-        "ck_qty": 14,
+        "ck_qty": 18,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/adventures-in-the-forgotten-realms-set-booster-box",
         "ck_buy": 182.0
       },
@@ -5766,7 +5767,7 @@
         "price_low": 296.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/238745/magic-adventures-in-the-forgotten-realms-collector-booster-display",
-        "ev": 214.49,
+        "ev": 244.49,
         "ck_price": 399.99,
         "ck_qty": 10,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/adventures-in-the-forgotten-realms-collector-booster-box",
@@ -5782,7 +5783,11 @@
         "price_low": 92.5,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/604250/magic-aetherdrift-play-booster-display",
-        "ev": 154.97
+        "ev": 157.79,
+        "ck_price": 124.99,
+        "ck_qty": 6,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/aetherdrift-play-booster-box",
+        "ck_buy": null
       },
       {
         "type": "collector",
@@ -5792,7 +5797,11 @@
         "price_low": 260.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/604253/magic-aetherdrift-collector-booster-display",
-        "ev": 162.22
+        "ev": 183.63,
+        "ck_price": 299.99,
+        "ck_qty": 2,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/aetherdrift-collector-booster-box",
+        "ck_buy": 195.0
       }
     ],
     "Bloomburrow Commander": [
@@ -5804,7 +5813,11 @@
         "price_low": 150.62,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541235/magic-bloomburrow-play-booster-display",
-        "ev": 203.66
+        "ev": 212.96,
+        "ck_price": 219.99,
+        "ck_qty": 2,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/bloomburrow-play-booster-box",
+        "ck_buy": 143.0
       },
       {
         "type": "collector",
@@ -5814,7 +5827,71 @@
         "price_low": 950.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541238/magic-bloomburrow-collector-booster-display",
-        "ev": 402.71
+        "ev": 466.13,
+        "ck_price": 999.99,
+        "ck_qty": 0,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/bloomburrow-collector-booster-box",
+        "ck_buy": 650.0
+      }
+    ],
+    "Commander Legends: Battle for Baldur's Gate": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Commander Legends: Battle for Baldur's Gate - Draft Booster Box",
+        "price": 279.57,
+        "price_low": 268.0,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/267019/magic-commander-legends-battle-for-baldur-s-gate-draft-booster-box",
+        "ev": 501.57,
+        "ck_price": 334.99,
+        "ck_qty": 3,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/commander-legends-battle-for-baldurs-gate-draft-booster-box",
+        "ck_buy": 217.0
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Commander Legends: Battle for Baldur's Gate - Collector Booster Display",
+        "price": 548.87,
+        "price_low": 549.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/267023/magic-commander-legends-battle-for-baldur-s-gate-collector-booster-display",
+        "ev": 574.43,
+        "ck_price": 649.99,
+        "ck_qty": 6,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/commander-legends-battle-for-baldurs-gate-collector-booster-box",
+        "ck_buy": 422.0
+      }
+    ],
+    "Commander Masters": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Commander Masters - Draft Booster Box",
+        "price": 535.45,
+        "price_low": 544.68,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/484924/magic-commander-masters-draft-booster-box",
+        "ev": 816.53,
+        "ck_price": 649.99,
+        "ck_qty": 1,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/commander-masters-draft-booster-box",
+        "ck_buy": 422.0
+      },
+      {
+        "type": "collector",
+        "label": "Collector Booster Box",
+        "name": "Commander Masters - Collector Booster Box",
+        "price": 450.9,
+        "price_low": 489.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/484929/magic-commander-masters-collector-booster-box",
+        "ev": 898.41,
+        "ck_price": 549.99,
+        "ck_qty": 3,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/commander-masters-collector-booster-box",
+        "ck_buy": 357.0
       }
     ],
     "Commander: Final Fantasy": [
@@ -5826,7 +5903,11 @@
         "price_low": 205.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618890/magic-final-fantasy-play-booster-display",
-        "ev": 246.53
+        "ev": 254.83,
+        "ck_price": 249.99,
+        "ck_qty": 1,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/final-fantasy-play-booster-box",
+        "ck_buy": 162.0
       },
       {
         "type": "collector",
@@ -5836,10 +5917,28 @@
         "price_low": 1280.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618893/magic-final-fantasy-collector-booster-display",
-        "ev": 707.34
+        "ev": 863.76,
+        "ck_price": 1499.99,
+        "ck_qty": 1,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/final-fantasy-collector-booster-box",
+        "ck_buy": 850.0
       }
     ],
     "Dominaria United": [
+      {
+        "type": "play",
+        "label": "Booster Box",
+        "name": "Dominaria United - Draft Booster Box",
+        "price": 154.3,
+        "price_low": 161.75,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/275403/magic-dominaria-united-draft-booster-box",
+        "ev": 146.83,
+        "ck_price": 299.99,
+        "ck_qty": 4,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/dominaria-united-set-booster-box",
+        "ck_buy": 195.0
+      },
       {
         "type": "collector",
         "label": "Collector Booster Box",
@@ -5848,7 +5947,7 @@
         "price_low": 308.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/275412/magic-dominaria-united-collector-booster-display",
-        "ev": 208.97,
+        "ev": 239.74,
         "ck_price": 349.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/dominaria-united-collector-booster-box",
@@ -5862,7 +5961,7 @@
         "price_low": 69.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/275428/magic-dominaria-united-jumpstart-booster-display",
-        "ev": 171.88,
+        "ev": 169.57,
         "ck_price": 79.99,
         "ck_qty": 4,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/dominaria-united-jumpstart-booster-box",
@@ -5878,7 +5977,7 @@
         "price_low": 140.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557241/magic-duskmourn-house-of-horror-play-booster-display",
-        "ev": 191.29,
+        "ev": 197.21,
         "ck_price": 159.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/duskmourn-house-of-horror-play-booster-box",
@@ -5892,7 +5991,7 @@
         "price_low": 754.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557244/magic-duskmourn-house-of-horror-collector-booster-display",
-        "ev": 294.48,
+        "ev": 334.3,
         "ck_price": 749.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/duskmourn-house-of-horror-collector-booster-box",
@@ -5908,7 +6007,7 @@
         "price_low": 124.85,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619674/magic-edge-of-eternities-play-booster-display",
-        "ev": 195.47,
+        "ev": 201.06,
         "ck_price": 169.99,
         "ck_qty": 4,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/edge-of-eternities-play-booster-box",
@@ -5922,7 +6021,7 @@
         "price_low": 577.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619672/magic-edge-of-eternities-collector-booster-display",
-        "ev": 388.49,
+        "ev": 434.87,
         "ck_price": 699.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/edge-of-eternities-collector-booster-box",
@@ -5933,11 +6032,12 @@
       {
         "type": "play",
         "label": "Booster Box",
-        "name": "Innistrad: Crimson Vow - Set Booster Display",
-        "price": 198.73,
-        "price_low": 199.99,
+        "name": "Innistrad: Crimson Vow - Draft Booster Box",
+        "price": 131.56,
+        "price_low": 119.35,
         "price_source": "Market",
-        "url": "https://www.tcgplayer.com/product/246470/magic-innistrad-crimson-vow-set-booster-display",
+        "url": "https://www.tcgplayer.com/product/246467/magic-innistrad-crimson-vow-draft-booster-box",
+        "ev": 149.69,
         "ck_price": 149.99,
         "ck_qty": 3,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/innistrad-crimson-vow-draft-booster-box",
@@ -5951,7 +6051,7 @@
         "price_low": 247.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/246457/magic-innistrad-crimson-vow-collector-booster-display",
-        "ev": 134.29,
+        "ev": 162.28,
         "ck_price": 259.99,
         "ck_qty": 5,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/innistrad-crimson-vow-collector-booster-box",
@@ -5962,11 +6062,12 @@
       {
         "type": "play",
         "label": "Booster Box",
-        "name": "Innistrad: Midnight Hunt - Set Booster Display",
-        "price": 156.78,
-        "price_low": 153.99,
+        "name": "Innistrad: Midnight Hunt - Draft Booster Box",
+        "price": 125.42,
+        "price_low": 124.95,
         "price_source": "Market",
-        "url": "https://www.tcgplayer.com/product/244389/magic-innistrad-midnight-hunt-set-booster-display",
+        "url": "https://www.tcgplayer.com/product/244379/magic-innistrad-midnight-hunt-draft-booster-box",
+        "ev": 125.5,
         "ck_price": 124.99,
         "ck_qty": 16,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/innistrad-midnight-hunt-draft-booster-box",
@@ -5980,7 +6081,7 @@
         "price_low": 192.57,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/244384/magic-innistrad-midnight-hunt-collector-booster-display",
-        "ev": 122.49,
+        "ev": 147.92,
         "ck_price": 229.99,
         "ck_qty": 24,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/innistrad-midnight-hunt-collector-booster-box",
@@ -5991,11 +6092,12 @@
       {
         "type": "play",
         "label": "Booster Box",
-        "name": "Kamigawa: Neon Dynasty - Set Booster Display",
-        "price": 311.56,
-        "price_low": 300.0,
+        "name": "Kamigawa: Neon Dynasty - Draft Booster Box",
+        "price": 205.7,
+        "price_low": 220.0,
         "price_source": "Market",
-        "url": "https://www.tcgplayer.com/product/257560/magic-kamigawa-neon-dynasty-set-booster-display",
+        "url": "https://www.tcgplayer.com/product/257557/magic-kamigawa-neon-dynasty-draft-booster-box",
+        "ev": 245.07,
         "ck_price": 249.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/kamigawa-neon-dynasty-draft-booster-box",
@@ -6009,7 +6111,7 @@
         "price_low": 499.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/257563/magic-kamigawa-neon-dynasty-collector-booster-display",
-        "ev": 292.25,
+        "ev": 344.0,
         "ck_price": 549.99,
         "ck_qty": 4,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/kamigawa-neon-dynasty-collector-booster-box",
@@ -6025,7 +6127,7 @@
         "price_low": 109.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/656312/magic-lorwyn-eclipsed-play-booster-display",
-        "ev": 167.67,
+        "ev": 171.72,
         "ck_price": 149.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/lorwyn-eclipsed-play-booster-box",
@@ -6039,7 +6141,7 @@
         "price_low": 378.88,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/656322/magic-lorwyn-eclipsed-collector-booster-display",
-        "ev": 205.61,
+        "ev": 245.52,
         "ck_price": 499.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/lorwyn-eclipsed-collector-booster-box",
@@ -6050,11 +6152,12 @@
       {
         "type": "play",
         "label": "Booster Box",
-        "name": "March of the Machine - Set Booster Display",
-        "price": 219.89,
-        "price_low": 231.5,
+        "name": "March of the Machine - Draft Booster Box",
+        "price": 157.69,
+        "price_low": 154.0,
         "price_source": "Market",
-        "url": "https://www.tcgplayer.com/product/475579/magic-march-of-the-machine-set-booster-display",
+        "url": "https://www.tcgplayer.com/product/475575/magic-march-of-the-machine-draft-booster-box",
+        "ev": 228.2,
         "ck_price": 179.99,
         "ck_qty": 5,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/march-of-the-machine-draft-booster-box",
@@ -6068,7 +6171,7 @@
         "price_low": 725.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/475584/magic-march-of-the-machine-collector-booster-display",
-        "ev": 263.06,
+        "ev": 292.9,
         "ck_price": 799.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/march-of-the-machine-collector-booster-box",
@@ -6082,7 +6185,7 @@
         "price_low": 189.5,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/475582/magic-march-of-the-machine-jumpstart-booster-display",
-        "ev": 266.14,
+        "ev": 261.91,
         "ck_price": 129.99,
         "ck_qty": 10,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/march-of-the-machine-jumpstart-booster-box",
@@ -6098,7 +6201,7 @@
         "price_low": 129.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675603/magic-marvel-super-heroes-play-booster-display",
-        "ev": 183.45,
+        "ev": 192.59,
         "ck_price": 144.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/marvel-super-heroes-play-booster-box",
@@ -6112,7 +6215,7 @@
         "price_low": 473.75,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675606/magic-marvel-super-heroes-collector-booster-display",
-        "ev": 508.07,
+        "ev": 605.54,
         "ck_price": 499.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/marvel-super-heroes-collector-booster-box",
@@ -6141,7 +6244,7 @@
         "price_low": 246.88,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541164/magic-modern-horizons-3-play-booster-display",
-        "ev": 321.02,
+        "ev": 341.94,
         "ck_price": 284.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/modern-horizons-3-play-booster-box",
@@ -6155,7 +6258,7 @@
         "price_low": 689.73,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541179/magic-modern-horizons-3-collector-booster-display",
-        "ev": 442.3,
+        "ev": 601.21,
         "ck_price": 949.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/modern-horizons-3-collector-booster-box",
@@ -6171,7 +6274,7 @@
         "price_low": 120.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/529964/magic-murders-at-karlov-manor-play-booster-display",
-        "ev": 180.23,
+        "ev": 187.01,
         "ck_price": 159.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/murders-at-karlov-manor-play-booster-box",
@@ -6185,7 +6288,7 @@
         "price_low": 342.04,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/529968/magic-murders-at-karlov-manor-collector-booster-display",
-        "ev": 238.65,
+        "ev": 295.0,
         "ck_price": 419.99,
         "ck_qty": 3,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/murders-at-karlov-manor-collector-booster-box",
@@ -6201,7 +6304,7 @@
         "price_low": 152.87,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541084/magic-outlaws-of-thunder-junction-play-booster-display",
-        "ev": 227.35,
+        "ev": 230.77,
         "ck_price": 199.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/outlaws-of-thunder-junction-play-booster-box",
@@ -6215,7 +6318,7 @@
         "price_low": 399.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541090/magic-outlaws-of-thunder-junction-collector-booster-display",
-        "ev": 260.29,
+        "ev": 305.68,
         "ck_price": 449.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/outlaws-of-thunder-junction-collector-booster-box",
@@ -6226,11 +6329,12 @@
       {
         "type": "play",
         "label": "Booster Box",
-        "name": "Phyrexia: All Will Be One - Set Booster Display",
-        "price": 224.09,
-        "price_low": 230.0,
+        "name": "Phyrexia: All Will Be One - Draft Booster Box",
+        "price": 185.86,
+        "price_low": 189.99,
         "price_source": "Market",
-        "url": "https://www.tcgplayer.com/product/451872/magic-phyrexia-all-will-be-one-set-booster-display",
+        "url": "https://www.tcgplayer.com/product/451869/magic-phyrexia-all-will-be-one-draft-booster-box",
+        "ev": 201.44,
         "ck_price": 279.99,
         "ck_qty": 4,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/phyrexia-all-will-be-one-set-booster-box",
@@ -6244,7 +6348,7 @@
         "price_low": 975.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/451880/magic-phyrexia-all-will-be-one-collector-booster-display",
-        "ev": 303.88,
+        "ev": 327.09,
         "ck_price": 1199.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/phyrexia-all-will-be-one-collector-booster-box",
@@ -6258,7 +6362,7 @@
         "price_low": 169.69,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/451876/magic-phyrexia-all-will-be-one-jumpstart-booster-display",
-        "ev": 179.93,
+        "ev": 177.72,
         "ck_price": 159.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/phyrexia-all-will-be-one-jumpstart-booster-box",
@@ -6274,7 +6378,7 @@
         "price_low": 130.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675555/magic-secrets-of-strixhaven-play-booster-display",
-        "ev": 156.45,
+        "ev": 160.67,
         "ck_price": 179.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/secrets-of-strixhaven-play-booster-box",
@@ -6288,7 +6392,7 @@
         "price_low": 430.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675558/magic-secrets-of-strixhaven-collector-booster-display",
-        "ev": 382.22,
+        "ev": 418.82,
         "ck_price": 599.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/secrets-of-strixhaven-collector-booster-box",
@@ -6299,11 +6403,12 @@
       {
         "type": "play",
         "label": "Booster Box",
-        "name": "Streets of New Capenna - Set Booster Display",
-        "price": 168.06,
-        "price_low": 175.0,
+        "name": "Streets of New Capenna - Draft Booster Box",
+        "price": 116.63,
+        "price_low": 109.96,
         "price_source": "Market",
-        "url": "https://www.tcgplayer.com/product/264763/magic-streets-of-new-capenna-set-booster-display",
+        "url": "https://www.tcgplayer.com/product/264760/magic-streets-of-new-capenna-draft-booster-box",
+        "ev": 157.6,
         "ck_price": 149.99,
         "ck_qty": 3,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/streets-of-new-capenna-draft-booster-box",
@@ -6317,7 +6422,7 @@
         "price_low": 238.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/264767/magic-streets-of-new-capenna-collector-booster-display",
-        "ev": 176.15,
+        "ev": 199.89,
         "ck_price": 279.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/streets-of-new-capenna-collector-booster-box",
@@ -6332,7 +6437,12 @@
         "price": 184.74,
         "price_low": 179.75,
         "price_source": "Market",
-        "url": "https://www.tcgplayer.com/product/233229/magic-strixhaven-school-of-mages-set-booster-display"
+        "url": "https://www.tcgplayer.com/product/233229/magic-strixhaven-school-of-mages-set-booster-display",
+        "ev": 183.18,
+        "ck_price": 249.99,
+        "ck_qty": 3,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/strixhaven-school-of-mages-draft-booster-box",
+        "ck_buy": 162.0
       },
       {
         "type": "collector",
@@ -6342,7 +6452,11 @@
         "price_low": 628.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/233232/magic-strixhaven-school-of-mages-collector-booster-display",
-        "ev": 340.61
+        "ev": 497.39,
+        "ck_price": 699.99,
+        "ck_qty": 1,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/strixhaven-school-of-mages-collector-booster-box",
+        "ck_buy": 455.0
       }
     ],
     "Tarkir: Dragonstorm": [
@@ -6354,7 +6468,7 @@
         "price_low": 129.35,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619645/magic-tarkir-dragonstorm-play-booster-display",
-        "ev": 179.99,
+        "ev": 184.24,
         "ck_price": 169.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/tarkir-dragonstorm-play-booster-box",
@@ -6368,7 +6482,7 @@
         "price_low": 410.69,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619649/magic-tarkir-dragonstorm-collector-booster-display",
-        "ev": 339.02,
+        "ev": 391.74,
         "ck_price": 499.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/tarkir-dragonstorm-collector-booster-box",
@@ -6384,7 +6498,7 @@
         "price_low": 104.95,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/657849/magic-teenage-mutant-ninja-turtles-play-booster-display",
-        "ev": 125.7,
+        "ev": 130.09,
         "ck_price": 119.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/teenage-mutant-ninja-turtles-play-booster-box",
@@ -6398,7 +6512,7 @@
         "price_low": 440.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/657852/magic-teenage-mutant-ninja-turtles-collector-booster-display",
-        "ev": 270.12,
+        "ev": 301.14,
         "ck_price": 499.99,
         "ck_qty": 3,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/teenage-mutant-ninja-turtles-collector-booster-box",
@@ -6409,11 +6523,12 @@
       {
         "type": "play",
         "label": "Booster Box",
-        "name": "The Brothers' War - Set Booster Display",
-        "price": 319.68,
-        "price_low": 335.0,
+        "name": "The Brothers' War - Draft Booster Box",
+        "price": 178.05,
+        "price_low": 188.88,
         "price_source": "Market",
-        "url": "https://www.tcgplayer.com/product/282230/magic-the-brothers-war-set-booster-display",
+        "url": "https://www.tcgplayer.com/product/282226/magic-the-brothers-war-draft-booster-box",
+        "ev": 215.87,
         "ck_price": 199.99,
         "ck_qty": 10,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/the-brothers-war-draft-booster-box",
@@ -6427,7 +6542,7 @@
         "price_low": 570.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/282224/magic-the-brothers-war-collector-booster-display",
-        "ev": 253.69,
+        "ev": 349.41,
         "ck_price": 649.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/the-brothers-war-collector-booster-box",
@@ -6441,7 +6556,7 @@
         "price_low": 79.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/449719/magic-the-brothers-war-jumpstart-booster-display",
-        "ev": 113.52,
+        "ev": 113.91,
         "ck_price": 69.99,
         "ck_qty": 12,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/the-brothers-war-jumpstart-booster-box",
@@ -6457,6 +6572,7 @@
         "price_low": 199.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/516619/magic-the-lost-caverns-of-ixalan-draft-booster-display",
+        "ev": 195.19,
         "ck_price": 349.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/the-lost-caverns-of-ixalan-set-booster-box",
@@ -6470,7 +6586,7 @@
         "price_low": 987.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/516614/magic-the-lost-caverns-of-ixalan-collector-booster-display",
-        "ev": 439.19,
+        "ev": 499.53,
         "ck_price": 999.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/the-lost-caverns-of-ixalan-collector-booster-box",
@@ -6486,6 +6602,7 @@
         "price_low": 290.35,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496035/magic-wilds-of-eldraine-draft-booster-display",
+        "ev": 329.49,
         "ck_price": 324.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/wilds-of-eldraine-draft-booster-box",
@@ -6499,7 +6616,7 @@
         "price_low": 799.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496041/magic-wilds-of-eldraine-collector-booster-display",
-        "ev": 410.61,
+        "ev": 466.22,
         "ck_price": 999.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/wilds-of-eldraine-collector-booster-box",

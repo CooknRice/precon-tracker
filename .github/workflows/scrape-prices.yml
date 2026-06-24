@@ -60,24 +60,35 @@ jobs:
         # that silently wipes singles or box pricing must not overwrite good data.
         run: |
           python - <<'PY'
-          import json
+          import json, jsonschema
           data = json.load(open("prices.json"))
+          jsonschema.validate(data, json.load(open("prices.schema.json")))
           assert "vendors" in data and "tcgplayer" in data["vendors"], "missing tcgplayer vendor"
           tcg = data["vendors"]["tcgplayer"]
           hits = sum(1 for v in tcg.values() if v.get("price") is not None)
-          assert hits > 50, f"only {hits} TCG hits — refusing to commit a likely-broken scrape"
+          # Floors set with headroom under steady state (~103 TCG / ~104 CK /
+          # 111 crack / 25 boxes) so a partial regression is caught, not just a
+          # total outage. Card Kingdom is now a tracked vendor — guard it too.
+          assert hits > 90, f"only {hits} TCG hits — refusing to commit a likely-broken scrape"
+          ck = data["vendors"].get("cardkingdom", {})
+          ck_hits = sum(1 for v in ck.values() if v.get("price") is not None)
+          assert ck_hits > 50, f"only {ck_hits} Card Kingdom hits — CK pricing likely broke"
           crack = data.get("crack", {})
-          assert len(crack) > 50, f"only {len(crack)} crack entries — singles pricing likely broke"
+          assert len(crack) > 95, f"only {len(crack)} crack entries — singles pricing likely broke"
           boxes = data.get("boxes", {})
-          assert len(boxes) > 10, f"only {len(boxes)} box sets — box pricing likely broke"
-          print(f"prices.json OK: {hits} TCG hits, {len(crack)} crack, {len(boxes)} box sets")
+          assert len(boxes) > 18, f"only {len(boxes)} box sets — box pricing likely broke"
+          import os
+          assert os.path.exists("cards_index.json"), "cards_index.json missing"
+          ci = json.load(open("cards_index.json")).get("cards", {})
+          assert len(ci) > 1000, f"only {len(ci)} cards in index — reverse index likely broke"
+          print(f"prices.json OK: {hits} TCG, {ck_hits} CK, {len(crack)} crack, {len(boxes)} boxes, {len(ci)} index cards")
           PY
 
       - name: Commit updated prices.json
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add prices.json prices_history.json
+          git add prices.json prices_history.json cards_index.json
           if git diff --staged --quiet; then
             echo "No price changes today."
             exit 0
