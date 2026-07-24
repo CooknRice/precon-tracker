@@ -8,7 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="fetch" href="./decks.json" crossorigin>
 <link rel="preload" as="fetch" href="./prices.json" crossorigin>
-<link rel="prefetch" href="./prices_history.json">
+<!-- prices_history.json is fetched by loadHistory() with cache:"no-cache"; a
+     prefetch here does NOT satisfy that request and just downloads it twice. -->
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#15120e">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
@@ -803,6 +804,16 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .price-best a { color: var(--sage); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--sage) 40%, transparent); }
 .price-best a:hover { color: var(--gold); }
 .price-best .price-best-save { color: var(--ink-muted); font-weight: 400; }
+/* Realized sales — the only sold-side number on the card, so it reads
+   distinctly from the vendor ask prices above it. */
+.price-sold {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+.price-sold strong { color: var(--ink-strong); font-weight: 600; }
+.price-sold .sold-vs { color: var(--ink-muted); }
 
 /* Sparkline */
 .sparkline {
@@ -1271,6 +1282,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .box-ev.good { color: var(--success); }
 .box-ck { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
 .box-ck.cheaper { color: var(--sage); font-weight: 600; }
+.box-sold { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-soft); }
 .box-ev-note { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); padding: 10px 18px 14px; line-height: 1.5; }
 .box-item { cursor: pointer; }
 .box-item-link { font-family: var(--font-mono); font-size: 10px; color: var(--gold); text-decoration: none; margin-top: 2px; }
@@ -1332,12 +1344,12 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   <div class="title-block">
     <div>
       <h1 class="title"><em>MTG</em> Tracker</h1>
-      <p class="tagline">Live prices for every MTG Commander precon, sealed booster box, and set bundle from the last five years — refreshed daily across TCGPlayer, Card Kingdom &amp; Zulus.</p>
+      <p class="tagline">Live prices for every MTG Commander precon, sealed booster box, and set bundle from the last five years — refreshed daily across TCGPlayer, Card Kingdom, Mana Pool &amp; Zulus.</p>
     </div>
     <div class="meta-line">
       <div style="margin-bottom:6px;"><button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle light or dark theme" title="Toggle light/dark theme">◐</button></div>
-      <div>Last verified · <strong id="lastUpdated">April 23, 2026</strong></div>
-      <div>Coverage · <strong id="coverageRange">Apr 2021 — Apr 2026</strong></div>
+      <div>Prices updated · <strong id="lastUpdated">—</strong></div>
+      <div>Coverage · <strong id="coverageRange">—</strong></div>
       <div>Tracked decks · <strong id="totalTracked">—</strong></div>
     </div>
   </div>
@@ -1621,15 +1633,25 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     PRECONS = (Array.isArray(data) ? data : []).filter(d => d && /^[a-z0-9-]+$/.test(d.id || ""));
   }
 
-  async function loadCardIndex() {
-    try {
-      const res = await fetch("./cards_index.json", { cache: "no-cache" });
-      if (!res.ok) return;
-      const data = await res.json();
-      CARD_INDEX = data && data.cards ? data.cards : null;
-    } catch (e) {
-      // Optional — staple finder just stays hidden if absent.
-    }
+  // The card index is ~440 KB and is only needed by the staple finder, so it
+  // is loaded LAZILY on first search rather than blocking first paint.
+  // Concurrent callers share one in-flight promise.
+  let cardIndexPromise = null;
+  function loadCardIndex() {
+    if (CARD_INDEX) return Promise.resolve(CARD_INDEX);
+    if (cardIndexPromise) return cardIndexPromise;
+    cardIndexPromise = (async () => {
+      try {
+        const res = await fetch("./cards_index.json", { cache: "no-cache" });
+        if (!res.ok) return null;
+        const data = await res.json();
+        CARD_INDEX = data && data.cards ? data.cards : null;
+      } catch (e) {
+        // Optional — staple finder just reports unavailable.
+      }
+      return CARD_INDEX;
+    })();
+    return cardIndexPromise;
   }
 
   async function loadHistory() {
@@ -1689,9 +1711,25 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     return { price: c.price, url: c.url, qty: c.qty ?? null, buy: c.buy ?? null };
   }
 
-  // Cheapest place to actually BUY the sealed deck right now, across the vendors
-  // we track: TCGPlayer Market, Zulus, and Card Kingdom retail (in-stock only).
-  // Returns { best:{vendor,price,url}, all:[...sorted asc] } or null.
+  // Mana Pool sealed-deck price (free public API). Returns
+  // { price, market, url, qty, sold } or null. `sold` is the realized-sales
+  // summary { last, last_date, avg, n } — what people actually paid.
+  function getManaPool(deck) {
+    if (!LIVE_PRICES) return null;
+    const m = LIVE_PRICES.vendors.manapool?.[deck.id];
+    if (!m?.price) return null;
+    return { price: m.price, market: m.market ?? null, url: m.url,
+             qty: m.qty ?? null, sold: m.sold ?? null };
+  }
+
+  // Realized-sale summary for a deck (Mana Pool completed transactions).
+  function getRealized(deck) {
+    return LIVE_PRICES?.vendors?.manapool?.[deck.id]?.sold || null;
+  }
+
+  // Cheapest place to actually BUY the sealed deck right now, across the four
+  // vendors we track: TCGPlayer Market, Zulus, Card Kingdom, Mana Pool
+  // (in-stock only). Returns { best:{vendor,price,url}, all:[...asc] } or null.
   function bestVendorPrice(deck) {
     const opts = [];
     const live = getLivePrice(deck);
@@ -1700,6 +1738,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     if (zu?.price) opts.push({ vendor: "Zulus", price: zu.price, url: zu.url });
     const ck = getCardKingdom(deck);
     if (ck?.price && (ck.qty == null || ck.qty > 0)) opts.push({ vendor: "Card Kingdom", price: ck.price, url: ck.url });
+    const mp = getManaPool(deck);
+    if (mp?.price && (mp.qty == null || mp.qty > 0)) opts.push({ vendor: "Mana Pool", price: mp.price, url: mp.url });
     if (!opts.length) return null;
     opts.sort((a, b) => a.price - b.price);
     return { best: opts[0], all: opts };
@@ -1896,10 +1936,22 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   }
 
   // ---------- Buying intelligence ----------
+  // The price a buyer could actually have paid on a given history day: the
+  // best across all vendors we recorded, falling back to TCGPlayer for days
+  // logged before multi-vendor history existed. Every history-derived signal
+  // (range, all-time low, trend, forecast, sparkline) reads through this, so
+  // "all-time low" means "cheapest you could have bought it", not "TCG low".
+  function histPrice(entry) {
+    if (!entry) return null;
+    const v = (typeof entry.best === "number") ? entry.best
+            : (typeof entry.tcg === "number") ? entry.tcg : null;
+    return v;
+  }
+
   // 90-day price stats from history: low/high/current + where current sits.
   function getPriceStats(d) {
     const series = (PRICE_HISTORY && PRICE_HISTORY[d.id]) || [];
-    const pts = series.map(s => s.tcg).filter(v => typeof v === "number");
+    const pts = series.map(histPrice).filter(v => typeof v === "number");
     if (pts.length < 2) return null;
     const low = Math.min(...pts), high = Math.max(...pts), now = pts[pts.length - 1];
     const range = high - low;
@@ -1980,15 +2032,15 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const series = (PRICE_HISTORY && PRICE_HISTORY[d.id]) || [];
     // Keep date + price together so the slope is per-DAY, not per-sample
     // (history entries are only written on price changes, not daily).
-    const withTcg = series.filter(s => typeof s.tcg === "number" && s.date);
-    if (withTcg.length < 8) return null;        // need a few weeks of data
+    const priced = series.filter(s => typeof histPrice(s) === "number" && s.date);
+    if (priced.length < 8) return null;         // need a few weeks of data
     const ep = effectivePrice(d);
     if (ep == null) return null;
-    const recent = withTcg.slice(-14);
+    const recent = priced.slice(-14);
     const n = recent.length;
     const t0 = new Date(recent[0].date).getTime();
     const xs = recent.map(s => (new Date(s.date).getTime() - t0) / 86400000); // days
-    const ys = recent.map(s => s.tcg);
+    const ys = recent.map(histPrice);
     const mx = xs.reduce((a, b) => a + b, 0) / n;
     const my = ys.reduce((a, b) => a + b, 0) / n;
     let num = 0, den = 0;
@@ -2107,10 +2159,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   }
 
   // Inline SVG sparkline. Trend determines colour: down=sage, up=burgundy, flat=gold.
-  // Series entries look like {date, tcg, zulus}. We chart `tcg`.
+  // Charts the best-available price per day (see histPrice).
   function sparklineSvg(series) {
     if (!series || series.length < 2) return "";
-    const pts = series.map(s => s.tcg).filter(v => typeof v === "number");
+    const pts = series.map(histPrice).filter(v => typeof v === "number");
     if (pts.length < 2) return "";
     const w = 60, h = 18, pad = 1;
     const min = Math.min(...pts), max = Math.max(...pts);
@@ -2217,8 +2269,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       series = trimmed.length >= 2 ? trimmed : series;
     }
 
+    // "best" charts the cheapest vendor per day (decks); boxes chart "price".
     const points = series
-      .map(s => ({ date: s.date, price: s[chartCurrentField] }))
+      .map(s => ({ date: s.date,
+                   price: chartCurrentField === "best" ? histPrice(s) : s[chartCurrentField] }))
       .filter(p => typeof p.price === "number");
 
     if (points.length < 2) {
@@ -2319,7 +2373,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const deck = PRECONS.find(d => d.id === deckId);
     if (!deck) return;
     const raw = (PRICE_HISTORY && PRICE_HISTORY[deck.id]) || [];
-    showChartModal(deck.name, `${deck.set} · TCGPlayer Market`, raw, "tcg", range);
+    showChartModal(deck.name, `${deck.set} · best price across vendors`, raw, "best", range);
   }
 
   // Open the chart for a sealed box, keyed "<set>::<type>" in BOX_HISTORY.
@@ -2397,6 +2451,27 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       const note = oos ? ' <span class="vendor-oos">(out of stock)</span>'
                  : cheaper ? ` <span style="color:var(--sage);">(saves $${(live.price - ck.price).toFixed(2)})</span>` : "";
       zulusLine += `<div class="price-zulus${cheaper ? " cheaper" : ""}">Card Kingdom · <a href="${safeUrl(ck.url)}" target="_blank" rel="noopener noreferrer">$${ck.price.toFixed(2)}</a>${note}</div>`;
+    }
+
+    // Mana Pool vendor row (free public API, joins on TCGPlayer product id).
+    const mp = getManaPool(d);
+    if (mp) {
+      const oos = (mp.qty != null && mp.qty <= 0);
+      const cheaper = !oos && live && mp.price < live.price;
+      const note = oos ? ' <span class="vendor-oos">(out of stock)</span>'
+                 : cheaper ? ` <span style="color:var(--sage);">(saves $${(live.price - mp.price).toFixed(2)})</span>` : "";
+      zulusLine += `<div class="price-zulus${cheaper ? " cheaper" : ""}">Mana Pool · <a href="${safeUrl(mp.url)}" target="_blank" rel="noopener noreferrer">$${mp.price.toFixed(2)}</a>${note}</div>`;
+    }
+
+    // Realized sales — what buyers ACTUALLY paid recently (Mana Pool completed
+    // transactions). The only sold-side signal here; every other number is an
+    // asking price, so it's labelled distinctly rather than as another vendor.
+    const sold = getRealized(d);
+    if (sold && typeof sold.last === "number") {
+      const vs = (ep != null && ep > 0)
+        ? ` <span class="sold-vs">${sold.last < ep ? "▼" : "▲"} ${Math.abs(((sold.last - ep) / ep) * 100).toFixed(0)}% vs asking</span>`
+        : "";
+      zulusLine += `<div class="price-sold" title="${sold.n} completed sale${sold.n === 1 ? "" : "s"} on Mana Pool, most recent ${escapeHtml(sold.last_date || "")}">💵 Last sold <strong>$${sold.last.toFixed(2)}</strong>${sold.n > 1 ? ` · avg $${sold.avg.toFixed(2)} of ${sold.n}` : ""}${vs}</div>`;
     }
 
     // 90-day range / near-low / all-time-low line, above the vendor lines.
@@ -2615,12 +2690,20 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   }
 
   // ---------- Staple finder (reverse card -> cheapest precon) ----------
-  function renderStapleResults(query) {
+  async function renderStapleResults(query) {
     const box = $("stapleResults");
     if (!box) return;
     const q = (query || "").trim().toLowerCase();
     if (q.length < 3) { box.innerHTML = q ? '<div class="staple-empty">Keep typing…</div>' : ""; return; }
-    if (!CARD_INDEX) { box.innerHTML = '<div class="staple-empty">Card index loads after the next daily scrape.</div>'; return; }
+    if (!CARD_INDEX) {
+      // Lazy-load on first use (the index is ~440 KB — see loadCardIndex).
+      box.innerHTML = '<div class="staple-empty">Loading card index…</div>';
+      await loadCardIndex();
+      // Bail if the user kept typing while we loaded — a later call will render.
+      const cur = ($("stapleInput")?.value || "").trim().toLowerCase();
+      if (cur !== q) return;
+      if (!CARD_INDEX) { box.innerHTML = '<div class="staple-empty">Card index unavailable.</div>'; return; }
+    }
 
     const qn = q.replace(/[^a-z0-9]+/g, "");
     // Find matching card entries: exact-normalized first, then substring.
@@ -2634,22 +2717,27 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     }
     if (matches.length === 0) { box.innerHTML = `<div class="staple-empty">No tracked precon contains a card matching “${escapeHtml(query)}”.</div>`; return; }
 
-    // Use the single best (shortest-name) match's decks; rank by sealed price.
+    // Use the single best (shortest-name) match's decks. Rank by the BEST
+    // price across all vendors — the panel promises "cheapest", so ranking by
+    // TCGPlayer alone would contradict the best-price logic used elsewhere.
     matches.sort((a, b) => a.name.length - b.name.length);
     const card = matches[0];
     const byId = Object.fromEntries(PRECONS.map(d => [d.id, d]));
     const decks = (card.decks || [])
       .map(id => byId[id]).filter(Boolean)
-      .map(d => ({ d, ep: effectivePrice(d) }))
+      .map(d => {
+        const bv = bestVendorPrice(d);
+        return { d, ep: bv ? bv.best.price : effectivePrice(d), vendor: bv ? bv.best.vendor : null };
+      })
       .sort((a, b) => (a.ep ?? Infinity) - (b.ep ?? Infinity));
     if (decks.length === 0) { box.innerHTML = `<div class="staple-empty">No priced precon currently lists ${escapeHtml(card.name)}.</div>`; return; }
 
     const head = `<div class="staple-empty">Cheapest precons containing <span class="staple-cardname">${escapeHtml(card.name)}</span>:</div>`;
-    box.innerHTML = head + decks.map(({ d, ep }) => `
+    box.innerHTML = head + decks.map(({ d, ep, vendor }) => `
       <div class="staple-row" data-staple-id="${escapeHtml(d.id)}" role="button" tabindex="0" aria-label="View price history for ${escapeHtml(d.name)}">
         <div>
           <div class="staple-row-name">${escapeHtml(d.name)}</div>
-          <div class="staple-row-set">${escapeHtml(d.set)}</div>
+          <div class="staple-row-set">${escapeHtml(d.set)}${vendor ? ` · ${escapeHtml(vendor)}` : ""}</div>
         </div>
         <div class="staple-row-price">${ep != null ? "$" + ep.toFixed(2) : "—"}</div>
       </div>`).join("");
@@ -2865,12 +2953,27 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         const ckLink = b.ck_url
           ? `<a class="box-item-link" href="${safeUrl(b.ck_url)}" target="_blank" rel="noopener noreferrer">view on Card Kingdom →</a>`
           : "";
+        // Mana Pool third vendor for the box.
+        let mpLine = "";
+        if (typeof b.mp_price === "number") {
+          const oos = (b.mp_qty != null && b.mp_qty <= 0);
+          const cheaper = !oos && b.mp_price < b.price;
+          const tail = oos ? " (out of stock)" : cheaper ? ` · save $${(b.price - b.mp_price).toFixed(2)}` : "";
+          mpLine = `<span class="box-ck${cheaper ? " cheaper" : ""}">Mana Pool $${b.mp_price.toFixed(2)}${tail}</span>`;
+        }
+        // Realized sales for this box (what buyers actually paid).
+        const bs = b.sold;
+        const soldLine = (bs && typeof bs.last === "number")
+          ? `<span class="box-sold" title="${bs.n} completed sale${bs.n === 1 ? "" : "s"}, most recent ${escapeHtml(bs.last_date || "")}">💵 last sold $${bs.last.toFixed(2)}</span>`
+          : "";
         return `
         <div class="box-item" data-box-set="${escapeHtml(sn)}" data-box-type="${escapeHtml(b.type)}" data-box-label="${escapeHtml(b.label)}" role="button" tabindex="0" title="Click for price history">
           <span class="box-item-type">${escapeHtml(b.label)}</span>
           <span class="box-item-price">$${b.price.toFixed(2)} ${spark}</span>
           ${(b.price_low != null && b.price_low < b.price) ? `<span class="box-item-low">TCG low $${b.price_low.toFixed(2)}</span>` : ""}
           ${ckLine}
+          ${mpLine}
+          ${soldLine}
           ${evLine}
           <a class="box-item-link" href="${safeUrl(b.url)}" target="_blank" rel="noopener noreferrer">view on TCGPlayer →</a>
           ${ckLink}
@@ -3029,6 +3132,18 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const sets = new Set(PRECONS.map(d => d.set));
     $("statSets").textContent = `across ${sets.size} sets`;
     $("totalTracked").textContent = PRECONS.length;
+
+    // Header meta, derived from the loaded data (never hardcode a date — it
+    // silently goes stale and misrepresents how fresh the prices are).
+    const upd = LIVE_PRICES?.updated_at ? new Date(LIVE_PRICES.updated_at) : null;
+    if (upd && !isNaN(upd)) {
+      $("lastUpdated").textContent = upd.toLocaleDateString(undefined,
+        { year: "numeric", month: "long", day: "numeric" });
+    }
+    const rel = PRECONS.map(d => d.releaseDate).filter(Boolean).sort();
+    if (rel.length) {
+      $("coverageRange").textContent = `${formatDate(rel[0])} — ${formatDate(rel[rel.length - 1])}`;
+    }
 
     const owned = PRECONS.filter(d => ownedSet.has(d.id));
     $("statOwned").textContent = owned.length;
@@ -3324,7 +3439,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         loadTargets(),
         loadLivePrices().catch(() => null),
         loadHistory().catch(() => null),
-        loadCardIndex().catch(() => null),
+        // cards_index.json (~440 KB) is NOT loaded here — the staple finder
+        // fetches it lazily on first search so it can't delay first paint.
       ]);
       readUrlState();
       updateStaleBanner();

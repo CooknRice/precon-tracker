@@ -14,6 +14,7 @@ Last reviewed: **2026-07-23**
 |---|---|---|
 | **TCGplayer Market** (via [TCGCSV](https://tcgcsv.com/)) | Primary price anchor for decks + sealed boxes | Free public mirror of TCGplayer's API, ~24h fresh |
 | **Card Kingdom** | Retail + buylist for decks and boxes | Free public [sealed pricelist API](https://api.cardkingdom.com/api/sealed_pricelist), no auth |
+| **Mana Pool** | 4th vendor + **realized sales** for decks and boxes | Free public [API](https://manapool.com/api/v1/prices/sealed), no auth |
 | **Zulus Games** | Third vendor (partial: ~18/115 decks) | Direct JSON search endpoint |
 | **MTGJSON** | Decklists, singles prices (crack value), booster models (box EV) | Free, MIT-licensed |
 
@@ -126,9 +127,13 @@ independent venues.
 ## Known gaps (accepted)
 
 1. **No European market.** Cardmarket (EUR) prices are independently determined, not
-   a currency conversion of US prices. We are effectively a **US-only** view.
-2. **No independent eBay-realized cross-check.** Mitigated by the fact that our
-   TCGplayer anchor is itself a realized-sales metric that tracks eBay within ~5%.
+   a currency conversion of US prices. We are effectively a **US-only** view — and
+   that is a deliberate scope choice, not an oversight.
+2. ~~**No independent realized-price cross-check.**~~ **CLOSED (2026-07-24)** — Mana
+   Pool's free public API returns `recent_sales`: actual completed transactions with
+   timestamp, price and quantity. We now show "last sold" on 95 decks and 58 box rows.
+   This is what PriceCharting was going to cost $49/mo for. It is a *non-eBay*,
+   *non-TCGplayer* realized signal, so it is genuinely independent of our anchor.
 3. **No other large US retailers** (SCG, ChannelFireball, CoolStuffInc). These are
    *ask* prices that sit at or above the realized market, so they add less than they
    appear to.

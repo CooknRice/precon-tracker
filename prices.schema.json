@@ -1,24 +1,94 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "prices.json — machine-generated daily by scrape_prices.py",
+  "title": "prices.json \u2014 machine-generated daily by scrape_prices.py",
   "type": "object",
-  "required": ["updated_at", "vendors", "crack", "boxes", "bundles"],
+  "required": [
+    "updated_at",
+    "vendors",
+    "crack",
+    "boxes",
+    "bundles"
+  ],
   "properties": {
-    "updated_at": { "type": "string" },
-    "deck_count": { "type": "integer", "minimum": 0 },
+    "updated_at": {
+      "type": "string"
+    },
+    "deck_count": {
+      "type": "integer",
+      "minimum": 0
+    },
     "vendors": {
       "type": "object",
-      "required": ["tcgplayer", "cardkingdom", "zulus"],
+      "required": [
+        "tcgplayer",
+        "cardkingdom",
+        "zulus",
+        "manapool"
+      ],
       "additionalProperties": {
         "type": "object",
         "additionalProperties": {
           "type": "object",
           "properties": {
-            "price": { "type": ["number", "null"], "minimum": 0 },
-            "url": { "type": ["string", "null"] },
-            "status": { "type": "string" },
-            "qty": { "type": "integer", "minimum": 0 },
-            "buy": { "type": ["number", "null"], "minimum": 0 }
+            "price": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": "string"
+            },
+            "qty": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "buy": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "market": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "sold": {
+              "type": "object",
+              "properties": {
+                "last": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "last_date": {
+                  "type": "string"
+                },
+                "avg": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "n": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "last",
+                "avg",
+                "n"
+              ]
+            }
           }
         }
       }
@@ -28,22 +98,65 @@
       "additionalProperties": {
         "type": "object",
         "properties": {
-          "tcg": { "type": ["number", "null"], "minimum": 0 },
-          "cardkingdom": { "type": ["number", "null"], "minimum": 0 },
-          "sell_tcg": { "type": ["number", "null"], "minimum": 0 },
-          "sell_cardkingdom": { "type": ["number", "null"], "minimum": 0 },
-          "sell_tcg_estimated": { "type": "boolean" },
-          "card_count": { "type": "integer", "minimum": 0 },
-          "priced": { "type": "integer", "minimum": 0 },
-          "missing": { "type": "integer", "minimum": 0 },
+          "tcg": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "cardkingdom": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "sell_tcg": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "sell_cardkingdom": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "sell_tcg_estimated": {
+            "type": "boolean"
+          },
+          "card_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "priced": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "missing": {
+            "type": "integer",
+            "minimum": 0
+          },
           "top_cards": {
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["name", "price"],
+              "required": [
+                "name",
+                "price"
+              ],
               "properties": {
-                "name": { "type": "string" },
-                "price": { "type": "number", "minimum": 0 }
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "number",
+                  "minimum": 0
+                }
               }
             }
           }
@@ -56,17 +169,103 @@
         "type": "array",
         "items": {
           "type": "object",
-          "required": ["type", "price"],
+          "required": [
+            "type",
+            "price"
+          ],
           "properties": {
-            "type": { "type": "string", "enum": ["play", "collector", "jumpstart"] },
-            "label": { "type": "string" },
-            "price": { "type": "number", "exclusiveMinimum": 0 },
-            "price_low": { "type": ["number", "null"], "minimum": 0 },
-            "ev": { "type": "number", "minimum": 0 },
-            "ck_price": { "type": ["number", "null"], "minimum": 0 },
-            "ck_qty": { "type": "integer", "minimum": 0 },
-            "ck_url": { "type": ["string", "null"] },
-            "ck_buy": { "type": ["number", "null"], "minimum": 0 }
+            "type": {
+              "type": "string",
+              "enum": [
+                "play",
+                "collector",
+                "jumpstart"
+              ]
+            },
+            "label": {
+              "type": "string"
+            },
+            "price": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "price_low": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "ev": {
+              "type": "number",
+              "minimum": 0
+            },
+            "ck_price": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "ck_qty": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "ck_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ck_buy": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "mp_price": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "mp_qty": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "mp_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sold": {
+              "type": "object",
+              "properties": {
+                "last": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "last_date": {
+                  "type": "string"
+                },
+                "avg": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "n": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "last",
+                "avg",
+                "n"
+              ]
+            }
           }
         }
       }
@@ -75,13 +274,39 @@
       "type": "object",
       "additionalProperties": {
         "type": "object",
-        "required": ["price", "deck_ids"],
+        "required": [
+          "price",
+          "deck_ids"
+        ],
         "properties": {
-          "price": { "type": "number", "exclusiveMinimum": 0 },
-          "deck_ids": { "type": "array", "items": { "type": "string" } },
-          "deck_count": { "type": "integer", "minimum": 0 },
-          "individual_total": { "type": ["number", "null"], "minimum": 0 },
-          "savings": { "type": ["number", "null"], "exclusiveMinimum": 0 }
+          "price": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "deck_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "deck_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "individual_total": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "savings": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          }
         }
       }
     }

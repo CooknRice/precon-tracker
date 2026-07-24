@@ -29,7 +29,7 @@ import re
 import time
 import traceback
 import urllib.parse
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import requests
@@ -60,7 +60,11 @@ STOPWORDS = {
     "the", "of", "a", "and", "an", "in", "to", "with", "for", "on", "at",
 }
 # Treated as semi-noise: not required for match, but tracked for scoring.
-SEMI_NOISE = {"commander", "kit", "deck", "decks", "precon", "starter"}
+# "universes"/"beyond" let a deck set ("Assassin's Creed") match its TCGCSV
+# group ("Universes Beyond: Assassin's Creed"), which otherwise fails the
+# bidirectional token check and silently drops that set's box pricing.
+SEMI_NOISE = {"commander", "kit", "deck", "decks", "precon", "starter",
+              "universes", "beyond"}
 
 
 # -------------------------------------------------------------------------
@@ -552,7 +556,11 @@ def is_plausible_mtg_commander_product(title: str) -> bool:
     has_magic = "magic" in t or "mtg" in t
     has_commander = "commander" in t or "precon" in t
     is_premium = "collector" in t or "deluxe" in t
-    return has_magic and has_commander and not is_premium
+    # Damaged-box SKUs are a different product and must not be price-compared
+    # against sealed-new listings from the other vendors. (Defensive: none are
+    # currently matching, but Zulus does carry these.)
+    is_damaged = any(k in t for k in ("ding", "dent", "damaged", "as-is"))
+    return has_magic and has_commander and not is_premium and not is_damaged
 
 
 def fetch_zulus(deck_name: str, session: requests.Session) -> dict:
@@ -1253,8 +1261,179 @@ def _ck_box_for(ck_boxes: dict, set_name: str, box_type: str) -> dict | None:
     return (ck_boxes.get(key) or ck_boxes.get(norm(set_name)) or {}).get(box_type)
 
 
+# ---------- Mana Pool sealed prices + realized sales (free public API) ----------
+# Mana Pool serves a fully public, unauthenticated JSON price list for every
+# in-stock sealed product, keyed by TCGPlayer product id — the same id our TCG
+# URLs already carry, so decks/boxes join exactly rather than by fuzzy name.
+# Its /products/sealed endpoint additionally returns `recent_sales`: real
+# completed transactions (timestamp, price, qty). That is an independent
+# REALIZED-price signal — the gap DATA-SOURCES.md lists as accepted-gap #2 —
+# and it is free. Prices are integer CENTS.
+MP_BASE = "https://manapool.com/api/v1"
+MP_PRICES_URL = f"{MP_BASE}/prices/sealed"
+MP_PRODUCTS_URL = f"{MP_BASE}/products/sealed"
+MP_BATCH = 100          # max ids per /products/sealed request
+MP_MAX_SALE_AGE_DAYS = 120
+
+
+def _mp_cents(v) -> float | None:
+    """Mana Pool prices are integer cents; return dollars or None."""
+    if v is None:
+        return None
+    try:
+        d = float(v) / 100.0
+    except (TypeError, ValueError):
+        return None
+    return d if d > 0 else None
+
+
+def _tcg_pid_from_url(url: str) -> int | None:
+    """Pull the TCGPlayer productId out of a product URL we already store."""
+    m = re.search(r"/product/(\d+)", url or "")
+    return int(m.group(1)) if m else None
+
+
+def _index_manapool(rows: list) -> dict:
+    """Pure indexer (no network) so it can be unit-tested. Returns
+    {"by_tcg": {tcgplayer_product_id: row}, "by_name": {norm(name): row}}."""
+    by_tcg, by_name = {}, {}
+    for r in rows or []:
+        pid = r.get("tcgplayer_product_id")
+        rec = {
+            "low": _mp_cents(r.get("low_price")),
+            "market": _mp_cents(r.get("price_market")),
+            "qty": r.get("available_quantity") or 0,
+            "url": r.get("url"),
+            "name": r.get("name"),
+            "product_id": r.get("product_id"),
+            "tcg_pid": pid,
+        }
+        if pid and pid not in by_tcg:
+            by_tcg[pid] = rec
+        key = norm(r.get("name") or "")
+        if key and key not in by_name:
+            by_name[key] = rec
+    return {"by_tcg": by_tcg, "by_name": by_name}
+
+
+def fetch_manapool(session: requests.Session) -> dict:
+    """Fetch + index Mana Pool's public sealed price list. Cached; {} on
+    failure (non-fatal — Mana Pool is an enrichment, never a hard dependency)."""
+    cached = getattr(fetch_manapool, "_cache", None)
+    if cached is not None:
+        return cached
+    try:
+        payload = fetch_json(MP_PRICES_URL, session)
+    except Exception as e:
+        print(f"  MP: sealed price list fetch failed (non-fatal): {e}", flush=True)
+        fetch_manapool._cache = {}
+        return {}
+    rows = payload.get("data") if isinstance(payload, dict) else payload
+    if not isinstance(rows, list):
+        print("  MP: unexpected payload shape (non-fatal)", flush=True)
+        fetch_manapool._cache = {}
+        return {}
+    out = _index_manapool(rows)
+    fetch_manapool._cache = out
+    print(f"  MP: {len(rows)} sealed products "
+          f"({len(out['by_tcg'])} with a TCGPlayer id)", flush=True)
+    return out
+
+
+def _mp_lookup(mp: dict, tcg_url: str, name: str) -> dict | None:
+    """Join to Mana Pool by TCGPlayer product id first (exact), then by name."""
+    if not mp:
+        return None
+    pid = _tcg_pid_from_url(tcg_url)
+    if pid and pid in mp.get("by_tcg", {}):
+        return mp["by_tcg"][pid]
+    nm = norm(name)
+    if not nm:
+        return None
+    by_name = mp.get("by_name", {})
+    if nm in by_name:
+        return by_name[nm]
+    for k, v in by_name.items():           # deck name contained in product name
+        if nm in k:
+            return v
+    return None
+
+
+def match_manapool_decks(decks: list, mp: dict, tcg_results: dict) -> dict:
+    """Per-deck Mana Pool vendor records: {price, url, status, qty, market}."""
+    out = {}
+    for d in decks:
+        did = d["id"]
+        rec = _mp_lookup(mp, (tcg_results.get(did) or {}).get("url") or "", d["name"])
+        if rec and rec.get("low") is not None:
+            out[did] = {
+                "price": rec["low"],
+                "market": rec.get("market"),
+                "url": rec.get("url") or "https://manapool.com/",
+                "status": "ok" if (rec.get("qty") or 0) > 0 else "out-of-stock",
+                "qty": rec.get("qty") or 0,
+            }
+        else:
+            out[did] = {"price": None, "url": "https://manapool.com/",
+                        "status": "no-match"}
+    n = sum(1 for v in out.values() if v.get("price") is not None)
+    print(f"  MP: matched {n}/{len(decks)} decks to a live Mana Pool price", flush=True)
+    return out
+
+
+def fetch_manapool_sales(tcg_pids: list, session: requests.Session) -> dict:
+    """Batch-fetch realized sales for the given TCGPlayer product ids.
+
+    Returns {tcg_pid: {"last": price, "last_date": iso, "avg": mean_price,
+                       "n": sale_count}} using only sales inside the recent
+    window, so a stale one-off doesn't masquerade as the market.
+    """
+    out: dict = {}
+    pids = [p for p in dict.fromkeys(tcg_pids) if p]
+    if not pids:
+        return out
+    cutoff = datetime.now(timezone.utc) - timedelta(days=MP_MAX_SALE_AGE_DAYS)
+    for i in range(0, len(pids), MP_BATCH):
+        chunk = pids[i:i + MP_BATCH]
+        # NOTE: the API expects REPEATED params, not a comma-joined list.
+        qs = "&".join(f"tcgplayer_ids={p}" for p in chunk)
+        try:
+            payload = fetch_json(f"{MP_PRODUCTS_URL}?{qs}", session)
+        except Exception as e:
+            print(f"  MP: sales batch failed (non-fatal): {e}", flush=True)
+            continue
+        for r in (payload.get("data") if isinstance(payload, dict) else payload) or []:
+            pid = r.get("tcgplayer_product_id")
+            sales = r.get("recent_sales") or []
+            recs = []
+            for s in sales:
+                price = _mp_cents(s.get("price"))
+                ts = s.get("created_at") or ""
+                if price is None or not ts:
+                    continue
+                try:
+                    when = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+                except ValueError:
+                    continue
+                if when >= cutoff:
+                    recs.append((when, price))
+            if not pid or not recs:
+                continue
+            recs.sort(key=lambda x: x[0], reverse=True)
+            prices = [p for _, p in recs]
+            out[pid] = {
+                "last": round(prices[0], 2),
+                "last_date": recs[0][0].date().isoformat(),
+                "avg": round(sum(prices) / len(prices), 2),
+                "n": len(prices),
+            }
+        time.sleep(0.3 + random.uniform(0, 0.2))
+    print(f"  MP: realized sales for {len(out)} products", flush=True)
+    return out
+
+
 def fetch_box_prices(decks: list, session: requests.Session, groups: list,
-                     ck_boxes: dict | None = None) -> dict:
+                     ck_boxes: dict | None = None, mp: dict | None = None) -> dict:
     """For each unique set among the decks, find its main-set group and price
     the Play/Collector/Jumpstart boxes. Returns { set_name: [ {type, label,
     name, price, price_low, price_source, url, ev} ] }.
@@ -1327,6 +1506,13 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
                     r["ck_qty"] = ck.get("qty") or 0
                     r["ck_url"] = ck.get("url")
                     r["ck_buy"] = ck.get("buy")
+                # Mana Pool as a third box vendor — joins exactly on the
+                # TCGPlayer product id already embedded in this row's url.
+                m = _mp_lookup(mp, r.get("url") or "", r.get("name") or "")
+                if m and m.get("low") is not None:
+                    r["mp_price"] = m["low"]
+                    r["mp_qty"] = m.get("qty") or 0
+                    r["mp_url"] = m.get("url")
             # Stable order: play, collector, jumpstart.
             order = {"play": 0, "collector": 1, "jumpstart": 2}
             rows.sort(key=lambda r: order.get(r["type"], 9))
@@ -1389,6 +1575,20 @@ def main() -> None:
             for deck in decks
         }
 
+    print("\n=== Phase 2.6: Mana Pool (free sealed API + realized sales) ===", flush=True)
+    mp_index = {}
+    mp_results = {}
+    try:
+        mp_session = make_session(TCGCSV_UA)
+        mp_index = fetch_manapool(mp_session)
+        mp_results = match_manapool_decks(decks, mp_index, tcg_results)
+    except Exception as e:
+        print(f"Mana Pool phase failed (non-fatal): {e}", flush=True)
+        traceback.print_exc()
+    if not mp_results:
+        mp_results = {deck["id"]: {"price": None, "url": "https://manapool.com/",
+                                   "status": "unavailable"} for deck in decks}
+
     print("\n=== Phase 3: Crack value (MTGJSON dual-vendor, NM) ===", flush=True)
     crack_results = {}
     try:
@@ -1403,9 +1603,33 @@ def main() -> None:
         box_session = make_session(TCGCSV_UA)
         box_groups = load_magic_groups(box_session)
         box_results = fetch_box_prices(decks, box_session, box_groups,
-                                       ck_boxes=ck_sealed.get("boxes"))
+                                       ck_boxes=ck_sealed.get("boxes"),
+                                       mp=mp_index)
     except Exception as e:
         print(f"Box price phase failed (non-fatal): {e}", flush=True)
+        traceback.print_exc()
+
+    # --- Phase 4.5: realized sales (Mana Pool) for decks + boxes ------------
+    # An independent REALIZED-price signal: what people actually paid, versus
+    # the ask prices every other vendor reports.
+    print("\n=== Phase 4.5: Realized sales (Mana Pool) ===", flush=True)
+    try:
+        pids = [_tcg_pid_from_url((tcg_results.get(d["id"]) or {}).get("url") or "")
+                for d in decks]
+        pids += [_tcg_pid_from_url(r.get("url") or "")
+                 for rows in box_results.values() for r in rows]
+        sales = fetch_manapool_sales(pids, make_session(TCGCSV_UA)) if mp_index else {}
+        for d in decks:
+            pid = _tcg_pid_from_url((tcg_results.get(d["id"]) or {}).get("url") or "")
+            if pid and pid in sales:
+                mp_results.setdefault(d["id"], {})["sold"] = sales[pid]
+        for rows in box_results.values():
+            for r in rows:
+                pid = _tcg_pid_from_url(r.get("url") or "")
+                if pid and pid in sales:
+                    r["sold"] = sales[pid]
+    except Exception as e:
+        print(f"Realized-sales phase failed (non-fatal): {e}", flush=True)
         traceback.print_exc()
 
     # --- Coverage gate: never let a degraded run clobber good data ----------
@@ -1423,6 +1647,7 @@ def main() -> None:
             "cardkingdom": ck_results,
             "zulus": zulus_results,
             "tcgplayer": tcg_results,
+            "manapool": mp_results,
         },
         "bundles": bundles,
         "crack": crack_results,
@@ -1459,7 +1684,8 @@ def main() -> None:
     # History is part of the same process: only record on a healthy run so a
     # partial scrape can't permanently pollute the rolling series.
     if healthy:
-        update_history(decks, tcg_results, zulus_results, box_results, ck_results)
+        update_history(decks, tcg_results, zulus_results, box_results, ck_results,
+                       mp_results)
     else:
         print("Skipping history update (degraded run).", flush=True)
 
@@ -1469,25 +1695,30 @@ def main() -> None:
     print(f"\nWrote {out_path}")
     print(f"TCGPlayer: {tcg_hits}/{len(decks)} hits  (rejected {rejected} as likely singles)")
     print(f"Zulus:     {zu_hits}/{len(decks)} hits")
+    mp_hits = sum(1 for v in mp_results.values() if v.get("price") is not None)
+    mp_sold = sum(1 for v in mp_results.values() if v.get("sold"))
+    print(f"Mana Pool: {mp_hits}/{len(decks)} hits  ({mp_sold} with realized sales)")
     print(f"Bundles:   {len(bundles)} sets")
     print(f"Crack val: {len(crack_results)} decks priced")
     print(f"Boxes:     {len(box_results)} sets with sealed boxes")
 
 
 def update_history(decks: list, tcg_results: dict, zulus_results: dict,
-                   box_results: dict | None = None, ck_results: dict | None = None) -> None:
+                   box_results: dict | None = None, ck_results: dict | None = None,
+                   mp_results: dict | None = None) -> None:
     """Append today's prices to prices_history.json and trim to HISTORY_DAYS.
 
     File shape:
-      { "decks": { deck_id: [{date, tcg, zulus, ck, best}, ...] },
+      { "decks": { deck_id: [{date, tcg, zulus, ck, mp, best}, ...] },
         "boxes": { "<set>::<type>": [{date, price}, ...] } }
-    `best` is the cheapest available vendor price that day (drives alerts).
-    Skips appending if today's present-vendor prices match the most-recent
-    entry's, so the file stays small for items that don't move much.
+    `best` is the cheapest available vendor price that day (drives alerts and
+    the all-time-low badge). Skips appending if today's present-vendor prices
+    match the most-recent entry's, so the file stays small for quiet items.
     """
     history_path = Path(__file__).parent / "prices_history.json"
     today = datetime.now(timezone.utc).date().isoformat()
     ck_results = ck_results or {}
+    mp_results = mp_results or {}
 
     if history_path.exists():
         try:
@@ -1505,7 +1736,8 @@ def update_history(decks: list, tcg_results: dict, zulus_results: dict,
         tcg_price = tcg_results.get(did, {}).get("price")
         zu_price = zulus_results.get(did, {}).get("price")
         ck_price = ck_results.get(did, {}).get("price")
-        if tcg_price is None and zu_price is None and ck_price is None:
+        mp_price = mp_results.get(did, {}).get("price")
+        if tcg_price is None and zu_price is None and ck_price is None and mp_price is None:
             continue  # nothing to record
 
         series = decks_history.get(did, [])
@@ -1516,7 +1748,9 @@ def update_history(decks: list, tcg_results: dict, zulus_results: dict,
             new_entry["zulus"] = round(float(zu_price), 2)
         if ck_price is not None:
             new_entry["ck"] = round(float(ck_price), 2)
-        avail = [p for p in (tcg_price, zu_price, ck_price) if p is not None]
+        if mp_price is not None:
+            new_entry["mp"] = round(float(mp_price), 2)
+        avail = [p for p in (tcg_price, zu_price, ck_price, mp_price) if p is not None]
         if avail:
             new_entry["best"] = round(float(min(avail)), 2)
 

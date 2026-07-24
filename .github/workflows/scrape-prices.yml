@@ -73,6 +73,9 @@ jobs:
           ck = data["vendors"].get("cardkingdom", {})
           ck_hits = sum(1 for v in ck.values() if v.get("price") is not None)
           assert ck_hits > 50, f"only {ck_hits} Card Kingdom hits — CK pricing likely broke"
+          mp = data["vendors"].get("manapool", {})
+          mp_hits = sum(1 for v in mp.values() if v.get("price") is not None)
+          assert mp_hits > 50, f"only {mp_hits} Mana Pool hits — MP pricing likely broke"
           crack = data.get("crack", {})
           assert len(crack) > 95, f"only {len(crack)} crack entries — singles pricing likely broke"
           boxes = data.get("boxes", {})
@@ -81,8 +84,14 @@ jobs:
           assert os.path.exists("cards_index.json"), "cards_index.json missing"
           ci = json.load(open("cards_index.json")).get("cards", {})
           assert len(ci) > 1000, f"only {len(ci)} cards in index — reverse index likely broke"
-          print(f"prices.json OK: {hits} TCG, {ck_hits} CK, {len(crack)} crack, {len(boxes)} boxes, {len(ci)} index cards")
+          print(f"prices.json OK: {hits} TCG, {ck_hits} CK, {mp_hits} MP, {len(crack)} crack, {len(boxes)} boxes, {len(ci)} index cards")
           PY
+
+      - name: Run data-integrity tests
+        # The full suite (schema + cross-file invariants) against the freshly
+        # scraped data. Previously this only ever ran locally, so nothing in CI
+        # actually enforced it.
+        run: python test_data_integrity.py
 
       - name: Commit updated prices.json
         run: |
