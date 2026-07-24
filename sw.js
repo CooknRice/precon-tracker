@@ -5,7 +5,7 @@
 //     updates show immediately; fall back to cache only when offline.
 //     (Stale-while-revalidate caused day-old prices/box-history to show.)
 //   - SHELL (html, icons, manifest): stale-while-revalidate for instant load.
-const CACHE = "mtg-tracker-v5";
+const CACHE = "mtg-tracker-v6";
 const SHELL = [
   "./",
   "./index.html",

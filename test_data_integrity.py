@@ -246,6 +246,75 @@ def test_boxes_ck():
                     f"box {set_name}/{r.get('type')} CK/TCG ratio {ratio:.2f} out of range"
 
 
+def _check_sold(sold, where):
+    """Shared shape check for a realized-sales summary block."""
+    assert isinstance(sold, dict), f"{where} sold not an object"
+    for k in ("last", "avg"):
+        assert isinstance(sold.get(k), (int, float)) and sold[k] > 0, f"{where} sold.{k} bad"
+    assert isinstance(sold.get("n"), int) and sold["n"] >= 1, f"{where} sold.n bad"
+    if sold.get("last_date") is not None:
+        assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", sold["last_date"]), f"{where} sold.last_date bad"
+
+
+def test_vendors_manapool():
+    """Mana Pool vendor map: real deck ids, sane prices, valid realized sales."""
+    prices = load("prices.json")
+    deck_ids = {d["id"] for d in load("decks.json")}
+    mp = prices["vendors"].get("manapool", {})
+    assert mp, "vendors.manapool missing"
+    ok_status = {"ok", "out-of-stock", "no-match", "unavailable"}
+    for did, e in mp.items():
+        assert did in deck_ids, f"manapool has stale deck id {did}"
+        assert "url" in e, f"manapool {did} missing url"
+        if e.get("status") is not None:
+            assert e["status"] in ok_status, f"manapool {did} bad status {e['status']}"
+        for k in ("price", "market"):
+            if e.get(k) is not None:
+                assert isinstance(e[k], (int, float)) and e[k] > 0, f"manapool {did}.{k} bad"
+        if e.get("qty") is not None:
+            assert isinstance(e["qty"], int) and e["qty"] >= 0, f"manapool {did} bad qty"
+        if e.get("sold") is not None:
+            _check_sold(e["sold"], f"manapool {did}")
+
+
+def test_boxes_manapool():
+    """Box rows: Mana Pool price/qty/url and realized-sales block are well-formed."""
+    prices = load("prices.json")
+    for set_name, rows in prices.get("boxes", {}).items():
+        for r in rows:
+            where = f"box {set_name}/{r.get('type')}"
+            if r.get("mp_price") is not None:
+                assert isinstance(r["mp_price"], (int, float)) and r["mp_price"] > 0, f"{where} bad mp_price"
+            if r.get("mp_qty") is not None:
+                assert isinstance(r["mp_qty"], int) and r["mp_qty"] >= 0, f"{where} bad mp_qty"
+            if r.get("mp_url") is not None:
+                assert str(r["mp_url"]).startswith("http"), f"{where} bad mp_url"
+            if r.get("sold") is not None:
+                _check_sold(r["sold"], where)
+
+
+def test_history_best_is_min():
+    """`best` must equal the cheapest vendor recorded that day — it drives the
+    all-time-low badge and the alerts, so a wrong value misleads directly."""
+    p = ROOT / "prices_history.json"
+    if not p.exists():
+        return
+    history = json.loads(p.read_text())
+    for did, series in history.get("decks", {}).items():
+        for e in series:
+            vals = [e[k] for k in ("tcg", "zulus", "ck", "mp") if isinstance(e.get(k), (int, float))]
+            if not vals or "best" not in e:
+                continue
+            assert abs(e["best"] - min(vals)) < 0.011, (
+                f"history {did} {e.get('date')}: best={e['best']} != min{vals}")
+
+
+def test_prices_schema():
+    """prices.json validates against its JSON Schema."""
+    schema = load("prices.schema.json")
+    jsonschema.validate(load("prices.json"), schema)
+
+
 if __name__ == "__main__":
     tests = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     failures = 0
