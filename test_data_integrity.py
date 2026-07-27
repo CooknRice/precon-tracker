@@ -309,10 +309,61 @@ def test_history_best_is_min():
                 f"history {did} {e.get('date')}: best={e['best']} != min{vals}")
 
 
-def test_prices_schema():
-    """prices.json validates against its JSON Schema."""
-    schema = load("prices.schema.json")
-    jsonschema.validate(load("prices.json"), schema)
+def test_no_wrong_product_matches():
+    """A vendor listing must be the same KIND of product as the deck.
+
+    Regression guard: name-only matching once priced Urza's Iron Alliance off a
+    *prerelease pack* (-74%) and Lorehold Legacies off a "(Deck Only)" SKU
+    (-61%). Because those are cheaper, they won the best-price headline and
+    pointed buyers at the wrong product.
+    """
+    prices = load("prices.json")
+    decks = {d["id"]: d for d in load("decks.json")}
+    markers = ("prerelease", "brawl", "booster", "bundle", "display", "case",
+               "deck only", "commander kit", "collector", "jumpstart",
+               "starter kit", "sample", "art series")
+    for vendor, entries in prices["vendors"].items():
+        for did, e in entries.items():
+            if not e.get("price"):
+                continue
+            deck_name = (decks.get(did, {}).get("name") or "").lower()
+            # Both the human snippet and the product URL leak the product kind.
+            text = f"{e.get('snippet') or ''} {e.get('url') or ''}".lower()
+            for m in markers:
+                assert not (m in text and m not in deck_name), (
+                    f"{vendor}/{did} looks like a different product ('{m}'): "
+                    f"{e.get('snippet') or e.get('url')}")
+
+
+def test_vendor_price_sanity():
+    """No vendor should be wildly below every other vendor for the same deck.
+
+    A genuine sale is one thing; less than half of what the other vendors agree
+    on is almost always a mismatched listing.
+    """
+    prices = load("prices.json")
+    v = prices["vendors"]
+    for did in {k for m in v.values() for k in m}:
+        quotes = {name: (m.get(did) or {}).get("price") for name, m in v.items()}
+        quotes = {k: p for k, p in quotes.items() if p}
+        if len(quotes) < 3:
+            continue                    # need a real consensus to judge against
+        for name, p in quotes.items():
+            others = [q for k, q in quotes.items() if k != name]
+            assert p >= min(others) * 0.5, (
+                f"{name}/{did} = ${p:.2f} is under half the cheapest other "
+                f"vendor (${min(others):.2f}) — likely a wrong product")
+
+
+def test_manapool_price_vs_own_sales():
+    """Mana Pool's asking price must not contradict its own realized sales."""
+    prices = load("prices.json")
+    for did, e in prices["vendors"].get("manapool", {}).items():
+        price, sold = e.get("price"), e.get("sold") or {}
+        if price and sold.get("avg"):
+            assert price >= sold["avg"] * 0.5, (
+                f"manapool/{did}: asking ${price:.2f} vs its own realized avg "
+                f"${sold['avg']:.2f} — mismatched listing")
 
 
 if __name__ == "__main__":

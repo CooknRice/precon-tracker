@@ -549,6 +549,34 @@ def json_headers() -> dict:
     }
 
 
+# Words that mark a listing as a DIFFERENT physical product from the plain
+# Commander precon deck we track. Matching on name alone happily returns a
+# prerelease pack, a Brawl deck, or a boxless "(Deck Only)" SKU — all of which
+# are cheaper, so they win the best-price headline and send the buyer to the
+# wrong thing. Real cases this caught: Urza's Iron Alliance priced off a
+# prerelease pack (-74%), Lorehold Legacies off a "(Deck Only)" SKU (-61%).
+PRODUCT_KIND_MARKERS = (
+    "prerelease", "brawl", "booster", "bundle", "display", "case",
+    "deck only", "commander kit", "gift edition", "collector",
+    "jumpstart", "starter kit", "sample", "single", "art series",
+)
+
+
+def is_same_product_kind(deck_name: str, product_name: str) -> bool:
+    """True when a vendor listing looks like the SAME kind of product as the
+    deck we're pricing.
+
+    Asymmetric on purpose: a marker is only disqualifying when the product name
+    has it and the deck's own name does not. That way a deck legitimately
+    called e.g. "... Jumpstart ..." still matches its own listing, while a
+    "Commander Kit - Revival Trance" listing is rejected for plain
+    "Revival Trance".
+    """
+    p = (product_name or "").lower()
+    d = (deck_name or "").lower()
+    return not any(m in p and m not in d for m in PRODUCT_KIND_MARKERS)
+
+
 def is_plausible_mtg_commander_product(title: str) -> bool:
     if not title:
         return False
@@ -589,6 +617,11 @@ def fetch_zulus(deck_name: str, session: requests.Session) -> dict:
             if name_lower not in title.lower():
                 continue
             if not is_plausible_mtg_commander_product(title):
+                continue
+            # Same NAME is not the same PRODUCT: reject Commander Kits,
+            # "(Deck Only)" SKUs and the like, which are cheaper and would
+            # otherwise win the best-price headline.
+            if not is_same_product_kind(deck_name, title):
                 continue
             price_str = p.get("price")
             if not price_str:
@@ -1340,8 +1373,42 @@ def fetch_manapool(session: requests.Session) -> dict:
     return out
 
 
-def _mp_lookup(mp: dict, tcg_url: str, name: str) -> dict | None:
-    """Join to Mana Pool by TCGPlayer product id first (exact), then by name."""
+# Words that carry no set identity, so they're ignored when checking whether a
+# vendor's product name belongs to the same release as our deck.
+GENERIC_PRODUCT_WORDS = {
+    "commander", "deck", "decks", "magic", "mtg", "the", "gathering",
+    "edition", "precon", "preconstructed",
+}
+
+
+def name_match_is_same_release(deck_name: str, deck_set: str, product_name: str) -> bool:
+    """For a fuzzy (substring) name match, check the product belongs to OUR set.
+
+    Deck names repeat across releases — "Peace Offering" exists in both Wilds of
+    Eldraine and Bloomburrow, and "Draconic Domination" in both Starter
+    Commander Decks and Commander 2017. Matching on name alone silently picks
+    whichever the vendor listed first.
+
+    The test: take the words the product name adds beyond the deck's own name.
+    Every one of them must either be generic ("Commander Deck") or appear in our
+    deck's set name. So "Commander 2021 Commander Deck Silverquill Statement"
+    matches a deck whose set is "Strixhaven: School of Mages (Commander 2021)",
+    while "Commander 2017 ..." and "Bloomburrow ..." are rejected — the tokens
+    2017 / bloomburrow appear nowhere in our set.
+    """
+    extra = tokenize(product_name) - tokenize(deck_name) - GENERIC_PRODUCT_WORDS
+    return extra.issubset(tokenize(deck_set))
+
+
+def _mp_lookup(mp: dict, tcg_url: str, name: str, deck_set: str = "") -> dict | None:
+    """Join to Mana Pool by TCGPlayer product id (exact), then by name.
+
+    Name matching is guarded two ways, because the raw unanchored scan priced
+    Urza's Iron Alliance off a *prerelease pack* at $40.55 against a real ~$156
+    — and being the lowest number, it won the best-price headline:
+      1. the listing must be the same KIND of product (not a pack/kit/brawl deck)
+      2. a fuzzy match must belong to the same RELEASE (see above)
+    """
     if not mp:
         return None
     pid = _tcg_pid_from_url(tcg_url)
@@ -1350,11 +1417,14 @@ def _mp_lookup(mp: dict, tcg_url: str, name: str) -> dict | None:
     nm = norm(name)
     if not nm:
         return None
-    by_name = mp.get("by_name", {})
-    if nm in by_name:
-        return by_name[nm]
-    for k, v in by_name.items():           # deck name contained in product name
-        if nm in k:
+    by_name = mp.get("by_name") or {}
+    ok = lambda r: r and is_same_product_kind(name, r.get("name") or "")
+    rec = by_name.get(nm)
+    if ok(rec):
+        return rec
+    # Fuzzy fallback, but only within the same release.
+    for k, v in by_name.items():
+        if nm in k and ok(v) and name_match_is_same_release(name, deck_set, v.get("name") or ""):
             return v
     return None
 
@@ -1364,7 +1434,8 @@ def match_manapool_decks(decks: list, mp: dict, tcg_results: dict) -> dict:
     out = {}
     for d in decks:
         did = d["id"]
-        rec = _mp_lookup(mp, (tcg_results.get(did) or {}).get("url") or "", d["name"])
+        rec = _mp_lookup(mp, (tcg_results.get(did) or {}).get("url") or "",
+                         d["name"], d.get("set") or "")
         if rec and rec.get("low") is not None:
             out[did] = {
                 "price": rec["low"],
@@ -1379,6 +1450,35 @@ def match_manapool_decks(decks: list, mp: dict, tcg_results: dict) -> dict:
     n = sum(1 for v in out.values() if v.get("price") is not None)
     print(f"  MP: matched {n}/{len(decks)} decks to a live Mana Pool price", flush=True)
     return out
+
+
+# A vendor asking far less than that same vendor's own recent SALES is a
+# mismatched listing, not a bargain — real deals don't sell for triple the ask.
+SELF_CONTRADICTION_RATIO = 0.5
+
+
+def drop_self_contradicting_prices(mp_results: dict) -> int:
+    """Void any Mana Pool price that its own realized sales contradict.
+
+    Runs after the sales phase, since it needs `sold`. Keeps the realized-sale
+    figures (they're still true and useful) but clears the asking price so a
+    mismatched listing can't win the best-price headline.
+    """
+    dropped = 0
+    for did, rec in (mp_results or {}).items():
+        price = rec.get("price")
+        sold = rec.get("sold") or {}
+        avg = sold.get("avg")
+        if price is None or not avg:
+            continue
+        if price < avg * SELF_CONTRADICTION_RATIO:
+            print(f"  MP: dropping {did} — asking ${price:.2f} vs its own "
+                  f"realized avg ${avg:.2f} (likely a different product)", flush=True)
+            rec["price"] = None
+            rec["market"] = None
+            rec["status"] = "price-contradicts-sales"
+            dropped += 1
+    return dropped
 
 
 def fetch_manapool_sales(tcg_pids: list, session: requests.Session) -> dict:
@@ -1631,6 +1731,15 @@ def main() -> None:
     except Exception as e:
         print(f"Realized-sales phase failed (non-fatal): {e}", flush=True)
         traceback.print_exc()
+
+    # Realized sales are the strongest available cross-check on our own
+    # matching: void any asking price its own sales contradict.
+    try:
+        n_dropped = drop_self_contradicting_prices(mp_results)
+        if n_dropped:
+            print(f"  MP: voided {n_dropped} self-contradicting price(s)", flush=True)
+    except Exception as e:
+        print(f"Self-consistency check failed (non-fatal): {e}", flush=True)
 
     # --- Coverage gate: never let a degraded run clobber good data ----------
     tcg_hits = sum(1 for v in tcg_results.values() if v.get("price") is not None)
