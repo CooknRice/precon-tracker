@@ -1012,7 +1012,6 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
    (names now flip automatically via --ink-strong). */
 [data-theme="light"] .discount-badge { color: #6e4e0a; }
 [data-theme="light"] .stale-banner { color: #8a3a1a; }
-[data-theme="light"] .curve-tag.new { color: #2f6da3; }
 
 /* Visible keyboard focus for all custom controls (mouse focus stays clean). */
 .own-toggle:focus-visible, .watch-toggle:focus-visible, .theme-toggle:focus-visible,
@@ -1056,20 +1055,6 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .buy-signal.buy { color: var(--success); background: rgba(62,198,106,0.14); }
 .buy-signal.ok { color: var(--gold-bright); background: rgba(228,185,84,0.14); }
 .buy-signal.hold { color: var(--ink-muted); background: rgba(237,227,202,0.06); }
-.curve-tag {
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  padding: 3px 10px;
-  border-radius: var(--radius-pill);
-  background: rgba(237,227,202,0.06);
-  color: var(--ink-soft);
-}
-.curve-tag.dip { color: var(--success); background: rgba(110,138,85,0.14); }
-.curve-tag.new { color: var(--u); background: rgba(109,168,219,0.14); }
-.curve-tag.mature { color: var(--gold-bright); background: rgba(228,185,84,0.12); }
-.curve-tag.stable { color: var(--ink-soft); }
 
 /* ---------- 90-day range / near-low ---------- */
 .price-range {
@@ -1081,10 +1066,6 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 }
 .price-range.near-low { color: var(--sage); }
 .price-range.near-low strong { color: var(--sage); }
-.price-forecast { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); margin-top: 3px; }
-.price-forecast.up { color: var(--burgundy-soft); }
-.price-forecast.down { color: var(--sage); }
-.price-forecast .fc-band { color: var(--ink-faded); }
 
 /* ---------- Portfolio ---------- */
 .portfolio {
@@ -1248,13 +1229,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .bd-name { font-family: var(--font-ui); font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink-strong); }
 .bd-price { font-family: var(--font-ui); font-size: 14px; color: var(--burgundy); font-weight: 700; }
 .bd-disc { color: var(--gold-bright); font-size: 11px; margin-left: 4px; font-weight: 600; }
-.bd-low { font-family: var(--font-mono); font-size: 10px; color: var(--sage); }
 
 /* Crack-arbitrage section — distinct from price deals */
-.crack-deals { border-color: rgba(110,138,85,0.4); background: var(--surface); }
-.crack-deals .best-deals-head { color: var(--success); }
-.crack-deals-note { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); margin-top: 10px; line-height: 1.5; }
-.bd-margin { color: var(--success); font-weight: 600; }
 
 /* Sealed box section */
 .box-section { border: 1px solid var(--hairline); background: var(--surface); border-radius: var(--radius); margin-bottom: 24px; }
@@ -1289,8 +1265,6 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .box-item-link:hover { color: var(--gold-bright); text-decoration: underline; }
 .box-item .sparkline { margin-left: 4px; }
 .box-spark { margin-top: 2px; }
-.bd-crackline { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
-.bd-crackline .bd-sealed { color: var(--burgundy); }
 
 /* ---------- Price target (watched cards) ---------- */
 .target-row {
@@ -1368,16 +1342,13 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   <div class="best-deals-grid" id="unifiedFeedGrid"></div>
 </section>
 
-<section id="bestDeals" class="best-deals" hidden>
-  <div class="best-deals-head">🔥 Best deals right now</div>
-  <div class="best-deals-grid" id="bestDealsGrid"></div>
-</section>
-
-<section id="crackDeals" class="best-deals crack-deals" hidden>
-  <div class="best-deals-head">💎 Best value to crack · net profit if you crack &amp; sell</div>
-  <div class="best-deals-grid" id="crackDealsGrid"></div>
-  <div class="crack-deals-note">Net = realistic <strong>sell</strong> value of the singles minus the live sealed price. Sell value uses Card Kingdom's real buylist where available; TCGPlayer sell is estimated at 70% of retail (<strong>*</strong>) since no TCG buylist feed exists. Excludes shipping, fees, card condition, and the time/effort to actually sell ~100 singles — treat as an upper bound.</div>
-</section>
+<!-- "Best deals right now" and "Best value to crack" lived here. Both were
+     removed: the deals panel overlapped the unified feed on 4 of its 6 picks
+     (and Deal of the Day is the feed's #1 by construction), while the crack
+     panel typically listed 2 decks, the second worth ~$0.13 of net profit.
+     Four panels recommending eight decks in four voices is noise; the unified
+     feed survives because it is the only one spanning decks, boxes AND
+     bundles. Per-deck crack value is still on each card. -->
 
 <div id="staleBanner" class="stale-banner" role="status"></div>
 <section class="stats">
@@ -2003,18 +1974,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     return { level, score, reasons };
   }
 
-  // Where a deck sits on the release price curve, by age since release.
-  function curvePosition(d) {
-    if (!d.releaseDate) return null;
-    const released = new Date(d.releaseDate).getTime();
-    if (isNaN(released)) return null;
-    const ageDays = (Date.now() - released) / 86400000;
-    if (ageDays < 0) return { label: "Preorder", cls: "new" };
-    if (ageDays < 14) return { label: "Just released", cls: "new" };
-    if (ageDays < 70) return { label: "Post-release dip", cls: "dip" };
-    if (ageDays < 182) return { label: "Stabilizing", cls: "stable" };
-    return { label: "Maturing ↑", cls: "mature" };
-  }
+  // curvePosition() was removed. It was a pure function of releaseDate — which
+  // the card already prints — and with a five-year catalog it read "Maturing ↑"
+  // on 105 of 115 decks, while its "Just released"/"Preorder" state matched
+  // none. A label that says the same thing on 91% of cards is not a label.
 
   // F7: at the lowest price across all recorded history (not just "near").
   // Our history is the full tracked window, so low == all-time-tracked low.
@@ -2025,38 +1988,13 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     return ep <= st.low * 1.01;
   }
 
-  // F5: naive price projection ~30 days out, from the recent linear trend,
-  // damped (markets mean-revert; raw extrapolation overshoots). Returns
-  // { proj, lowB, highB, dirn } or null when history is too thin.
-  function priceForecast(d) {
-    const series = (PRICE_HISTORY && PRICE_HISTORY[d.id]) || [];
-    // Keep date + price together so the slope is per-DAY, not per-sample
-    // (history entries are only written on price changes, not daily).
-    const priced = series.filter(s => typeof histPrice(s) === "number" && s.date);
-    if (priced.length < 8) return null;         // need a few weeks of data
-    const ep = effectivePrice(d);
-    if (ep == null) return null;
-    const recent = priced.slice(-14);
-    const n = recent.length;
-    const t0 = new Date(recent[0].date).getTime();
-    const xs = recent.map(s => (new Date(s.date).getTime() - t0) / 86400000); // days
-    const ys = recent.map(histPrice);
-    const mx = xs.reduce((a, b) => a + b, 0) / n;
-    const my = ys.reduce((a, b) => a + b, 0) / n;
-    let num = 0, den = 0;
-    for (let i = 0; i < n; i++) { num += (xs[i] - mx) * (ys[i] - my); den += (xs[i] - mx) ** 2; }
-    const slope = den ? num / den : 0;          // dollars per day
-    const damp = 0.5;                            // halve raw extrapolation
-    const proj = Math.max(0, ep + slope * 30 * damp);
-    // Confidence band from recent volatility (std dev of step-to-step moves).
-    const diffs = [];
-    for (let i = 1; i < ys.length; i++) diffs.push(ys[i] - ys[i - 1]);
-    const md = diffs.reduce((a, b) => a + b, 0) / (diffs.length || 1);
-    const variance = diffs.reduce((a, b) => a + (b - md) ** 2, 0) / (diffs.length || 1);
-    const band = Math.sqrt(variance) * 5;       // ~5-day-ish spread
-    const dirn = proj > ep * 1.03 ? "up" : proj < ep * 0.97 ? "down" : "flat";
-    return { proj, lowB: Math.max(0, proj - band), highB: proj + band, dirn, now: ep };
-  }
+  // priceForecast() was removed. It damped its own extrapolation by half
+  // (an admission the model overshoots), ran on at most 14 change-triggered
+  // points, and produced confidence bands up to 290% of the price. Worse, it
+  // contradicted the buy signal on 23 decks: both read the same trend, but the
+  // signal rendered it as "trending down — good buy" while the forecast three
+  // lines below rendered it as "cheaper in 30 days — wait". One input must not
+  // produce two opposite recommendations.
 
   // Live crack value (sum of singles) from the scraper, if present.
   function getCrackValue(d) {
@@ -2404,7 +2342,6 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const isDeal = pct >= 20;
     const ep = effectivePrice(d);
     const sig = buySignal(d);
-    const curve = curvePosition(d);
     const stats = getPriceStats(d);
     const target = targets[d.id];
     const belowTarget = target != null && ep != null && ep <= target;
@@ -2482,13 +2419,6 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
                  : nearLow ? ' · <strong>near low</strong>' : '';
       const rangeLine = `<div class="price-range${(atLow || nearLow) ? " near-low" : ""}">${stats.days}d $${stats.low.toFixed(0)}–$${stats.high.toFixed(0)}${flag}</div>`;
       zulusLine = rangeLine + zulusLine;
-    }
-
-    // F5: forecast line (only when we have enough history to be meaningful).
-    const fc = priceForecast(d);
-    if (fc) {
-      const arrow = fc.dirn === "up" ? "↑" : fc.dirn === "down" ? "↓" : "→";
-      zulusLine += `<div class="price-forecast ${fc.dirn}">~30d: ${arrow} $${fc.proj.toFixed(0)} <span class="fc-band">($${fc.lowB.toFixed(0)}–$${fc.highB.toFixed(0)})</span></div>`;
     }
 
     // Best price across all in-stock vendors (TCGPlayer / Zulus / Card Kingdom).
@@ -2630,11 +2560,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         </div>`;
     }
 
-    // Signals row: buy-signal chip + release-curve tag.
+    // Signals row: one verdict chip, with its reasons in the tooltip.
     const sigLabels = { buy: "🟢 Good buy", ok: "🟡 Fair", hold: "🔴 Hold" };
     const sigChip = sig ? `<span class="buy-signal ${sig.level}" title="${escapeHtml(sig.reasons.join(" · "))}">${sigLabels[sig.level]}</span>` : "";
-    const curveTag = curve ? `<span class="curve-tag ${curve.cls}">${curve.label}</span>` : "";
-    const signalsRow = (sigChip || curveTag) ? `<div class="signals-row">${sigChip}${curveTag}</div>` : "";
+    const signalsRow = sigChip ? `<div class="signals-row">${sigChip}</div>` : "";
 
     // Price-target input (watched cards only).
     const targetLine = isWatching ? `
@@ -2870,50 +2799,9 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       </button>`).join("");
   }
 
-  // ---------- Best deals ----------
-  function renderBestDeals() {
-    const el = $("bestDeals"), dgrid = $("bestDealsGrid");
-    if (!el || !dgrid) return;
-    const scored = PRECONS.map(d => {
-      const ep = effectivePrice(d);
-      if (ep == null) return null;
-      const disc = discountPct(d);
-      const st = getPriceStats(d);
-      const nearLow = st ? (ep <= st.low * 1.05) : false;
-      return { d, ep, disc, nearLow, rank: disc + (nearLow ? 15 : 0) };
-    }).filter(Boolean).filter(x => x.disc >= 10 || x.nearLow);
-    scored.sort((a, b) => b.rank - a.rank);
-    const top = scored.slice(0, 5);
-    if (top.length === 0) { el.hidden = true; return; }
-    el.hidden = false;
-    dgrid.innerHTML = top.map(x => `
-      <button type="button" class="best-deal" data-deal-id="${x.d.id}">
-        <span class="bd-name">${escapeHtml(x.d.name)}</span>
-        <span class="bd-price">$${x.ep.toFixed(2)}${x.disc > 0 ? `<span class="bd-disc">${x.disc.toFixed(0)}% off</span>` : ""}</span>
-        ${x.nearLow ? '<span class="bd-low">near 90d low</span>' : ""}
-      </button>`).join("");
-  }
-
-  // ---------- Crack-value arbitrage ----------
-  function renderCrackDeals() {
-    const el = $("crackDeals"), cgrid = $("crackDealsGrid");
-    if (!el || !cgrid) return;
-    const scored = PRECONS.map(d => {
-      const a = crackArbitrage(d);
-      return a ? { d, ...a } : null;
-    }).filter(Boolean)
-      .filter(x => x.margin > 0)          // only decks worth more cracked than sealed
-      .sort((a, b) => b.margin - a.margin);
-    const top = scored.slice(0, 6);
-    if (top.length === 0) { el.hidden = true; return; }
-    el.hidden = false;
-    cgrid.innerHTML = top.map(x => `
-      <button type="button" class="best-deal" data-deal-id="${x.d.id}">
-        <span class="bd-name">${escapeHtml(x.d.name)}</span>
-        <span class="bd-price"><span class="bd-margin">+$${x.margin.toFixed(0)}</span> <span style="color:var(--ink-faded);">net (${x.pct.toFixed(0)}%)</span></span>
-        <span class="bd-crackline">sell $${x.sell.toFixed(0)} ${x.vendor === "Card Kingdom" ? "CK buylist" : "TCG est*"} vs <span class="bd-sealed">$${x.sealed.toFixed(0)} sealed</span></span>
-      </button>`).join("");
-  }
+  // renderBestDeals() and renderCrackDeals() were removed — see the note where
+  // their sections used to live in the markup. crackArbitrage() is retained: it
+  // still drives the per-card "profit to crack" flag and the crack-value sort.
 
   // ---------- Sealed boxes ----------
   function renderBoxes() {
@@ -3359,9 +3247,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
     $("themeToggle").addEventListener("click", toggleTheme);
     $("exportAlertsBtn").addEventListener("click", exportAlerts);
-    // Deal sections + the deal-of-day banner open the price chart on click.
-    ["dealOfDay", "bestDeals", "crackDeals"].forEach(id => {
+    // The deal-of-day banner opens the price chart on click.
+    ["dealOfDay"].forEach(id => {
       const root = $(id);
+      if (!root) return;
       root.addEventListener("click", e => {
         const btn = e.target.closest("[data-deal-id]");
         if (btn) openChart(btn.dataset.dealId);
@@ -3447,8 +3336,6 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       renderStats();
       renderDealOfDay();
       renderUnifiedFeed();
-      renderBestDeals();
-      renderCrackDeals();
       renderBoxes();
       renderPortfolio();
       if (CARD_INDEX) $("stapleFinder").hidden = false;
