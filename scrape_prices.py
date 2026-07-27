@@ -992,7 +992,20 @@ def _classify_box(name: str) -> str | None:
 BOX_TYPE_LABELS = {"play": "Booster Box", "collector": "Collector Booster Box", "jumpstart": "Jumpstart Box"}
 
 # Packs per display box, by our box type and MTGJSON booster key.
-BOX_PACKS = {"play": 30, "collector": 12, "jumpstart": 24}
+# Packs per display box, by the booster KIND actually printed on the SKU.
+# This must track the SKU we priced, not our coarse box "type": half of what we
+# classify as "play" are pre-2024 Draft Booster displays, which hold 36 packs,
+# not 30. Using 30 for those understated their EV by ~17%.
+PACKS_BY_KIND = {"draft": 36, "set": 30, "play": 30, "collector": 12, "jumpstart": 24}
+
+
+def packs_for_sku(sku_name: str, box_type: str) -> int:
+    """How many packs the box actually contains, read off the product name."""
+    n = (sku_name or "").lower()
+    for kind in ("collector", "jumpstart", "draft", "set", "play"):
+        if f"{kind} booster" in n:
+            return PACKS_BY_KIND[kind]
+    return PACKS_BY_KIND.get(box_type, 1)
 BOX_BOOSTER_KEY = {"play": "play", "collector": "collector", "jumpstart": "jumpstart"}
 
 
@@ -1070,7 +1083,8 @@ def _pack_ev_from_booster(booster_cfg: dict, price_of_uuid):
     return ev, coverage
 
 
-def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session, want_types: set) -> dict:
+def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
+                   want_types: set, sku_names: dict | None = None) -> dict:
     """Return {box_type: ev_per_box} for the given set, using MTGJSON's set
     file (booster config + per-card foil/nonfoil prices). Estimate — see the
     UI note. Returns {} when the set/booster/price data isn't available."""
@@ -1116,7 +1130,8 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session, 
         # Skip publishing a misleadingly-low EV when most slots had no price.
         if pack_ev is None or coverage < 0.5:
             continue
-        out[t] = round(pack_ev * BOX_PACKS.get(t, 1), 2)
+        # Multiply by the pack count of the SKU we actually priced.
+        out[t] = round(pack_ev * packs_for_sku((sku_names or {}).get(t, ""), t), 2)
     return out
 
 
@@ -1592,7 +1607,9 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
         if rows:
             # Expected-value estimate per box type (best-effort).
             try:
-                ev_map = compute_box_ev(set_name, setcode_map, session, {r["type"] for r in rows})
+                ev_map = compute_box_ev(set_name, setcode_map, session,
+                                        {r["type"] for r in rows},
+                                        {r["type"]: r.get("name") or "" for r in rows})
             except Exception as e:
                 print(f"  ev: [{set_name}] failed: {e}", flush=True)
                 ev_map = {}

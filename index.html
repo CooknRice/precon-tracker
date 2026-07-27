@@ -1919,6 +1919,17 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     return v;
   }
 
+  // Calendar days actually spanned by a history series. History entries are
+  // written only when a price CHANGES, so entry count is not day count —
+  // reporting the count made every card understate its own window (e.g. "74d"
+  // for a series that really covers 89 days).
+  function spanDays(series) {
+    const dates = (series || []).map(s => s && s.date).filter(Boolean).sort();
+    if (dates.length < 2) return dates.length;
+    const ms = new Date(dates[dates.length - 1]) - new Date(dates[0]);
+    return Number.isFinite(ms) ? Math.max(1, Math.round(ms / 86400000)) : dates.length;
+  }
+
   // 90-day price stats from history: low/high/current + where current sits.
   function getPriceStats(d) {
     const series = (PRICE_HISTORY && PRICE_HISTORY[d.id]) || [];
@@ -1941,7 +1952,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     } else if (recent.length === 2 && recent[0] > 0) {
       trend = (recent[1] - recent[0]) / recent[0];
     }
-    return { low, high, now, posInRange, trend, days: pts.length };
+    return { low, high, now, posInRange, trend, days: spanDays(series) };
   }
 
   function isNearLow(d) {
@@ -1981,11 +1992,30 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
   // F7: at the lowest price across all recorded history (not just "near").
   // Our history is the full tracked window, so low == all-time-tracked low.
+  // History keys, by the vendor label bestVendorPrice() reports.
+  const VENDOR_HISTORY_KEY = {
+    "TCGPlayer": "tcg", "Card Kingdom": "ck", "Mana Pool": "mp", "Zulus": "zulus",
+  };
+  const MIN_BASIS_DAYS = 21;   // how long a vendor must have been watched
+
+  // "★ all-time low" must compare like with like. The `best` series silently
+  // changes basis whenever a vendor is onboarded: adding Mana Pool made `best`
+  // drop on 20 decks in a single day purely because a new, cheaper quote
+  // appeared — not because the market moved. So before claiming an all-time
+  // low, require that the vendor currently winning has its OWN long-enough
+  // history, and compare today's price against that vendor's own past prices.
   function isAllTimeLow(d) {
-    const ep = effectivePrice(d);
     const st = getPriceStats(d);
-    if (ep == null || !st || st.days < 7) return false;  // need enough history
-    return ep <= st.low * 1.01;
+    const bv = bestVendorPrice(d);
+    if (!st || !bv || st.days < 7) return false;
+    const key = VENDOR_HISTORY_KEY[bv.best.vendor];
+    const series = (PRICE_HISTORY && PRICE_HISTORY[d.id]) || [];
+    if (!key) return false;
+    const own = series.filter(s => typeof s[key] === "number");
+    // Too new to make an "all-time" claim about — say nothing rather than lie.
+    if (own.length < 2 || spanDays(own) < MIN_BASIS_DAYS) return false;
+    const ownLow = Math.min(...own.map(s => s[key]));
+    return bv.best.price <= ownLow * 1.01;
   }
 
   // priceForecast() was removed. It damped its own extrapolation by half
