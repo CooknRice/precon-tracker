@@ -1,0 +1,125 @@
+name: Site health
+
+# Checks that the PUBLISHED site is actually up and serving current data.
+#
+# Why this exists: on 2026-08-12 GitHub Pages was switched off on this repo.
+# The scraper kept running, kept committing real price data, and kept reporting
+# success every single day — while cooknrice.github.io/precon-tracker returned
+# 404 to every visitor. Every workflow was green for two days with the product
+# completely down, because nothing here ever looked at the site itself.
+#
+# Everything else in this repo tests the DATA. This tests the DELIVERY.
+
+on:
+  schedule:
+    # 18:00 UTC — comfortably after the 13:00 UTC scrape, which in practice
+    # starts late (GitHub queues scheduled jobs) and finishes around 14:30 UTC,
+    # plus a Pages rebuild. The wide gap keeps a slow queue from false-alarming.
+    - cron: '0 18 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+  # Age at which the served data is considered stale. Normal age at 18:00 UTC is
+  # ~3-4h. A completely missed scrape shows up as ~28h, so 26h catches a skipped
+  # day without tripping on a merely slow one.
+  MAX_AGE_HOURS: '26'
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Resolve the published URL
+        id: url
+        run: |
+          owner="${GITHUB_REPOSITORY%%/*}"
+          name="${GITHUB_REPOSITORY##*/}"
+          # Pages hostnames are always lowercase; repo paths keep their case.
+          echo "base=https://${owner,,}.github.io/${name}" >> "$GITHUB_OUTPUT"
+
+      - name: Site responds
+        run: |
+          base='${{ steps.url.outputs.base }}'
+          echo "Checking $base/"
+          # Retry a few times so a single transient blip is not an outage.
+          for i in 1 2 3 4 5; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$base/") || code=000
+            echo "  attempt $i: HTTP $code"
+            [ "$code" = "200" ] && exit 0
+            sleep 10
+          done
+          echo "::error::Site is not serving: $base/ returned HTTP $code"
+          echo "If this is 404, GitHub Pages is probably disabled — check Settings > Pages." >&2
+          exit 1
+
+      - name: Served data is current
+        run: |
+          base='${{ steps.url.outputs.base }}'
+          curl -sf --max-time 60 "$base/prices.json" -o served.json || {
+            echo "::error::Could not fetch $base/prices.json"; exit 1; }
+          python - <<'PY'
+          import json, os, sys
+          from datetime import datetime, timezone
+
+          limit = float(os.environ["MAX_AGE_HOURS"])
+          try:
+              data = json.load(open("served.json"))
+          except json.JSONDecodeError as e:
+              print(f"::error::The site is serving prices.json but it is not valid JSON: {e}")
+              sys.exit(1)
+
+          stamp = data.get("updated_at")
+          if not stamp:
+              print("::error::Served prices.json has no updated_at field")
+              sys.exit(1)
+
+          age = (datetime.now(timezone.utc) - datetime.fromisoformat(stamp)).total_seconds() / 3600
+          decks = data.get("deck_count")
+          print(f"served updated_at={stamp}  age={age:.1f}h  deck_count={decks}")
+
+          # A 200 with an empty payload is still a broken site.
+          if not decks:
+              print("::error::Served prices.json reports no decks")
+              sys.exit(1)
+
+          if age > limit:
+              print(f"::error::Served data is {age:.1f}h old (limit {limit:.0f}h) — "
+                    "either the scrape did not run or Pages is not republishing it")
+              sys.exit(1)
+
+          print(f"OK: site is up and serving {decks} decks, {age:.1f}h old")
+          PY
+
+      - name: Open an issue if the site is down
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Site health check failed"
+          # Only one open issue at a time, so a multi-day outage does not spam.
+          existing=$(gh issue list --state open --search "$title in:title" \
+                       --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            echo "Issue #$existing already open; adding a comment instead."
+            gh issue comment "$existing" --body "Still failing — $RUN_URL"
+            exit 0
+          fi
+          gh issue create --title "$title" --body \
+          "The published site is down or serving stale data.
+
+          Run: $RUN_URL
+
+          Most likely cause, based on the 2026-08-12 outage: **GitHub Pages got
+          disabled**. Check Settings > Pages — source should be \`main\` / \`(root)\`.
+          Re-enable from the CLI with:
+
+          \`\`\`
+          gh api -X POST repos/${{ github.repository }}/pages --input - <<< '{\"source\":{\"branch\":\"main\",\"path\":\"/\"}}'
+          \`\`\`
+          "
