@@ -1837,8 +1837,8 @@ def update_history(decks: list, tcg_results: dict, zulus_results: dict,
     File shape:
       { "decks": { deck_id: [{date, tcg, zulus, ck, mp, best}, ...] },
         "boxes": { "<set>::<type>": [{date, price}, ...] } }
-    `best` is the cheapest available vendor price that day (drives alerts and
-    the all-time-low badge). Skips appending if today's present-vendor prices
+    `best` is the cheapest available vendor price that day (drives the all
+    time low badge). Skips appending if today's present-vendor prices
     match the most-recent entry's, so the file stays small for quiet items.
     """
     history_path = Path(__file__).parent / "prices_history.json"
