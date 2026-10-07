@@ -1,5 +1,120 @@
 [
   {
+    "id": "multiverse-reforged",
+    "scryCheckSlug": "multiverse-reforged",
+    "name": "Multiverse Reforged",
+    "set": "Reality Fracture",
+    "setType": "standard",
+    "releaseDate": "2026-10-02",
+    "colors": [
+      "W",
+      "U",
+      "B",
+      "R"
+    ],
+    "commander": "Jace, Multiverse Architect",
+    "desc": "Four color planeswalker deck led by Jace: each turn he draws two cards and filters one away, he can trade one of your creatures or planeswalkers for a random new one from the top of your library, and opponents must pay a tax to attack him.",
+    "msrp": 49.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-10-02",
+    "powerScore": 4.7,
+    "powerBracket": "B2"
+  },
+  {
+    "id": "calling-all-angels",
+    "scryCheckSlug": "calling-all-angels",
+    "name": "Calling All Angels",
+    "set": "Foundations Commander Decks",
+    "setType": "commander",
+    "releaseDate": "2026-10-02",
+    "colors": [
+      "W"
+    ],
+    "commander": "Giada, Font of Hope",
+    "desc": "Mono white Angels: Giada makes every Angel enter with extra +1/+1 counters for each Angel already in play, and taps for mana to cast them. A beginner friendly flying army that snowballs.",
+    "msrp": 29.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-10-02",
+    "powerScore": 5.0,
+    "powerBracket": "B3"
+  },
+  {
+    "id": "keen-engineering",
+    "scryCheckSlug": "keen-engineering",
+    "name": "Keen Engineering",
+    "set": "Foundations Commander Decks",
+    "setType": "commander",
+    "releaseDate": "2026-10-02",
+    "colors": [
+      "U"
+    ],
+    "commander": "Sai, Master Thopterist",
+    "desc": "Mono blue artifacts: every artifact you cast makes a 1/1 flying Thopter with Sai, and spare artifacts can be sacrificed to draw cards. A simple, steady value engine.",
+    "msrp": 29.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-10-02"
+  },
+  {
+    "id": "wretched-ranks",
+    "scryCheckSlug": "wretched-ranks",
+    "name": "Wretched Ranks",
+    "set": "Foundations Commander Decks",
+    "setType": "commander",
+    "releaseDate": "2026-10-02",
+    "colors": [
+      "B"
+    ],
+    "commander": "Ghoulcaller Gisa",
+    "desc": "Mono black Zombies and sacrifice: Gisa turns one creature into a horde of 2/2 Zombies equal to its power, so every body you sacrifice comes back as an army.",
+    "msrp": 29.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-10-02",
+    "powerScore": 4.5,
+    "powerBracket": "B2"
+  },
+  {
+    "id": "reign-of-dragons",
+    "scryCheckSlug": "reign-of-dragons",
+    "name": "Reign of Dragons",
+    "set": "Foundations Commander Decks",
+    "setType": "commander",
+    "releaseDate": "2026-10-02",
+    "colors": [
+      "R"
+    ],
+    "commander": "Lathliss, Dragon Queen",
+    "desc": "Mono red Dragons: each nontoken Dragon you play brings a free 5/5 flying Dragon token with Lathliss, and she can pump the whole flight. Big fliers, fast clocks.",
+    "msrp": 29.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-10-02",
+    "powerScore": 4.8,
+    "powerBracket": "B2"
+  },
+  {
+    "id": "tramplesaurus-rex",
+    "scryCheckSlug": "tramplesaurus-rex",
+    "name": "Tramplesaurus Rex",
+    "set": "Foundations Commander Decks",
+    "setType": "commander",
+    "releaseDate": "2026-10-02",
+    "colors": [
+      "G"
+    ],
+    "commander": "Ghalta, Primal Hunger",
+    "desc": "Mono green stompy: Elf and Druid ramp into Dinosaurs and other big creatures, then Ghalta costs almost nothing to cast and tramples over blockers.",
+    "msrp": 29.99,
+    "currentPrice": null,
+    "priceSource": null,
+    "priceDate": "2026-10-02",
+    "powerScore": 5.3,
+    "powerBracket": "B3"
+  },
+  {
     "id": "avengers-assemble",
     "scryCheckSlug": "avengers-assemble",
     "name": "Avengers Assemble",
