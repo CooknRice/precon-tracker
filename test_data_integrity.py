@@ -295,7 +295,7 @@ def test_boxes_manapool():
 
 def test_history_best_is_min():
     """`best` must equal the cheapest vendor recorded that day — it drives the
-    all-time-low badge and the alerts, so a wrong value misleads directly."""
+    all time low badge, so a wrong value misleads directly."""
     p = ROOT / "prices_history.json"
     if not p.exists():
         return
