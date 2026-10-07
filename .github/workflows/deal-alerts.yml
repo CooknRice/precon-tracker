@@ -28,7 +28,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Check out repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 2
 
@@ -152,6 +152,15 @@ jobs:
           # name with shell metacharacters can't be injected into the command.
           TITLE: ${{ steps.detect.outputs.title }}
         run: |
+          # An issue can only carry a label that already exists. This label was
+          # never created, so from the start every run that had drops to report
+          # failed right here and not a single alert was ever delivered (the
+          # "successful" runs were only the days with nothing to say). --force
+          # makes this idempotent: it creates the label once, then just
+          # reasserts it on later runs.
+          gh label create deal-alert --color d97485 \
+            --description "Automated price drop alerts from deal-alerts.yml" --force
+
           # Dedup: reuse the most recent open deal-alert issue (comment on it)
           # instead of spawning a new one every run, to avoid notification noise.
           existing=$(gh issue list --label deal-alert --state open --limit 1 --json number --jq '.[0].number' 2>/dev/null || echo "")
