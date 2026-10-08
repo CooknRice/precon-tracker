@@ -177,8 +177,8 @@ logic is in the inline `<script>`.
   / `.price-msrp` / `.price-live-dot` / `.price-live-other` / `.price-low-note`
   / `.price-unverified` / `.price-checkprompt`.
 - Value lines (stacked under price): `.price-range` (90-day range + near-low /
-  ★ all-time-low) · `.price-zulus` (second-vendor rows for **Zulus** and **Card
-  Kingdom**, `.cheaper` when they beat TCG, `.vendor-oos` when out of stock) ·
+  ★ all-time-low) · `.price-vendor` (second vendor row for **Card Kingdom**,
+  `.cheaper` when it beats TCG, `.vendor-oos` when out of stock) ·
   `.price-forecast` (~30-day projection) · `.price-best` (`🏆 Best of N` cross-
   vendor winner, `.price-best-save`).
 - Singles: `.crack-value` (`.worth` / `▲ crack-flag`) · `.chase-cards`
@@ -243,6 +243,6 @@ logic is in the inline `<script>`.
   Pages. A service worker (`sw.js`) caches the shell + JSON.
 - **Canonical repo:** `~/precon-tracker` (has the GitHub remote / Pages deploy).
   Point design tooling and round-trips here — not at any local preview copy.
-- **Vendors:** TCGPlayer (via TCGCSV), Card Kingdom (public pricelist API),
-  Zulus (direct). Singles/crack data via MTGJSON. Amazon is intentionally out of
-  scope.
+- **Vendors:** TCGPlayer (via TCGCSV) and Card Kingdom (public pricelist API)
+  only. Singles/crack data via MTGJSON. Amazon, Zulus Games and Mana Pool are
+  intentionally out of scope (see `DATA-SOURCES.md`).

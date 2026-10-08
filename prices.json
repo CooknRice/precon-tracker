@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-07T19:20:57.917855+00:00",
+  "updated_at": "2026-10-08T05:06:15.265821+00:00",
   "deck_count": 121,
   "vendors": {
     "cardkingdom": {
@@ -207,14 +207,14 @@
         "buy": 45.0
       },
       "living-energy": {
-        "price": 34.99,
+        "price": 32.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/aetherdrift-commander-deck-living-energy",
         "status": "ok",
         "qty": 1,
         "buy": null
       },
       "eternal-might": {
-        "price": 39.99,
+        "price": 44.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/aetherdrift-commander-deck-eternal-might",
         "status": "ok",
         "qty": 4,
@@ -575,7 +575,7 @@
         "price": 109.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/phyrexia-all-will-be-one-commander-deck-rebellion-rising",
         "status": "ok",
-        "qty": 7,
+        "qty": 6,
         "buy": 71.0
       },
       "corrupting-influence": {
@@ -708,7 +708,7 @@
         "price": 89.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/kamigawa-neon-dynasty-commander-deck-upgrades-unleashed",
         "status": "ok",
-        "qty": 8,
+        "qty": 9,
         "buy": 58.0
       },
       "buckle-up": {
@@ -829,745 +829,17 @@
         "status": "no-match"
       }
     },
-    "zulus": {
-      "multiverse-reforged": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Multiverse%20Reforged",
-        "status": "no-match",
-        "snippet": null
-      },
-      "calling-all-angels": {
-        "price": 29.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-foundations-commander-deck-calling-all-angels?_pos=1&_psq=Calling+All+Angels&_psid=ede545330&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Foundations: Commander Deck - Calling All Angels"
-      },
-      "keen-engineering": {
-        "price": 29.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-foundations-commander-deck-keen-engineering-1?_pos=1&_psq=Keen+Engineering&_psid=b8d171051&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Foundations: Commander Deck - Keen Engineering"
-      },
-      "wretched-ranks": {
-        "price": 29.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-foundations-commander-deck-wretched-ranks-1?_pos=1&_psq=Wretched+Ranks&_psid=731eef428&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Foundations: Commander Deck - Wretched Ranks"
-      },
-      "reign-of-dragons": {
-        "price": 29.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-foundations-commander-deck-reign-of-dragons-1?_pos=1&_psq=Reign+of+Dragons&_psid=351a3e75e&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Foundations: Commander Deck - Reign of Dragons"
-      },
-      "tramplesaurus-rex": {
-        "price": 29.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-foundations-commander-deck-tramplesaurus-rex-1?_pos=1&_psq=Tramplesaurus+Rex&_psid=b9fad48cd&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Foundations: Commander Deck - Tramplesaurus Rex"
-      },
-      "avengers-assemble": {
-        "price": 54.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-marvel-super-heroes-commander-deck-avengers-assemble?_pos=5&_psq=Avengers+Assemble&_psid=d7f9791a2&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Marvel Super Heroes: Commander Deck: Avengers Assemble"
-      },
-      "wakanda-forever": {
-        "price": 44.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-marvel-super-heroes-commander-deck-wakanda-forever?_pos=2&_psq=Wakanda+Forever&_psid=acbadf3e6&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Marvel Super Heroes: Commander Deck: Wakanda Forever"
-      },
-      "the-fantastic-four": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=The%20Fantastic%20Four",
-        "status": "no-match",
-        "snippet": null
-      },
-      "doom-prevails": {
-        "price": 74.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-marvel-super-heroes-commander-deck-doom-prevails?_pos=1&_psq=Doom+Prevails&_psid=a2c1fe13c&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Marvel Super Heroes: Commander Deck: Doom Prevails"
-      },
-      "quandrix-unlimited": {
-        "price": 34.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-secrets-of-strixhaven-commander-deck-quandrix-unlimited?_pos=1&_psq=Quandrix+Unlimited&_psid=bd0562e31&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Secrets of Strixhaven: Commander Deck: Quandrix Unlimited"
-      },
-      "silverquill-influence": {
-        "price": 44.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-secrets-of-strixhaven-commander-deck-silverquill-influence?_pos=1&_psq=Silverquill+Influence&_psid=80c977fed&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Secrets of Strixhaven: Commander Deck: Silverquill Influence"
-      },
-      "prismari-artistry": {
-        "price": 34.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-secrets-of-strixhaven-commander-deck-prismari-artistry?_pos=1&_psq=Prismari+Artistry&_psid=e3923d6a7&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Secrets of Strixhaven: Commander Deck: Prismari Artistry"
-      },
-      "lorehold-spirit": {
-        "price": 34.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-secrets-of-strixhaven-commander-decks?_pos=1&_psq=Lorehold+Spirit&_psid=6efd53bc6&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Secrets of Strixhaven: Commander Deck: Lorehold Spirit"
-      },
-      "witherbloom-pestilence": {
-        "price": 44.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-secrets-of-strixhaven-commander-deck-witherbloom-pestilence?_pos=1&_psq=Witherbloom+Pestilence&_psid=5228e063c&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Secrets of Strixhaven: Commander Deck: Witherbloom Pestilence"
-      },
-      "turtle-power": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Turtle%20Power%21",
-        "status": "no-match",
-        "snippet": null
-      },
-      "dance-of-the-elements": {
-        "price": 34.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-lorwyn-eclipsed-commander-deck-dance-of-the-elements?_pos=1&_psq=Dance+of+the+Elements&_psid=56c40594f&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Lorwyn Eclipsed: Commander Deck: Dance of the Elements"
-      },
-      "blight-curse": {
-        "price": 34.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-lorwyn-eclipsed-commander-deck-blight-curse?_pos=1&_psq=Blight+Curse&_psid=a29557a15&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Lorwyn Eclipsed: Commander Deck: Blight Curse"
-      },
-      "counter-intelligence": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Counter%20Intelligence",
-        "status": "no-match",
-        "snippet": null
-      },
-      "world-shaper": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=World%20Shaper",
-        "status": "no-match",
-        "snippet": null
-      },
-      "revival-trance": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Revival%20Trance",
-        "status": "no-match",
-        "snippet": null
-      },
-      "limit-break": {
-        "price": 69.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-universes-beyond-final-fantasy-limit-break-commander-deck-game-edition?_pos=1&_psq=Limit+Break&_psid=00560bc95&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Universes Beyond: Final Fantasy: Limit Break Commander Deck - Game Edition"
-      },
-      "counter-blitz": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Counter%20Blitz",
-        "status": "no-match",
-        "snippet": null
-      },
-      "scions-and-spellcraft": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Scions%20%26%20Spellcraft",
-        "status": "no-match",
-        "snippet": null
-      },
-      "jeskai-striker": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Jeskai%20Striker",
-        "status": "no-match",
-        "snippet": null
-      },
-      "abzan-armor": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Abzan%20Armor",
-        "status": "no-match",
-        "snippet": null
-      },
-      "sultai-arisen": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Sultai%20Arisen",
-        "status": "no-match",
-        "snippet": null
-      },
-      "mardu-surge": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Mardu%20Surge",
-        "status": "no-match",
-        "snippet": null
-      },
-      "temur-roar": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Temur%20Roar",
-        "status": "no-match",
-        "snippet": null
-      },
-      "living-energy": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Living%20Energy",
-        "status": "no-match",
-        "snippet": null
-      },
-      "eternal-might": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Eternal%20Might",
-        "status": "no-match",
-        "snippet": null
-      },
-      "miracle-worker": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Miracle%20Worker",
-        "status": "no-match",
-        "snippet": null
-      },
-      "death-toll": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Death%20Toll",
-        "status": "no-match",
-        "snippet": null
-      },
-      "jump-scare": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Jump%20Scare%21",
-        "status": "no-match",
-        "snippet": null
-      },
-      "endless-punishment": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Endless%20Punishment",
-        "status": "no-match",
-        "snippet": null
-      },
-      "family-matters": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Family%20Matters",
-        "status": "no-match",
-        "snippet": null
-      },
-      "squirreled-away": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Squirreled%20Away",
-        "status": "no-match",
-        "snippet": null
-      },
-      "animated-army": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Animated%20Army",
-        "status": "no-match",
-        "snippet": null
-      },
-      "peace-offering-blb": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Peace%20Offering",
-        "status": "no-match",
-        "snippet": null
-      },
-      "animus-antiquity": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Animus%20Antiquity",
-        "status": "no-match",
-        "snippet": null
-      },
-      "master-of-keys-ac": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Master%20of%20Keys",
-        "status": "no-match",
-        "snippet": null
-      },
-      "creative-energy": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Creative%20Energy",
-        "status": "no-match",
-        "snippet": null
-      },
-      "eldrazi-incursion": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Eldrazi%20Incursion",
-        "status": "no-match",
-        "snippet": null
-      },
-      "graveyard-overdrive": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Graveyard%20Overdrive",
-        "status": "no-match",
-        "snippet": null
-      },
-      "tricky-terrain": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Tricky%20Terrain",
-        "status": "no-match",
-        "snippet": null
-      },
-      "most-wanted": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Most%20Wanted",
-        "status": "no-match",
-        "snippet": null
-      },
-      "grand-larceny": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Grand%20Larceny",
-        "status": "no-match",
-        "snippet": null
-      },
-      "quick-draw": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Quick%20Draw",
-        "status": "no-match",
-        "snippet": null
-      },
-      "desert-bloom": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Desert%20Bloom",
-        "status": "no-match",
-        "snippet": null
-      },
-      "scrappy-survivors": {
-        "price": 79.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-fallout-commander-decks?_pos=1&_psq=Scrappy+Survivors&_psid=bb2058cfe&_ss=e",
-        "status": "ok",
-        "snippet": "Magic The Gathering: Fallout: Commander Deck - Scrappy Survivors"
-      },
-      "mutant-menace": {
-        "price": 144.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-fallout-commander-deck-mutant-menace?_pos=2&_psq=Mutant+Menace&_psid=3e20cd534&_ss=e",
-        "status": "ok",
-        "snippet": "Magic The Gathering: Fallout: Commander Deck - Mutant Menace"
-      },
-      "hail-caesar": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Hail%2C%20Caesar",
-        "status": "no-match",
-        "snippet": null
-      },
-      "science": {
-        "price": 44.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-fallout-commander-deck-science?_pos=9&_psq=Science%21&_psid=c6e4051bb&_ss=e",
-        "status": "ok",
-        "snippet": "Magic The Gathering: Fallout: Commander Deck - Science!"
-      },
-      "deep-clue-sea": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Deep%20Clue%20Sea",
-        "status": "no-match",
-        "snippet": null
-      },
-      "revenant-recon": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Revenant%20Recon",
-        "status": "no-match",
-        "snippet": null
-      },
-      "blame-game": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Blame%20Game",
-        "status": "no-match",
-        "snippet": null
-      },
-      "deadly-disguise": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Deadly%20Disguise",
-        "status": "no-match",
-        "snippet": null
-      },
-      "ahoy-mateys": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Ahoy%20Mateys",
-        "status": "no-match",
-        "snippet": null
-      },
-      "veloci-ramp-tor": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Veloci-Ramp-Tor",
-        "status": "no-match",
-        "snippet": null
-      },
-      "blood-rites": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Blood%20Rites",
-        "status": "no-match",
-        "snippet": null
-      },
-      "explorers-of-the-deep": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Explorers%20of%20the%20Deep",
-        "status": "no-match",
-        "snippet": null
-      },
-      "blast-from-the-past": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Blast%20from%20the%20Past",
-        "status": "no-match",
-        "snippet": null
-      },
-      "timey-wimey": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Timey-Wimey",
-        "status": "no-match",
-        "snippet": null
-      },
-      "paradox-power": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Paradox%20Power",
-        "status": "no-match",
-        "snippet": null
-      },
-      "masters-of-evil": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Masters%20of%20Evil",
-        "status": "no-match",
-        "snippet": null
-      },
-      "virtue-and-valor": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Virtue%20and%20Valor",
-        "status": "no-match",
-        "snippet": null
-      },
-      "fae-dominion": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Fae%20Dominion",
-        "status": "no-match",
-        "snippet": null
-      },
-      "peace-offering-woe": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Peace%20Offering",
-        "status": "no-match",
-        "snippet": null
-      },
-      "faerie-schemes": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Faerie%20Schemes",
-        "status": "no-match",
-        "snippet": null
-      },
-      "sliver-swarm": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Sliver%20Swarm",
-        "status": "no-match",
-        "snippet": null
-      },
-      "eldrazi-unbound": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Eldrazi%20Unbound",
-        "status": "no-match",
-        "snippet": null
-      },
-      "enduring-enchantments": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Enduring%20Enchantments",
-        "status": "no-match",
-        "snippet": null
-      },
-      "planeswalker-party": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Planeswalker%20Party",
-        "status": "no-match",
-        "snippet": null
-      },
-      "the-hosts-of-mordor": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=The%20Hosts%20of%20Mordor",
-        "status": "no-match",
-        "snippet": null
-      },
-      "food-and-fellowship": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Food%20and%20Fellowship",
-        "status": "no-match",
-        "snippet": null
-      },
-      "elven-council": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Elven%20Council",
-        "status": "no-match",
-        "snippet": null
-      },
-      "riders-of-rohan": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Riders%20of%20Rohan",
-        "status": "no-match",
-        "snippet": null
-      },
-      "call-for-backup": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Call%20for%20Backup",
-        "status": "no-match",
-        "snippet": null
-      },
-      "divine-convocation": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Divine%20Convocation",
-        "status": "no-match",
-        "snippet": null
-      },
-      "growing-threat": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Growing%20Threat",
-        "status": "no-match",
-        "snippet": null
-      },
-      "cavalry-charge": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Cavalry%20Charge",
-        "status": "no-match",
-        "snippet": null
-      },
-      "tinker-time": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Tinker%20Time",
-        "status": "no-match",
-        "snippet": null
-      },
-      "rebellion-rising": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Rebellion%20Rising",
-        "status": "no-match",
-        "snippet": null
-      },
-      "corrupting-influence": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Corrupting%20Influence",
-        "status": "no-match",
-        "snippet": null
-      },
-      "urzas-iron-alliance": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Urza%27s%20Iron%20Alliance",
-        "status": "no-match",
-        "snippet": null
-      },
-      "mishras-burnished-banner": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Mishra%27s%20Burnished%20Banner",
-        "status": "no-match",
-        "snippet": null
-      },
-      "forces-of-the-imperium": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Forces%20of%20the%20Imperium",
-        "status": "no-match",
-        "snippet": null
-      },
-      "necron-dynasties": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Necron%20Dynasties",
-        "status": "no-match",
-        "snippet": null
-      },
-      "tyranid-swarm": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Tyranid%20Swarm",
-        "status": "no-match",
-        "snippet": null
-      },
-      "the-ruinous-powers": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=The%20Ruinous%20Powers",
-        "status": "no-match",
-        "snippet": null
-      },
-      "legends-legacy": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Legends%27%20Legacy",
-        "status": "no-match",
-        "snippet": null
-      },
-      "painbow": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Painbow",
-        "status": "no-match",
-        "snippet": null
-      },
-      "party-time": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Party%20Time",
-        "status": "no-match",
-        "snippet": null
-      },
-      "mind-flayarrrs": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Mind%20Flayarrrs",
-        "status": "no-match",
-        "snippet": null
-      },
-      "exit-from-exile": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Exit%20from%20Exile",
-        "status": "no-match",
-        "snippet": null
-      },
-      "draconic-dissent": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Draconic%20Dissent",
-        "status": "no-match",
-        "snippet": null
-      },
-      "obscura-operation": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Obscura%20Operation",
-        "status": "no-match",
-        "snippet": null
-      },
-      "maestros-massacre": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Maestros%20Massacre",
-        "status": "no-match",
-        "snippet": null
-      },
-      "riveteers-rampage": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Riveteers%20Rampage",
-        "status": "no-match",
-        "snippet": null
-      },
-      "cabaretti-cacophony": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Cabaretti%20Cacophony",
-        "status": "no-match",
-        "snippet": null
-      },
-      "bedecked-brokers": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Bedecked%20Brokers",
-        "status": "no-match",
-        "snippet": null
-      },
-      "upgrades-unleashed": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Upgrades%20Unleashed",
-        "status": "no-match",
-        "snippet": null
-      },
-      "buckle-up": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Buckle%20Up",
-        "status": "no-match",
-        "snippet": null
-      },
-      "take-flight": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Take%20Flight",
-        "status": "no-match",
-        "snippet": null
-      },
-      "grave-danger": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Grave%20Danger",
-        "status": "no-match",
-        "snippet": null
-      },
-      "token-triumph": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Token%20Triumph",
-        "status": "no-match",
-        "snippet": null
-      },
-      "chaos-incarnate": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Chaos%20Incarnate",
-        "status": "no-match",
-        "snippet": null
-      },
-      "draconic-domination": {
-        "price": 379.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-commander-2017-deck-draconic-domination?_pos=1&_psq=Draconic+Domination&_psid=bb9357351&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Commander 2017 Deck: Draconic Domination"
-      },
-      "vampiric-bloodlust": {
-        "price": 379.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-commander-deck-vampiric-bloodlust?_pos=1&_psq=Vampiric+Bloodlust&_psid=2cf34a17a&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Commander Deck: Vampiric Bloodlust"
-      },
-      "spirit-squadron": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Spirit%20Squadron",
-        "status": "no-match",
-        "snippet": null
-      },
-      "coven-counters": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Coven%20Counters",
-        "status": "no-match",
-        "snippet": null
-      },
-      "undead-unleashed": {
-        "price": 134.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-innistrad-midnight-hunt-commander-deck-undead-unleashed?_pos=1&_psq=Undead+Unleashed&_psid=20a9fc389&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Innistrad: Midnight Hunt: Commander Deck: Undead Unleashed"
-      },
-      "aura-of-courage": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Aura%20of%20Courage",
-        "status": "no-match",
-        "snippet": null
-      },
-      "dungeons-of-death": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Dungeons%20of%20Death",
-        "status": "no-match",
-        "snippet": null
-      },
-      "draconic-rage": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Draconic%20Rage",
-        "status": "no-match",
-        "snippet": null
-      },
-      "planar-portal": {
-        "price": null,
-        "url": "https://www.zulusgames.com/search?q=Planar%20Portal",
-        "status": "no-match",
-        "snippet": null
-      },
-      "silverquill-statement": {
-        "price": 89.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-strixhaven-commander-deck-silverquill-statement?_pos=1&_psq=Silverquill+Statement&_psid=602788b80&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Strixhaven: Commander Deck: Silverquill Statement"
-      },
-      "prismari-performance": {
-        "price": 59.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-strixhaven-commander-deck-prismari-performance?_pos=2&_psq=Prismari+Performance&_psid=4add0b348&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Strixhaven: Commander Deck: Prismari Performance"
-      },
-      "witherbloom-witchcraft": {
-        "price": 74.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-strixhaven-commander-deck-witherbloom-witchcraft?_pos=2&_psq=Witherbloom+Witchcraft&_psid=3045ff817&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Strixhaven: Commander Deck: Witherbloom Witchcraft"
-      },
-      "lorehold-legacies": {
-        "price": 59.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-strixhaven-commander-deck-lorehold-legacies?_pos=3&_psq=Lorehold+Legacies&_psid=5a1921fd7&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Strixhaven: Commander Deck: Lorehold Legacies"
-      },
-      "quantum-quandrix": {
-        "price": 69.99,
-        "url": "https://www.zulusgames.com/products/magic-the-gathering-strixhaven-commander-deck-quantum-quandrix?_pos=1&_psq=Quantum+Quandrix&_psid=7b763aad1&_ss=e",
-        "status": "ok",
-        "snippet": "Magic the Gathering: Strixhaven: Commander Deck: Quantum Quandrix"
-      }
-    },
     "tcgplayer": {
       "multiverse-reforged": {
-        "price": 61.83,
-        "price_low": 53.0,
+        "price": 62.72,
+        "price_low": 57.75,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/692989/magic-reality-fracture-commander-deck-multiverse-reforged",
         "status": "ok",
         "snippet": "Reality Fracture Commander Deck - Multiverse Reforged"
       },
       "calling-all-angels": {
-        "price": 44.13,
+        "price": 46.97,
         "price_low": 40.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/693140/magic-foundations-commander-deck-calling-all-angels",
@@ -1575,7 +847,7 @@
         "snippet": "Foundations Commander Deck - Calling All Angels"
       },
       "keen-engineering": {
-        "price": 28.44,
+        "price": 28.92,
         "price_low": 20.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/693141/magic-foundations-commander-deck-keen-engineering",
@@ -1583,7 +855,7 @@
         "snippet": "Foundations Commander Deck - Keen Engineering"
       },
       "wretched-ranks": {
-        "price": 40.35,
+        "price": 41.82,
         "price_low": 39.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/693142/magic-foundations-commander-deck-wretched-ranks",
@@ -1591,7 +863,7 @@
         "snippet": "Foundations Commander Deck - Wretched Ranks"
       },
       "reign-of-dragons": {
-        "price": 43.5,
+        "price": 44.75,
         "price_low": 39.08,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/693143/magic-foundations-commander-deck-reign-of-dragons",
@@ -1599,7 +871,7 @@
         "snippet": "Foundations Commander Deck - Reign of Dragons"
       },
       "tramplesaurus-rex": {
-        "price": 54.0,
+        "price": 53.89,
         "price_low": 53.39,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/693144/magic-foundations-commander-deck-tramplesaurus-rex",
@@ -1607,31 +879,31 @@
         "snippet": "Foundations Commander Deck - Tramplesaurus Rex"
       },
       "avengers-assemble": {
-        "price": 49.16,
-        "price_low": 49.0,
+        "price": 48.77,
+        "price_low": 45.49,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675634/magic-marvel-super-heroes-commander-deck-avengers-assemble",
         "status": "ok",
         "snippet": "Marvel Super Heroes Commander Deck - Avengers Assemble"
       },
       "wakanda-forever": {
-        "price": 37.88,
-        "price_low": 32.8,
+        "price": 36.57,
+        "price_low": 25.2,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675633/magic-marvel-super-heroes-commander-deck-wakanda-forever",
         "status": "ok",
         "snippet": "Marvel Super Heroes Commander Deck - Wakanda Forever"
       },
       "the-fantastic-four": {
-        "price": 36.02,
-        "price_low": 30.99,
+        "price": 35.8,
+        "price_low": 25.2,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675632/magic-marvel-super-heroes-commander-deck-the-fantastic-four",
         "status": "ok",
         "snippet": "Marvel Super Heroes Commander Deck - The Fantastic Four"
       },
       "doom-prevails": {
-        "price": 61.92,
+        "price": 61.87,
         "price_low": 60.05,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675631/magic-marvel-super-heroes-commander-deck-doom-prevails",
@@ -1639,15 +911,15 @@
         "snippet": "Marvel Super Heroes Commander Deck - Doom Prevails"
       },
       "quandrix-unlimited": {
-        "price": 42.86,
-        "price_low": 34.99,
+        "price": 42.32,
+        "price_low": 38.11,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675571/magic-secrets-of-strixhaven-commander-deck-quandrix-unlimited",
         "status": "ok",
         "snippet": "Secrets of Strixhaven Commander Deck - Quandrix Unlimited"
       },
       "silverquill-influence": {
-        "price": 64.31,
+        "price": 64.32,
         "price_low": 51.4,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675567/magic-secrets-of-strixhaven-commander-deck-silverquill-influence",
@@ -1656,14 +928,14 @@
       },
       "prismari-artistry": {
         "price": 46.81,
-        "price_low": 40.0,
+        "price_low": 34.95,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675568/magic-secrets-of-strixhaven-commander-deck-prismari-artistry",
         "status": "ok",
         "snippet": "Secrets of Strixhaven Commander Deck - Prismari Artistry"
       },
       "lorehold-spirit": {
-        "price": 44.38,
+        "price": 44.29,
         "price_low": 29.88,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675570/magic-secrets-of-strixhaven-commander-deck-lorehold-spirit",
@@ -1671,7 +943,7 @@
         "snippet": "Secrets of Strixhaven Commander Deck - Lorehold Spirit"
       },
       "witherbloom-pestilence": {
-        "price": 63.18,
+        "price": 63.17,
         "price_low": 48.61,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675569/magic-secrets-of-strixhaven-commander-deck-witherbloom-pestilence",
@@ -1679,7 +951,7 @@
         "snippet": "Secrets of Strixhaven Commander Deck - Witherbloom Pestilence"
       },
       "turtle-power": {
-        "price": 64.02,
+        "price": 61.24,
         "price_low": 44.5,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/657865/magic-teenage-mutant-ninja-turtles-commander-deck-turtle-power",
@@ -1687,7 +959,7 @@
         "snippet": "Teenage Mutant Ninja Turtles Commander Deck - Turtle Power!"
       },
       "dance-of-the-elements": {
-        "price": 45.77,
+        "price": 45.72,
         "price_low": 31.96,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/656352/magic-lorwyn-eclipsed-commander-deck-dance-of-the-elements",
@@ -1695,7 +967,7 @@
         "snippet": "Lorwyn Eclipsed Commander Deck - Dance of the Elements"
       },
       "blight-curse": {
-        "price": 34.23,
+        "price": 33.66,
         "price_low": 25.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/656354/magic-lorwyn-eclipsed-commander-deck-blight-curse",
@@ -1703,15 +975,15 @@
         "snippet": "Lorwyn Eclipsed Commander Deck - Blight Curse"
       },
       "counter-intelligence": {
-        "price": 42.99,
-        "price_low": 32.0,
+        "price": 42.0,
+        "price_low": 35.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619677/magic-edge-of-eternities-commander-deck-counter-intelligence",
         "status": "ok",
         "snippet": "Edge of Eternities Commander Deck - Counter Intelligence"
       },
       "world-shaper": {
-        "price": 51.74,
+        "price": 51.85,
         "price_low": 50.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619676/magic-edge-of-eternities-commander-deck-world-shaper",
@@ -1719,7 +991,7 @@
         "snippet": "Edge of Eternities Commander Deck - World Shaper"
       },
       "revival-trance": {
-        "price": 34.43,
+        "price": 33.8,
         "price_low": 28.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618903/magic-final-fantasy-commander-deck-final-fantasy-vi-revival-trance",
@@ -1727,31 +999,31 @@
         "snippet": "FINAL FANTASY Commander Deck - FINAL FANTASY VI Revival Trance"
       },
       "limit-break": {
-        "price": 47.05,
-        "price_low": 39.46,
+        "price": 45.47,
+        "price_low": 34.96,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618904/magic-final-fantasy-commander-deck-final-fantasy-vii-limit-break",
         "status": "ok",
         "snippet": "FINAL FANTASY Commander Deck - FINAL FANTASY VII Limit Break"
       },
       "counter-blitz": {
-        "price": 51.99,
-        "price_low": 43.38,
+        "price": 49.6,
+        "price_low": 39.94,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618905/magic-final-fantasy-commander-deck-final-fantasy-x-counter-blitz",
         "status": "ok",
         "snippet": "FINAL FANTASY Commander Deck - FINAL FANTASY X Counter Blitz"
       },
       "scions-and-spellcraft": {
-        "price": 58.43,
-        "price_low": 48.99,
+        "price": 57.53,
+        "price_low": 46.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618906/magic-final-fantasy-commander-deck-final-fantasy-xiv-scions-spellcraft",
         "status": "ok",
         "snippet": "FINAL FANTASY Commander Deck - FINAL FANTASY XIV Scions & Spellcraft"
       },
       "jeskai-striker": {
-        "price": 40.3,
+        "price": 40.81,
         "price_low": 30.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619665/magic-tarkir-dragonstorm-commander-deck-jeskai-striker",
@@ -1759,7 +1031,7 @@
         "snippet": "Tarkir: Dragonstorm Commander Deck - Jeskai Striker"
       },
       "abzan-armor": {
-        "price": 64.55,
+        "price": 64.52,
         "price_low": 64.98,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619664/magic-tarkir-dragonstorm-commander-deck-abzan-armor",
@@ -1767,7 +1039,7 @@
         "snippet": "Tarkir: Dragonstorm Commander Deck - Abzan Armor"
       },
       "sultai-arisen": {
-        "price": 93.01,
+        "price": 92.86,
         "price_low": 85.71,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619666/magic-tarkir-dragonstorm-commander-deck-sultai-arisen",
@@ -1775,15 +1047,15 @@
         "snippet": "Tarkir: Dragonstorm Commander Deck - Sultai Arisen"
       },
       "mardu-surge": {
-        "price": 53.94,
-        "price_low": 45.0,
+        "price": 53.8,
+        "price_low": 52.49,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619667/magic-tarkir-dragonstorm-commander-deck-mardu-surge",
         "status": "ok",
         "snippet": "Tarkir: Dragonstorm Commander Deck - Mardu Surge"
       },
       "temur-roar": {
-        "price": 87.28,
+        "price": 87.14,
         "price_low": 73.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619668/magic-tarkir-dragonstorm-commander-deck-temur-roar",
@@ -1791,15 +1063,15 @@
         "snippet": "Tarkir: Dragonstorm Commander Deck - Temur Roar"
       },
       "living-energy": {
-        "price": 30.82,
-        "price_low": 19.99,
+        "price": 28.55,
+        "price_low": 25.81,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/604258/magic-aetherdrift-commander-deck-living-energy",
         "status": "ok",
         "snippet": "Aetherdrift Commander Deck - Living Energy"
       },
       "eternal-might": {
-        "price": 41.48,
+        "price": 41.42,
         "price_low": 34.8,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/604259/magic-aetherdrift-commander-deck-eternal-might",
@@ -1807,8 +1079,8 @@
         "snippet": "Aetherdrift Commander Deck - Eternal Might"
       },
       "miracle-worker": {
-        "price": 71.37,
-        "price_low": 57.0,
+        "price": 70.84,
+        "price_low": 65.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557253/magic-duskmourn-house-of-horror-commander-deck-miracle-worker",
         "status": "ok",
@@ -1816,14 +1088,14 @@
       },
       "death-toll": {
         "price": 59.67,
-        "price_low": 56.01,
+        "price_low": 55.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557254/magic-duskmourn-house-of-horror-commander-deck-death-toll",
         "status": "ok",
         "snippet": "Duskmourn: House of Horror Commander Deck - Death Toll"
       },
       "jump-scare": {
-        "price": 67.05,
+        "price": 66.9,
         "price_low": 59.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557255/magic-duskmourn-house-of-horror-commander-deck-jump-scare",
@@ -1831,7 +1103,7 @@
         "snippet": "Duskmourn: House of Horror Commander Deck - Jump Scare!"
       },
       "endless-punishment": {
-        "price": 228.09,
+        "price": 228.17,
         "price_low": 220.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557256/magic-duskmourn-house-of-horror-commander-deck-endless-punishment",
@@ -1839,7 +1111,7 @@
         "snippet": "Duskmourn: House of Horror Commander Deck - Endless Punishment"
       },
       "family-matters": {
-        "price": 39.33,
+        "price": 39.21,
         "price_low": 29.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541247/magic-bloomburrow-commander-deck-family-matters",
@@ -1847,7 +1119,7 @@
         "snippet": "Bloomburrow Commander Deck - Family Matters"
       },
       "squirreled-away": {
-        "price": 92.63,
+        "price": 92.97,
         "price_low": 78.74,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541249/magic-bloomburrow-commander-deck-squirreled-away",
@@ -1855,7 +1127,7 @@
         "snippet": "Bloomburrow Commander Deck - Squirreled Away"
       },
       "animated-army": {
-        "price": 82.74,
+        "price": 82.2,
         "price_low": 70.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541246/magic-bloomburrow-commander-deck-animated-army",
@@ -1863,7 +1135,7 @@
         "snippet": "Bloomburrow Commander Deck - Animated Army"
       },
       "peace-offering-blb": {
-        "price": 114.06,
+        "price": 116.74,
         "price_low": 110.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541248/magic-bloomburrow-commander-deck-peace-offering",
@@ -1893,7 +1165,7 @@
         "snippet": "Modern Horizons 3 Commander Deck - Creative Energy"
       },
       "eldrazi-incursion": {
-        "price": 210.31,
+        "price": 210.19,
         "price_low": 201.81,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541195/magic-modern-horizons-3-commander-deck-eldrazi-incursion",
@@ -1909,7 +1181,7 @@
         "snippet": "Modern Horizons 3 Commander Deck - Graveyard Overdrive"
       },
       "tricky-terrain": {
-        "price": 87.56,
+        "price": 87.88,
         "price_low": 79.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541193/magic-modern-horizons-3-commander-deck-tricky-terrain",
@@ -1949,31 +1221,31 @@
         "snippet": "Outlaws of Thunder Junction Commander Deck - Desert Bloom"
       },
       "scrappy-survivors": {
-        "price": 76.71,
-        "price_low": 64.7,
+        "price": 68.31,
+        "price_low": 64.01,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/522899/magic-universes-beyond-fallout-scrappy-survivors-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Fallout - Scrappy Survivors Commander Deck"
       },
       "mutant-menace": {
-        "price": 130.88,
-        "price_low": 124.75,
+        "price": 131.74,
+        "price_low": 124.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/522902/magic-universes-beyond-fallout-mutant-menace-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Fallout - Mutant Menace Commander Deck"
       },
       "hail-caesar": {
-        "price": 82.83,
-        "price_low": 74.83,
+        "price": 82.23,
+        "price_low": 69.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/522903/magic-universes-beyond-fallout-hail-caesar-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Fallout - Hail, Caesar Commander Deck"
       },
       "science": {
-        "price": 38.42,
+        "price": 37.88,
         "price_low": 36.76,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/522905/magic-universes-beyond-fallout-science-commander-deck",
@@ -1989,8 +1261,8 @@
         "snippet": "Murders at Karlov Manor Commander Deck - Deep Clue Sea"
       },
       "revenant-recon": {
-        "price": 88.87,
-        "price_low": 85.0,
+        "price": 88.75,
+        "price_low": 86.45,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/529978/magic-murders-at-karlov-manor-commander-deck-revenant-recon",
         "status": "ok",
@@ -1998,22 +1270,22 @@
       },
       "blame-game": {
         "price": 138.48,
-        "price_low": 139.74,
+        "price_low": 129.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/529980/magic-murders-at-karlov-manor-commander-deck-blame-game",
         "status": "ok",
         "snippet": "Murders at Karlov Manor Commander Deck - Blame Game"
       },
       "deadly-disguise": {
-        "price": 95.3,
-        "price_low": 99.95,
+        "price": 95.84,
+        "price_low": 89.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/529977/magic-murders-at-karlov-manor-commander-deck-deadly-disguise",
         "status": "ok",
         "snippet": "Murders at Karlov Manor Commander Deck - Deadly Disguise"
       },
       "ahoy-mateys": {
-        "price": 47.68,
+        "price": 47.65,
         "price_low": 38.5,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/517513/magic-the-lost-caverns-of-ixalan-commander-deck-ahoy-mateys",
@@ -2021,7 +1293,7 @@
         "snippet": "The Lost Caverns of Ixalan Commander Deck - Ahoy Mateys"
       },
       "veloci-ramp-tor": {
-        "price": 137.01,
+        "price": 137.17,
         "price_low": 134.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/517516/magic-the-lost-caverns-of-ixalan-commander-deck-veloci-ramp-tor",
@@ -2029,7 +1301,7 @@
         "snippet": "The Lost Caverns of Ixalan Commander Deck - Veloci-Ramp-Tor"
       },
       "blood-rites": {
-        "price": 94.62,
+        "price": 94.45,
         "price_low": 83.96,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/517514/magic-the-lost-caverns-of-ixalan-commander-deck-blood-rites",
@@ -2037,7 +1309,7 @@
         "snippet": "The Lost Caverns of Ixalan Commander Deck - Blood Rites"
       },
       "explorers-of-the-deep": {
-        "price": 96.08,
+        "price": 96.52,
         "price_low": 85.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/517515/magic-the-lost-caverns-of-ixalan-commander-deck-explorers-of-the-deep",
@@ -2046,14 +1318,14 @@
       },
       "blast-from-the-past": {
         "price": 58.02,
-        "price_low": 54.0,
+        "price_low": 44.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496071/magic-universes-beyond-doctor-who-blast-from-the-past-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Doctor Who - Blast From the Past Commander Deck"
       },
       "timey-wimey": {
-        "price": 153.46,
+        "price": 153.23,
         "price_low": 150.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496072/magic-universes-beyond-doctor-who-timey-wimey-commander-deck",
@@ -2069,7 +1341,7 @@
         "snippet": "Universes Beyond: Doctor Who - Paradox Power Commander Deck"
       },
       "masters-of-evil": {
-        "price": 126.57,
+        "price": 127.07,
         "price_low": 120.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496070/magic-universes-beyond-doctor-who-masters-of-evil-commander-deck",
@@ -2123,15 +1395,15 @@
         "snippet": "Commander Masters Commander Deck - Eldrazi Unbound"
       },
       "enduring-enchantments": {
-        "price": 145.21,
-        "price_low": 142.01,
+        "price": 145.41,
+        "price_low": 152.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484932/magic-commander-masters-commander-deck-enduring-enchantments",
         "status": "ok",
         "snippet": "Commander Masters Commander Deck - Enduring Enchantments"
       },
       "planeswalker-party": {
-        "price": 186.26,
+        "price": 186.84,
         "price_low": 127.78,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484930/magic-commander-masters-commander-deck-planeswalker-party",
@@ -2139,7 +1411,7 @@
         "snippet": "Commander Masters Commander Deck - Planeswalker Party"
       },
       "the-hosts-of-mordor": {
-        "price": 126.76,
+        "price": 126.09,
         "price_low": 115.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/488293/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-deck-the-hosts-of-mordor",
@@ -2147,7 +1419,7 @@
         "snippet": "The Lord of the Rings: Tales of Middle-earth Commander Deck - The Hosts of Mordor"
       },
       "food-and-fellowship": {
-        "price": 102.91,
+        "price": 103.55,
         "price_low": 100.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/488294/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-deck-food-and-fellowship",
@@ -2155,15 +1427,15 @@
         "snippet": "The Lord of the Rings: Tales of Middle-earth Commander Deck - Food and Fellowship"
       },
       "elven-council": {
-        "price": 67.27,
-        "price_low": 59.95,
+        "price": 66.54,
+        "price_low": 65.02,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/488295/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-deck-elven-council",
         "status": "ok",
         "snippet": "The Lord of the Rings: Tales of Middle-earth Commander Deck - Elven Council"
       },
       "riders-of-rohan": {
-        "price": 81.49,
+        "price": 81.0,
         "price_low": 70.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/488296/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-deck-riders-of-rohan",
@@ -2187,7 +1459,7 @@
         "snippet": "March of the Machine Commander Deck - Divine Convocation"
       },
       "growing-threat": {
-        "price": 87.26,
+        "price": 87.63,
         "price_low": 85.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484590/magic-march-of-the-machine-commander-deck-growing-threat",
@@ -2195,15 +1467,15 @@
         "snippet": "March of the Machine Commander Deck - Growing Threat"
       },
       "cavalry-charge": {
-        "price": 149.25,
-        "price_low": 141.5,
+        "price": 149.04,
+        "price_low": 145.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484589/magic-march-of-the-machine-commander-deck-cavalry-charge",
         "status": "ok",
         "snippet": "March of the Machine Commander Deck - Cavalry Charge"
       },
       "tinker-time": {
-        "price": 52.99,
+        "price": 53.51,
         "price_low": 45.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484591/magic-march-of-the-machine-commander-deck-tinker-time",
@@ -2236,7 +1508,7 @@
       },
       "mishras-burnished-banner": {
         "price": 104.31,
-        "price_low": 74.99,
+        "price_low": 89.75,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/449723/magic-the-brothers-war-commander-deck-mishra-s-burnished-banner",
         "status": "ok",
@@ -2252,7 +1524,7 @@
       },
       "necron-dynasties": {
         "price": 356.81,
-        "price_low": 350.0,
+        "price_low": 344.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/272308/magic-universes-beyond-warhammer-40-000-necron-dynasties-commander-deck",
         "status": "ok",
@@ -2267,15 +1539,15 @@
         "snippet": "Universes Beyond: Warhammer 40,000 - Tyranid Swarm Commander Deck"
       },
       "the-ruinous-powers": {
-        "price": 230.57,
-        "price_low": 230.0,
+        "price": 231.37,
+        "price_low": 227.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/272315/magic-universes-beyond-warhammer-40-000-the-ruinous-powers-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Warhammer 40,000 - The Ruinous Powers Commander Deck"
       },
       "legends-legacy": {
-        "price": 148.34,
+        "price": 150.01,
         "price_low": 166.88,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/279817/magic-dominaria-united-commander-deck-legends-legacy",
@@ -2371,7 +1643,7 @@
         "snippet": "Kamigawa: Neon Dynasty Commander Deck - Upgrades Unleashed"
       },
       "buckle-up": {
-        "price": 103.16,
+        "price": 103.26,
         "price_low": 99.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/262517/magic-kamigawa-neon-dynasty-commander-deck-buckle-up",
@@ -2386,8 +1658,8 @@
         "snippet": "group=Starter Commander Decks"
       },
       "grave-danger": {
-        "price": 36.5,
-        "price_low": 27.49,
+        "price": 36.11,
+        "price_low": 30.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/448432/magic-starter-commander-deck-grave-danger",
         "status": "ok",
@@ -2402,7 +1674,7 @@
         "snippet": "Starter Commander Deck - Token Triumph"
       },
       "chaos-incarnate": {
-        "price": 38.81,
+        "price": 38.83,
         "price_low": 30.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/448435/magic-starter-commander-deck-chaos-incarnate",
@@ -2440,7 +1712,7 @@
         "snippet": "Innistrad: Midnight Hunt Commander Deck - Coven Counters"
       },
       "undead-unleashed": {
-        "price": 140.61,
+        "price": 141.45,
         "price_low": 144.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/246461/magic-innistrad-midnight-hunt-commander-deck-undead-unleashed",
@@ -2514,1475 +1786,6 @@
         "status": "tcgcsv-no-product-match",
         "snippet": "group=Commander: Secrets of Strixhaven"
       }
-    },
-    "manapool": {
-      "multiverse-reforged": {
-        "price": 48.98,
-        "market": 64.74,
-        "url": "https://manapool.com/sealed/frc/deck-multiverse-reforged",
-        "status": "ok",
-        "qty": 95,
-        "sold": {
-          "last": 48.98,
-          "last_date": "2026-10-07",
-          "avg": 51.94,
-          "n": 20
-        }
-      },
-      "calling-all-angels": {
-        "price": 38.88,
-        "market": 43.18,
-        "url": "https://manapool.com/sealed/fdc/deck-calling-all-angels",
-        "status": "ok",
-        "qty": 31,
-        "sold": {
-          "last": 38.87,
-          "last_date": "2026-10-06",
-          "avg": 43.51,
-          "n": 9
-        }
-      },
-      "keen-engineering": {
-        "price": 28.44,
-        "market": 27.9,
-        "url": "https://manapool.com/sealed/fdc/deck-keen-engineering",
-        "status": "ok",
-        "qty": 46,
-        "sold": {
-          "last": 27.9,
-          "last_date": "2026-10-07",
-          "avg": 31.87,
-          "n": 10
-        }
-      },
-      "wretched-ranks": {
-        "price": 38.4,
-        "market": 32.38,
-        "url": "https://manapool.com/sealed/fdc/deck-wretched-ranks",
-        "status": "ok",
-        "qty": 30,
-        "sold": {
-          "last": 37.22,
-          "last_date": "2026-10-05",
-          "avg": 37.5,
-          "n": 10
-        }
-      },
-      "reign-of-dragons": {
-        "price": 36.95,
-        "market": 36.96,
-        "url": "https://manapool.com/sealed/fdc/deck-reign-of-dragons",
-        "status": "ok",
-        "qty": 39,
-        "sold": {
-          "last": 36.91,
-          "last_date": "2026-10-05",
-          "avg": 39.76,
-          "n": 13
-        }
-      },
-      "tramplesaurus-rex": {
-        "price": 50.0,
-        "market": 43.18,
-        "url": "https://manapool.com/sealed/fdc/deck-tramplesaurus-rex",
-        "status": "ok",
-        "qty": 18,
-        "sold": {
-          "last": 50.0,
-          "last_date": "2026-10-07",
-          "avg": 47.21,
-          "n": 20
-        }
-      },
-      "avengers-assemble": {
-        "price": 49.16,
-        "market": 52.0,
-        "url": "https://manapool.com/sealed/msc/deck-avengers-assemble",
-        "status": "ok",
-        "qty": 112,
-        "sold": {
-          "last": 49.39,
-          "last_date": "2026-10-06",
-          "avg": 59.64,
-          "n": 20
-        }
-      },
-      "wakanda-forever": {
-        "price": 37.88,
-        "market": 39.99,
-        "url": "https://manapool.com/sealed/msc/deck-wakanda-forever",
-        "status": "ok",
-        "qty": 120,
-        "sold": {
-          "last": 37.0,
-          "last_date": "2026-09-16",
-          "avg": 47.3,
-          "n": 20
-        }
-      },
-      "the-fantastic-four": {
-        "price": 36.02,
-        "market": 48.4,
-        "url": "https://manapool.com/sealed/msc/deck-the-fantastic-four",
-        "status": "ok",
-        "qty": 109,
-        "sold": {
-          "last": 36.97,
-          "last_date": "2026-10-03",
-          "avg": 52.06,
-          "n": 20
-        }
-      },
-      "doom-prevails": {
-        "price": 61.1,
-        "market": 61.74,
-        "url": "https://manapool.com/sealed/msc/deck-doom-prevails",
-        "status": "ok",
-        "qty": 122,
-        "sold": {
-          "last": 62.72,
-          "last_date": "2026-09-27",
-          "avg": 65.52,
-          "n": 20
-        }
-      },
-      "quandrix-unlimited": {
-        "price": 38.5,
-        "market": 39.6,
-        "url": "https://manapool.com/sealed/soc/deck-quandrix-unlimited",
-        "status": "ok",
-        "qty": 70,
-        "sold": {
-          "last": 38.99,
-          "last_date": "2026-09-29",
-          "avg": 43.41,
-          "n": 20
-        }
-      },
-      "silverquill-influence": {
-        "price": 58.2,
-        "market": 58.78,
-        "url": "https://manapool.com/sealed/soc/deck-silverquill-influence",
-        "status": "ok",
-        "qty": 58,
-        "sold": {
-          "last": 63.0,
-          "last_date": "2026-10-03",
-          "avg": 59.41,
-          "n": 20
-        }
-      },
-      "prismari-artistry": {
-        "price": 40.8,
-        "market": 49.5,
-        "url": "https://manapool.com/sealed/soc/deck-prismari-artistry",
-        "status": "ok",
-        "qty": 36,
-        "sold": {
-          "last": 58.47,
-          "last_date": "2026-09-25",
-          "avg": 47.99,
-          "n": 20
-        }
-      },
-      "lorehold-spirit": {
-        "price": 38.11,
-        "market": 45.0,
-        "url": "https://manapool.com/sealed/soc/deck-lorehold-spirit",
-        "status": "ok",
-        "qty": 71,
-        "sold": {
-          "last": 39.99,
-          "last_date": "2026-10-07",
-          "avg": 40.68,
-          "n": 20
-        }
-      },
-      "witherbloom-pestilence": {
-        "price": 54.99,
-        "market": 57.5,
-        "url": "https://manapool.com/sealed/soc/deck-witherbloom-pestilence",
-        "status": "ok",
-        "qty": 27,
-        "sold": {
-          "last": 54.99,
-          "last_date": "2026-10-03",
-          "avg": 55.46,
-          "n": 20
-        }
-      },
-      "turtle-power": {
-        "price": 50.99,
-        "market": 59.99,
-        "url": "https://manapool.com/sealed/tmc/teenage-mutant-ninja-turtles-commander-deck-turtle-power",
-        "status": "ok",
-        "qty": 129,
-        "sold": {
-          "last": 63.62,
-          "last_date": "2026-10-02",
-          "avg": 59.34,
-          "n": 20
-        }
-      },
-      "dance-of-the-elements": {
-        "price": 37.99,
-        "market": 35.0,
-        "url": "https://manapool.com/sealed/ecc/deck-dance-of-the-elements",
-        "status": "ok",
-        "qty": 146,
-        "sold": {
-          "last": 36.98,
-          "last_date": "2026-10-06",
-          "avg": 36.88,
-          "n": 20
-        }
-      },
-      "blight-curse": {
-        "price": 34.22,
-        "market": 32.99,
-        "url": "https://manapool.com/sealed/ecc/deck-blight-curse",
-        "status": "ok",
-        "qty": 133,
-        "sold": {
-          "last": 34.23,
-          "last_date": "2026-10-07",
-          "avg": 33.15,
-          "n": 20
-        }
-      },
-      "counter-intelligence": {
-        "price": 36.4,
-        "market": 44.47,
-        "url": "https://manapool.com/sealed/eoc/deck-counter-intelligence",
-        "status": "ok",
-        "qty": 66,
-        "sold": {
-          "last": 43.51,
-          "last_date": "2026-10-03",
-          "avg": 45.74,
-          "n": 20
-        }
-      },
-      "world-shaper": {
-        "price": 48.95,
-        "market": 52.95,
-        "url": "https://manapool.com/sealed/eoc/deck-world-shaper",
-        "status": "ok",
-        "qty": 73,
-        "sold": {
-          "last": 52.42,
-          "last_date": "2026-09-30",
-          "avg": 58.91,
-          "n": 20
-        }
-      },
-      "revival-trance": {
-        "price": 34.43,
-        "market": 36.58,
-        "url": "https://manapool.com/sealed/fic/deck-revival-trance",
-        "status": "ok",
-        "qty": 147,
-        "sold": {
-          "last": 34.99,
-          "last_date": "2026-09-30",
-          "avg": 39.24,
-          "n": 20
-        }
-      },
-      "limit-break": {
-        "price": 47.05,
-        "market": 60.65,
-        "url": "https://manapool.com/sealed/fic/deck-limit-break",
-        "status": "ok",
-        "qty": 117,
-        "sold": {
-          "last": 47.33,
-          "last_date": "2026-10-05",
-          "avg": 63.91,
-          "n": 20
-        }
-      },
-      "counter-blitz": {
-        "price": 48.07,
-        "market": 52.0,
-        "url": "https://manapool.com/sealed/fic/deck-counter-blitz",
-        "status": "ok",
-        "qty": 104,
-        "sold": {
-          "last": 60.0,
-          "last_date": "2026-10-06",
-          "avg": 55.21,
-          "n": 20
-        }
-      },
-      "scions-and-spellcraft": {
-        "price": 65.99,
-        "market": 65.84,
-        "url": "https://manapool.com/sealed/fic/deck-scions-&-spellcraft",
-        "status": "ok",
-        "qty": 82,
-        "sold": {
-          "last": 64.95,
-          "last_date": "2026-10-05",
-          "avg": 65.75,
-          "n": 20
-        }
-      },
-      "jeskai-striker": {
-        "price": 48.97,
-        "market": 55.54,
-        "url": "https://manapool.com/sealed/tdc/deck-jeskai-striker",
-        "status": "ok",
-        "qty": 14,
-        "sold": {
-          "last": 59.99,
-          "last_date": "2026-09-15",
-          "avg": 52.63,
-          "n": 20
-        }
-      },
-      "abzan-armor": {
-        "price": 62.99,
-        "market": 64.99,
-        "url": "https://manapool.com/sealed/tdc/deck-abzan-armor",
-        "status": "ok",
-        "qty": 23,
-        "sold": {
-          "last": 63.63,
-          "last_date": "2026-10-02",
-          "avg": 62.85,
-          "n": 20
-        }
-      },
-      "sultai-arisen": {
-        "price": 89.94,
-        "market": 95.0,
-        "url": "https://manapool.com/sealed/tdc/deck-sultai-arisen",
-        "status": "ok",
-        "qty": 31,
-        "sold": {
-          "last": 91.19,
-          "last_date": "2026-10-02",
-          "avg": 100.91,
-          "n": 20
-        }
-      },
-      "mardu-surge": {
-        "price": 58.57,
-        "market": 69.99,
-        "url": "https://manapool.com/sealed/tdc/deck-mardu-surge",
-        "status": "ok",
-        "qty": 18,
-        "sold": {
-          "last": 64.99,
-          "last_date": "2026-10-04",
-          "avg": 75.28,
-          "n": 20
-        }
-      },
-      "temur-roar": {
-        "price": 86.8,
-        "market": 89.43,
-        "url": "https://manapool.com/sealed/tdc/deck-temur-roar",
-        "status": "ok",
-        "qty": 12,
-        "sold": {
-          "last": 87.49,
-          "last_date": "2026-10-02",
-          "avg": 90.06,
-          "n": 20
-        }
-      },
-      "living-energy": {
-        "price": 30.82,
-        "market": 32.38,
-        "url": "https://manapool.com/sealed/drc/deck-living-energy",
-        "status": "ok",
-        "qty": 100,
-        "sold": {
-          "last": 32.05,
-          "last_date": "2026-09-30",
-          "avg": 33.15,
-          "n": 9
-        }
-      },
-      "eternal-might": {
-        "price": 36.19,
-        "market": 46.92,
-        "url": "https://manapool.com/sealed/drc/deck-eternal-might",
-        "status": "ok",
-        "qty": 63,
-        "sold": {
-          "last": 36.28,
-          "last_date": "2026-10-05",
-          "avg": 46.35,
-          "n": 18
-        }
-      },
-      "miracle-worker": {
-        "price": 78.89,
-        "market": 72.72,
-        "url": "https://manapool.com/sealed/dsc/deck-miracle-worker",
-        "status": "ok",
-        "qty": 17,
-        "sold": {
-          "last": 72.72,
-          "last_date": "2026-09-08",
-          "avg": 72.79,
-          "n": 13
-        }
-      },
-      "death-toll": {
-        "price": 61.61,
-        "market": 46.11,
-        "url": "https://manapool.com/sealed/dsc/deck-death-toll",
-        "status": "ok",
-        "qty": 17,
-        "sold": {
-          "last": 61.98,
-          "last_date": "2026-09-13",
-          "avg": 52.27,
-          "n": 9
-        }
-      },
-      "jump-scare": {
-        "price": 73.97,
-        "market": 64.94,
-        "url": "https://manapool.com/sealed/dsc/deck-jump-scare",
-        "status": "ok",
-        "qty": 19,
-        "sold": {
-          "last": 67.67,
-          "last_date": "2026-09-15",
-          "avg": 58.0,
-          "n": 20
-        }
-      },
-      "endless-punishment": {
-        "price": 210.99,
-        "market": 214.99,
-        "url": "https://manapool.com/sealed/dsc/deck-endless-punishment",
-        "status": "ok",
-        "qty": 23,
-        "sold": {
-          "last": 209.0,
-          "last_date": "2026-09-23",
-          "avg": 208.11,
-          "n": 20
-        }
-      },
-      "family-matters": {
-        "price": 34.8,
-        "market": 35.69,
-        "url": "https://manapool.com/sealed/blc/deck-family-matters",
-        "status": "ok",
-        "qty": 63,
-        "sold": {
-          "last": 34.79,
-          "last_date": "2026-09-30",
-          "avg": 37.24,
-          "n": 15
-        }
-      },
-      "squirreled-away": {
-        "price": 78.74,
-        "market": 89.95,
-        "url": "https://manapool.com/sealed/blc/deck-squirreled-away",
-        "status": "ok",
-        "qty": 26,
-        "sold": {
-          "last": 85.0,
-          "last_date": "2026-10-04",
-          "avg": 89.28,
-          "n": 20
-        }
-      },
-      "animated-army": {
-        "price": 84.48,
-        "market": 84.22,
-        "url": "https://manapool.com/sealed/blc/deck-animated-army",
-        "status": "ok",
-        "qty": 25,
-        "sold": {
-          "last": 84.48,
-          "last_date": "2026-09-28",
-          "avg": 78.67,
-          "n": 20
-        }
-      },
-      "peace-offering-blb": {
-        "price": 104.99,
-        "market": 95.0,
-        "url": "https://manapool.com/sealed/blc/deck-peace-offering",
-        "status": "ok",
-        "qty": 17,
-        "sold": {
-          "last": 104.98,
-          "last_date": "2026-10-07",
-          "avg": 96.24,
-          "n": 20
-        }
-      },
-      "animus-antiquity": {
-        "price": null,
-        "url": "https://manapool.com/",
-        "status": "no-match"
-      },
-      "master-of-keys-ac": {
-        "price": null,
-        "url": "https://manapool.com/",
-        "status": "no-match"
-      },
-      "creative-energy": {
-        "price": 49.86,
-        "market": 43.98,
-        "url": "https://manapool.com/sealed/m3c/deck-creative-energy",
-        "status": "ok",
-        "qty": 34,
-        "sold": {
-          "last": 54.99,
-          "last_date": "2026-08-17",
-          "avg": 50.37,
-          "n": 4
-        }
-      },
-      "eldrazi-incursion": {
-        "price": 209.99,
-        "market": 175.0,
-        "url": "https://manapool.com/sealed/m3c/deck-eldrazi-incursion",
-        "status": "ok",
-        "qty": 38,
-        "sold": {
-          "last": 214.67,
-          "last_date": "2026-09-19",
-          "avg": 178.91,
-          "n": 20
-        }
-      },
-      "graveyard-overdrive": {
-        "price": 65.28,
-        "market": 68.23,
-        "url": "https://manapool.com/sealed/m3c/deck-graveyard-overdrive",
-        "status": "ok",
-        "qty": 29,
-        "sold": {
-          "last": 65.28,
-          "last_date": "2026-10-07",
-          "avg": 61.71,
-          "n": 18
-        }
-      },
-      "tricky-terrain": {
-        "price": 97.98,
-        "market": 89.97,
-        "url": "https://manapool.com/sealed/m3c/deck-tricky-terrain",
-        "status": "ok",
-        "qty": 13,
-        "sold": {
-          "last": 95.99,
-          "last_date": "2026-10-02",
-          "avg": 85.06,
-          "n": 16
-        }
-      },
-      "most-wanted": {
-        "price": 168.36,
-        "market": 139.0,
-        "url": "https://manapool.com/sealed/otc/deck-most-wanted",
-        "status": "ok",
-        "qty": 4,
-        "sold": {
-          "last": 166.0,
-          "last_date": "2026-09-29",
-          "avg": 144.74,
-          "n": 6
-        }
-      },
-      "grand-larceny": {
-        "price": 198.23,
-        "market": 170.0,
-        "url": "https://manapool.com/sealed/otc/deck-grand-larceny",
-        "status": "ok",
-        "qty": 5,
-        "sold": {
-          "last": 198.22,
-          "last_date": "2026-09-28",
-          "avg": 180.74,
-          "n": 3
-        }
-      },
-      "quick-draw": {
-        "price": 189.56,
-        "market": 160.0,
-        "url": "https://manapool.com/sealed/otc/deck-quick-draw",
-        "status": "ok",
-        "qty": 12,
-        "sold": {
-          "last": 160.0,
-          "last_date": "2026-08-11",
-          "avg": 178.0,
-          "n": 2
-        }
-      },
-      "desert-bloom": {
-        "price": 115.0,
-        "market": 95.4,
-        "url": "https://manapool.com/sealed/otc/deck-desert-bloom",
-        "status": "ok",
-        "qty": 7,
-        "sold": {
-          "last": 115.0,
-          "last_date": "2026-10-07",
-          "avg": 102.06,
-          "n": 6
-        }
-      },
-      "scrappy-survivors": {
-        "price": 75.58,
-        "market": 90.5,
-        "url": "https://manapool.com/sealed/pip/commander-deck-scrappy-survivors",
-        "status": "ok",
-        "qty": 120,
-        "sold": {
-          "last": 74.5,
-          "last_date": "2026-10-05",
-          "avg": 92.65,
-          "n": 18
-        }
-      },
-      "mutant-menace": {
-        "price": 136.48,
-        "market": 143.0,
-        "url": "https://manapool.com/sealed/pip/commander-deck-mutant-menace",
-        "status": "ok",
-        "qty": 113,
-        "sold": {
-          "last": 143.0,
-          "last_date": "2026-10-07",
-          "avg": 173.58,
-          "n": 14
-        }
-      },
-      "hail-caesar": {
-        "price": 79.75,
-        "market": 131.99,
-        "url": "https://manapool.com/sealed/pip/commander-deck-hail-caesar",
-        "status": "ok",
-        "qty": 125,
-        "sold": {
-          "last": 80.0,
-          "last_date": "2026-10-07",
-          "avg": 122.49,
-          "n": 18
-        }
-      },
-      "science": {
-        "price": 44.55,
-        "market": 53.99,
-        "url": "https://manapool.com/sealed/pip/commander-deck-science",
-        "status": "ok",
-        "qty": 109,
-        "sold": {
-          "last": 44.0,
-          "last_date": "2026-10-07",
-          "avg": 51.26,
-          "n": 18
-        }
-      },
-      "deep-clue-sea": {
-        "price": 89.89,
-        "market": 74.73,
-        "url": "https://manapool.com/sealed/mkc/deck-deep-clue-sea",
-        "status": "ok",
-        "qty": 7,
-        "sold": {
-          "last": 85.0,
-          "last_date": "2026-09-12",
-          "avg": 75.73,
-          "n": 5
-        }
-      },
-      "revenant-recon": {
-        "price": 92.29,
-        "market": 86.3,
-        "url": "https://manapool.com/sealed/mkc/deck-revenant-recon",
-        "status": "ok",
-        "qty": 8,
-        "sold": {
-          "last": 95.0,
-          "last_date": "2026-10-07",
-          "avg": 87.45,
-          "n": 7
-        }
-      },
-      "blame-game": {
-        "price": 140.0,
-        "market": 115.55,
-        "url": "https://manapool.com/sealed/mkc/deck-blame-game",
-        "status": "ok",
-        "qty": 7,
-        "sold": {
-          "last": 120.0,
-          "last_date": "2026-09-25",
-          "avg": 108.24,
-          "n": 9
-        }
-      },
-      "deadly-disguise": {
-        "price": 100.0,
-        "market": 86.79,
-        "url": "https://manapool.com/sealed/mkc/deck-deadly-disguise",
-        "status": "ok",
-        "qty": 1,
-        "sold": {
-          "last": 107.98,
-          "last_date": "2026-09-23",
-          "avg": 91.54,
-          "n": 7
-        }
-      },
-      "ahoy-mateys": {
-        "price": 45.45,
-        "market": 45.44,
-        "url": "https://manapool.com/sealed/lcc/deck-ahoy-mateys",
-        "status": "ok",
-        "qty": 13,
-        "sold": {
-          "last": 44.97,
-          "last_date": "2026-10-06",
-          "avg": 43.8,
-          "n": 20
-        }
-      },
-      "veloci-ramp-tor": {
-        "price": 141.0,
-        "market": 139.85,
-        "url": "https://manapool.com/sealed/lcc/deck-veloci-ramp-tor",
-        "status": "ok",
-        "qty": 28,
-        "sold": {
-          "last": 139.85,
-          "last_date": "2026-10-07",
-          "avg": 141.23,
-          "n": 20
-        }
-      },
-      "blood-rites": {
-        "price": 94.44,
-        "market": 96.68,
-        "url": "https://manapool.com/sealed/lcc/deck-blood-rites",
-        "status": "ok",
-        "qty": 12,
-        "sold": {
-          "last": 96.99,
-          "last_date": "2026-10-06",
-          "avg": 93.79,
-          "n": 20
-        }
-      },
-      "explorers-of-the-deep": {
-        "price": 92.92,
-        "market": 93.49,
-        "url": "https://manapool.com/sealed/lcc/deck-explorers-of-the-deep",
-        "status": "ok",
-        "qty": 15,
-        "sold": {
-          "last": 99.5,
-          "last_date": "2026-09-26",
-          "avg": 90.33,
-          "n": 20
-        }
-      },
-      "blast-from-the-past": {
-        "price": 62.99,
-        "market": 57.1,
-        "url": "https://manapool.com/sealed/who/commander-deck-blast-from-the-past",
-        "status": "ok",
-        "qty": 15,
-        "sold": {
-          "last": 57.1,
-          "last_date": "2026-10-01",
-          "avg": 56.04,
-          "n": 6
-        }
-      },
-      "timey-wimey": {
-        "price": 150.57,
-        "market": 144.98,
-        "url": "https://manapool.com/sealed/who/commander-deck-timey-wimey",
-        "status": "ok",
-        "qty": 4,
-        "sold": {
-          "last": 154.77,
-          "last_date": "2026-10-07",
-          "avg": 147.81,
-          "n": 9
-        }
-      },
-      "paradox-power": {
-        "price": 58.0,
-        "market": 49.5,
-        "url": "https://manapool.com/sealed/who/commander-deck-paradox-power",
-        "status": "ok",
-        "qty": 20
-      },
-      "masters-of-evil": {
-        "price": 122.22,
-        "market": 119.19,
-        "url": "https://manapool.com/sealed/who/commander-deck-masters-of-evil",
-        "status": "ok",
-        "qty": 14,
-        "sold": {
-          "last": 119.19,
-          "last_date": "2026-10-04",
-          "avg": 121.85,
-          "n": 4
-        }
-      },
-      "virtue-and-valor": {
-        "price": 135.97,
-        "market": 92.47,
-        "url": "https://manapool.com/sealed/woc/deck-virtue-and-valor",
-        "status": "ok",
-        "qty": 2,
-        "sold": {
-          "last": 129.0,
-          "last_date": "2026-09-22",
-          "avg": 106.65,
-          "n": 3
-        }
-      },
-      "fae-dominion": {
-        "price": null,
-        "url": "https://manapool.com/",
-        "status": "no-match",
-        "sold": {
-          "last": 294.97,
-          "last_date": "2026-08-08",
-          "avg": 294.97,
-          "n": 1
-        }
-      },
-      "peace-offering-woe": {
-        "price": null,
-        "url": "https://manapool.com/",
-        "status": "no-match"
-      },
-      "faerie-schemes": {
-        "price": null,
-        "url": "https://manapool.com/",
-        "status": "no-match"
-      },
-      "sliver-swarm": {
-        "price": 300.0,
-        "market": 334.97,
-        "url": "https://manapool.com/sealed/cmm/commander-deck-sliver-swarm",
-        "status": "ok",
-        "qty": 11,
-        "sold": {
-          "last": 308.65,
-          "last_date": "2026-07-17",
-          "avg": 308.65,
-          "n": 1
-        }
-      },
-      "eldrazi-unbound": {
-        "price": 399.95,
-        "market": 398.99,
-        "url": "https://manapool.com/sealed/cmm/commander-deck-eldrazi-unbound",
-        "status": "ok",
-        "qty": 7,
-        "sold": {
-          "last": 394.45,
-          "last_date": "2026-09-08",
-          "avg": 396.94,
-          "n": 4
-        }
-      },
-      "enduring-enchantments": {
-        "price": 140.0,
-        "market": 143.38,
-        "url": "https://manapool.com/sealed/cmm/commander-deck-enduring-enchantments",
-        "status": "ok",
-        "qty": 12,
-        "sold": {
-          "last": 139.99,
-          "last_date": "2026-09-24",
-          "avg": 144.32,
-          "n": 4
-        }
-      },
-      "planeswalker-party": {
-        "price": 197.81,
-        "market": 161.55,
-        "url": "https://manapool.com/sealed/cmm/commander-deck-planeswalker-party",
-        "status": "ok",
-        "qty": 5,
-        "sold": {
-          "last": 201.98,
-          "last_date": "2026-10-05",
-          "avg": 146.86,
-          "n": 15
-        }
-      },
-      "the-hosts-of-mordor": {
-        "price": 115.0,
-        "market": 116.98,
-        "url": "https://manapool.com/sealed/ltc/deck-the-hosts-of-mordor",
-        "status": "ok",
-        "qty": 51,
-        "sold": {
-          "last": 118.88,
-          "last_date": "2026-10-05",
-          "avg": 116.15,
-          "n": 20
-        }
-      },
-      "food-and-fellowship": {
-        "price": 102.9,
-        "market": 105.99,
-        "url": "https://manapool.com/sealed/ltc/deck-food-and-fellowship",
-        "status": "ok",
-        "qty": 36,
-        "sold": {
-          "last": 102.98,
-          "last_date": "2026-10-07",
-          "avg": 108.28,
-          "n": 20
-        }
-      },
-      "elven-council": {
-        "price": 68.9,
-        "market": 70.7,
-        "url": "https://manapool.com/sealed/ltc/deck-elven-council",
-        "status": "ok",
-        "qty": 50,
-        "sold": {
-          "last": 68.92,
-          "last_date": "2026-10-07",
-          "avg": 71.41,
-          "n": 20
-        }
-      },
-      "riders-of-rohan": {
-        "price": 82.2,
-        "market": 79.97,
-        "url": "https://manapool.com/sealed/ltc/deck-riders-of-rohan",
-        "status": "ok",
-        "qty": 61,
-        "sold": {
-          "last": 84.98,
-          "last_date": "2026-09-28",
-          "avg": 78.25,
-          "n": 20
-        }
-      },
-      "call-for-backup": {
-        "price": 82.0,
-        "market": 82.0,
-        "url": "https://manapool.com/sealed/moc/deck-call-for-backup",
-        "status": "ok",
-        "qty": 4,
-        "sold": {
-          "last": 82.0,
-          "last_date": "2026-10-05",
-          "avg": 81.54,
-          "n": 3
-        }
-      },
-      "divine-convocation": {
-        "price": 75.0,
-        "market": 75.0,
-        "url": "https://manapool.com/sealed/moc/deck-divine-convocation",
-        "status": "ok",
-        "qty": 9,
-        "sold": {
-          "last": 75.0,
-          "last_date": "2026-10-06",
-          "avg": 75.0,
-          "n": 1
-        }
-      },
-      "growing-threat": {
-        "price": 92.5,
-        "market": 92.29,
-        "url": "https://manapool.com/sealed/moc/deck-growing-threat",
-        "status": "ok",
-        "qty": 4,
-        "sold": {
-          "last": 92.49,
-          "last_date": "2026-10-03",
-          "avg": 91.4,
-          "n": 4
-        }
-      },
-      "cavalry-charge": {
-        "price": 146.99,
-        "market": 125.0,
-        "url": "https://manapool.com/sealed/moc/deck-cavalry-charge",
-        "status": "ok",
-        "qty": 18,
-        "sold": {
-          "last": 147.99,
-          "last_date": "2026-09-23",
-          "avg": 138.25,
-          "n": 4
-        }
-      },
-      "tinker-time": {
-        "price": 62.0,
-        "market": 56.56,
-        "url": "https://manapool.com/sealed/moc/deck-tinker-time",
-        "status": "ok",
-        "qty": 7,
-        "sold": {
-          "last": 61.4,
-          "last_date": "2026-10-03",
-          "avg": 57.59,
-          "n": 5
-        }
-      },
-      "rebellion-rising": {
-        "price": 93.94,
-        "market": 100.0,
-        "url": "https://manapool.com/sealed/onc/deck-rebellion-rising",
-        "status": "ok",
-        "qty": 10,
-        "sold": {
-          "last": 111.2,
-          "last_date": "2026-08-26",
-          "avg": 105.6,
-          "n": 2
-        }
-      },
-      "corrupting-influence": {
-        "price": 299.99,
-        "market": 250.0,
-        "url": "https://manapool.com/sealed/onc/deck-corrupting-influence",
-        "status": "ok",
-        "qty": 8,
-        "sold": {
-          "last": 314.98,
-          "last_date": "2026-09-09",
-          "avg": 282.49,
-          "n": 2
-        }
-      },
-      "urzas-iron-alliance": {
-        "price": 164.99,
-        "market": 159.99,
-        "url": "https://manapool.com/sealed/brc/deck-urzas-iron-alliance",
-        "status": "ok",
-        "qty": 2,
-        "sold": {
-          "last": 166.0,
-          "last_date": "2026-07-14",
-          "avg": 163.0,
-          "n": 2
-        }
-      },
-      "mishras-burnished-banner": {
-        "price": 110.23,
-        "market": 106.0,
-        "url": "https://manapool.com/sealed/brc/deck-mishras-burnished-banner",
-        "status": "ok",
-        "qty": 4,
-        "sold": {
-          "last": 132.36,
-          "last_date": "2026-08-16",
-          "avg": 111.87,
-          "n": 5
-        }
-      },
-      "forces-of-the-imperium": {
-        "price": 260.0,
-        "market": 289.99,
-        "url": "https://manapool.com/sealed/40k/deck-forces-of-the-imperium",
-        "status": "ok",
-        "qty": 11,
-        "sold": {
-          "last": 257.4,
-          "last_date": "2026-10-06",
-          "avg": 292.61,
-          "n": 9
-        }
-      },
-      "necron-dynasties": {
-        "price": 359.99,
-        "market": 349.99,
-        "url": "https://manapool.com/sealed/40k/deck-necron-dynasties",
-        "status": "ok",
-        "qty": 7,
-        "sold": {
-          "last": 360.96,
-          "last_date": "2026-10-02",
-          "avg": 355.68,
-          "n": 8
-        }
-      },
-      "tyranid-swarm": {
-        "price": 295.47,
-        "market": 299.0,
-        "url": "https://manapool.com/sealed/40k/deck-tyranid-swarm",
-        "status": "ok",
-        "qty": 7,
-        "sold": {
-          "last": 275.75,
-          "last_date": "2026-10-02",
-          "avg": 295.18,
-          "n": 4
-        }
-      },
-      "the-ruinous-powers": {
-        "price": 235.49,
-        "market": 245.0,
-        "url": "https://manapool.com/sealed/40k/deck-the-ruinous-powers",
-        "status": "ok",
-        "qty": 7,
-        "sold": {
-          "last": 225.0,
-          "last_date": "2026-10-02",
-          "avg": 240.14,
-          "n": 5
-        }
-      },
-      "legends-legacy": {
-        "price": 159.5,
-        "market": 160.0,
-        "url": "https://manapool.com/sealed/dmc/deck-legends-legacy",
-        "status": "ok",
-        "qty": 12,
-        "sold": {
-          "last": 160.0,
-          "last_date": "2026-10-03",
-          "avg": 163.0,
-          "n": 2
-        }
-      },
-      "painbow": {
-        "price": 113.0,
-        "market": 75.0,
-        "url": "https://manapool.com/sealed/dmc/deck-painbow",
-        "status": "ok",
-        "qty": 17,
-        "sold": {
-          "last": 119.97,
-          "last_date": "2026-08-18",
-          "avg": 119.97,
-          "n": 1
-        }
-      },
-      "party-time": {
-        "price": 188.88,
-        "market": 125.0,
-        "url": "https://manapool.com/sealed/clb/commander-deck-party-time",
-        "status": "ok",
-        "qty": 6,
-        "sold": {
-          "last": 160.1,
-          "last_date": "2026-10-06",
-          "avg": 142.55,
-          "n": 2
-        }
-      },
-      "mind-flayarrrs": {
-        "price": 325.48,
-        "market": 330.0,
-        "url": "https://manapool.com/sealed/clb/commander-deck-mind-flayarrrs",
-        "status": "ok",
-        "qty": 2,
-        "sold": {
-          "last": 330.0,
-          "last_date": "2026-06-27",
-          "avg": 330.0,
-          "n": 1
-        }
-      },
-      "exit-from-exile": {
-        "price": 188.98,
-        "market": null,
-        "url": "https://manapool.com/sealed/clb/commander-deck-exit-from-exile",
-        "status": "ok",
-        "qty": 3
-      },
-      "draconic-dissent": {
-        "price": 167.98,
-        "market": 176.17,
-        "url": "https://manapool.com/sealed/clb/commander-deck-draconic-dissent",
-        "status": "ok",
-        "qty": 5,
-        "sold": {
-          "last": 209.98,
-          "last_date": "2026-06-27",
-          "avg": 209.98,
-          "n": 1
-        }
-      },
-      "obscura-operation": {
-        "price": 100.0,
-        "market": 69.99,
-        "url": "https://manapool.com/sealed/ncc/deck-obscura-operation",
-        "status": "ok",
-        "qty": 3,
-        "sold": {
-          "last": 86.0,
-          "last_date": "2026-08-14",
-          "avg": 85.16,
-          "n": 2
-        }
-      },
-      "maestros-massacre": {
-        "price": 89.95,
-        "market": 79.87,
-        "url": "https://manapool.com/sealed/ncc/deck-maestros-massacre",
-        "status": "ok",
-        "qty": 5,
-        "sold": {
-          "last": 79.87,
-          "last_date": "2026-06-21",
-          "avg": 79.87,
-          "n": 1
-        }
-      },
-      "riveteers-rampage": {
-        "price": 144.44,
-        "market": 96.0,
-        "url": "https://manapool.com/sealed/ncc/deck-riveteers-rampage",
-        "status": "ok",
-        "qty": 2,
-        "sold": {
-          "last": 96.0,
-          "last_date": "2026-08-04",
-          "avg": 96.0,
-          "n": 1
-        }
-      },
-      "cabaretti-cacophony": {
-        "price": 120.0,
-        "market": 99.99,
-        "url": "https://manapool.com/sealed/ncc/deck-cabaretti-cacophony",
-        "status": "ok",
-        "qty": 6
-      },
-      "bedecked-brokers": {
-        "price": 74.87,
-        "market": 71.36,
-        "url": "https://manapool.com/sealed/ncc/deck-bedecked-brokers",
-        "status": "ok",
-        "qty": 6,
-        "sold": {
-          "last": 71.36,
-          "last_date": "2026-07-21",
-          "avg": 73.18,
-          "n": 2
-        }
-      },
-      "upgrades-unleashed": {
-        "price": 87.99,
-        "market": 77.4,
-        "url": "https://manapool.com/sealed/nec/deck-upgrades-unleashed",
-        "status": "ok",
-        "qty": 10,
-        "sold": {
-          "last": 84.99,
-          "last_date": "2026-09-13",
-          "avg": 76.64,
-          "n": 5
-        }
-      },
-      "buckle-up": {
-        "price": 107.99,
-        "market": 99.99,
-        "url": "https://manapool.com/sealed/nec/deck-buckle-up",
-        "status": "ok",
-        "qty": 13,
-        "sold": {
-          "last": 100.0,
-          "last_date": "2026-10-03",
-          "avg": 99.95,
-          "n": 6
-        }
-      },
-      "take-flight": {
-        "price": null,
-        "url": "https://manapool.com/",
-        "status": "no-match"
-      },
-      "grave-danger": {
-        "price": 34.98,
-        "market": 29.69,
-        "url": "https://manapool.com/sealed/scd/grave-danger",
-        "status": "ok",
-        "qty": 31,
-        "sold": {
-          "last": 31.68,
-          "last_date": "2026-09-09",
-          "avg": 31.65,
-          "n": 7
-        }
-      },
-      "token-triumph": {
-        "price": 31.44,
-        "market": 27.48,
-        "url": "https://manapool.com/sealed/scd/token-triumph",
-        "status": "ok",
-        "qty": 23,
-        "sold": {
-          "last": 32.38,
-          "last_date": "2026-09-13",
-          "avg": 28.57,
-          "n": 9
-        }
-      },
-      "chaos-incarnate": {
-        "price": 34.81,
-        "market": 31.99,
-        "url": "https://manapool.com/sealed/scd/chaos-incarnate",
-        "status": "ok",
-        "qty": 21,
-        "sold": {
-          "last": 36.28,
-          "last_date": "2026-10-05",
-          "avg": 32.91,
-          "n": 8
-        }
-      },
-      "draconic-domination": {
-        "price": null,
-        "url": "https://manapool.com/",
-        "status": "no-match"
-      },
-      "vampiric-bloodlust": {
-        "price": null,
-        "url": "https://manapool.com/",
-        "status": "no-match"
-      },
-      "spirit-squadron": {
-        "price": 84.41,
-        "market": 79.7,
-        "url": "https://manapool.com/sealed/voc/deck-spirit-squadron",
-        "status": "ok",
-        "qty": 13,
-        "sold": {
-          "last": 79.7,
-          "last_date": "2026-09-03",
-          "avg": 79.7,
-          "n": 1
-        }
-      },
-      "coven-counters": {
-        "price": 54.98,
-        "market": 54.99,
-        "url": "https://manapool.com/sealed/mic/deck-coven-counters",
-        "status": "ok",
-        "qty": 17,
-        "sold": {
-          "last": 54.98,
-          "last_date": "2026-09-17",
-          "avg": 59.39,
-          "n": 7
-        }
-      },
-      "undead-unleashed": {
-        "price": 149.99,
-        "market": 135.0,
-        "url": "https://manapool.com/sealed/mic/deck-undead-unleashed",
-        "status": "ok",
-        "qty": 11,
-        "sold": {
-          "last": 135.0,
-          "last_date": "2026-08-30",
-          "avg": 135.0,
-          "n": 1
-        }
-      },
-      "aura-of-courage": {
-        "price": 107.98,
-        "market": 94.88,
-        "url": "https://manapool.com/sealed/afc/deck-aura-of-courage",
-        "status": "ok",
-        "qty": 3,
-        "sold": {
-          "last": 99.0,
-          "last_date": "2026-10-03",
-          "avg": 97.17,
-          "n": 6
-        }
-      },
-      "dungeons-of-death": {
-        "price": 110.0,
-        "market": 90.99,
-        "url": "https://manapool.com/sealed/afc/deck-dungeons-of-death",
-        "status": "ok",
-        "qty": 3,
-        "sold": {
-          "last": 91.9,
-          "last_date": "2026-07-22",
-          "avg": 91.44,
-          "n": 2
-        }
-      },
-      "draconic-rage": {
-        "price": 136.48,
-        "market": 116.97,
-        "url": "https://manapool.com/sealed/afc/deck-draconic-rage",
-        "status": "ok",
-        "qty": 6,
-        "sold": {
-          "last": 129.99,
-          "last_date": "2026-09-12",
-          "avg": 129.99,
-          "n": 1
-        }
-      },
-      "planar-portal": {
-        "price": 140.25,
-        "market": 130.0,
-        "url": "https://manapool.com/sealed/afc/deck-planar-portal",
-        "status": "ok",
-        "qty": 5,
-        "sold": {
-          "last": 130.99,
-          "last_date": "2026-09-05",
-          "avg": 130.5,
-          "n": 2
-        }
-      },
-      "silverquill-statement": {
-        "price": 91.78,
-        "market": 96.16,
-        "url": "https://manapool.com/sealed/c21/commander-deck-silverquill-statement",
-        "status": "ok",
-        "qty": 7
-      },
-      "prismari-performance": {
-        "price": 54.99,
-        "market": 60.0,
-        "url": "https://manapool.com/sealed/c21/commander-deck-prismari-performance",
-        "status": "ok",
-        "qty": 15
-      },
-      "witherbloom-witchcraft": {
-        "price": 76.98,
-        "market": 78.65,
-        "url": "https://manapool.com/sealed/c21/commander-deck-witherbloom-witchcraft",
-        "status": "ok",
-        "qty": 7
-      },
-      "lorehold-legacies": {
-        "price": 69.0,
-        "market": 75.0,
-        "url": "https://manapool.com/sealed/c21/commander-deck-lorehold-legacies",
-        "status": "ok",
-        "qty": 9
-      },
-      "quantum-quandrix": {
-        "price": 73.0,
-        "market": 69.99,
-        "url": "https://manapool.com/sealed/c21/commander-deck-quantum-quandrix",
-        "status": "ok",
-        "qty": 14
-      }
     }
   },
   "bundles": {
@@ -3997,10 +1800,10 @@
         "tramplesaurus-rex"
       ],
       "deck_count": 5,
-      "price": 197.27,
+      "price": 189.76,
       "price_source": "Market",
-      "individual_total": 210.42,
-      "savings": 13.15,
+      "individual_total": 216.35,
+      "savings": 26.59,
       "url": "https://www.tcgplayer.com/product/707496/magic-foundations-commander-decks-set-of-5",
       "snippet": "Foundations Commander Decks [Set of 5]"
     },
@@ -4016,8 +1819,8 @@
       "deck_count": 4,
       "price": 183.91,
       "price_source": "Market",
-      "individual_total": 184.98,
-      "savings": 1.07,
+      "individual_total": 183.01,
+      "savings": null,
       "url": "https://www.tcgplayer.com/product/675635/magic-marvel-super-heroes-commander-deck-case",
       "snippet": "Marvel Super Heroes Commander Deck Case"
     },
@@ -4034,8 +1837,8 @@
       "deck_count": 5,
       "price": 230.9,
       "price_source": "Market",
-      "individual_total": 261.54,
-      "savings": 30.64,
+      "individual_total": 260.91,
+      "savings": 30.01,
       "url": "https://www.tcgplayer.com/product/675572/magic-secrets-of-strixhaven-commander-deck-case",
       "snippet": "Secrets of Strixhaven Commander Deck Case"
     },
@@ -4049,7 +1852,7 @@
       "deck_count": 2,
       "price": 158.14,
       "price_source": "Market",
-      "individual_total": 94.73,
+      "individual_total": 93.85,
       "savings": null,
       "url": "https://www.tcgplayer.com/product/619691/magic-edge-of-eternities-commander-deck-case",
       "snippet": "Edge of Eternities Commander Deck Case"
@@ -4067,8 +1870,8 @@
       "deck_count": 5,
       "price": 275.07,
       "price_source": "Market",
-      "individual_total": 339.08,
-      "savings": 64.01,
+      "individual_total": 339.13,
+      "savings": 64.06,
       "url": "https://www.tcgplayer.com/product/619669/magic-tarkir-dragonstorm-commander-deck-case",
       "snippet": "Tarkir: Dragonstorm Commander Deck Case"
     },
@@ -4082,10 +1885,10 @@
         "science"
       ],
       "deck_count": 4,
-      "price": 312.04,
+      "price": 302.81,
       "price_source": "Market",
-      "individual_total": 328.84,
-      "savings": 16.8,
+      "individual_total": 320.16,
+      "savings": 17.35,
       "url": "https://www.tcgplayer.com/product/524616/magic-universes-beyond-fallout-commander-deck-case",
       "snippet": "Universes Beyond: Fallout Commander Deck Case"
     },
@@ -4099,10 +1902,10 @@
         "deadly-disguise"
       ],
       "deck_count": 4,
-      "price": 361.28,
+      "price": 368.9,
       "price_source": "Market",
-      "individual_total": 400.95,
-      "savings": 39.67,
+      "individual_total": 401.37,
+      "savings": 32.47,
       "url": "https://www.tcgplayer.com/product/529981/magic-murders-at-karlov-manor-commander-deck-case",
       "snippet": "Murders at Karlov Manor Commander Deck Case"
     },
@@ -4118,8 +1921,8 @@
       "deck_count": 4,
       "price": 320.09,
       "price_source": "Market",
-      "individual_total": 375.39,
-      "savings": 55.3,
+      "individual_total": 375.79,
+      "savings": 55.7,
       "url": "https://www.tcgplayer.com/product/517517/magic-the-lost-caverns-of-ixalan-commander-deck-case",
       "snippet": "The Lost Caverns of Ixalan Commander Deck Case"
     },
@@ -4152,8 +1955,8 @@
       "deck_count": 4,
       "price": 902.67,
       "price_source": "Market",
-      "individual_total": 1087.05,
-      "savings": 184.38,
+      "individual_total": 1087.83,
+      "savings": 185.16,
       "url": "https://www.tcgplayer.com/product/484934/magic-commander-masters-commander-decks-set-of-4",
       "snippet": "Commander Masters Commander Decks [Set of 4]"
     },
@@ -4167,10 +1970,10 @@
         "riders-of-rohan"
       ],
       "deck_count": 4,
-      "price": 322.74,
+      "price": 323.46,
       "price_source": "Market",
-      "individual_total": 378.43,
-      "savings": 55.69,
+      "individual_total": 377.18,
+      "savings": 53.72,
       "url": "https://www.tcgplayer.com/product/488297/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-decks-set-of-4",
       "snippet": "The Lord of the Rings: Tales of Middle-earth Commander Decks [Set of 4]"
     },
@@ -4185,10 +1988,10 @@
         "tinker-time"
       ],
       "deck_count": 5,
-      "price": 415.36,
+      "price": 415.76,
       "price_source": "Market",
-      "individual_total": 449.22,
-      "savings": 33.86,
+      "individual_total": 449.9,
+      "savings": 34.14,
       "url": "https://www.tcgplayer.com/product/484593/magic-march-of-the-machine-commander-decks-set-of-5",
       "snippet": "March of the Machine Commander Decks [Set of 5]"
     },
@@ -4204,8 +2007,8 @@
       "deck_count": 4,
       "price": 1017.02,
       "price_source": "Market",
-      "individual_total": 1204.19,
-      "savings": 187.17,
+      "individual_total": 1204.99,
+      "savings": 187.97,
       "url": "https://www.tcgplayer.com/product/272321/magic-universes-beyond-warhammer-40-000-commander-deck-case",
       "snippet": "Universes Beyond: Warhammer 40,000 - Commander Deck Case"
     },
@@ -7536,24 +5339,15 @@
         "url": "https://www.tcgplayer.com/product/238730/magic-adventures-in-the-forgotten-realms-draft-booster-box",
         "ev": 223.71,
         "ck_price": 269.99,
-        "ck_qty": 24,
+        "ck_qty": 26,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/adventures-in-the-forgotten-realms-draft-booster-box",
-        "ck_buy": 175.0,
-        "mp_price": 235.0,
-        "mp_qty": 16,
-        "mp_url": "https://manapool.com/sealed/afr/draft-booster-box",
-        "sold": {
-          "last": 238.99,
-          "last_date": "2026-09-23",
-          "avg": 219.51,
-          "n": 3
-        }
+        "ck_buy": 175.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Adventures in the Forgotten Realms - Collector Booster Display",
-        "price": 404.02,
+        "price": 403.36,
         "price_low": 398.88,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/238745/magic-adventures-in-the-forgotten-realms-collector-booster-display",
@@ -7561,16 +5355,7 @@
         "ck_price": 449.99,
         "ck_qty": 19,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/adventures-in-the-forgotten-realms-collector-booster-box",
-        "ck_buy": 292.0,
-        "mp_price": 472.48,
-        "mp_qty": 5,
-        "mp_url": "https://manapool.com/sealed/afr/collector-booster-box",
-        "sold": {
-          "last": 515.0,
-          "last_date": "2026-10-01",
-          "avg": 393.4,
-          "n": 10
-        }
+        "ck_buy": 292.0
       }
     ],
     "Aetherdrift Commander": [
@@ -7578,30 +5363,21 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Aetherdrift - Play Booster Display",
-        "price": 112.71,
-        "price_low": 106.94,
+        "price": 111.31,
+        "price_low": 106.92,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/604250/magic-aetherdrift-play-booster-display",
         "ev": 165.24,
         "ck_price": 124.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/aetherdrift-play-booster-box",
-        "ck_buy": null,
-        "mp_price": 125.0,
-        "mp_qty": 108,
-        "mp_url": "https://manapool.com/sealed/dft/play-booster-box",
-        "sold": {
-          "last": 131.98,
-          "last_date": "2026-10-05",
-          "avg": 113.63,
-          "n": 16
-        }
+        "ck_buy": null
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Aetherdrift - Collector Booster Display",
-        "price": 315.77,
+        "price": 315.63,
         "price_low": 300.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/604253/magic-aetherdrift-collector-booster-display",
@@ -7609,16 +5385,7 @@
         "ck_price": 399.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/aetherdrift-collector-booster-box",
-        "ck_buy": 260.0,
-        "mp_price": 325.0,
-        "mp_qty": 38,
-        "mp_url": "https://manapool.com/sealed/dft/collector-booster-box",
-        "sold": {
-          "last": 309.45,
-          "last_date": "2026-09-28",
-          "avg": 289.52,
-          "n": 20
-        }
+        "ck_buy": 260.0
       }
     ],
     "Assassin's Creed": [
@@ -7630,16 +5397,7 @@
         "price_low": 529.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541225/magic-universes-beyond-assassin-s-creed-collector-booster-display",
-        "ev": 240.45,
-        "mp_price": 538.88,
-        "mp_qty": 5,
-        "mp_url": "https://manapool.com/sealed/acr/collector-booster-box",
-        "sold": {
-          "last": 422.1,
-          "last_date": "2026-07-07",
-          "avg": 422.1,
-          "n": 1
-        }
+        "ev": 240.45
       }
     ],
     "Bloomburrow Commander": [
@@ -7647,47 +5405,29 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Bloomburrow - Play Booster Display",
-        "price": 205.05,
-        "price_low": 194.99,
+        "price": 204.49,
+        "price_low": 189.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541235/magic-bloomburrow-play-booster-display",
         "ev": 235.28,
         "ck_price": 274.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/bloomburrow-play-booster-box",
-        "ck_buy": 178.0,
-        "mp_price": 194.99,
-        "mp_qty": 84,
-        "mp_url": "https://manapool.com/sealed/blb/play-booster-box",
-        "sold": {
-          "last": 193.99,
-          "last_date": "2026-10-06",
-          "avg": 196.49,
-          "n": 20
-        }
+        "ck_buy": 178.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Bloomburrow - Collector Booster Display",
         "price": 1323.67,
-        "price_low": 1343.0,
+        "price_low": 1360.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541238/magic-bloomburrow-collector-booster-display",
         "ev": 510.28,
         "ck_price": 1599.99,
         "ck_qty": 3,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/bloomburrow-collector-booster-box",
-        "ck_buy": 1040.0,
-        "mp_price": 1388.88,
-        "mp_qty": 3,
-        "mp_url": "https://manapool.com/sealed/blb/collector-booster-box",
-        "sold": {
-          "last": 1324.98,
-          "last_date": "2026-07-27",
-          "avg": 1108.47,
-          "n": 4
-        }
+        "ck_buy": 1040.0
       }
     ],
     "Commander Legends: Battle for Baldur's Gate": [
@@ -7695,7 +5435,7 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Commander Legends: Battle for Baldur's Gate - Draft Booster Box",
-        "price": 300.22,
+        "price": 300.42,
         "price_low": 293.35,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/267019/magic-commander-legends-battle-for-baldur-s-gate-draft-booster-box",
@@ -7703,16 +5443,7 @@
         "ck_price": 349.99,
         "ck_qty": 3,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/commander-legends-battle-for-baldurs-gate-draft-booster-box",
-        "ck_buy": 227.0,
-        "mp_price": 292.0,
-        "mp_qty": 56,
-        "mp_url": "https://manapool.com/sealed/clb/draft-booster-box",
-        "sold": {
-          "last": 290.0,
-          "last_date": "2026-09-22",
-          "avg": 284.49,
-          "n": 19
-        }
+        "ck_buy": 227.0
       },
       {
         "type": "collector",
@@ -7726,16 +5457,7 @@
         "ck_price": 724.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/commander-legends-battle-for-baldurs-gate-collector-booster-box",
-        "ck_buy": 471.0,
-        "mp_price": 599.0,
-        "mp_qty": 15,
-        "mp_url": "https://manapool.com/sealed/clb/collector-booster-box",
-        "sold": {
-          "last": 647.5,
-          "last_date": "2026-09-17",
-          "avg": 635.83,
-          "n": 6
-        }
+        "ck_buy": 471.0
       }
     ],
     "Commander Masters": [
@@ -7744,23 +5466,14 @@
         "label": "Booster Box",
         "name": "Commander Masters - Draft Booster Box",
         "price": 546.31,
-        "price_low": 525.0,
+        "price_low": 499.95,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484924/magic-commander-masters-draft-booster-box",
         "ev": 1011.32,
         "ck_price": 649.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/commander-masters-draft-booster-box",
-        "ck_buy": 422.0,
-        "mp_price": 524.99,
-        "mp_qty": 27,
-        "mp_url": "https://manapool.com/sealed/cmm/draft-booster-box",
-        "sold": {
-          "last": 557.9,
-          "last_date": "2026-09-07",
-          "avg": 540.32,
-          "n": 6
-        }
+        "ck_buy": 422.0
       },
       {
         "type": "collector",
@@ -7774,16 +5487,7 @@
         "ck_price": 649.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/commander-masters-collector-booster-box",
-        "ck_buy": 422.0,
-        "mp_price": 597.98,
-        "mp_qty": 9,
-        "mp_url": "https://manapool.com/sealed/cmm/collector-booster-box",
-        "sold": {
-          "last": 510.55,
-          "last_date": "2026-09-21",
-          "avg": 486.99,
-          "n": 13
-        }
+        "ck_buy": 422.0
       }
     ],
     "Commander: Final Fantasy": [
@@ -7791,47 +5495,29 @@
         "type": "play",
         "label": "Booster Box",
         "name": "FINAL FANTASY - Play Booster Display",
-        "price": 254.75,
-        "price_low": 249.99,
+        "price": 257.61,
+        "price_low": 250.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618890/magic-final-fantasy-play-booster-display",
         "ev": 270.97,
         "ck_price": 349.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/final-fantasy-play-booster-box",
-        "ck_buy": 227.0,
-        "mp_price": 250.0,
-        "mp_qty": 40,
-        "mp_url": "https://manapool.com/sealed/fin/play-booster-box",
-        "sold": {
-          "last": 250.0,
-          "last_date": "2026-10-06",
-          "avg": 238.49,
-          "n": 20
-        }
+        "ck_buy": 227.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "FINAL FANTASY - Collector Booster Display",
-        "price": 1653.35,
-        "price_low": 1659.99,
+        "price": 1651.75,
+        "price_low": 1661.8,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618893/magic-final-fantasy-collector-booster-display",
         "ev": 1000.77,
         "ck_price": 1999.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/final-fantasy-collector-booster-box",
-        "ck_buy": 1300.0,
-        "mp_price": 1685.0,
-        "mp_qty": 30,
-        "mp_url": "https://manapool.com/sealed/fin/collector-booster-box",
-        "sold": {
-          "last": 1649.99,
-          "last_date": "2026-10-06",
-          "avg": 1385.22,
-          "n": 13
-        }
+        "ck_buy": 1300.0
       }
     ],
     "Doctor Who Commander": [
@@ -7840,19 +5526,10 @@
         "label": "Collector Booster Box",
         "name": "Universes Beyond: Doctor Who - Collector Booster Display",
         "price": 703.2,
-        "price_low": 794.7,
+        "price_low": 784.61,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496076/magic-universes-beyond-doctor-who-collector-booster-display",
-        "ev": 567.94,
-        "mp_price": 807.99,
-        "mp_qty": 16,
-        "mp_url": "https://manapool.com/sealed/who/collector-booster-box",
-        "sold": {
-          "last": 845.0,
-          "last_date": "2026-09-10",
-          "avg": 751.56,
-          "n": 3
-        }
+        "ev": 567.94
       }
     ],
     "Dominaria United": [
@@ -7861,69 +5538,42 @@
         "label": "Booster Box",
         "name": "Dominaria United - Draft Booster Box",
         "price": 179.02,
-        "price_low": 189.0,
+        "price_low": 169.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/275403/magic-dominaria-united-draft-booster-box",
         "ev": 195.36,
         "ck_price": 179.99,
         "ck_qty": 8,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/dominaria-united-draft-booster-box",
-        "ck_buy": 117.0,
-        "mp_price": 224.99,
-        "mp_qty": 5,
-        "mp_url": "https://manapool.com/sealed/dmu/draft-booster-box",
-        "sold": {
-          "last": 188.95,
-          "last_date": "2026-09-29",
-          "avg": 183.88,
-          "n": 9
-        }
+        "ck_buy": 117.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Dominaria United - Collector Booster Display",
-        "price": 393.5,
+        "price": 394.7,
         "price_low": 396.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/275412/magic-dominaria-united-collector-booster-display",
         "ev": 265.49,
         "ck_price": 474.99,
-        "ck_qty": 4,
+        "ck_qty": 5,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/dominaria-united-collector-booster-box",
-        "ck_buy": 308.0,
-        "mp_price": 410.0,
-        "mp_qty": 10,
-        "mp_url": "https://manapool.com/sealed/dmu/collector-booster-box",
-        "sold": {
-          "last": 399.94,
-          "last_date": "2026-08-18",
-          "avg": 380.87,
-          "n": 5
-        }
+        "ck_buy": 308.0
       },
       {
         "type": "jumpstart",
         "label": "Jumpstart Box",
         "name": "Dominaria United - Jumpstart Booster Display",
         "price": 88.48,
-        "price_low": 93.0,
+        "price_low": 84.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/275428/magic-dominaria-united-jumpstart-booster-display",
         "ev": 188.75,
         "ck_price": 129.99,
-        "ck_qty": 1,
+        "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/dominaria-united-jumpstart-booster-box",
-        "ck_buy": 84.0,
-        "mp_price": 99.99,
-        "mp_qty": 6,
-        "mp_url": "https://manapool.com/sealed/dmu/jumpstart-booster-box",
-        "sold": {
-          "last": 99.99,
-          "last_date": "2026-09-28",
-          "avg": 99.99,
-          "n": 1
-        }
+        "ck_buy": 84.0
       }
     ],
     "Duskmourn: House of Horror": [
@@ -7931,24 +5581,15 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Duskmourn: House of Horror - Play Booster Display",
-        "price": 206.79,
-        "price_low": 195.99,
+        "price": 205.79,
+        "price_low": 179.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557241/magic-duskmourn-house-of-horror-play-booster-display",
         "ev": 216.85,
         "ck_price": 214.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/duskmourn-house-of-horror-play-booster-box",
-        "ck_buy": 139.0,
-        "mp_price": 204.98,
-        "mp_qty": 34,
-        "mp_url": "https://manapool.com/sealed/dsk/play-booster-box",
-        "sold": {
-          "last": 204.98,
-          "last_date": "2026-10-07",
-          "avg": 189.74,
-          "n": 20
-        }
+        "ck_buy": 139.0
       },
       {
         "type": "collector",
@@ -7962,16 +5603,7 @@
         "ck_price": 924.99,
         "ck_qty": 3,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/duskmourn-house-of-horror-collector-booster-box",
-        "ck_buy": 601.0,
-        "mp_price": 755.95,
-        "mp_qty": 11,
-        "mp_url": "https://manapool.com/sealed/dsk/collector-booster-box",
-        "sold": {
-          "last": 799.0,
-          "last_date": "2026-07-30",
-          "avg": 696.42,
-          "n": 7
-        }
+        "ck_buy": 601.0
       }
     ],
     "Edge of Eternities": [
@@ -7979,7 +5611,7 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Edge of Eternities - Play Booster Display",
-        "price": 189.76,
+        "price": 190.41,
         "price_low": 182.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619674/magic-edge-of-eternities-play-booster-display",
@@ -7987,22 +5619,13 @@
         "ck_price": 274.99,
         "ck_qty": 4,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/edge-of-eternities-play-booster-box",
-        "ck_buy": 178.0,
-        "mp_price": 183.71,
-        "mp_qty": 67,
-        "mp_url": "https://manapool.com/sealed/eoe/play-booster-box",
-        "sold": {
-          "last": 182.99,
-          "last_date": "2026-10-06",
-          "avg": 183.45,
-          "n": 20
-        }
+        "ck_buy": 178.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Edge of Eternities - Collector Booster Display",
-        "price": 736.87,
+        "price": 735.99,
         "price_low": 699.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619672/magic-edge-of-eternities-collector-booster-display",
@@ -8010,16 +5633,7 @@
         "ck_price": 924.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/edge-of-eternities-collector-booster-box",
-        "ck_buy": 601.0,
-        "mp_price": 719.99,
-        "mp_qty": 29,
-        "mp_url": "https://manapool.com/sealed/eoe/collector-booster-box",
-        "sold": {
-          "last": 717.17,
-          "last_date": "2026-10-06",
-          "avg": 692.72,
-          "n": 18
-        }
+        "ck_buy": 601.0
       }
     ],
     "Fallout Commander": [
@@ -8028,13 +5642,10 @@
         "label": "Collector Booster Box",
         "name": "Universes Beyond: Fallout - Collector Booster Display",
         "price": 1834.75,
-        "price_low": 1942.9,
+        "price_low": 1959.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/523185/magic-universes-beyond-fallout-collector-booster-display",
-        "ev": 1035.36,
-        "mp_price": 2000.0,
-        "mp_qty": 4,
-        "mp_url": "https://manapool.com/sealed/pip/collector-booster-box"
+        "ev": 1035.36
       }
     ],
     "Innistrad: Crimson Vow": [
@@ -8042,30 +5653,21 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Innistrad: Crimson Vow - Draft Booster Box",
-        "price": 145.91,
-        "price_low": 149.0,
+        "price": 145.33,
+        "price_low": 142.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/246467/magic-innistrad-crimson-vow-draft-booster-box",
         "ev": 187.3,
         "ck_price": 159.99,
         "ck_qty": 20,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/innistrad-crimson-vow-draft-booster-box",
-        "ck_buy": 104.0,
-        "mp_price": 130.0,
-        "mp_qty": 112,
-        "mp_url": "https://manapool.com/sealed/vow/draft-booster-box",
-        "sold": {
-          "last": 153.98,
-          "last_date": "2026-10-05",
-          "avg": 143.58,
-          "n": 8
-        }
+        "ck_buy": 104.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Innistrad: Crimson Vow - Collector Booster Display",
-        "price": 306.37,
+        "price": 309.8,
         "price_low": 314.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/246457/magic-innistrad-crimson-vow-collector-booster-display",
@@ -8073,16 +5675,7 @@
         "ck_price": 324.99,
         "ck_qty": 5,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/innistrad-crimson-vow-collector-booster-box",
-        "ck_buy": 211.0,
-        "mp_price": 309.99,
-        "mp_qty": 10,
-        "mp_url": "https://manapool.com/sealed/vow/collector-booster-box",
-        "sold": {
-          "last": 309.45,
-          "last_date": "2026-09-25",
-          "avg": 287.11,
-          "n": 10
-        }
+        "ck_buy": 211.0
       }
     ],
     "Innistrad: Midnight Hunt": [
@@ -8090,7 +5683,7 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Innistrad: Midnight Hunt - Draft Booster Box",
-        "price": 157.52,
+        "price": 161.11,
         "price_low": 175.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/244379/magic-innistrad-midnight-hunt-draft-booster-box",
@@ -8098,39 +5691,21 @@
         "ck_price": 199.99,
         "ck_qty": 4,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/innistrad-midnight-hunt-draft-booster-box",
-        "ck_buy": 130.0,
-        "mp_price": 160.0,
-        "mp_qty": 13,
-        "mp_url": "https://manapool.com/sealed/mid/draft-booster-box",
-        "sold": {
-          "last": 160.0,
-          "last_date": "2026-09-24",
-          "avg": 141.12,
-          "n": 4
-        }
+        "ck_buy": 130.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Innistrad: Midnight Hunt - Collector Booster Display",
-        "price": 266.48,
-        "price_low": 265.0,
+        "price": 268.52,
+        "price_low": 276.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/244384/magic-innistrad-midnight-hunt-collector-booster-display",
         "ev": 152.28,
         "ck_price": 274.99,
         "ck_qty": 23,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/innistrad-midnight-hunt-collector-booster-box",
-        "ck_buy": 178.0,
-        "mp_price": 290.0,
-        "mp_qty": 11,
-        "mp_url": "https://manapool.com/sealed/mid/collector-booster-box",
-        "sold": {
-          "last": 290.0,
-          "last_date": "2026-10-04",
-          "avg": 257.5,
-          "n": 13
-        }
+        "ck_buy": 178.0
       }
     ],
     "Kamigawa: Neon Dynasty": [
@@ -8138,7 +5713,7 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Kamigawa: Neon Dynasty - Draft Booster Box",
-        "price": 239.39,
+        "price": 239.47,
         "price_low": 240.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/257557/magic-kamigawa-neon-dynasty-draft-booster-box",
@@ -8146,16 +5721,7 @@
         "ck_price": 249.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/kamigawa-neon-dynasty-draft-booster-box",
-        "ck_buy": 162.0,
-        "mp_price": 225.7,
-        "mp_qty": 11,
-        "mp_url": "https://manapool.com/sealed/neo/draft-booster-box",
-        "sold": {
-          "last": 248.88,
-          "last_date": "2026-09-29",
-          "avg": 229.66,
-          "n": 12
-        }
+        "ck_buy": 162.0
       },
       {
         "type": "collector",
@@ -8169,16 +5735,7 @@
         "ck_price": 799.99,
         "ck_qty": 4,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/kamigawa-neon-dynasty-collector-booster-box",
-        "ck_buy": 520.0,
-        "mp_price": 650.0,
-        "mp_qty": 8,
-        "mp_url": "https://manapool.com/sealed/neo/collector-booster-box",
-        "sold": {
-          "last": 624.98,
-          "last_date": "2026-08-28",
-          "avg": 572.7,
-          "n": 5
-        }
+        "ck_buy": 520.0
       }
     ],
     "Lorwyn Eclipsed": [
@@ -8186,7 +5743,7 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Lorwyn Eclipsed - Play Booster Display",
-        "price": 112.24,
+        "price": 113.22,
         "price_low": 107.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/656312/magic-lorwyn-eclipsed-play-booster-display",
@@ -8194,22 +5751,13 @@
         "ck_price": 129.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/lorwyn-eclipsed-play-booster-box",
-        "ck_buy": 84.0,
-        "mp_price": 118.0,
-        "mp_qty": 310,
-        "mp_url": "https://manapool.com/sealed/ecl/play-booster-box",
-        "sold": {
-          "last": 112.24,
-          "last_date": "2026-10-07",
-          "avg": 119.95,
-          "n": 20
-        }
+        "ck_buy": 84.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Lorwyn Eclipsed - Collector Booster Display",
-        "price": 421.9,
+        "price": 421.66,
         "price_low": 404.9,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/656322/magic-lorwyn-eclipsed-collector-booster-display",
@@ -8217,16 +5765,7 @@
         "ck_price": 499.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/lorwyn-eclipsed-collector-booster-box",
-        "ck_buy": 325.0,
-        "mp_price": 404.44,
-        "mp_qty": 68,
-        "mp_url": "https://manapool.com/sealed/ecl/collector-booster-box",
-        "sold": {
-          "last": 424.99,
-          "last_date": "2026-09-27",
-          "avg": 414.81,
-          "n": 20
-        }
+        "ck_buy": 325.0
       }
     ],
     "March of the Machine": [
@@ -8234,24 +5773,15 @@
         "type": "play",
         "label": "Booster Box",
         "name": "March of the Machine - Draft Booster Box",
-        "price": 188.95,
-        "price_low": 193.53,
+        "price": 189.28,
+        "price_low": 190.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/475575/magic-march-of-the-machine-draft-booster-box",
         "ev": 283.2,
         "ck_price": 249.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/march-of-the-machine-draft-booster-box",
-        "ck_buy": 162.0,
-        "mp_price": 172.0,
-        "mp_qty": 17,
-        "mp_url": "https://manapool.com/sealed/mom/draft-booster-box",
-        "sold": {
-          "last": 169.0,
-          "last_date": "2026-10-04",
-          "avg": 165.96,
-          "n": 7
-        }
+        "ck_buy": 162.0
       },
       {
         "type": "collector",
@@ -8265,33 +5795,21 @@
         "ck_price": 999.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/march-of-the-machine-collector-booster-box",
-        "ck_buy": 650.0,
-        "mp_price": 949.98,
-        "mp_qty": 7,
-        "mp_url": "https://manapool.com/sealed/mom/collector-booster-box",
-        "sold": {
-          "last": 1040.0,
-          "last_date": "2026-08-01",
-          "avg": 1040.0,
-          "n": 1
-        }
+        "ck_buy": 650.0
       },
       {
         "type": "jumpstart",
         "label": "Jumpstart Box",
         "name": "March of the Machine - Jumpstart Booster Display",
         "price": 153.45,
-        "price_low": 143.07,
+        "price_low": 144.49,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/475582/magic-march-of-the-machine-jumpstart-booster-display",
         "ev": 315.73,
         "ck_price": 124.99,
         "ck_qty": 10,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/march-of-the-machine-jumpstart-booster-box",
-        "ck_buy": 81.0,
-        "mp_price": 300.0,
-        "mp_qty": 3,
-        "mp_url": "https://manapool.com/sealed/mom/jumpstart-booster-box"
+        "ck_buy": 81.0
       }
     ],
     "Marvel Super Heroes": [
@@ -8299,30 +5817,21 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Marvel Super Heroes - Play Booster Display",
-        "price": 113.64,
-        "price_low": 109.12,
+        "price": 114.11,
+        "price_low": 109.69,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675603/magic-marvel-super-heroes-play-booster-display",
         "ev": 137.45,
         "ck_price": 169.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/marvel-super-heroes-play-booster-box",
-        "ck_buy": null,
-        "mp_price": 115.8,
-        "mp_qty": 481,
-        "mp_url": "https://manapool.com/sealed/msh/play-booster-box",
-        "sold": {
-          "last": 153.98,
-          "last_date": "2026-10-03",
-          "avg": 117.56,
-          "n": 20
-        }
+        "ck_buy": null
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Marvel Super Heroes - Collector Booster Display",
-        "price": 438.12,
+        "price": 438.8,
         "price_low": 435.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675606/magic-marvel-super-heroes-collector-booster-display",
@@ -8330,39 +5839,21 @@
         "ck_price": 524.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/marvel-super-heroes-collector-booster-box",
-        "ck_buy": 341.0,
-        "mp_price": 487.05,
-        "mp_qty": 71,
-        "mp_url": "https://manapool.com/sealed/msh/collector-booster-box",
-        "sold": {
-          "last": 482.18,
-          "last_date": "2026-10-03",
-          "avg": 477.13,
-          "n": 20
-        }
+        "ck_buy": 341.0
       },
       {
         "type": "jumpstart",
         "label": "Jumpstart Box",
         "name": "Marvel Super Heroes - Jumpstart Booster Display",
-        "price": 92.97,
-        "price_low": 97.28,
+        "price": 94.34,
+        "price_low": 97.44,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675623/magic-marvel-super-heroes-jumpstart-booster-display",
         "ev": 231.84,
         "ck_price": 149.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/marvel-super-heroes-jumpstart-booster-box",
-        "ck_buy": 130.0,
-        "mp_price": 125.72,
-        "mp_qty": 66,
-        "mp_url": "https://manapool.com/sealed/msh/jumpstart-booster-box",
-        "sold": {
-          "last": 125.5,
-          "last_date": "2026-10-02",
-          "avg": 116.46,
-          "n": 20
-        }
+        "ck_buy": 130.0
       }
     ],
     "Modern Horizons 3": [
@@ -8370,7 +5861,7 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Modern Horizons 3 - Play Booster Display",
-        "price": 303.53,
+        "price": 303.93,
         "price_low": 298.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541164/magic-modern-horizons-3-play-booster-display",
@@ -8378,16 +5869,7 @@
         "ck_price": 399.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/modern-horizons-3-play-booster-box",
-        "ck_buy": 260.0,
-        "mp_price": 294.98,
-        "mp_qty": 44,
-        "mp_url": "https://manapool.com/sealed/mh3/play-booster-box",
-        "sold": {
-          "last": 291.99,
-          "last_date": "2026-10-06",
-          "avg": 295.01,
-          "n": 20
-        }
+        "ck_buy": 260.0
       },
       {
         "type": "collector",
@@ -8401,16 +5883,7 @@
         "ck_price": 1099.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/modern-horizons-3-collector-booster-box",
-        "ck_buy": 715.0,
-        "mp_price": 868.5,
-        "mp_qty": 6,
-        "mp_url": "https://manapool.com/sealed/mh3/collector-booster-box",
-        "sold": {
-          "last": 864.99,
-          "last_date": "2026-09-21",
-          "avg": 792.45,
-          "n": 9
-        }
+        "ck_buy": 715.0
       }
     ],
     "Murders at Karlov Manor": [
@@ -8426,16 +5899,7 @@
         "ck_price": 179.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/murders-at-karlov-manor-play-booster-box",
-        "ck_buy": 117.0,
-        "mp_price": 144.86,
-        "mp_qty": 61,
-        "mp_url": "https://manapool.com/sealed/mkm/play-booster-box",
-        "sold": {
-          "last": 149.99,
-          "last_date": "2026-10-01",
-          "avg": 143.9,
-          "n": 20
-        }
+        "ck_buy": 117.0
       },
       {
         "type": "collector",
@@ -8449,16 +5913,7 @@
         "ck_price": 449.99,
         "ck_qty": 3,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/murders-at-karlov-manor-collector-booster-box",
-        "ck_buy": 292.0,
-        "mp_price": 397.0,
-        "mp_qty": 13,
-        "mp_url": "https://manapool.com/sealed/mkm/collector-booster-box",
-        "sold": {
-          "last": 383.8,
-          "last_date": "2026-09-16",
-          "avg": 379.91,
-          "n": 6
-        }
+        "ck_buy": 292.0
       }
     ],
     "Outlaws of Thunder Junction": [
@@ -8474,39 +5929,21 @@
         "ck_price": 224.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/outlaws-of-thunder-junction-play-booster-box",
-        "ck_buy": 146.0,
-        "mp_price": 195.99,
-        "mp_qty": 42,
-        "mp_url": "https://manapool.com/sealed/otj/play-booster-box",
-        "sold": {
-          "last": 195.99,
-          "last_date": "2026-10-04",
-          "avg": 186.26,
-          "n": 20
-        }
+        "ck_buy": 146.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Outlaws of Thunder Junction - Collector Booster Display",
         "price": 475.34,
-        "price_low": 489.96,
+        "price_low": 475.34,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541090/magic-outlaws-of-thunder-junction-collector-booster-display",
         "ev": 327.68,
         "ck_price": 574.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/outlaws-of-thunder-junction-collector-booster-box",
-        "ck_buy": 373.0,
-        "mp_price": 495.95,
-        "mp_qty": 18,
-        "mp_url": "https://manapool.com/sealed/otj/collector-booster-box",
-        "sold": {
-          "last": 469.0,
-          "last_date": "2026-08-28",
-          "avg": 440.32,
-          "n": 6
-        }
+        "ck_buy": 373.0
       }
     ],
     "Phyrexia: All Will Be One": [
@@ -8522,22 +5959,13 @@
         "ck_price": 259.99,
         "ck_qty": 3,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/phyrexia-all-will-be-one-draft-booster-box",
-        "ck_buy": 169.0,
-        "mp_price": 225.0,
-        "mp_qty": 9,
-        "mp_url": "https://manapool.com/sealed/one/draft-booster-box",
-        "sold": {
-          "last": 224.98,
-          "last_date": "2026-09-16",
-          "avg": 215.0,
-          "n": 4
-        }
+        "ck_buy": 169.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Phyrexia: All Will Be One - Collector Booster Display",
-        "price": 1115.41,
+        "price": 1123.45,
         "price_low": 1199.69,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/451880/magic-phyrexia-all-will-be-one-collector-booster-display",
@@ -8545,16 +5973,7 @@
         "ck_price": 1399.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/phyrexia-all-will-be-one-collector-booster-box",
-        "ck_buy": 910.0,
-        "mp_price": 1188.88,
-        "mp_qty": 3,
-        "mp_url": "https://manapool.com/sealed/one/collector-booster-box",
-        "sold": {
-          "last": 1150.0,
-          "last_date": "2026-08-22",
-          "avg": 1150.0,
-          "n": 1
-        }
+        "ck_buy": 910.0
       },
       {
         "type": "jumpstart",
@@ -8568,10 +5987,7 @@
         "ck_price": 219.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/phyrexia-all-will-be-one-jumpstart-booster-box",
-        "ck_buy": 143.0,
-        "mp_price": 187.49,
-        "mp_qty": 9,
-        "mp_url": "https://manapool.com/sealed/one/jumpstart-booster-box"
+        "ck_buy": 143.0
       }
     ],
     "Reality Fracture": [
@@ -8579,7 +5995,7 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Reality Fracture - Play Booster Display",
-        "price": 146.03,
+        "price": 143.08,
         "price_low": 140.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/692980/magic-reality-fracture-play-booster-display",
@@ -8587,39 +6003,21 @@
         "ck_price": 164.99,
         "ck_qty": 3,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/reality-fracture-play-booster-box",
-        "ck_buy": null,
-        "mp_price": 143.86,
-        "mp_qty": 321,
-        "mp_url": "https://manapool.com/sealed/fra/play-booster-box",
-        "sold": {
-          "last": 143.87,
-          "last_date": "2026-10-07",
-          "avg": 145.57,
-          "n": 20
-        }
+        "ck_buy": null
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Reality Fracture - Collector Booster Display",
-        "price": 451.91,
-        "price_low": 447.95,
+        "price": 431.35,
+        "price_low": 429.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/692983/magic-reality-fracture-collector-booster-display",
         "ev": 413.56,
         "ck_price": 569.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/reality-fracture-collector-booster-box",
-        "ck_buy": null,
-        "mp_price": 439.98,
-        "mp_qty": 86,
-        "mp_url": "https://manapool.com/sealed/fra/collector-booster-box",
-        "sold": {
-          "last": 439.99,
-          "last_date": "2026-10-07",
-          "avg": 461.42,
-          "n": 20
-        }
+        "ck_buy": null
       }
     ],
     "Secrets of Strixhaven": [
@@ -8627,7 +6025,7 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Secrets of Strixhaven - Play Booster Display",
-        "price": 143.65,
+        "price": 143.99,
         "price_low": 132.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675555/magic-secrets-of-strixhaven-play-booster-display",
@@ -8635,22 +6033,13 @@
         "ck_price": 199.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/secrets-of-strixhaven-play-booster-box",
-        "ck_buy": 130.0,
-        "mp_price": 140.0,
-        "mp_qty": 181,
-        "mp_url": "https://manapool.com/sealed/sos/play-booster-box",
-        "sold": {
-          "last": 134.99,
-          "last_date": "2026-10-02",
-          "avg": 145.84,
-          "n": 20
-        }
+        "ck_buy": 130.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Secrets of Strixhaven - Collector Booster Display",
-        "price": 503.79,
+        "price": 502.66,
         "price_low": 486.67,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675558/magic-secrets-of-strixhaven-collector-booster-display",
@@ -8658,16 +6047,7 @@
         "ck_price": 649.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/secrets-of-strixhaven-collector-booster-box",
-        "ck_buy": 422.0,
-        "mp_price": 514.99,
-        "mp_qty": 51,
-        "mp_url": "https://manapool.com/sealed/sos/collector-booster-box",
-        "sold": {
-          "last": 543.0,
-          "last_date": "2026-10-05",
-          "avg": 519.76,
-          "n": 20
-        }
+        "ck_buy": 422.0
       }
     ],
     "Streets of New Capenna": [
@@ -8675,7 +6055,7 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Streets of New Capenna - Draft Booster Box",
-        "price": 141.64,
+        "price": 141.88,
         "price_low": 129.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/264760/magic-streets-of-new-capenna-draft-booster-box",
@@ -8683,39 +6063,21 @@
         "ck_price": 174.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/streets-of-new-capenna-draft-booster-box",
-        "ck_buy": 113.0,
-        "mp_price": 153.99,
-        "mp_qty": 23,
-        "mp_url": "https://manapool.com/sealed/snc/draft-booster-box",
-        "sold": {
-          "last": 150.0,
-          "last_date": "2026-09-05",
-          "avg": 138.81,
-          "n": 6
-        }
+        "ck_buy": 113.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Streets of New Capenna - Collector Booster Display",
         "price": 310.46,
-        "price_low": 310.0,
+        "price_low": 308.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/264767/magic-streets-of-new-capenna-collector-booster-display",
         "ev": 212.43,
         "ck_price": 399.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/streets-of-new-capenna-collector-booster-box",
-        "ck_buy": 260.0,
-        "mp_price": 339.98,
-        "mp_qty": 6,
-        "mp_url": "https://manapool.com/sealed/snc/collector-booster-box",
-        "sold": {
-          "last": 299.45,
-          "last_date": "2026-09-25",
-          "avg": 274.67,
-          "n": 8
-        }
+        "ck_buy": 260.0
       }
     ],
     "Strixhaven: School of Mages (Commander 2021)": [
@@ -8729,18 +6091,9 @@
         "url": "https://www.tcgplayer.com/product/233229/magic-strixhaven-school-of-mages-set-booster-display",
         "ev": 175.44,
         "ck_price": 199.99,
-        "ck_qty": 13,
+        "ck_qty": 15,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/strixhaven-school-of-mages-draft-booster-box",
-        "ck_buy": 130.0,
-        "mp_price": 189.94,
-        "mp_qty": 9,
-        "mp_url": "https://manapool.com/sealed/stx/set-booster-box",
-        "sold": {
-          "last": 199.94,
-          "last_date": "2026-09-21",
-          "avg": 202.25,
-          "n": 7
-        }
+        "ck_buy": 130.0
       },
       {
         "type": "collector",
@@ -8754,16 +6107,7 @@
         "ck_price": 699.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/strixhaven-school-of-mages-collector-booster-box",
-        "ck_buy": 455.0,
-        "mp_price": 639.69,
-        "mp_qty": 13,
-        "mp_url": "https://manapool.com/sealed/stx/collector-booster-box",
-        "sold": {
-          "last": 500.0,
-          "last_date": "2026-07-25",
-          "avg": 500.0,
-          "n": 1
-        }
+        "ck_buy": 455.0
       }
     ],
     "Tarkir: Dragonstorm": [
@@ -8771,7 +6115,7 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Tarkir: Dragonstorm - Play Booster Display",
-        "price": 165.49,
+        "price": 164.77,
         "price_low": 149.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619645/magic-tarkir-dragonstorm-play-booster-display",
@@ -8779,39 +6123,21 @@
         "ck_price": 199.99,
         "ck_qty": 3,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/tarkir-dragonstorm-play-booster-box",
-        "ck_buy": 130.0,
-        "mp_price": 164.64,
-        "mp_qty": 58,
-        "mp_url": "https://manapool.com/sealed/tdm/play-booster-box",
-        "sold": {
-          "last": 164.64,
-          "last_date": "2026-10-04",
-          "avg": 159.1,
-          "n": 20
-        }
+        "ck_buy": 130.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Tarkir: Dragonstorm - Collector Booster Display",
-        "price": 496.84,
-        "price_low": 491.69,
+        "price": 497.16,
+        "price_low": 489.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619649/magic-tarkir-dragonstorm-collector-booster-display",
         "ev": 408.9,
         "ck_price": 599.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/tarkir-dragonstorm-collector-booster-box",
-        "ck_buy": 390.0,
-        "mp_price": 498.88,
-        "mp_qty": 35,
-        "mp_url": "https://manapool.com/sealed/tdm/collector-booster-box",
-        "sold": {
-          "last": 495.93,
-          "last_date": "2026-09-25",
-          "avg": 469.79,
-          "n": 20
-        }
+        "ck_buy": 390.0
       }
     ],
     "Teenage Mutant Ninja Turtles": [
@@ -8819,30 +6145,21 @@
         "type": "play",
         "label": "Booster Box",
         "name": "Teenage Mutant Ninja Turtles - Play Booster Display",
-        "price": 106.97,
-        "price_low": 103.2,
+        "price": 107.1,
+        "price_low": 104.72,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/657849/magic-teenage-mutant-ninja-turtles-play-booster-display",
         "ev": 129.78,
         "ck_price": 119.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/teenage-mutant-ninja-turtles-play-booster-box",
-        "ck_buy": null,
-        "mp_price": 106.97,
-        "mp_qty": 311,
-        "mp_url": "https://manapool.com/sealed/tmt/play-booster-box",
-        "sold": {
-          "last": 105.95,
-          "last_date": "2026-10-05",
-          "avg": 114.63,
-          "n": 20
-        }
+        "ck_buy": null
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Teenage Mutant Ninja Turtles - Collector Booster Display",
-        "price": 427.91,
+        "price": 427.31,
         "price_low": 420.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/657852/magic-teenage-mutant-ninja-turtles-collector-booster-display",
@@ -8850,16 +6167,7 @@
         "ck_price": 499.99,
         "ck_qty": 3,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/teenage-mutant-ninja-turtles-collector-booster-box",
-        "ck_buy": 325.0,
-        "mp_price": 449.99,
-        "mp_qty": 45,
-        "mp_url": "https://manapool.com/sealed/tmt/collector-booster-box",
-        "sold": {
-          "last": 461.98,
-          "last_date": "2026-09-23",
-          "avg": 429.49,
-          "n": 10
-        }
+        "ck_buy": 325.0
       }
     ],
     "The Brothers' War": [
@@ -8875,39 +6183,21 @@
         "ck_price": 249.99,
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/the-brothers-war-draft-booster-box",
-        "ck_buy": 162.0,
-        "mp_price": 225.0,
-        "mp_qty": 12,
-        "mp_url": "https://manapool.com/sealed/bro/draft-booster-box",
-        "sold": {
-          "last": 200.0,
-          "last_date": "2026-09-05",
-          "avg": 199.78,
-          "n": 5
-        }
+        "ck_buy": 162.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "The Brothers' War - Collector Booster Display",
         "price": 838.51,
-        "price_low": 837.99,
+        "price_low": 829.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/282224/magic-the-brothers-war-collector-booster-display",
         "ev": 348.82,
         "ck_price": 949.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/the-brothers-war-collector-booster-box",
-        "ck_buy": 617.0,
-        "mp_price": 839.99,
-        "mp_qty": 8,
-        "mp_url": "https://manapool.com/sealed/bro/collector-booster-box",
-        "sold": {
-          "last": 835.0,
-          "last_date": "2026-08-11",
-          "avg": 765.47,
-          "n": 4
-        }
+        "ck_buy": 617.0
       },
       {
         "type": "jumpstart",
@@ -8921,16 +6211,7 @@
         "ck_price": 119.99,
         "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/the-brothers-war-jumpstart-booster-box",
-        "ck_buy": 78.0,
-        "mp_price": 97.49,
-        "mp_qty": 16,
-        "mp_url": "https://manapool.com/sealed/bro/jumpstart-booster-box",
-        "sold": {
-          "last": 119.99,
-          "last_date": "2026-09-24",
-          "avg": 104.72,
-          "n": 2
-        }
+        "ck_buy": 78.0
       }
     ],
     "The Lord of the Rings: Tales of Middle-earth": [
@@ -8946,45 +6227,27 @@
         "ck_price": 449.99,
         "ck_qty": 6,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/the-lord-of-the-rings-tales-of-middle-earth-draft-booster-box",
-        "ck_buy": 292.0,
-        "mp_price": 415.0,
-        "mp_qty": 19,
-        "mp_url": "https://manapool.com/sealed/ltr/draft-booster-box",
-        "sold": {
-          "last": 399.99,
-          "last_date": "2026-09-21",
-          "avg": 393.38,
-          "n": 9
-        }
+        "ck_buy": 292.0
       },
       {
         "type": "collector",
         "label": "Collector Booster Box",
         "name": "Universes Beyond: The Lord of the Rings: Tales of Middle-earth - Collector Booster Display",
         "price": 2063.54,
-        "price_low": 2055.0,
+        "price_low": 2054.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484912/magic-universes-beyond-the-lord-of-the-rings-tales-of-middle-earth-collector-booster-display",
         "ev": 704.46,
         "ck_price": 2299.99,
         "ck_qty": 4,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/the-lord-of-the-rings-tales-of-middle-earth-collector-booster-box",
-        "ck_buy": 1495.0,
-        "mp_price": 2188.0,
-        "mp_qty": 21,
-        "mp_url": "https://manapool.com/sealed/ltr/collector-booster-box",
-        "sold": {
-          "last": 1725.0,
-          "last_date": "2026-06-13",
-          "avg": 1725.0,
-          "n": 1
-        }
+        "ck_buy": 1495.0
       },
       {
         "type": "jumpstart",
         "label": "Jumpstart Box",
         "name": "Universes Beyond: The Lord of the Rings: Tales of Middle-earth - Jumpstart Booster Box",
-        "price": 245.21,
+        "price": 245.61,
         "price_low": 230.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484915/magic-universes-beyond-the-lord-of-the-rings-tales-of-middle-earth-jumpstart-booster-box",
@@ -8992,10 +6255,7 @@
         "ck_price": 249.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/the-lord-of-the-rings-tales-of-middle-earth-jumpstart-booster-box",
-        "ck_buy": 162.0,
-        "mp_price": 225.0,
-        "mp_qty": 24,
-        "mp_url": "https://manapool.com/sealed/ltr/jumpstart-booster-box"
+        "ck_buy": 162.0
       }
     ],
     "The Lost Caverns of Ixalan": [
@@ -9011,16 +6271,7 @@
         "ck_price": 474.99,
         "ck_qty": 3,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/the-lost-caverns-of-ixalan-set-booster-box",
-        "ck_buy": 308.0,
-        "mp_price": 263.0,
-        "mp_qty": 9,
-        "mp_url": "https://manapool.com/sealed/lci/draft-booster-box",
-        "sold": {
-          "last": 256.0,
-          "last_date": "2026-09-08",
-          "avg": 243.62,
-          "n": 8
-        }
+        "ck_buy": 308.0
       },
       {
         "type": "collector",
@@ -9034,16 +6285,7 @@
         "ck_price": 1399.99,
         "ck_qty": 5,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/the-lost-caverns-of-ixalan-collector-booster-box",
-        "ck_buy": 910.0,
-        "mp_price": 1419.99,
-        "mp_qty": 4,
-        "mp_url": "https://manapool.com/sealed/lci/collector-booster-box",
-        "sold": {
-          "last": 1296.63,
-          "last_date": "2026-08-19",
-          "avg": 1296.63,
-          "n": 1
-        }
+        "ck_buy": 910.0
       }
     ],
     "Wilds of Eldraine": [
@@ -9059,16 +6301,7 @@
         "ck_price": 374.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/wilds-of-eldraine-draft-booster-box",
-        "ck_buy": 243.0,
-        "mp_price": 314.95,
-        "mp_qty": 12,
-        "mp_url": "https://manapool.com/sealed/woe/draft-booster-box",
-        "sold": {
-          "last": 310.0,
-          "last_date": "2026-09-09",
-          "avg": 313.73,
-          "n": 4
-        }
+        "ck_buy": 243.0
       },
       {
         "type": "collector",
@@ -9082,16 +6315,7 @@
         "ck_price": 1099.99,
         "ck_qty": 2,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/wilds-of-eldraine-collector-booster-box",
-        "ck_buy": 715.0,
-        "mp_price": 888.99,
-        "mp_qty": 25,
-        "mp_url": "https://manapool.com/sealed/woe/collector-booster-box",
-        "sold": {
-          "last": 850.0,
-          "last_date": "2026-08-18",
-          "avg": 852.33,
-          "n": 6
-        }
+        "ck_buy": 715.0
       }
     ]
   }

@@ -783,17 +783,17 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .scope-chip:hover { border-color: var(--gold); }
 .scope-chip.active { background: var(--gold-bright); color: #1a1308; border-color: var(--gold-bright); }
 
-/* Zulus second-vendor price row */
-.price-zulus {
+/* Second vendor price row (Card Kingdom) */
+.price-vendor {
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--ink-muted);
   margin-top: 4px;
 }
-.price-zulus a { color: var(--ink-soft); text-decoration: none; }
-.price-zulus a:hover { color: var(--gold); }
-.price-zulus.cheaper { color: var(--burgundy-soft); font-weight: 500; }
-.price-zulus .vendor-oos { color: var(--ink-muted); }
+.price-vendor a { color: var(--ink-soft); text-decoration: none; }
+.price-vendor a:hover { color: var(--gold); }
+.price-vendor.cheaper { color: var(--burgundy-soft); font-weight: 500; }
+.price-vendor .vendor-oos { color: var(--ink-muted); }
 .price-best {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -804,16 +804,6 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .price-best a { color: var(--sage); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--sage) 40%, transparent); }
 .price-best a:hover { color: var(--gold); }
 .price-best .price-best-save { color: var(--ink-muted); font-weight: 400; }
-/* Realized sales — the only sold-side number on the card, so it reads
-   distinctly from the vendor ask prices above it. */
-.price-sold {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--ink-soft);
-  margin-top: 4px;
-}
-.price-sold strong { color: var(--ink-strong); font-weight: 600; }
-.price-sold .sold-vs { color: var(--ink-muted); }
 
 /* Sparkline */
 .sparkline {
@@ -1258,7 +1248,6 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .box-ev.good { color: var(--success); }
 .box-ck { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
 .box-ck.cheaper { color: var(--sage); font-weight: 600; }
-.box-sold { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-soft); }
 .box-ev-note { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); padding: 10px 18px 14px; line-height: 1.5; }
 .box-item { cursor: pointer; }
 .box-item-link { font-family: var(--font-mono); font-size: 10px; color: var(--gold); text-decoration: none; margin-top: 2px; }
@@ -1318,7 +1307,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   <div class="title-block">
     <div>
       <h1 class="title"><em>MTG</em> Tracker</h1>
-      <p class="tagline">Live prices for every MTG Commander precon, sealed booster box, and set bundle since 2021, refreshed daily across TCGPlayer, Card Kingdom, Mana Pool &amp; Zulus.</p>
+      <p class="tagline">Live prices for every MTG Commander precon, sealed booster box, and set bundle since 2021, refreshed daily across TCGplayer and Card Kingdom.</p>
     </div>
     <div class="meta-line">
       <div style="margin-bottom:6px;"><button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle light or dark theme" title="Toggle light/dark theme">◐</button></div>
@@ -1518,7 +1507,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   <div>
     <div>Prices come from three tiers, best-first: <em style="color:var(--live);">Live</em> (TCGPlayer Market, refreshed daily via a GitHub Action scraper) → <em style="color:var(--gold);">Snapshot</em> (verified research from April 2026) → <em style="color:var(--ink-muted);">MSRP reference</em>.</div>
     <div style="margin-top:6px;">Power scores from <a href="https://scrycheck.com/precons" target="_blank" rel="noopener" style="color:var(--gold);">ScryCheck</a> — rule-based analysis, 93% bracket accuracy against 252 reference decks. 108 of 111 decks scored inline. Brackets follow Wizards' official system (<em>B1 casual → B5 cEDH</em>).</div>
-    <div style="margin-top:6px;">Vendor: TCGPlayer.</div>
+    <div style="margin-top:6px;">Vendors: TCGplayer and Card Kingdom.</div>
   </div>
   <div>Built for Isaac · <a id="reportLink" href="https://github.com/CooknRice/precon-tracker/issues/new?labels=data-fix" target="_blank" rel="noopener noreferrer">Report an error</a></div>
 </footer>
@@ -1583,7 +1572,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   const LIVE_PRICES_REMOTE_URL = null;  // ← EDIT THIS AFTER YOU CREATE THE REPO
   const LIVE_PRICES_LOCAL_URL = "./prices.json";  // works when HTML is served from same folder
   let LIVE_PRICES = null;  // populated by loadLivePrices(); null = unavailable
-  let PRICE_HISTORY = null;  // populated by loadHistory(); { deck_id: [{date, tcg, zulus}, ...] }
+  let PRICE_HISTORY = null;  // populated by loadHistory(); { deck_id: [{date, tcg, ck, best}, ...] }
   let BOX_HISTORY = null;    // populated by loadHistory(); { "<set>::<type>": [{date, price}, ...] }
   let CARD_INDEX = null;    // populated by loadCardIndex(); { normName: {name, decks:[ids]} }
   let PRECONS = [];        // populated by loadDecks() from decks.json
@@ -1661,14 +1650,6 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     return { price: tcg.price, price_low: tcg.price_low ?? null, url: tcg.url };
   }
 
-  // Zulus is scraped in parallel with TCGPlayer. Returns {price, url} or null.
-  function getZulusPrice(deck) {
-    if (!LIVE_PRICES) return null;
-    const z = LIVE_PRICES.vendors.zulus?.[deck.id];
-    if (!z?.price) return null;
-    return { price: z.price, url: z.url };
-  }
-
   // Card Kingdom sealed-deck price (from CK's free public pricelist API).
   // Returns { price, url, qty, buy } or null. qty is CK's in-stock count.
   function getCardKingdom(deck) {
@@ -1678,35 +1659,15 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     return { price: c.price, url: c.url, qty: c.qty ?? null, buy: c.buy ?? null };
   }
 
-  // Mana Pool sealed-deck price (free public API). Returns
-  // { price, market, url, qty, sold } or null. `sold` is the realized-sales
-  // summary { last, last_date, avg, n } — what people actually paid.
-  function getManaPool(deck) {
-    if (!LIVE_PRICES) return null;
-    const m = LIVE_PRICES.vendors.manapool?.[deck.id];
-    if (!m?.price) return null;
-    return { price: m.price, market: m.market ?? null, url: m.url,
-             qty: m.qty ?? null, sold: m.sold ?? null };
-  }
-
-  // Realized-sale summary for a deck (Mana Pool completed transactions).
-  function getRealized(deck) {
-    return LIVE_PRICES?.vendors?.manapool?.[deck.id]?.sold || null;
-  }
-
-  // Cheapest place to actually BUY the sealed deck right now, across the four
-  // vendors we track: TCGPlayer Market, Zulus, Card Kingdom, Mana Pool
-  // (in-stock only). Returns { best:{vendor,price,url}, all:[...asc] } or null.
+  // Cheapest place to actually BUY the sealed deck right now, across the two
+  // vendors we track: TCGPlayer Market and Card Kingdom (in stock only).
+  // Returns { best:{vendor,price,url}, all:[...asc] } or null.
   function bestVendorPrice(deck) {
     const opts = [];
     const live = getLivePrice(deck);
     if (live?.price) opts.push({ vendor: "TCGPlayer", price: live.price, url: live.url });
-    const zu = getZulusPrice(deck);
-    if (zu?.price) opts.push({ vendor: "Zulus", price: zu.price, url: zu.url });
     const ck = getCardKingdom(deck);
     if (ck?.price && (ck.qty == null || ck.qty > 0)) opts.push({ vendor: "Card Kingdom", price: ck.price, url: ck.url });
-    const mp = getManaPool(deck);
-    if (mp?.price && (mp.qty == null || mp.qty > 0)) opts.push({ vendor: "Mana Pool", price: mp.price, url: mp.url });
     if (!opts.length) return null;
     opts.sort((a, b) => a.price - b.price);
     return { best: opts[0], all: opts };
@@ -1969,16 +1930,16 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   // Our history is the full tracked window, so low == all-time-tracked low.
   // History keys, by the vendor label bestVendorPrice() reports.
   const VENDOR_HISTORY_KEY = {
-    "TCGPlayer": "tcg", "Card Kingdom": "ck", "Mana Pool": "mp", "Zulus": "zulus",
+    "TCGPlayer": "tcg", "Card Kingdom": "ck",
   };
   const MIN_BASIS_DAYS = 21;   // how long a vendor must have been watched
 
   // "★ all-time low" must compare like with like. The `best` series silently
-  // changes basis whenever a vendor is onboarded: adding Mana Pool made `best`
-  // drop on 20 decks in a single day purely because a new, cheaper quote
-  // appeared — not because the market moved. So before claiming an all-time
-  // low, require that the vendor currently winning has its OWN long-enough
-  // history, and compare today's price against that vendor's own past prices.
+  // changes basis whenever a vendor is added or dropped: adding one cheaper
+  // vendor once made `best` fall on 20 decks in a single day purely because a
+  // new quote appeared, not because the market moved. So before claiming an
+  // all time low, require that the vendor currently winning has its OWN long
+  // enough history, and compare today's price against that vendor's own past.
   function isAllTimeLow(d) {
     const st = getPriceStats(d);
     const bv = bestVendorPrice(d);
@@ -2371,18 +2332,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     // Sparkline of recent TCG prices (when history is available).
     const spark = sparklineSvg(getHistory(d));
 
-    // Zulus second-vendor row: shown when we have a Zulus price.
-    // If Zulus is cheaper than TCG, highlight it.
-    const zulus = getZulusPrice(d);
     const live = getLivePrice(d);
-    let zulusLine = "";
-    if (zulus) {
-      const cheaperClass = (live && zulus.price < live.price) ? " cheaper" : "";
-      const delta = (live && zulus.price < live.price)
-        ? ` <span style="color:var(--sage);">(saves $${(live.price - zulus.price).toFixed(2)})</span>`
-        : "";
-      zulusLine = `<div class="price-zulus${cheaperClass}">Zulus · <a href="${safeUrl(zulus.url)}" target="_blank" rel="noopener noreferrer">$${zulus.price.toFixed(2)}</a>${delta}</div>`;
-    }
+    let vendorLines = "";
 
     // Card Kingdom second-vendor row (re-enabled via CK's free public
     // pricelist API). Highlight when CK beats the live TCGPlayer price.
@@ -2392,28 +2343,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       const cheaper = !oos && live && ck.price < live.price;
       const note = oos ? ' <span class="vendor-oos">(out of stock)</span>'
                  : cheaper ? ` <span style="color:var(--sage);">(saves $${(live.price - ck.price).toFixed(2)})</span>` : "";
-      zulusLine += `<div class="price-zulus${cheaper ? " cheaper" : ""}">Card Kingdom · <a href="${safeUrl(ck.url)}" target="_blank" rel="noopener noreferrer">$${ck.price.toFixed(2)}</a>${note}</div>`;
-    }
-
-    // Mana Pool vendor row (free public API, joins on TCGPlayer product id).
-    const mp = getManaPool(d);
-    if (mp) {
-      const oos = (mp.qty != null && mp.qty <= 0);
-      const cheaper = !oos && live && mp.price < live.price;
-      const note = oos ? ' <span class="vendor-oos">(out of stock)</span>'
-                 : cheaper ? ` <span style="color:var(--sage);">(saves $${(live.price - mp.price).toFixed(2)})</span>` : "";
-      zulusLine += `<div class="price-zulus${cheaper ? " cheaper" : ""}">Mana Pool · <a href="${safeUrl(mp.url)}" target="_blank" rel="noopener noreferrer">$${mp.price.toFixed(2)}</a>${note}</div>`;
-    }
-
-    // Realized sales — what buyers ACTUALLY paid recently (Mana Pool completed
-    // transactions). The only sold-side signal here; every other number is an
-    // asking price, so it's labelled distinctly rather than as another vendor.
-    const sold = getRealized(d);
-    if (sold && typeof sold.last === "number") {
-      const vs = (ep != null && ep > 0)
-        ? ` <span class="sold-vs">${sold.last < ep ? "▼" : "▲"} ${Math.abs(((sold.last - ep) / ep) * 100).toFixed(0)}% vs asking</span>`
-        : "";
-      zulusLine += `<div class="price-sold" title="${sold.n} completed sale${sold.n === 1 ? "" : "s"} on Mana Pool, most recent ${escapeHtml(sold.last_date || "")}">💵 Last sold <strong>$${sold.last.toFixed(2)}</strong>${sold.n > 1 ? ` · avg $${sold.avg.toFixed(2)} of ${sold.n}` : ""}${vs}</div>`;
+      vendorLines += `<div class="price-vendor${cheaper ? " cheaper" : ""}">Card Kingdom · <a href="${safeUrl(ck.url)}" target="_blank" rel="noopener noreferrer">$${ck.price.toFixed(2)}</a>${note}</div>`;
     }
 
     // 90-day range / near-low / all-time-low line, above the vendor lines.
@@ -2423,17 +2353,17 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       const flag = atLow ? ' · <strong>★ all-time low</strong>'
                  : nearLow ? ' · <strong>near low</strong>' : '';
       const rangeLine = `<div class="price-range${(atLow || nearLow) ? " near-low" : ""}">${stats.days}d $${stats.low.toFixed(0)}–$${stats.high.toFixed(0)}${flag}</div>`;
-      zulusLine = rangeLine + zulusLine;
+      vendorLines = rangeLine + vendorLines;
     }
 
-    // Best price across all in-stock vendors (TCGPlayer / Zulus / Card Kingdom).
+    // Best price across all in stock vendors (TCGPlayer / Card Kingdom).
     // Headlines the cheapest place to actually buy the sealed deck right now.
     const bv = bestVendorPrice(d);
     if (bv && bv.all.length >= 2) {
       // Savings vs the next-cheapest vendor (runner-up), not the priciest.
       const spread = bv.all[1].price - bv.best.price;
       if (spread >= 0.5) {
-        zulusLine = `<div class="price-best">🏆 Best of ${bv.all.length}: <a href="${safeUrl(bv.best.url)}" target="_blank" rel="noopener noreferrer">$${bv.best.price.toFixed(2)}</a> @ ${bv.best.vendor} <span class="price-best-save">save $${spread.toFixed(2)}</span></div>` + zulusLine;
+        vendorLines = `<div class="price-best">🏆 Best of ${bv.all.length}: <a href="${safeUrl(bv.best.url)}" target="_blank" rel="noopener noreferrer">$${bv.best.price.toFixed(2)}</a> @ ${bv.best.vendor} <span class="price-best-save">save $${spread.toFixed(2)}</span></div>` + vendorLines;
       }
     }
 
@@ -2461,7 +2391,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
           </div>
           ${badge}
         </div>
-        ${zulusLine}`;
+        ${vendorLines}`;
     } else if (hasSnapshot) {
       const priceVal = `$${d.currentPrice.toFixed(2)}`;
       const sourceTag = `<span class="price-source">${escapeHtml(d.priceSource)}</span>`;
@@ -2474,7 +2404,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
           </div>
           ${badge}
         </div>
-        ${zulusLine}`;
+        ${vendorLines}`;
     } else {
       const msrpBig = d.msrp ? `$${d.msrp.toFixed(2)}` : "—";
       priceBlock = `
@@ -2485,7 +2415,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
             <span class="price-checkprompt">check vendors below for current price</span>
           </div>
         </div>
-        ${zulusLine}`;
+        ${vendorLines}`;
     }
 
     const crack = getCrackValue(d);
@@ -2684,7 +2614,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   // factor dominates):
   //   - discount vs MSRP        (player value)
   //   - nearness to 90-day low  (timing: "won't get cheaper")
-  //   - cross-vendor savings    (Zulus cheaper than TCG)
+  //   - cross-vendor savings    (in stock Card Kingdom cheaper than TCG)
   //   - downward trend          (still falling)
   //   - crack-to-sell margin    (speculator upside)
   function dealScore(d) {
@@ -2705,11 +2635,11 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       if (stats.trend <= -0.05) { score += 8; reasons.push("trending down"); }
     }
 
-    const zu = getZulusPrice(d), live = getLivePrice(d);
-    if (zu && live && zu.price < live.price) {
-      const save = live.price - zu.price;
+    const bv = bestVendorPrice(d), live = getLivePrice(d);
+    if (bv && live && bv.best.vendor !== "TCGPlayer" && bv.best.price < live.price) {
+      const save = live.price - bv.best.price;
       score += Math.min(save, 15);
-      reasons.push(`$${save.toFixed(2)} cheaper at Zulus`);
+      reasons.push(`$${save.toFixed(2)} cheaper at ${bv.best.vendor}`);
     }
 
     const arb = crackArbitrage(d);   // sell value − sealed (net profit to crack)
@@ -2846,27 +2776,12 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         const ckLink = b.ck_url
           ? `<a class="box-item-link" href="${safeUrl(b.ck_url)}" target="_blank" rel="noopener noreferrer">view on Card Kingdom →</a>`
           : "";
-        // Mana Pool third vendor for the box.
-        let mpLine = "";
-        if (typeof b.mp_price === "number") {
-          const oos = (b.mp_qty != null && b.mp_qty <= 0);
-          const cheaper = !oos && b.mp_price < b.price;
-          const tail = oos ? " (out of stock)" : cheaper ? ` · save $${(b.price - b.mp_price).toFixed(2)}` : "";
-          mpLine = `<span class="box-ck${cheaper ? " cheaper" : ""}">Mana Pool $${b.mp_price.toFixed(2)}${tail}</span>`;
-        }
-        // Realized sales for this box (what buyers actually paid).
-        const bs = b.sold;
-        const soldLine = (bs && typeof bs.last === "number")
-          ? `<span class="box-sold" title="${bs.n} completed sale${bs.n === 1 ? "" : "s"}, most recent ${escapeHtml(bs.last_date || "")}">💵 last sold $${bs.last.toFixed(2)}</span>`
-          : "";
         return `
         <div class="box-item" data-box-set="${escapeHtml(sn)}" data-box-type="${escapeHtml(b.type)}" data-box-label="${escapeHtml(b.label)}" role="button" tabindex="0" title="Click for price history">
           <span class="box-item-type">${escapeHtml(b.label)}</span>
           <span class="box-item-price">$${b.price.toFixed(2)} ${spark}</span>
           ${(b.price_low != null && b.price_low < b.price) ? `<span class="box-item-low">TCG low $${b.price_low.toFixed(2)}</span>` : ""}
           ${ckLine}
-          ${mpLine}
-          ${soldLine}
           ${evLine}
           <a class="box-item-link" href="${safeUrl(b.url)}" target="_blank" rel="noopener noreferrer">view on TCGPlayer →</a>
           ${ckLink}
