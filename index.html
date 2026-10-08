@@ -3,7 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Content Security Policy. GitHub Pages cannot send headers, so it lives
+     here. Only same origin data, Google Fonts and this page's own inline
+     script may load. The script hash MUST be recomputed whenever the inline
+     script changes (base64 sha256 of the exact text between its opening and
+     closing tags), or the browser refuses to run the app. A remote
+     prices URL (LIVE_PRICES_REMOTE_URL) would also need adding to connect-src. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-62fuvsn4w9/kr2p7mwa/15osY7/I0AiD/Aqg58s9ujc='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>MTG Tracker · Commander Precon, Sealed Box & Bundle Prices</title>
+<meta name="description" content="Daily prices for Magic: The Gathering Commander precons released since 2021, plus sealed booster boxes and set bundles from the same sets, checked at TCGplayer and Card Kingdom, with price history and buy signals.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MTG Tracker">
+<meta property="og:title" content="MTG Tracker · Commander Precon, Sealed Box & Bundle Prices">
+<meta property="og:description" content="Daily prices for Commander precons released since 2021, plus sealed booster boxes and set bundles from the same sets, checked at TCGplayer and Card Kingdom.">
+<meta property="og:url" content="https://cooknrice.github.io/precon-tracker/">
+<meta property="og:image" content="https://cooknrice.github.io/precon-tracker/icon-512.png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="og:image:alt" content="MTG Tracker icon">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="fetch" href="./decks.json" crossorigin>
@@ -11,25 +30,35 @@
 <!-- prices_history.json is fetched by loadHistory() with cache:"no-cache"; a
      prefetch here does NOT satisfy that request and just downloads it twice. -->
 <link rel="manifest" href="./manifest.webmanifest">
-<meta name="theme-color" content="#15120e">
+<!-- Browser chrome color per theme. applyTheme() rewrites both to the active
+     theme's --paper once the page picks a theme (saved choice or the OS). -->
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#15120e">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3ead4">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="icon" type="image/svg+xml" href="./icon.svg">
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* Author rules such as .deal-of-day { display: flex } outrank the browser's
+   default [hidden] style, so the attribute must win explicitly. */
+[hidden] { display: none !important; }
 :root {
   --paper: #15120e;          /* deep warm charcoal — the page */
   --paper-deep: #1d1915;     /* cards/panels */
   --paper-line: #2c2720;     /* borders/dividers */
   --ink: #ede3ca;            /* primary warm cream */
   --ink-soft: #c9c0a8;       /* secondary text */
-  --ink-muted: #8a8168;      /* labels */
-  --ink-faded: #625b49;      /* faded hints */
+  /* muted and faded are real content (MSRP, labels, prompts), so both
+     clear WCAG AA 4.5:1 on every surface, the owned card included. */
+  --ink-muted: #a39a80;      /* labels */
+  --ink-faded: #978d74;      /* faded hints */
   --burgundy: #d97485;       /* brightened crimson for deals/prices on dark */
   --burgundy-soft: #bd5d6e;
   --gold: #c69a3e;           /* warm antique gold */
   --gold-bright: #e4b954;
-  --sage: #6e8a55;           /* owned/sage accent */
+  --gold-fill: #e4b954;      /* gold FILL behind dark text (buttons, active chips) */
+  --sage: #6e8a55;           /* owned/sage accent (fills, borders, lines) */
+  --sage-text: #86a36b;      /* sage as small text, AA on every surface */
   --success: #5ad487;        /* positive green text (savings, gains, good EV) */
   --live: #3ec66a;           /* "Live" data-tier indicator */
   --ink-strong: #f5efe2;     /* brightest text — deck/box/deal names */
@@ -263,7 +292,9 @@ h1.title em { font-style: normal; color: var(--burgundy); font-weight: 600; }
 }
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  /* min() lets a column shrink below 330px on a 320px phone instead of
+     overflowing the page sideways. */
+  grid-template-columns: repeat(auto-fill, minmax(min(330px, 100%), 1fr));
   gap: 14px;
 }
 .card {
@@ -276,6 +307,9 @@ h1.title em { font-style: normal; color: var(--burgundy); font-weight: 600; }
   gap: 12px;
   position: relative;
   transition: border-color 0.15s, transform 0.15s, background 0.15s;
+  /* Off screen cards skip layout and paint until scrolled near. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 560px;
 }
 .card.owned { background: var(--owned-bg); }
 .card.deal { border-color: rgba(228,185,84,0.28); }
@@ -411,10 +445,7 @@ h1.title em { font-style: normal; color: var(--burgundy); font-weight: 600; }
   color: var(--ink-muted);
   margin-left: 8px;
 }
-.price-low-note::before {
-  content: "low ";
-  color: var(--ink-faded);
-}
+.price-low-note .note-key { color: var(--ink-faded); }
 .price-unverified {
   color: var(--ink-muted) !important;
   font-style: italic;
@@ -504,7 +535,7 @@ h1.title em { font-style: normal; color: var(--burgundy); font-weight: 600; }
   margin-top: 2px;
 }
 .vendor-btn {
-  background: var(--gold-bright);
+  background: var(--gold-fill);
   border: none;
   padding: 10px;
   font-family: var(--font-ui);
@@ -581,6 +612,9 @@ footer {
   gap: 14px;
 }
 footer a { color: var(--gold-bright); text-decoration: none; }
+/* Sources, privacy and the Fan Content notice: sentence case reads better
+   than uppercase mono at this length. */
+.footer-note { margin-top: 8px; text-transform: none; letter-spacing: 0.02em; line-height: 1.6; max-width: 900px; }
 footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
 @media (max-width: 720px) {
@@ -588,10 +622,29 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   .filters { grid-template-columns: 1fr; }
   .vendor-row { grid-template-columns: 1fr; }
   .meta-line { text-align: left; }
+  .compare-bar { flex-wrap: wrap; gap: 8px; padding: 10px 16px; }
 }
 @media (max-width: 480px) {
   .vendor-row { grid-template-columns: 1fr; }
 }
+
+/* Sort control: the label and select share one row that may shrink, so a
+   long option can't push the page wider than a 320px screen. */
+.sort-wrap { display: flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; }
+.sort-wrap label { white-space: nowrap; }
+.sort-wrap .sort-select { min-width: 0; flex: 0 1 auto; }
+
+/* Text for screen readers only (context such as which deck a button is for). */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+/* Section headings reuse their existing look; only the element changed. */
+h2.section-head { font-size: 13px; }
+h2.box-heading { font: inherit; }
 
 /* Stale-price banner — shown when prices.json is more than 3 days old */
 .stale-banner {
@@ -781,7 +834,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   border-radius: var(--radius-sm);
 }
 .scope-chip:hover { border-color: var(--gold); }
-.scope-chip.active { background: var(--gold-bright); color: #1a1308; border-color: var(--gold-bright); }
+.scope-chip.active { background: var(--gold-fill); color: #1a1308; border-color: var(--gold-fill); }
 
 /* Second vendor price row (Card Kingdom) */
 .price-vendor {
@@ -794,16 +847,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .price-vendor a:hover { color: var(--gold); }
 .price-vendor.cheaper { color: var(--burgundy-soft); font-weight: 500; }
 .price-vendor .vendor-oos { color: var(--ink-muted); }
-.price-best {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--sage);
-  margin-top: 6px;
-}
-.price-best a { color: var(--sage); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--sage) 40%, transparent); }
-.price-best a:hover { color: var(--gold); }
-.price-best .price-best-save { color: var(--ink-muted); font-weight: 400; }
+.price-label a { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--ink-faded); }
+.price-label a:hover { color: var(--gold); }
 
 /* Sparkline */
 .sparkline {
@@ -866,7 +911,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   letter-spacing: 0.04em;
 }
 .chart-delta.up { color: var(--burgundy); }       /* price went UP — bad for buyer */
-.chart-delta.down { color: var(--sage); }         /* price went DOWN — good for buyer */
+.chart-delta.down { color: var(--sage-text); }    /* price went DOWN: good for buyer */
 .chart-delta.flat { color: var(--ink-muted); }
 
 .chart-range {
@@ -893,7 +938,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 }
 .range-btn:hover { color: var(--ink); }
 .range-btn.active {
-  background: var(--gold-bright);
+  background: var(--gold-fill);
   color: #1a1308;
 }
 
@@ -967,7 +1012,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 }
 .bundle-note a:hover { text-decoration: underline; }
 .bundle-note .bundle-savings {
-  color: var(--sage);
+  color: var(--sage-text);
   font-size: 10px;
   letter-spacing: 0.04em;
 }
@@ -979,29 +1024,39 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   --paper-line: #ddd0b2;
   --ink: #2c2416;
   --ink-soft: #4c4029;
-  --ink-muted: #6f6044;
-  --ink-faded: #9c8c6a;
+  --ink-muted: #5e5138;
+  --ink-faded: #6f6248;
   --burgundy: #9d2f44;
   --burgundy-soft: #b0405a;
-  --gold: #936812;
-  --gold-bright: #b3852a;
+  --gold: #7d5a0f;
+  --gold-bright: #80600f;    /* darker than the fill: used as text and outlines */
+  --gold-fill: #b3852a;
   --sage: #4d6a35;
-  --success: #2f7d3f;
-  --live: #2f9e52;
+  --sage-text: #4d6a35;
+  --success: #276b35;
+  --live: #1f6f39;
   --ink-strong: #2c2416;
   --deal-bg: #efe4c4;
   --owned-bg: #e7eed6;
-  --w: #c9b878; --u: #3f7fb5; --b: #6a6168; --r: #c0572f; --g: #5a803f; --c: #8a8470;
+  /* Pip fills light enough for their dark letters to clear 4.5:1. */
+  --w: #d1c38c; --u: #6095c2; --b: #6a6168; --r: #cb7452; --g: #73935c; --c: #928d7a;
   /* Light-mode values for the modern-app surface/shape tokens */
   --surface: #fbf6e7;
   --surface-2: #f1e7cd;
   --hairline: rgba(44,36,22,0.12);
 }
-[data-theme="light"] .price-live-dot { color: #2f9e52; }
 /* Light-mode contrast overrides for elements with tinted/colored backgrounds
    (names now flip automatically via --ink-strong). */
 [data-theme="light"] .discount-badge { color: #6e4e0a; }
 [data-theme="light"] .stale-banner { color: #8a3a1a; }
+[data-theme="light"] .uf-kind.uf-deck { color: #2a5f8e; }
+[data-theme="light"] .uf-kind.uf-box { color: var(--gold); }
+/* A black wash reads as a grey blob on parchment and sinks the star. */
+[data-theme="light"] .own-toggle:not(.checked), [data-theme="light"] .watch-toggle { background: rgba(44,36,22,0.07); }
+[data-theme="light"] .own-toggle:not(.checked):hover, [data-theme="light"] .watch-toggle:hover { background: rgba(44,36,22,0.14); }
+/* Gold fills behind dark text keep the bright gold in light mode too. */
+[data-theme="light"] .bracket-chip.active,
+[data-theme="light"] .compare-bar button:not(.secondary) { background: var(--gold-fill); border-color: var(--gold-fill); }
 
 /* Visible keyboard focus for all custom controls (mouse focus stays clean). */
 .own-toggle:focus-visible, .watch-toggle:focus-visible, .theme-toggle:focus-visible,
@@ -1010,13 +1065,36 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .range-btn:focus-visible, .box-toggle:focus-visible, .color-btn:focus-visible,
 .staple-row:focus-visible, .deal-of-day:focus-visible, .compare-toggle:focus-visible,
 .compare-modal-close:focus-visible, .uf-item:focus-visible, .sort-select:focus-visible,
-.search-input:focus-visible, .staple-input:focus-visible, .power-scan:focus-visible {
+.search-input:focus-visible, .staple-input:focus-visible, .power-scan:focus-visible,
+.sparkline:focus-visible, .box-item-link:focus-visible, .staple-alt:focus-visible {
   outline: 2px solid var(--gold-bright);
   outline-offset: 2px;
+}
+/* Focus inside the Deal of the Day banner rings the whole banner. */
+.deal-of-day:has(.dod-open:focus-visible) { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+.dod-open {
+  all: unset;
+  cursor: pointer;
+}
+.dod-open:focus-visible { outline: none; }
+
+/* Respect a system request for less motion: no pulsing dot, no hover lift. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  /* !important: the hover rules for these sit later in the sheet. */
+  .card:hover, .deal-of-day:hover, .best-deal:hover, .box-item:hover,
+  .staple-row:hover, .vendor-btn:hover, .color-btn:hover { transform: none !important; }
 }
 /* Larger touch targets on coarse pointers (phones/tablets). */
 @media (pointer: coarse) {
   .own-toggle, .watch-toggle, .theme-toggle, .color-btn { min-width: 40px; min-height: 40px; }
+  /* 40px toggles would overlap at the 26px spacing; keep them side by side. */
+  .watch-toggle { right: 58px; }
+  .card-top { padding-right: 100px; }
 }
 
 .theme-toggle {
@@ -1046,7 +1124,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .buy-signal.ok { color: var(--gold-bright); background: rgba(228,185,84,0.14); }
 .buy-signal.hold { color: var(--ink-muted); background: rgba(237,227,202,0.06); }
 
-/* ---------- 90-day range / near-low ---------- */
+/* ---------- Tracked price range / near low ---------- */
 .price-range {
   font-family: var(--font-mono);
   font-size: 10.5px;
@@ -1054,8 +1132,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   margin-top: 4px;
   letter-spacing: 0.02em;
 }
-.price-range.near-low { color: var(--sage); }
-.price-range.near-low strong { color: var(--sage); }
+.price-range.near-low { color: var(--sage-text); }
+.price-range.near-low strong { color: var(--sage-text); }
 
 /* ---------- Portfolio ---------- */
 .portfolio {
@@ -1113,6 +1191,13 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .staple-row-price { font-family: var(--font-ui); font-size: 15px; font-weight: 700; color: var(--burgundy); white-space: nowrap; }
 .staple-empty { font-family: var(--font-mono); font-size: 12px; color: var(--ink-faded); padding: 4px 2px; }
 .staple-cardname { color: var(--gold-bright); }
+.staple-alts { font-family: var(--font-mono); font-size: 11px; color: var(--ink-faded); padding: 2px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.staple-alt {
+  font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft);
+  background: var(--surface-2); border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill); padding: 2px 9px; cursor: pointer;
+}
+.staple-alt:hover, .staple-alt:focus-visible { border-color: var(--gold-bright); color: var(--gold-bright); }
 
 /* ---------- Unified feed kind badges ---------- */
 .uf-item { position: relative; }
@@ -1148,7 +1233,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #1a1308;
-  background: var(--gold-bright);
+  background: var(--gold-fill);
   padding: 5px 11px;
   border-radius: var(--radius-pill);
   white-space: nowrap;
@@ -1216,6 +1301,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   border-radius: var(--radius-sm);
 }
 .best-deal:hover { border-color: var(--gold-bright); transform: translateY(-2px); }
+a.best-deal { text-decoration: none; color: inherit; }
 .bd-name { font-family: var(--font-ui); font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink-strong); }
 .bd-price { font-family: var(--font-ui); font-size: 14px; color: var(--burgundy); font-weight: 700; }
 .bd-disc { color: var(--gold-bright); font-size: 11px; margin-left: 4px; font-weight: 600; }
@@ -1234,7 +1320,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .box-body { padding: 4px 18px 18px; }
 .box-set { border-top: 1px solid var(--hairline); padding: 14px 0; }
 .box-set-name { font-family: var(--font-ui); font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink-strong); margin-bottom: 10px; }
-.box-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.box-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 10px; }
 .box-item {
   display: flex; flex-direction: column; gap: 3px;
   background: var(--surface-2); border: 1px solid var(--hairline);
@@ -1247,7 +1333,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 .box-ev { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
 .box-ev.good { color: var(--success); }
 .box-ck { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
-.box-ck.cheaper { color: var(--sage); font-weight: 600; }
+.box-ck.cheaper { color: var(--sage-text); font-weight: 600; }
 .box-ev-note { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); padding: 10px 18px 14px; line-height: 1.5; }
 .box-item { cursor: pointer; }
 .box-item-link { font-family: var(--font-mono); font-size: 10px; color: var(--gold); text-decoration: none; margin-top: 2px; }
@@ -1275,8 +1361,9 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   font-size: 11px;
   padding: 3px 5px;
 }
-.target-row.hit { color: var(--sage); }
-.target-hit { color: var(--sage); font-weight: 600; }
+.target-row.hit { color: var(--sage-text); }
+.target-hit { color: var(--sage-text); font-weight: 600; }
+.target-err { color: var(--burgundy); }
 .card.target-hit { box-shadow: inset 0 0 0 1px var(--sage); }
 
 /* ---------- Crack value ---------- */
@@ -1287,8 +1374,9 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   margin-top: 4px;
 }
 .crack-value strong { color: var(--ink-soft); }
-.crack-value.worth strong { color: var(--sage); }
-.crack-value .crack-flag { color: var(--sage); }
+.crack-value.worth strong { color: var(--sage-text); }
+.crack-value .crack-flag { color: var(--sage-text); }
+.crack-value .crack-est { color: var(--ink-faded); cursor: help; border-bottom: 1px dotted var(--ink-faded); }
 .chase-cards {
   font-family: var(--font-mono);
   font-size: 10.5px;
@@ -1307,7 +1395,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   <div class="title-block">
     <div>
       <h1 class="title"><em>MTG</em> Tracker</h1>
-      <p class="tagline">Live prices for every MTG Commander precon, sealed booster box, and set bundle since 2021, refreshed daily across TCGplayer and Card Kingdom.</p>
+      <p class="tagline">Daily prices for Commander precons released since 2021, plus sealed booster boxes and set bundles from the same sets, checked at TCGplayer and Card Kingdom.</p>
     </div>
     <div class="meta-line">
       <div style="margin-bottom:6px;"><button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle light or dark theme" title="Toggle light/dark theme">◐</button></div>
@@ -1318,16 +1406,17 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   </div>
 </header>
 
-<section id="dealOfDay" class="deal-of-day" hidden></section>
+<main id="main">
+<section id="dealOfDay" class="deal-of-day" aria-labelledby="dodFlag" hidden></section>
 
-<section id="stapleFinder" class="staple-finder" hidden>
-  <div class="staple-head">🔎 Find the cheapest precon with a card</div>
-  <input type="text" id="stapleInput" class="staple-input" placeholder="Card name — e.g. Sol Ring, Cyclonic Rift, Smothering Tithe…" autocomplete="off">
+<section id="stapleFinder" class="staple-finder" aria-labelledby="stapleHead" hidden>
+  <h2 class="staple-head section-head" id="stapleHead"><label for="stapleInput">🔎 Find the cheapest precon with a card</label></h2>
+  <input type="text" id="stapleInput" class="staple-input" placeholder="Card name, for example Sol Ring, Arcane Signet, Lightning Bolt…" autocomplete="off">
   <div id="stapleResults" class="staple-results"></div>
 </section>
 
-<section id="unifiedFeed" class="best-deals" hidden>
-  <div class="best-deals-head">🏆 Best buys across everything · decks, boxes &amp; bundles</div>
+<section id="unifiedFeed" class="best-deals" aria-labelledby="feedHead" hidden>
+  <h2 class="best-deals-head section-head" id="feedHead">🏆 Best buys across everything · decks, boxes &amp; bundles</h2>
   <div class="best-deals-grid" id="unifiedFeedGrid"></div>
 </section>
 
@@ -1340,7 +1429,9 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
      bundles. Per-deck crack value is still on each card. -->
 
 <div id="staleBanner" class="stale-banner" role="status"></div>
-<section class="stats">
+<div id="storageBanner" class="stale-banner" role="status"></div>
+<section class="stats" aria-labelledby="statsHead">
+  <h2 class="sr-only" id="statsHead">At a glance</h2>
   <div class="stat">
     <div class="stat-label">Decks tracked</div>
     <div class="stat-val" id="statTotal">—</div>
@@ -1359,39 +1450,35 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   <div class="stat">
     <div class="stat-label">Median current price</div>
     <div class="stat-val" id="statMedian">—</div>
-    <div class="stat-sub">MSRP runs $44.99–$69.99</div>
+    <div class="stat-sub" id="statMsrpRange">&nbsp;</div>
   </div>
   <div class="stat live-status-wrap">
     <div class="stat-label">Live price feed</div>
     <div id="liveStatus" class="live-status">loading…</div>
-    <div class="stat-sub">from TCGPlayer Market, updated daily</div>
+    <div class="stat-sub">TCGPlayer and Card Kingdom, updated daily</div>
   </div>
 </section>
 
-<section id="portfolio" class="portfolio" hidden>
-  <div class="portfolio-head">📊 Your collection</div>
+<section id="portfolio" class="portfolio" aria-labelledby="portfolioHead" hidden>
+  <h2 class="portfolio-head section-head" id="portfolioHead">📊 Your collection</h2>
   <div class="portfolio-grid" id="portfolioGrid"></div>
 </section>
 
-<section class="filters">
+<section class="filters" aria-labelledby="filtersHead">
+  <h2 class="sr-only" id="filtersHead">Filter decks</h2>
   <div class="filter-group" style="grid-column: 1 / -1;">
     <label class="filter-label" for="search">Search · name · commander · strategy</label>
     <input type="text" id="search" class="search-input" placeholder="Try: dragons, reanimator, Zimone, Jeskai…">
   </div>
   <div class="filter-group">
-    <label class="filter-label">Year</label>
+    <label class="filter-label" for="yearFilter">Year</label>
     <select id="yearFilter" class="filter-select">
       <option value="all">All years</option>
-      <option value="2026">2026</option>
-      <option value="2025">2025</option>
-      <option value="2024">2024</option>
-      <option value="2023">2023</option>
-      <option value="2022">2022</option>
-      <option value="2021">2021</option>
+      <!-- One option per release year in decks.json, added by fillYearFilter(). -->
     </select>
   </div>
   <div class="filter-group">
-    <label class="filter-label">Set type</label>
+    <label class="filter-label" for="typeFilter">Set type</label>
     <select id="typeFilter" class="filter-select">
       <option value="all">Any</option>
       <option value="standard">Standard set</option>
@@ -1400,8 +1487,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     </select>
   </div>
   <div class="filter-group">
-    <label class="filter-label">Colors</label>
-    <div class="color-filter" id="colorFilter">
+    <span class="filter-label" id="colorsLabel">Colors</span>
+    <div class="color-filter" id="colorFilter" role="group" aria-labelledby="colorsLabel">
       <button type="button" class="color-btn cb-w" data-color="W" title="White" aria-label="Filter by White" aria-pressed="false">W</button>
       <button type="button" class="color-btn cb-u" data-color="U" title="Blue" aria-label="Filter by Blue" aria-pressed="false">U</button>
       <button type="button" class="color-btn cb-b" data-color="B" title="Black" aria-label="Filter by Black" aria-pressed="false">B</button>
@@ -1410,42 +1497,43 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     </div>
   </div>
   <div class="filter-group">
-    <label class="filter-label">Power bracket</label>
-    <div class="bracket-filter" id="bracketFilter">
-      <button type="button" class="bracket-chip" data-bracket="B1" aria-pressed="false">B1</button>
-      <button type="button" class="bracket-chip" data-bracket="B2" aria-pressed="false">B2</button>
-      <button type="button" class="bracket-chip" data-bracket="B3" aria-pressed="false">B3</button>
-      <button type="button" class="bracket-chip" data-bracket="B4" aria-pressed="false">B4</button>
-      <button type="button" class="bracket-chip" data-bracket="B5" aria-pressed="false">B5</button>
+    <span class="filter-label" id="bracketLabel">Power bracket</span>
+    <div class="bracket-filter" id="bracketFilter" role="group" aria-labelledby="bracketLabel">
+      <button type="button" class="bracket-chip" data-bracket="B1" aria-pressed="false" aria-label="Bracket 1">B1</button>
+      <button type="button" class="bracket-chip" data-bracket="B2" aria-pressed="false" aria-label="Bracket 2">B2</button>
+      <button type="button" class="bracket-chip" data-bracket="B3" aria-pressed="false" aria-label="Bracket 3">B3</button>
+      <button type="button" class="bracket-chip" data-bracket="B4" aria-pressed="false" aria-label="Bracket 4">B4</button>
+      <button type="button" class="bracket-chip" data-bracket="B5" aria-pressed="false" aria-label="Bracket 5">B5</button>
     </div>
   </div>
   <div class="filter-group">
-    <label class="filter-label">Scope</label>
+    <span class="filter-label" aria-hidden="true">Scope</span>
     <button type="button" class="scope-chip" id="watchOnlyChip" aria-pressed="false">★ Watching only</button>
   </div>
   <div class="filter-group">
-    <label class="filter-label" style="opacity:0;">Reset</label>
-    <button class="reset-btn" id="resetBtn">Reset filters</button>
+    <span class="filter-label" style="opacity:0;" aria-hidden="true">Reset</span>
+    <button type="button" class="reset-btn" id="resetBtn">Reset filters</button>
   </div>
 </section>
 
-<section id="boxSection" class="box-section" hidden>
-  <button type="button" id="boxToggle" class="box-toggle" aria-expanded="false">
+<section id="boxSection" class="box-section" aria-labelledby="boxToggle" hidden>
+  <h2 class="box-heading"><button type="button" id="boxToggle" class="box-toggle" aria-expanded="false" aria-controls="boxBody">
     📦 Sealed booster boxes <span class="box-toggle-hint">(prices by set · click to expand)</span>
-  </button>
+  </button></h2>
   <div id="boxBody" class="box-body" hidden></div>
   <div class="box-ev-note" id="boxEvNote" hidden><strong>*</strong> "est. singles" is the expected total singles value of a box, computed from MTGJSON's published pack model (slot weights × current TCGPlayer prices). It's a statistical average — any individual box varies widely — and excludes the value of cards you can't easily sell, fees, and your time. Treat it as a ballpark, not a guarantee.</div>
 </section>
 
+<h2 class="sr-only" id="decksHead">Decks</h2>
 <div class="count-line">
-  <span id="resultCount" aria-live="polite" aria-atomic="true">Loading…</span>
-  <div>
-    <span style="margin-right:8px;">Sort by</span>
+  <span id="resultCount" aria-live="polite" aria-atomic="true" tabindex="-1">Loading…</span>
+  <div class="sort-wrap">
+    <label for="sortSelect">Sort by</label>
     <select id="sortSelect" class="sort-select">
       <option value="releaseDesc">Newest first</option>
       <option value="releaseAsc">Oldest first</option>
       <option value="discount">Biggest discount</option>
-      <option value="crackValue">Best value to crack (singles − sealed)</option>
+      <option value="crackValue">Best value to crack (CK buylist)</option>
 
       <option value="priceAsc">Price, low → high</option>
       <option value="priceDesc">Price, high → low</option>
@@ -1456,11 +1544,26 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   </div>
 </div>
 
-<section class="grid" id="deckGrid">
+<section class="grid" id="deckGrid" aria-labelledby="decksHead">
   <div class="empty">Loading the archive…</div>
 </section>
+</main>
 
+<footer>
+  <div>
+    <div>Each card headlines the cheapest place to buy right now, refreshed daily by a GitHub Action scraper: <em style="color:var(--live);">TCGPlayer</em> (Market price, or the lowest current listing when Market sits below it) or <em style="color:var(--live);">Card Kingdom</em> (in stock only). Decks with no live price show their <em style="color:var(--ink-muted);">MSRP</em> for reference only. Singles values come from MTGJSON; "profit to crack" uses the real Card Kingdom buylist and is shown before tax, shipping and fees.</div>
+    <div style="margin-top:6px;">Power scores and brackets from <a href="https://scrycheck.com/precons" target="_blank" rel="noopener" style="color:var(--gold);">ScryCheck</a> are automated estimates; see <a href="https://scrycheck.com/about" target="_blank" rel="noopener" style="color:var(--gold);">ScryCheck's accuracy notes</a>. <span id="powerCoverage">Scores shown inline where published.</span> Brackets follow Wizards' official system (<em>B1 casual → B5 cEDH</em>).</div>
+    <div class="footer-note">Data sources: TCGplayer prices via <a href="https://tcgcsv.com/" target="_blank" rel="noopener noreferrer">TCGCSV</a>; Card Kingdom prices and stock from Card Kingdom's public pricelist; decklists and card prices from <a href="https://mtgjson.com/" target="_blank" rel="noopener noreferrer">MTGJSON</a> (<a href="https://mtgjson.com/license/" target="_blank" rel="noopener noreferrer">MIT License</a>); power scores from ScryCheck. Prices are refreshed once a day and can lag the vendors' sites.</div>
+    <div class="footer-note">Privacy: no accounts, cookies, analytics or tracking. Your watchlist, owned decks and price targets are saved only in this browser's storage and never leave your device. Fonts load from Google Fonts, which sees your IP address as part of that request.</div>
+    <div class="footer-note">MTG Tracker is unofficial Fan Content permitted under the <a href="https://company.wizards.com/en/legal/fancontentpolicy" target="_blank" rel="noopener noreferrer">Fan Content Policy</a>. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
+  </div>
+  <div>Built for Isaac · <a id="reportLink" href="https://github.com/CooknRice/precon-tracker/issues/new" target="_blank" rel="noopener noreferrer">Report an error</a></div>
+</footer>
 
+</div>
+
+<!-- Outside .wrap on purpose: while a modal is open, .wrap is made inert so
+     keyboard focus and screen readers stay inside the dialog. -->
 <div id="compareBar" class="compare-bar" role="region" aria-label="Compare selection">
   <span><strong id="compareCount">0</strong> decks selected for compare</span>
   <div class="compare-bar-actions">
@@ -1490,11 +1593,11 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         <div class="chart-delta" id="chartDelta">—</div>
       </div>
     </div>
-    <div class="chart-range" role="tablist" aria-label="Chart time range">
-      <button type="button" class="range-btn" data-range="7" role="tab">1W</button>
-      <button type="button" class="range-btn" data-range="30" role="tab">1M</button>
-      <button type="button" class="range-btn" data-range="90" role="tab">3M</button>
-      <button type="button" class="range-btn active" data-range="all" role="tab" aria-selected="true">All</button>
+    <div class="chart-range" role="group" aria-label="Chart time range">
+      <button type="button" class="range-btn" data-range="7" aria-pressed="false" aria-label="1 week">1W</button>
+      <button type="button" class="range-btn" data-range="30" aria-pressed="false" aria-label="1 month">1M</button>
+      <button type="button" class="range-btn" data-range="90" aria-pressed="false" aria-label="3 months">3M</button>
+      <button type="button" class="range-btn active" data-range="all" aria-pressed="true" aria-label="All history">All</button>
     </div>
     <div class="chart-canvas-wrap" id="chartCanvasWrap">
       <!-- SVG injected by renderChart() -->
@@ -1503,16 +1606,6 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   </div>
 </div>
 
-<footer>
-  <div>
-    <div>Prices come from three tiers, best-first: <em style="color:var(--live);">Live</em> (TCGPlayer Market, refreshed daily via a GitHub Action scraper) → <em style="color:var(--gold);">Snapshot</em> (verified research from April 2026) → <em style="color:var(--ink-muted);">MSRP reference</em>.</div>
-    <div style="margin-top:6px;">Power scores from <a href="https://scrycheck.com/precons" target="_blank" rel="noopener" style="color:var(--gold);">ScryCheck</a> — rule-based analysis, 93% bracket accuracy against 252 reference decks. 108 of 111 decks scored inline. Brackets follow Wizards' official system (<em>B1 casual → B5 cEDH</em>).</div>
-    <div style="margin-top:6px;">Vendors: TCGplayer and Card Kingdom.</div>
-  </div>
-  <div>Built for Isaac · <a id="reportLink" href="https://github.com/CooknRice/precon-tracker/issues/new?labels=data-fix" target="_blank" rel="noopener noreferrer">Report an error</a></div>
-</footer>
-
-</div>
 
 <script>
 // MTG Tracker — app logic
@@ -1542,14 +1635,13 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   const sortSelect = $("sortSelect");
   const resetBtn = $("resetBtn");
   const resultCount = $("resultCount");
-  const reportLink = $("reportLink");
   const staleBanner = $("staleBanner");
   const compareBar = $("compareBar");
   const compareCountEl = $("compareCount");
   const compareModal = $("compareModal");
   const compareTableWrap = $("compareTableWrap");
 
-  // GitHub repo for "Report an error" links — adjust if you fork.
+  // GitHub repo for "Report an error" links; adjust if you fork.
   const REPO_SLUG = "CooknRice/precon-tracker";
   // Show banner when prices.json is older than this many days.
   const STALE_DAYS = 3;
@@ -1574,19 +1666,134 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   let LIVE_PRICES = null;  // populated by loadLivePrices(); null = unavailable
   let PRICE_HISTORY = null;  // populated by loadHistory(); { deck_id: [{date, tcg, ck, best}, ...] }
   let BOX_HISTORY = null;    // populated by loadHistory(); { "<set>::<type>": [{date, price}, ...] }
+  let HIST_REF = null;       // "YYYY-MM-DD" of the scrape that wrote the history file
   let CARD_INDEX = null;    // populated by loadCardIndex(); { normName: {name, decks:[ids]} }
   let PRECONS = [];        // populated by loadDecks() from decks.json
   let lastFocused = null;  // element to restore focus to when a modal closes
-  function restoreFocus() { if (lastFocused && lastFocused.focus) { try { lastFocused.focus(); } catch (e) {} } lastFocused = null; }
+  let lastFocusKey = null; // how to find that control again if it was re-rendered
+
+  // A re-render while a dialog is open (history arriving, another tab saving)
+  // replaces the opener, and focus() on a detached node drops focus to
+  // <body>. So also remember WHICH control opened the dialog and find it again.
+  function focusKeyOf(el) {
+    if (!el || el === document.body || !el.closest) return null;
+    const card = focusedCardControl();
+    if (card) return { card };
+    const box = el.closest(".box-item");
+    if (box) return { sel: `.box-item[data-box-set="${CSS.escape(box.dataset.boxSet || "")}"][data-box-type="${CSS.escape(box.dataset.boxType || "")}"] [data-chart-trigger]` };
+    if (el.matches(".uf-item[data-uf-id]")) return { sel: `.uf-item[data-uf-id="${CSS.escape(el.dataset.ufId)}"]`, fallback: "#unifiedFeedGrid .uf-item" };
+    if (el.closest("#dealOfDay")) return { sel: "#dealOfDay .dod-open" };
+    return null;
+  }
+  function restoreFocus() {
+    let el = lastFocused;
+    const key = lastFocusKey;
+    lastFocused = lastFocusKey = null;
+    if (el && !el.isConnected) {
+      el = null;
+      if (key && key.card) { restoreCardFocus(key.card); return; }
+      if (key) el = document.querySelector(key.sel) || (key.fallback ? document.querySelector(key.fallback) : null);
+    }
+    if (el && el.focus) { try { el.focus(); } catch (e) {} }
+  }
+
+  // ---------- Modals ----------
+  // While a dialog is open, everything else on the page (the .wrap and the
+  // compare bar) is inert: Tab, clicks and screen readers can't reach it,
+  // and the page behind stops scrolling. A Tab trap backs up `inert` for
+  // browsers without it. Escape and the Close button restore focus to the
+  // control that opened the dialog.
+  let openModalEl = null;
+  function setBackgroundInert(on) {
+    for (const el of document.body.children) {
+      if (el.classList.contains("compare-modal") || el.tagName === "SCRIPT") continue;
+      if (on) el.setAttribute("inert", ""); else el.removeAttribute("inert");
+    }
+    document.body.style.overflow = on ? "hidden" : "";
+  }
+  function openModal(modal, focusEl) {
+    // Keep the original opener when one dialog replaces another.
+    if (!openModalEl) { lastFocused = document.activeElement; lastFocusKey = focusKeyOf(lastFocused); }
+    else if (openModalEl !== modal) openModalEl.classList.remove("visible");
+    openModalEl = modal;
+    modal.classList.add("visible");
+    setBackgroundInert(true);
+    if (focusEl) focusEl.focus();
+  }
+  function closeModal() {
+    if (!openModalEl) return;
+    openModalEl.classList.remove("visible");
+    openModalEl = null;
+    setBackgroundInert(false);
+    restoreFocus();
+  }
+  function trapTab(e) {
+    if (e.key !== "Tab" || !openModalEl) return;
+    const items = [...openModalEl.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select, [tabindex]:not([tabindex="-1"])')]
+      .filter(el => el.offsetParent !== null || el === document.activeElement);
+    if (!items.length) { e.preventDefault(); return; }
+    const first = items[0], last = items[items.length - 1];
+    if (!openModalEl.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+    else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  let ID_ALIAS = {};       // { formerId: currentId }, from decks.json formerIds
+
+  // decks.json is hand edited, so normalize every entry once here: one typo
+  // (a string msrp, a missing releaseDate, colors as "WUBR") must cost at most
+  // that one deck, never the whole grid. Renderers can then trust the types.
+  const SLUG_RE = /^[a-z0-9-]+$/;
+  function normalizeDeck(d) {
+    // Ids are interpolated raw into data-* attributes throughout; dropping any
+    // non slug id keeps that safe without escaping every call site.
+    if (!d || typeof d !== "object" || !SLUG_RE.test(d.id || "")) return null;
+    if (typeof d.name !== "string" || !d.name.trim()) return null;
+    const str = v => (typeof v === "string" ? v : "");
+    const num = v => {
+      const n = typeof v === "number" ? v : (typeof v === "string" && v.trim() ? Number(v) : NaN);
+      return Number.isFinite(n) ? n : null;
+    };
+    const msrp = num(d.msrp);
+    const score = num(d.powerScore);
+    return {
+      id: d.id,
+      name: d.name,
+      set: str(d.set),
+      setType: str(d.setType),
+      releaseDate: /^\d{4}-\d{2}-\d{2}$/.test(d.releaseDate || "") ? d.releaseDate : "",
+      colors: Array.isArray(d.colors)
+        ? [...new Set(d.colors.map(c => String(c).toUpperCase()).filter(c => /^[WUBRGC]$/.test(c)))]
+        : [],
+      commander: str(d.commander) || null,
+      partner: str(d.partner) || null,
+      desc: str(d.desc),
+      msrp: msrp != null && msrp > 0 ? msrp : null,
+      powerScore: score,
+      powerBracket: /^B[1-5]$/.test(d.powerBracket || "") ? d.powerBracket : null,
+      scryCheckSlug: str(d.scryCheckSlug) || null,
+      formerIds: Array.isArray(d.formerIds) ? d.formerIds.filter(x => SLUG_RE.test(x || "")) : [],
+    };
+  }
 
   async function loadDecks() {
     const res = await fetch("./decks.json", { cache: "no-cache" });
     if (!res.ok) throw new Error(`decks.json HTTP ${res.status}`);
-    const data = await res.json();
-    // Enforce the deck-id slug invariant at load time. Ids are interpolated raw
-    // into data-* attributes throughout; dropping any non-slug id keeps that
-    // safe without escaping every call site.
-    PRECONS = (Array.isArray(data) ? data : []).filter(d => d && /^[a-z0-9-]+$/.test(d.id || ""));
+    let data;
+    try { data = await res.json(); }
+    catch (e) { const err = new Error(`decks.json is not valid JSON: ${e.message}`); err.dataError = true; throw err; }
+    const seen = new Set();
+    PRECONS = [];
+    for (const raw of (Array.isArray(data) ? data : [])) {
+      const d = normalizeDeck(raw);
+      if (!d) { console.warn("Skipping malformed deck entry:", raw && raw.id); continue; }
+      if (seen.has(d.id)) { console.warn("Skipping duplicate deck id:", d.id); continue; }
+      seen.add(d.id);
+      PRECONS.push(d);
+    }
+    if (!PRECONS.length) { const err = new Error("decks.json holds no usable decks"); err.dataError = true; throw err; }
+    ID_ALIAS = {};
+    for (const d of PRECONS) for (const old of d.formerIds) if (!seen.has(old)) ID_ALIAS[old] = d.id;
   }
 
   // The card index is ~440 KB and is only needed by the staple finder, so it
@@ -1617,6 +1824,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       const data = await res.json();
       PRICE_HISTORY = data && data.decks ? data.decks : null;
       BOX_HISTORY = data && data.boxes ? data.boxes : null;
+      // The day of the scrape that wrote this file, as a UTC date like the
+      // entries' own dates. Windows and spans are measured up to this day.
+      const ref = data && typeof data.updated_at === "string" ? data.updated_at.slice(0, 10) : null;
+      HIST_REF = dayNum(ref) != null ? ref : null;
     } catch (e) {
       // History is optional — built up over time by the scraper.
     }
@@ -1638,37 +1849,53 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         // fetch failures are expected when running offline or before repo is set up
       }
     }
-    console.log("Live prices unavailable — using baked-in snapshot");
+    console.log("Live prices unavailable, showing MSRP only");
   }
 
-  // Get the live TCGPlayer price for a deck. Returns {price, price_low, url}
-  // when available, or null if no live data exists.
+  const posNum = v => (typeof v === "number" && Number.isFinite(v) && v > 0) ? v : null;
+
+  // Get the live TCGPlayer price for a deck. Returns {price, price_low,
+  // source, url} when available, or null if no live data exists. `source` is
+  // which TCGplayer figure the scraper used: "Market", or "Low"/"Mid" when the
+  // product had no Market price.
   function getLivePrice(deck) {
-    if (!LIVE_PRICES) return null;
-    const tcg = LIVE_PRICES.vendors.tcgplayer?.[deck.id];
-    if (!tcg?.price) return null;
-    return { price: tcg.price, price_low: tcg.price_low ?? null, url: tcg.url };
+    const tcg = LIVE_PRICES?.vendors?.tcgplayer?.[deck.id];
+    const price = posNum(tcg?.price);
+    if (!price) return null;
+    return { price, price_low: posNum(tcg.price_low), source: tcg.price_source || "Market", url: tcg.url };
+  }
+
+  // The TCGplayer price a buyer can actually pay. Market is derived from past
+  // sales; when it sits BELOW the lowest current listing nobody is offering
+  // it, so the lowest listing is the real floor. Returns { price, kind }.
+  function tcgBuyPrice(live) {
+    if (!live) return null;
+    if (live.price_low != null && live.price_low > live.price) return { price: live.price_low, kind: "lowest listing" };
+    return { price: live.price, kind: live.source === "Market" ? "Market" : live.source === "Low" ? "lowest listing" : live.source };
   }
 
   // Card Kingdom sealed-deck price (from CK's free public pricelist API).
-  // Returns { price, url, qty, buy } or null. qty is CK's in-stock count.
+  // Returns { price, url, qty, buy } or null. qty is CK's in stock count.
   function getCardKingdom(deck) {
-    if (!LIVE_PRICES) return null;
-    const c = LIVE_PRICES.vendors.cardkingdom?.[deck.id];
-    if (!c?.price) return null;
-    return { price: c.price, url: c.url, qty: c.qty ?? null, buy: c.buy ?? null };
+    const c = LIVE_PRICES?.vendors?.cardkingdom?.[deck.id];
+    const price = posNum(c?.price);
+    if (!price) return null;
+    return { price, url: c.url, qty: typeof c.qty === "number" ? c.qty : null, buy: posNum(c.buy) };
   }
+  const ckInStock = ck => !!ck && (ck.qty == null || ck.qty > 0);
 
   // Cheapest place to actually BUY the sealed deck right now, across the two
-  // vendors we track: TCGPlayer Market and Card Kingdom (in stock only).
-  // Returns { best:{vendor,price,url}, all:[...asc] } or null.
+  // vendors we track: TCGPlayer (see tcgBuyPrice) and Card Kingdom (in stock
+  // only). Returns { best:{vendor,price,kind,url}, all:[...asc] } or null.
   function bestVendorPrice(deck) {
     const opts = [];
     const live = getLivePrice(deck);
-    if (live?.price) opts.push({ vendor: "TCGPlayer", price: live.price, url: live.url });
+    const tb = tcgBuyPrice(live);
+    if (tb) opts.push({ vendor: "TCGPlayer", price: tb.price, kind: tb.kind, url: live.url });
     const ck = getCardKingdom(deck);
-    if (ck?.price && (ck.qty == null || ck.qty > 0)) opts.push({ vendor: "Card Kingdom", price: ck.price, url: ck.url });
+    if (ckInStock(ck)) opts.push({ vendor: "Card Kingdom", price: ck.price, kind: "in stock", url: ck.url });
     if (!opts.length) return null;
+    // Ties go to TCGPlayer (pushed first; sort is stable).
     opts.sort((a, b) => a.price - b.price);
     return { best: opts[0], all: opts };
   }
@@ -1679,13 +1906,65 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     return Array.isArray(series) && series.length >= 2 ? series : null;
   }
 
+  // ---------- History dates ----------
+  // History dates are UTC calendar days ("YYYY-MM-DD"). Work in whole day
+  // numbers so spans and windows are real calendar spans, never entry counts
+  // (entries are only written when a price changes).
+  function dayNum(iso) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || "");
+    return m ? Math.round(Date.UTC(+m[1], +m[2] - 1, +m[3]) / 86400000) : null;
+  }
+  function isoFromDay(n) { return new Date(n * 86400000).toISOString().slice(0, 10); }
+
+  // Turn a raw history series into dated price points, sorted by day. When
+  // the item is still tracked today, the last price is carried forward to the
+  // history file's date: the scraper skips unchanged days, so a quiet price is
+  // still today's price. { day, date, price, carried }
+  function historyPoints(series, read, tracked) {
+    const pts = (series || [])
+      .map(s => ({ day: dayNum(s && s.date), date: s && s.date, price: s ? read(s) : null }))
+      .filter(p => p.day != null && typeof p.price === "number" && Number.isFinite(p.price))
+      .sort((a, b) => a.day - b.day);
+    const ref = dayNum(HIST_REF);
+    if (tracked && pts.length && ref != null && ref > pts[pts.length - 1].day) {
+      pts.push({ day: ref, date: HIST_REF, price: pts[pts.length - 1].price, carried: true });
+    }
+    return pts;
+  }
+  const isTracked = d => !!(getLivePrice(d) || getCardKingdom(d));
+
+  // End a history series at today's live price, so a card's range, sparkline
+  // and chart "now" agree with its headline. History records TCGPlayer
+  // Market, while the headline is the price you can pay (see tcgBuyPrice);
+  // the two differ whenever Market sits below every current listing. With no
+  // live price but still tracked (Card Kingdom out of stock, say), the last
+  // recorded price is carried forward as before.
+  function withLivePoint(pts, live, tracked) {
+    const ref = dayNum(HIST_REF);
+    if (!pts.length || ref == null) return pts;
+    const last = pts[pts.length - 1];
+    if (live == null) {
+      if (tracked && ref > last.day) pts.push({ day: ref, date: HIST_REF, price: last.price, carried: true });
+      return pts;
+    }
+    if (ref < last.day) return pts;
+    if (ref === last.day) pts[pts.length - 1] = { ...last, price: live, live: true };
+    else pts.push({ day: ref, date: HIST_REF, price: live, carried: Math.abs(live - last.price) < 0.005, live: true });
+    return pts;
+  }
+  // Dated points for a deck: history `best`, ending at effectivePrice().
+  function deckPoints(d) {
+    const pts = historyPoints((PRICE_HISTORY && PRICE_HISTORY[d.id]) || [], histPrice, false);
+    return withLivePoint(pts, effectivePrice(d), isTracked(d));
+  }
+
   // If this deck belongs to a set with a TCGPlayer bundle (Commander Deck
   // Case / Set of N), return the bundle info. Null otherwise.
   function getBundleForDeck(deck) {
     const bundles = LIVE_PRICES?.bundles;
     if (!bundles) return null;
     for (const b of Object.values(bundles)) {
-      if (b.deck_ids && b.deck_ids.includes(deck.id)) return b;
+      if (b && Array.isArray(b.deck_ids) && b.deck_ids.includes(deck.id) && posNum(b.price)) return b;
     }
     return null;
   }
@@ -1716,43 +1995,116 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     } catch (e) { return null; }
   }
 
+  // Returns true when at least one store accepted the value. A failure (quota
+  // full, or site data blocked so even reading localStorage throws) shows a
+  // visible notice once instead of letting toggles look saved.
   async function saveKey(key, value) {
     const json = JSON.stringify(value);
+    let ok = false;
     try {
       if (window.storage && window.storage.set) {
         await window.storage.set(key, json);
+        ok = true;
       }
     } catch (e) { /* fall through */ }
     try {
       localStorage.setItem(`precon-${key}`, json);
+      ok = true;
     } catch (e) { console.warn(`Could not persist ${key}:`, e); }
+    if (!ok) showStorageWarning();
+    return ok;
   }
 
-  async function loadOwned() {
-    const arr = await loadKey("owned");
-    if (Array.isArray(arr)) ownedSet = new Set(arr);
+  function showStorageWarning() {
+    const el = $("storageBanner");
+    if (!el || el.classList.contains("visible")) return;
+    el.textContent = "⚠ Your browser is blocking this site from saving data, so your watchlist, owned decks and price targets will be lost when you close this page.";
+    el.classList.add("visible");
   }
-  async function saveOwned() { await saveKey("owned", [...ownedSet]); }
 
-  async function loadWatched() {
-    const arr = await loadKey("watched");
-    if (Array.isArray(arr)) watchSet = new Set(arr);
+  // ---------- Saved ids (contract: decks.json formerIds) ----------
+  // Saved state is keyed by deck id. Renamed ids (formerIds) are mapped to
+  // their current id, and that mapping is written back to storage. Ids that
+  // are not in the loaded catalog are hidden in memory but KEPT in storage:
+  // a catalog that briefly lost a deck (a typo dropping a malformed entry, or
+  // an older decks.json served from the offline cache) must not erase what
+  // every visitor saved for it.
+  function aliasId(id) {
+    return typeof id === "string" ? (ID_ALIAS[id] || id) : null;
   }
-  async function saveWatched() { await saveKey("watched", [...watchSet]); }
-
-  async function loadTargets() {
-    const o = await loadKey("targets");
-    if (o && typeof o === "object" && !Array.isArray(o)) {
-      targets = {};
-      for (const k in o) { const v = Number(o[k]); if (Number.isFinite(v) && v > 0) targets[k] = v; }
+  // Before decks.json has loaded there is nothing to check against.
+  function canonicalId(id) {
+    const cur = aliasId(id);
+    if (!cur || !PRECONS.length) return cur;
+    return PRECONS.some(d => d.id === cur) ? cur : null;
+  }
+  // What storage holds: renames applied, unknown ids kept.
+  function storedIdList(arr) {
+    return [...new Set((Array.isArray(arr) ? arr : []).map(aliasId).filter(Boolean))];
+  }
+  function storedTargets(o) {
+    const out = {};
+    if (!o || typeof o !== "object" || Array.isArray(o)) return out;
+    for (const k of Object.keys(o)) {
+      const id = aliasId(k), v = Number(o[k]);
+      if (!id || !Number.isFinite(v) || v <= 0) continue;
+      // A value saved under the current id wins over one under a former id.
+      if (!(id in out) || k === id) out[id] = v;
     }
+    return out;
   }
-  async function saveTargets() { await saveKey("targets", targets); }
+  // What this page uses: only ids in the loaded catalog.
+  function normalizeIdList(arr) {
+    return storedIdList(arr).filter(id => canonicalId(id));
+  }
+  function normalizeTargets(o) {
+    const out = storedTargets(o);
+    for (const k of Object.keys(out)) if (!canonicalId(k)) delete out[k];
+    return out;
+  }
+
+  async function loadOwned() { ownedSet = new Set(normalizeIdList(await loadKey("owned"))); }
+  async function loadWatched() { watchSet = new Set(normalizeIdList(await loadKey("watched"))); }
+  async function loadTargets() { targets = normalizeTargets(await loadKey("targets")); }
+
+  // Every save is a read, modify, write of ONE change against what is stored
+  // now, not a write of this tab's whole snapshot: two open tabs (or the
+  // installed app plus a tab) must never erase each other's changes.
+  async function toggleSavedId(key, id, add) {
+    const stored = await loadKey(key);
+    const set = new Set(Array.isArray(stored) ? storedIdList(stored) : (key === "owned" ? ownedSet : watchSet));
+    if (add) set.add(id); else set.delete(id);
+    const list = [...set];
+    if (key === "owned") ownedSet = new Set(normalizeIdList(list)); else watchSet = new Set(normalizeIdList(list));
+    return saveKey(key, list);
+  }
+  async function setSavedTarget(id, value) {
+    const stored = await loadKey("targets");
+    const next = stored && typeof stored === "object" && !Array.isArray(stored) ? storedTargets(stored) : { ...targets };
+    if (value == null) delete next[id]; else next[id] = value;
+    targets = normalizeTargets(next);
+    return saveKey("targets", next);
+  }
+
+  // Write the formerIds renames back to storage once, so storage stops
+  // carrying old ids. Only renames are persisted; unknown ids stay stored.
+  async function migrateSavedIds() {
+    const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+    const owned = await loadKey("owned"), watched = await loadKey("watched"), tg = await loadKey("targets");
+    if (Array.isArray(owned) && !same(owned, storedIdList(owned))) await saveKey("owned", storedIdList(owned));
+    if (Array.isArray(watched) && !same(watched, storedIdList(watched))) await saveKey("watched", storedIdList(watched));
+    if (tg && typeof tg === "object" && !Array.isArray(tg) && !same(tg, storedTargets(tg))) await saveKey("targets", storedTargets(tg));
+  }
 
   // ---------- Theme ----------
+  // Browser chrome color follows the theme actually shown, which may be a
+  // saved choice that differs from the OS setting the media metas assume.
+  const THEME_COLOR = { dark: "#15120e", light: "#f3ead4" };
   function applyTheme(t) {
     if (t === "light") document.documentElement.dataset.theme = "light";
     else delete document.documentElement.dataset.theme;
+    const c = THEME_COLOR[t === "light" ? "light" : "dark"];
+    document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.setAttribute("content", c));
   }
   async function loadTheme() {
     let t = await loadKey("theme");
@@ -1826,18 +2178,20 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     }
   }
 
-  // For sorting and "best discount" calculation. Uses the live TCG Market
-  // price, falling back to snapshot, then null.
+  // The one price every signal reads: the cheapest place to buy the deck
+  // right now (bestVendorPrice). Headline, discount, sorting, targets, Deal of
+  // the Day, the feed, compare and portfolio all agree on it. There is no
+  // snapshot tier any more: a hand typed research price from months ago (some
+  // of it from out of scope sources) must never drive a "discount". No live
+  // price means null, and the card shows MSRP for reference only.
   function effectivePrice(d) {
-    const live = getLivePrice(d);
-    if (live) return live.price;
-    if (d.currentPrice != null) return d.currentPrice;
-    return null;
+    const bv = bestVendorPrice(d);
+    return bv ? bv.best.price : null;
   }
 
   function discountPct(d) {
     const ep = effectivePrice(d);
-    if (ep == null || !d.msrp) return 0;  // ep==null only; a real $0 stays visible
+    if (ep == null || !d.msrp) return 0;
     const pct = ((d.msrp - ep) / d.msrp) * 100;
     return pct > 0 ? pct : 0;
   }
@@ -1855,28 +2209,31 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     return v;
   }
 
-  // Calendar days actually spanned by a history series. History entries are
-  // written only when a price CHANGES, so entry count is not day count —
-  // reporting the count made every card understate its own window (e.g. "74d"
-  // for a series that really covers 89 days).
-  function spanDays(series) {
-    const dates = (series || []).map(s => s && s.date).filter(Boolean).sort();
-    if (dates.length < 2) return dates.length;
-    const ms = new Date(dates[dates.length - 1]) - new Date(dates[0]);
-    return Number.isFinite(ms) ? Math.max(1, Math.round(ms / 86400000)) : dates.length;
+  // Calendar days actually spanned by a list of dated points (see
+  // historyPoints). History entries are written only when a price CHANGES,
+  // so entry count is not day count.
+  function spanOf(pts) {
+    return pts.length >= 2 ? Math.max(1, pts[pts.length - 1].day - pts[0].day) : 0;
   }
 
-  // 90-day price stats from history: low/high/current + where current sits.
+  // Price stats from history: low/high/now, where now sits in the range, the
+  // recent trend, and the real calendar span the range covers (up to today
+  // when the deck is still tracked). `moved` is false for a series that never
+  // changed or spans under a week: such a range has no meaningful "low".
   function getPriceStats(d) {
     const series = (PRICE_HISTORY && PRICE_HISTORY[d.id]) || [];
-    const pts = series.map(histPrice).filter(v => typeof v === "number");
-    if (pts.length < 2) return null;
+    if (historyPoints(series, histPrice, false).length < 2) return null;
+    // Range, now and span all read the series that ends at today's headline
+    // price (deckPoints), so the printed range always contains the headline.
+    const all = deckPoints(d);
+    const pts = all.map(p => p.price);
     const low = Math.min(...pts), high = Math.max(...pts), now = pts[pts.length - 1];
     const range = high - low;
     const posInRange = range > 0 ? (now - low) / range : 0;  // 0 = at low, 1 = at high
     // Trend over the recent window as a relative change, via a least-squares
     // slope (less endpoint-sensitive than first-vs-last) normalized by the mean.
-    const recent = pts.slice(-7);
+    // A carried point repeats the price before it, so it is not a sample.
+    const recent = all.filter(p => !p.carried).map(p => p.price).slice(-7);
     let trend = 0;
     if (recent.length >= 3) {
       const nn = recent.length, mx = (nn - 1) / 2;
@@ -1888,17 +2245,18 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     } else if (recent.length === 2 && recent[0] > 0) {
       trend = (recent[1] - recent[0]) / recent[0];
     }
-    return { low, high, now, posInRange, trend, days: spanDays(series) };
+    const days = spanOf(all);
+    return { low, high, now, posInRange, trend, days, moved: high > low && days >= 7 };
   }
 
   function isNearLow(d) {
     const ep = effectivePrice(d);
     const stats = getPriceStats(d);
-    if (ep == null || !stats) return false;
+    if (ep == null || !stats || !stats.moved) return false;
     return ep <= stats.low * 1.05;
   }
 
-  // Composite buy signal: blends discount-vs-MSRP, position-in-history, trend.
+  // Composite buy signal: blends discount vs MSRP, position in history, trend.
   function buySignal(d) {
     const ep = effectivePrice(d);
     if (ep == null) return null;
@@ -1908,16 +2266,23 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     if (disc >= 25) { score += 2; reasons.push(`${disc.toFixed(0)}% below MSRP`); }
     else if (disc >= 12) { score += 1; reasons.push(`${disc.toFixed(0)}% below MSRP`); }
     const stats = getPriceStats(d);
-    if (stats) {
-      if (ep <= stats.low * 1.05) { score += 2; reasons.push("near 90-day low"); }
-      else if (stats.posInRange <= 0.35) { score += 1; reasons.push("low in 90-day range"); }
+    if (stats && stats.moved) {
+      if (ep <= stats.low * 1.05) { score += 2; reasons.push(`near its ${stats.days} day low`); }
+      else if (stats.posInRange <= 0.35) { score += 1; reasons.push(`low in its ${stats.days} day range`); }
       if (stats.trend <= -0.03) { score += 1; reasons.push("trending down"); }
       else if (stats.trend >= 0.05) { score -= 1; reasons.push("trending up"); }
     }
     let level = "hold";
     if (score >= 3) level = "buy";
     else if (score >= 1) level = "ok";
-    if (reasons.length === 0) reasons.push("near MSRP, no discount");
+    if (reasons.length === 0) {
+      // Say where the price actually is, not a blanket "near MSRP".
+      const r = d.msrp ? ep / d.msrp : null;
+      if (r == null) reasons.push("no MSRP to compare against");
+      else if (r > 1.1) reasons.push(`${Math.round((r - 1) * 100)}% above MSRP`);
+      else if (r >= 0.9) reasons.push("near MSRP, no real discount");
+      else reasons.push(`${Math.round((1 - r) * 100)}% below MSRP`);
+    }
     return { level, score, reasons };
   }
 
@@ -1926,32 +2291,34 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   // on 105 of 115 decks, while its "Just released"/"Preorder" state matched
   // none. A label that says the same thing on 91% of cards is not a label.
 
-  // F7: at the lowest price across all recorded history (not just "near").
-  // Our history is the full tracked window, so low == all-time-tracked low.
   // History keys, by the vendor label bestVendorPrice() reports.
   const VENDOR_HISTORY_KEY = {
     "TCGPlayer": "tcg", "Card Kingdom": "ck",
   };
   const MIN_BASIS_DAYS = 21;   // how long a vendor must have been watched
 
-  // "★ all-time low" must compare like with like. The `best` series silently
-  // changes basis whenever a vendor is added or dropped: adding one cheaper
-  // vendor once made `best` fall on 20 decks in a single day purely because a
-  // new quote appeared, not because the market moved. So before claiming an
-  // all time low, require that the vendor currently winning has its OWN long
-  // enough history, and compare today's price against that vendor's own past.
+  // "★ all time low" must agree with the range printed right beside it, so it
+  // is judged against the SAME series (history `best`): today's price must be
+  // at that range's low, and the range must have actually moved. It must also
+  // compare like with like: `best` changes basis whenever a vendor is added
+  // (Card Kingdom joined in June), so the vendor winning today also needs its
+  // OWN history of at least MIN_BASIS_DAYS with real movement, and today's
+  // price must be at that vendor's own low too.
   function isAllTimeLow(d) {
     const st = getPriceStats(d);
     const bv = bestVendorPrice(d);
-    if (!st || !bv || st.days < 7) return false;
+    if (!st || !bv || !st.moved || st.days < MIN_BASIS_DAYS) return false;
+    const price = bv.best.price;
+    if (price > st.low * 1.005) return false;
     const key = VENDOR_HISTORY_KEY[bv.best.vendor];
-    const series = (PRICE_HISTORY && PRICE_HISTORY[d.id]) || [];
     if (!key) return false;
-    const own = series.filter(s => typeof s[key] === "number");
-    // Too new to make an "all-time" claim about — say nothing rather than lie.
-    if (own.length < 2 || spanDays(own) < MIN_BASIS_DAYS) return false;
-    const ownLow = Math.min(...own.map(s => s[key]));
-    return bv.best.price <= ownLow * 1.01;
+    const own = historyPoints((PRICE_HISTORY && PRICE_HISTORY[d.id]) || [], s => s[key], false);
+    // Too new, or never moved: say nothing rather than claim a low.
+    if (own.length < 2 || spanOf(own) < MIN_BASIS_DAYS) return false;
+    const vals = own.map(p => p.price);
+    const ownLow = Math.min(...vals);
+    if (ownLow === Math.max(...vals)) return false;
+    return price <= ownLow * 1.005;
   }
 
   // priceForecast() was removed. It damped its own extrapolation by half
@@ -1965,7 +2332,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   // Live crack value (sum of singles) from the scraper, if present.
   function getCrackValue(d) {
     const c = LIVE_PRICES?.crack?.[d.id];
-    if (!c || (c.tcg == null && c.cardkingdom == null)) return null;
+    if (!c || (posNum(c.tcg) == null && posNum(c.cardkingdom) == null)) return null;
     return c;
   }
 
@@ -1973,59 +2340,72 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   function getBoxes() {
     return LIVE_PRICES?.boxes || null;
   }
+  // The TCGPlayer price you can pay for a sealed box, on the same basis as
+  // deck cards (see tcgBuyPrice). Returns { price, kind } or null.
+  function boxBuyPrice(b) {
+    const price = posNum(b?.price);
+    if (!price) return null;
+    return tcgBuyPrice({ price, price_low: posNum(b.price_low), source: b.price_source || "Market" });
+  }
+  // Dated points for a box: its Market history, ending at boxBuyPrice().
+  function boxPoints(setName, b) {
+    const pts = historyPoints((BOX_HISTORY && BOX_HISTORY[`${setName}::${b?.type}`]) || [], s => s.price, false);
+    const tb = b ? boxBuyPrice(b) : null;
+    return withLivePoint(pts, tb ? tb.price : null, !!b);
+  }
 
-  // Singles BUY value (retail — what the cards cost to acquire). Returns the
-  // best (highest) of the two vendors' retail totals, or null.
+  // Singles BUY value: what the cards cost to acquire. That is the CHEAPER of
+  // the two vendors' retail totals; Card Kingdom's NM retail runs above
+  // TCGPlayer on every deck, so taking the higher one overstated it by up to
+  // 2x. Returns { value, vendor, tcg, ck } or null.
   function crackBuyValue(d) {
     const c = getCrackValue(d);
     if (!c) return null;
-    const tcg = c.tcg, ck = c.cardkingdom;
-    const best = Math.max(tcg ?? -Infinity, ck ?? -Infinity);
-    if (!isFinite(best)) return null;
-    // Deterministic vendor label, including the rare exact-tie case.
-    const vendor = (ck != null && (tcg == null || ck >= tcg)) ? "Card Kingdom" : "TCGPlayer";
-    return { value: best, vendor, tcg, ck };
+    const tcg = posNum(c.tcg), ck = posNum(c.cardkingdom);
+    if (tcg == null && ck == null) return null;
+    const useCk = ck != null && (tcg == null || ck < tcg);
+    return { value: useCk ? ck : tcg, vendor: useCk ? "Card Kingdom" : "TCGPlayer", tcg, ck };
   }
 
-  // Singles SELL value (crack-to-sell — what you'd actually receive).
-  // Card Kingdom is a REAL buylist; TCGPlayer is an estimate (~70% of retail).
-  // PREFER the real CK buylist whenever present so "net profit" reflects
-  // realizable value, and fall back to the TCG estimate only when CK is
-  // missing. (Using max() made the estimate win ~always, overstating profit.)
+  // Singles SELL value: what cracking and selling would actually pay. Only the
+  // REAL Card Kingdom buylist counts. The TCG figure is a flat 70% of retail
+  // with no buylist behind it (most of a deck is sub $1 bulk nobody buys), so
+  // it is returned only as a labelled secondary `estimate` and never drives
+  // the profit flag, the crack sort or the deal scores. An earlier rule
+  // switched to the estimate whenever CK fell below 30% of it, which made a
+  // WORSE buylist show a 3x to 4.5x HIGHER sell value.
+  // Returns { value, vendor, ck, estimate } (value null without a CK buylist)
+  // or null when there is no crack data at all.
   function crackSellValue(d) {
     const c = getCrackValue(d);
     if (!c) return null;
-    const ck = c.sell_cardkingdom;        // real CK buylist
-    const tcg = c.sell_tcg;               // estimated (70% of retail)
-    // Prefer the REAL CK buylist — but only when its coverage is meaningful.
-    // CK buylists ~60% of cards, and on some decks lists just a couple, which
-    // collapses to a near-zero total that would wrongly read as "sell ~$5".
-    // When CK is implausibly low vs the TCG estimate, use the estimate instead.
-    if (ck != null && (tcg == null || ck >= tcg * 0.3)) {
-      return { value: ck, vendor: "Card Kingdom", ck, tcg, estimated: false };
-    }
-    if (tcg != null) {
-      return { value: tcg, vendor: "TCGPlayer", ck, tcg, estimated: true };
-    }
-    if (ck != null) {
-      return { value: ck, vendor: "Card Kingdom", ck, tcg, estimated: false };
-    }
-    return null;
+    const ck = posNum(c.sell_cardkingdom);
+    const estimate = posNum(c.sell_tcg);
+    if (ck == null && estimate == null) return null;
+    return { value: ck, vendor: ck != null ? "Card Kingdom" : null, ck, estimate };
   }
 
-  // Crack arbitrage = realistic NET profit from cracking and SELLING the
-  // singles, vs buying the sealed deck. Uses the SELL value (not retail), so
-  // it answers "would cracking actually make me money?" — not the inflated
-  // retail comparison. { margin, pct, sell, sealed, vendor, estimated }
+  // A crack only counts as profit once it clears the real costs the margin
+  // ignores: sales tax and shipping on the sealed deck, shipping a hundred
+  // cards to the buylist, condition grading. Require the larger of $10 or 15%
+  // of the sealed price before flagging or scoring it.
+  const CRACK_MIN_PROFIT = 10;
+  const CRACK_MIN_PROFIT_PCT = 0.15;
+
+  // Crack arbitrage = NET margin from cracking and SELLING the singles to the
+  // Card Kingdom buylist, vs buying the sealed deck at today's best price.
+  // { margin, pct, sell, sealed, vendor, profitable }
   function crackArbitrage(d) {
     const sell = crackSellValue(d);
     const sealed = effectivePrice(d);
-    if (!sell || sealed == null || sealed <= 0) return null;
+    if (!sell || sell.value == null || sealed == null || sealed <= 0) return null;
+    const margin = sell.value - sealed;
     return {
-      margin: sell.value - sealed,
-      pct: ((sell.value - sealed) / sealed) * 100,
+      margin,
+      pct: (margin / sealed) * 100,
       sell: sell.value, sealed,
-      vendor: sell.vendor, estimated: sell.estimated,
+      vendor: sell.vendor,
+      profitable: margin >= Math.max(CRACK_MIN_PROFIT, sealed * CRACK_MIN_PROFIT_PCT),
     };
   }
 
@@ -2055,36 +2435,44 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     }[ch]));
   }
 
-  // Allow only http(s) URLs in href attributes (blocks javascript:/data:
-  // scheme injection). Defense-in-depth: URLs are scraper-generated today,
-  // but this makes every link safe regardless of data source.
+  // Allow only http(s) links to the sites this page actually links to (blocks
+  // javascript:/data: schemes, and a scraped URL like
+  // "https://www.cardkingdom.com@evil.example/" whose real host is elsewhere).
+  // The host is read by the URL parser, never by pattern matching the string.
+  const LINK_HOSTS = ["tcgplayer.com", "cardkingdom.com", "scrycheck.com"];
   function safeUrl(u) {
-    return /^https?:\/\//i.test(u || "") ? escapeHtml(u) : "#";
+    let url;
+    try { url = new URL(String(u || "")); } catch (e) { return "#"; }
+    if (url.protocol !== "https:" && url.protocol !== "http:") return "#";
+    if (url.username || url.password) return "#";
+    const host = url.hostname.toLowerCase();
+    if (!LINK_HOSTS.some(h => host === h || host.endsWith("." + h))) return "#";
+    return escapeHtml(url.href);
   }
 
-  // Inline SVG sparkline. Trend determines colour: down=sage, up=burgundy, flat=gold.
-  // Charts the best-available price per day (see histPrice).
-  function sparklineSvg(series) {
-    if (!series || series.length < 2) return "";
-    const pts = series.map(histPrice).filter(v => typeof v === "number");
-    if (pts.length < 2) return "";
+  // Inline SVG sparkline from dated points (see historyPoints). Trend sets the
+  // colour: down=sage, up=burgundy, flat=gold. x is placed by DATE and the
+  // line is drawn as steps, because a recorded price holds until the next
+  // change; spacing by entry index squeezed long quiet spells.
+  function sparklineSvg(pts, label) {
+    if (!pts || pts.length < 2) return "";
     const w = 60, h = 18, pad = 1;
-    const min = Math.min(...pts), max = Math.max(...pts);
+    const vals = pts.map(p => p.price);
+    const min = Math.min(...vals), max = Math.max(...vals);
     const range = max - min || 1;
-    const stepX = (w - pad * 2) / (pts.length - 1);
-    const coords = pts.map((v, i) => {
-      const x = pad + i * stepX;
-      const y = h - pad - ((v - min) / range) * (h - pad * 2);
-      return [x, y];
-    });
-    const path = "M " + coords.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" L ");
+    const d0 = pts[0].day, dspan = (pts[pts.length - 1].day - d0) || 1;
+    const X = p => pad + ((p.day - d0) / dspan) * (w - pad * 2);
+    const Y = v => h - pad - ((v - min) / range) * (h - pad * 2);
+    let path = `M ${X(pts[0]).toFixed(1)},${Y(vals[0]).toFixed(1)}`;
+    for (let i = 1; i < pts.length; i++) path += ` H ${X(pts[i]).toFixed(1)} V ${Y(vals[i]).toFixed(1)}`;
     const area = path + ` L ${(w - pad).toFixed(1)},${(h - pad).toFixed(1)} L ${pad},${(h - pad).toFixed(1)} Z`;
-    const first = pts[0], last = pts[pts.length - 1];
+    const first = vals[0], last = vals[vals.length - 1];
     let trend = "flat";
     if (last < first * 0.97) trend = "down";
     else if (last > first * 1.03) trend = "up";
-    const title = `${pts.length} days · $${first.toFixed(2)} → $${last.toFixed(2)}`;
-    return `<svg class="sparkline ${trend}" data-chart-trigger="1" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="button" tabindex="0" aria-label="Open price chart — ${title}"><title>${title} · click for full chart</title><path class="sparkline-area" d="${area}"/><path d="${path}"/></svg>`;
+    const n = spanOf(pts);
+    const title = `${n} ${n === 1 ? "day" : "days"} · $${first.toFixed(2)} → $${last.toFixed(2)}`;
+    return `<svg class="sparkline ${trend}" data-chart-trigger="1" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="button" tabindex="0" aria-label="Open price chart${label ? ` for ${escapeHtml(label)}` : ""}: ${title}"><title>${title} · click for full chart</title><path class="sparkline-area" d="${area}"/><path d="${path}"/></svg>`;
   }
 
   // Banner: warn the user if the last scrape was more than STALE_DAYS ago.
@@ -2097,7 +2485,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const updated = new Date(LIVE_PRICES.updated_at);
     const ageDays = (Date.now() - updated.getTime()) / 86400000;
     if (ageDays > STALE_DAYS) {
-      const dateStr = updated.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+      const dateStr = updated.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
       staleBanner.textContent = `⚠ Prices last updated ${dateStr} (${Math.round(ageDays)} days ago). The daily scraper may be down — open an issue if it's been more than a week.`;
       staleBanner.classList.add("visible");
     } else {
@@ -2106,34 +2494,18 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   }
 
   // ---------- Price-history chart ----------
-  // Catmull-Rom → cubic Bezier smoothing. Produces a path "M ... C ..."
-  // that flows naturally through every point. Used for the line in the
-  // chart modal; the tiny inline sparkline stays as a polyline for speed.
-  function smoothPath(points) {
-    if (points.length < 2) return "";
-    const [first] = points;
-    let d = `M ${first[0]},${first[1]}`;
-    for (let i = 0; i < points.length - 1; i++) {
-      const p0 = points[i - 1] || points[i];
-      const p1 = points[i];
-      const p2 = points[i + 1];
-      const p3 = points[i + 2] || p2;
-      const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
-      const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
-      const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
-      const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
-      d += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
-    }
-    return d;
-  }
-
+  // History dates are UTC calendar days. new Date("2026-10-07") is UTC
+  // midnight, which every US time zone displays as Oct 6, so build a LOCAL
+  // date from the parts instead.
   function fmtChartDate(iso) {
-    const d = new Date(iso);
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || "");
+    if (!m) return "";
+    return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
 
-  // Pick "nice" tick values for the Y axis. Returns up to 5 tick values
-  // that span min..max with rounded steps.
+  // Pick "nice" tick values for the Y axis: rounded steps whose first tick is
+  // at or below min and whose last is at or above max, so the caller can use
+  // the outer ticks as the plot bounds and no tick lands outside the plot.
   function niceTicks(min, max, count = 5) {
     const range = max - min || 1;
     const rough = range / (count - 1);
@@ -2145,46 +2517,48 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     else if (norm < 7) step = 5 * mag;
     else step = 10 * mag;
     const start = Math.floor(min / step) * step;
-    const ticks = [];
-    for (let v = start; v <= max + step * 0.5; v += step) ticks.push(v);
-    return ticks;
+    const n = Math.max(1, Math.ceil(max / step - 1e-9) - Math.floor(min / step));
+    return Array.from({ length: n + 1 }, (_, i) => +(start + i * step).toFixed(10));
   }
 
-  // State for the chart modal (which deck, which time range).
+  // State for the chart modal (which series, which time range).
   let chartCurrentRange = "all";
-  // Generic chart source: an array of {date, price} plus the field name to
-  // read. Decks read 'tcg' from PRICE_HISTORY; boxes read 'price' from
-  // BOX_HISTORY. renderChart works off this regardless of source.
-  let chartCurrentRaw = [];   // full series (array of {date, <field>})
-  let chartCurrentField = "tcg";
+  // Dated points for the open chart (deckPoints, boxPoints): decks chart the
+  // best price per day, boxes their TCGPlayer Market price, both ending at
+  // the price their headline shows today.
+  let chartCurrentPoints = [];
+  let chartPointsFn = null;   // recomputes the open chart's points
+
+  // Cut the points to the last `range` days, measured back from the history
+  // file's date. The price in force at the cutoff is carried in as the first
+  // point, so a quiet week shows a flat week instead of the whole history,
+  // and a 1M change starts from the price 30 days ago.
+  function windowPoints(all, range) {
+    if (range === "all" || !all.length) return all;
+    const days = parseInt(range, 10);
+    const end = dayNum(HIST_REF) ?? all[all.length - 1].day;
+    const cutoff = end - days;
+    const inside = all.filter(p => p.day >= cutoff);
+    const before = all.filter(p => p.day < cutoff).pop();
+    if (before && (!inside.length || inside[0].day > cutoff)) {
+      inside.unshift({ day: cutoff, date: isoFromDay(cutoff), price: before.price, carried: true });
+    }
+    return inside;
+  }
 
   function renderChart() {
     const wrap = $("chartCanvasWrap");
     const empty = $("chartEmpty");
-
-    let series = chartCurrentRaw || [];
-
-    // Trim to selected window
-    if (chartCurrentRange !== "all") {
-      const days = parseInt(chartCurrentRange, 10);
-      const cutoff = Date.now() - days * 86400000;
-      const trimmed = series.filter(s => new Date(s.date).getTime() >= cutoff);
-      // Fall back to all available if the window is too narrow to plot.
-      series = trimmed.length >= 2 ? trimmed : series;
-    }
-
-    // "best" charts the cheapest vendor per day (decks); boxes chart "price".
-    const points = series
-      .map(s => ({ date: s.date,
-                   price: chartCurrentField === "best" ? histPrice(s) : s[chartCurrentField] }))
-      .filter(p => typeof p.price === "number");
+    const points = windowPoints(chartCurrentPoints || [], chartCurrentRange);
 
     if (points.length < 2) {
       wrap.innerHTML = "";
       empty.classList.add("visible");
-      empty.textContent = points.length === 0
-        ? "No live price history yet."
-        : `Only ${points.length} data point so far — come back in a few days as the daily scraper builds up history.`;
+      empty.textContent = (chartCurrentPoints || []).length === 0
+        ? (historyReady ? "No live price history yet." : "Loading price history…")
+        : points.length === 0
+          ? "No price was recorded in this window."
+          : `Only ${points.length} data point so far. Come back in a few days as the daily scraper builds up history.`;
       $("chartPriceNow").textContent = points[0] ? `$${points[0].price.toFixed(2)}` : "—";
       $("chartDelta").textContent = "—";
       $("chartDelta").className = "chart-delta flat";
@@ -2193,13 +2567,13 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
     empty.classList.remove("visible");
 
-    // Header: current price + delta vs window start
+    // Header: current price + delta vs window start, over the real calendar span.
     const first = points[0].price, last = points[points.length - 1].price;
     const deltaPct = first > 0 ? ((last - first) / first) * 100 : 0;
     $("chartPriceNow").textContent = `$${last.toFixed(2)}`;
     const deltaEl = $("chartDelta");
     const sign = deltaPct >= 0 ? "+" : "";
-    deltaEl.textContent = `${sign}${deltaPct.toFixed(1)}% · ${points.length}d`;
+    deltaEl.textContent = `${sign}${deltaPct.toFixed(1)}% · ${spanOf(points)}d`;
     deltaEl.className = "chart-delta " + (deltaPct > 0.5 ? "up" : deltaPct < -0.5 ? "down" : "flat");
 
     // SVG layout (responsive via viewBox)
@@ -2209,40 +2583,52 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
     const prices = points.map(p => p.price);
     const yMin = Math.min(...prices), yMax = Math.max(...prices);
-    // Pad range so the line doesn't kiss the top/bottom edges
+    // Pad range so the line doesn't kiss the top/bottom edges, then snap the
+    // bounds to the outer nice ticks so every tick sits inside the plot.
     const yPad = (yMax - yMin) * 0.15 || 1;
-    const yLo = Math.max(0, yMin - yPad), yHi = yMax + yPad;
-    const yTicks = niceTicks(yLo, yHi, 5);
+    const yTicks = niceTicks(Math.max(0, yMin - yPad), yMax + yPad, 5);
+    const yLo = yTicks[0], yHi = yTicks[yTicks.length - 1];
+    const Y = v => padT + (1 - (v - yLo) / (yHi - yLo)) * innerH;
 
-    const xs = points.map((_, i) => padL + (i / (points.length - 1)) * innerW);
-    const ys = prices.map(p => padT + (1 - (p - yLo) / (yHi - yLo)) * innerH);
-    const coords = xs.map((x, i) => [x, ys[i]]);
+    // x by DATE, so a 50 day gap is drawn wider than a 2 day gap.
+    const d0 = points[0].day, d1 = points[points.length - 1].day, dspan = (d1 - d0) || 1;
+    const X = day => padL + ((day - d0) / dspan) * innerW;
+    const xs = points.map(p => X(p.day));
+    const ys = prices.map(Y);
 
-    const gridLines = yTicks.map(t => {
-      const y = padT + (1 - (t - yLo) / (yHi - yLo)) * innerH;
-      return `<line class="gridline" x1="${padL}" y1="${y.toFixed(1)}" x2="${W - padR}" y2="${y.toFixed(1)}"/>`;
-    }).join("");
-    const yLabels = yTicks.map(t => {
-      const y = padT + (1 - (t - yLo) / (yHi - yLo)) * innerH;
-      return `<text class="axis-label" x="${padL - 8}" y="${(y + 3).toFixed(1)}" text-anchor="end">$${t.toFixed(2)}</text>`;
-    }).join("");
+    const gridLines = yTicks.map(t =>
+      `<line class="gridline" x1="${padL}" y1="${Y(t).toFixed(1)}" x2="${W - padR}" y2="${Y(t).toFixed(1)}"/>`).join("");
+    const yLabels = yTicks.map(t =>
+      `<text class="axis-label" x="${padL - 8}" y="${(Y(t) + 3).toFixed(1)}" text-anchor="end">$${t.toFixed(2)}</text>`).join("");
 
-    // X axis: up to 5 evenly-spaced date labels (always include first + last)
-    const labelCount = Math.min(points.length, 5);
+    // X axis: up to 5 date labels evenly spaced IN TIME (first and last included).
+    const labelCount = Math.min(5, (d1 - d0) + 1);
     const xLabels = Array.from({ length: labelCount }, (_, i) => {
-      const idx = Math.round(i * (points.length - 1) / Math.max(1, labelCount - 1));
-      const x = xs[idx];
-      return `<text class="axis-label" x="${x.toFixed(1)}" y="${H - padB + 18}" text-anchor="middle">${fmtChartDate(points[idx].date)}</text>`;
+      const day = d0 + Math.round(i * (d1 - d0) / Math.max(1, labelCount - 1));
+      return `<text class="axis-label" x="${X(day).toFixed(1)}" y="${H - padB + 18}" text-anchor="middle">${fmtChartDate(isoFromDay(day))}</text>`;
     }).join("");
 
-    const linePath = smoothPath(coords);
+    // Step line: a recorded price holds until the next change.
+    let linePath = `M ${xs[0].toFixed(1)},${ys[0].toFixed(1)}`;
+    for (let i = 1; i < points.length; i++) linePath += ` H ${xs[i].toFixed(1)} V ${ys[i].toFixed(1)}`;
     const areaPath = linePath +
       ` L ${xs[xs.length - 1].toFixed(1)},${(padT + innerH).toFixed(1)}` +
       ` L ${xs[0].toFixed(1)},${(padT + innerH).toFixed(1)} Z`;
 
-    const dots = coords.map(([x, y], i) =>
-      `<circle class="price-dot${i === coords.length - 1 ? " endpoint" : ""}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${i === coords.length - 1 ? 4 : 2}"><title>${fmtChartDate(points[i].date)} · $${prices[i].toFixed(2)}</title></circle>`
-    ).join("");
+    // A dot per recorded change, plus the endpoint. Carried points (window
+    // start, today) are not observations of a change, so they get no dot,
+    // except the endpoint, which says since when the price has held.
+    const lastIdx = points.length - 1;
+    const dots = points.map((p, i) => {
+      if (p.carried && i !== lastIdx) return "";
+      const end = i === lastIdx;
+      let tip = `${fmtChartDate(p.date)} · $${p.price.toFixed(2)}`;
+      if (end && p.carried) {
+        const since = [...points].reverse().find(q => !q.carried);
+        if (since) tip += ` (unchanged since ${fmtChartDate(since.date)})`;
+      }
+      return `<circle class="price-dot${end ? " endpoint" : ""}" cx="${xs[i].toFixed(1)}" cy="${ys[i].toFixed(1)}" r="${end ? 4 : 2}"><title>${tip}</title></circle>`;
+    }).join("");
 
     wrap.innerHTML = `
       <svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Price history chart">
@@ -2255,61 +2641,70 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       </svg>`;
   }
 
-  // Shared modal opener — sets title/subtitle, range buttons, renders.
-  function showChartModal(title, subtitle, raw, field, range) {
-    chartCurrentRaw = raw || [];
-    chartCurrentField = field;
+  // Shared modal opener: sets title/subtitle, range buttons, renders.
+  function showChartModal(title, subtitle, points, range) {
+    chartCurrentPoints = points || [];
     chartCurrentRange = range;
     $("chartModalTitle").textContent = title;
     $("chartSubtitle").textContent = subtitle;
     document.querySelectorAll("#chartModal .range-btn").forEach(b => {
       const on = b.dataset.range === String(range);
       b.classList.toggle("active", on);
-      b.setAttribute("aria-selected", on ? "true" : "false");
+      b.setAttribute("aria-pressed", on ? "true" : "false");
     });
     renderChart();
-    lastFocused = document.activeElement;
-    $("chartModal").classList.add("visible");
-    $("chartModalClose").focus();
+    openModal($("chartModal"), $("chartModalClose"));
   }
 
   function openChart(deckId, range = "all") {
     const deck = PRECONS.find(d => d.id === deckId);
     if (!deck) return;
-    const raw = (PRICE_HISTORY && PRICE_HISTORY[deck.id]) || [];
-    showChartModal(deck.name, `${deck.set} · best price across vendors`, raw, "best", range);
+    chartPointsFn = () => deckPoints(deck);
+    showChartModal(deck.name, `${deck.set} · best price across vendors`, chartPointsFn(), range);
+  }
+
+  // Sealed box display names. Boxes are grouped under the Commander deck
+  // catalog's set name ("Fallout Commander"), but the product is the main
+  // set's display ("Universes Beyond: Fallout - Collector Booster Display"),
+  // so show the real SKU name and its own set and kind.
+  function boxNameParts(b) {
+    const name = typeof b?.name === "string" ? b.name.trim() : "";
+    const i = name.lastIndexOf(" - ");
+    return i > 0 ? { set: name.slice(0, i), kind: name.slice(i + 3), name } : { set: "", kind: b?.label || "Box", name };
+  }
+  function findBox(setName, type) {
+    return (getBoxes()?.[setName] || []).find(b => b && b.type === type) || null;
   }
 
   // Open the chart for a sealed box, keyed "<set>::<type>" in BOX_HISTORY.
-  function openBoxChart(setName, type, label, range = "all") {
-    const key = `${setName}::${type}`;
-    const raw = (BOX_HISTORY && BOX_HISTORY[key]) || [];
-    showChartModal(`${setName} — ${label}`, "Sealed box · TCGPlayer Market", raw, "price", range);
-  }
-
-  // Build a prefilled "report a problem" GitHub Issue URL for one deck.
-  function reportIssueUrl(deck) {
-    const title = `Issue with “${deck.name}”`;
-    const body = [
-      `**Deck:** ${deck.name} (${deck.set})`,
-      `**ID:** \`${deck.id}\``,
-      `**What's wrong?** (e.g. wrong commander, missing deck, broken price, typo)`,
-      "",
-      "<!-- Add details here. Auto-prefilled from MTG Tracker. -->",
-    ].join("\n");
-    return `https://github.com/${REPO_SLUG}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}&labels=data-fix`;
+  function openBoxChart(setName, type, range = "all") {
+    const box = findBox(setName, type);
+    const title = (box && boxNameParts(box).name) || `${setName} ${box?.label || "box"}`;
+    chartPointsFn = () => box ? boxPoints(setName, box)
+      : historyPoints((BOX_HISTORY && BOX_HISTORY[`${setName}::${type}`]) || [], s => s.price, false);
+    showChartModal(title, "Sealed box · TCGPlayer price", chartPointsFn(), range);
   }
 
   function renderCard(d) {
+    // Screen readers list every control on the page by name, so each one
+    // names its deck ("Watch Science!"), not just "Toggle watchlist" x121.
+    // Two decks sharing a name are told apart by their set.
+    const labelName = PRECONS.some(o => o !== d && o.name === d.name) ? `${d.name} (${d.set})` : d.name;
+    const nm = escapeHtml(labelName);
+    const forDeck = `<span class="sr-only"> for ${nm}</span>`;
     const isOwned = ownedSet.has(d.id);
     const isWatching = watchSet.has(d.id);
     const isComparing = compareSet.has(d.id);
     const pct = discountPct(d);
     const isDeal = pct >= 20;
     const ep = effectivePrice(d);
+    const bv = bestVendorPrice(d);
+    const best = bv ? bv.best : null;
     const sig = buySignal(d);
     const stats = getPriceStats(d);
-    const target = targets[d.id];
+    // Targets belong to watched decks: the input that sets or clears one only
+    // shows on watched cards, so an unwatched deck keeps no highlight.
+    const target = isWatching ? targets[d.id] : undefined;
     const belowTarget = target != null && ep != null && ep <= target;
     const classes = ["card"];
     if (isOwned) classes.push("owned");
@@ -2329,77 +2724,60 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       ? `<span class="discount-badge">${pct.toFixed(0)}% off</span>`
       : "";
 
-    // Sparkline of recent TCG prices (when history is available).
-    const spark = sparklineSvg(getHistory(d));
+    // Sparkline of the best price per day (when history is available).
+    const hist = getHistory(d);
+    const spark = hist ? sparklineSvg(deckPoints(d), labelName) : "";
 
     const live = getLivePrice(d);
-    let vendorLines = "";
-
-    // Card Kingdom second-vendor row (re-enabled via CK's free public
-    // pricelist API). Highlight when CK beats the live TCGPlayer price.
     const ck = getCardKingdom(d);
-    if (ck) {
-      const oos = (ck.qty != null && ck.qty <= 0);
-      const cheaper = !oos && live && ck.price < live.price;
-      const note = oos ? ' <span class="vendor-oos">(out of stock)</span>'
-                 : cheaper ? ` <span style="color:var(--sage);">(saves $${(live.price - ck.price).toFixed(2)})</span>` : "";
-      vendorLines += `<div class="price-vendor${cheaper ? " cheaper" : ""}">Card Kingdom · <a href="${safeUrl(ck.url)}" target="_blank" rel="noopener noreferrer">$${ck.price.toFixed(2)}</a>${note}</div>`;
+    const tb = tcgBuyPrice(live);
+    const more = p => (best && p - best.price >= 0.005) ? ` <span class="vendor-oos">(+$${(p - best.price).toFixed(2)})</span>` : "";
+
+    // The headline is the cheapest vendor; every other tracked vendor gets a
+    // reference line with how much more it costs.
+    let vendorLines = "";
+    if (tb && best?.vendor !== "TCGPlayer") {
+      vendorLines += `<div class="price-vendor">TCGPlayer ${escapeHtml(tb.kind)} · <a href="${safeUrl(live.url)}" target="_blank" rel="noopener noreferrer">$${tb.price.toFixed(2)}<span class="sr-only"> at TCGPlayer${forDeck}</span></a>${more(tb.price)}</div>`;
+    }
+    if (ck && best?.vendor !== "Card Kingdom") {
+      const note = !ckInStock(ck) ? ' <span class="vendor-oos">(out of stock)</span>' : more(ck.price);
+      vendorLines += `<div class="price-vendor">Card Kingdom · <a href="${safeUrl(ck.url)}" target="_blank" rel="noopener noreferrer">$${ck.price.toFixed(2)}<span class="sr-only"> at Card Kingdom${forDeck}</span></a>${note}</div>`;
     }
 
-    // 90-day range / near-low / all-time-low line, above the vendor lines.
+    // Tracked range line, above the vendor lines. The badge is judged against
+    // this same range (see isAllTimeLow), so the two can't contradict.
     if (stats) {
       const atLow = isAllTimeLow(d);
-      const nearLow = !atLow && ep != null && ep <= stats.low * 1.05;
-      const flag = atLow ? ' · <strong>★ all-time low</strong>'
+      const nearLow = !atLow && isNearLow(d);
+      const flag = atLow ? ' · <strong>★ all time low</strong>'
                  : nearLow ? ' · <strong>near low</strong>' : '';
-      const rangeLine = `<div class="price-range${(atLow || nearLow) ? " near-low" : ""}">${stats.days}d $${stats.low.toFixed(0)}–$${stats.high.toFixed(0)}${flag}</div>`;
+      const rangeLine = `<div class="price-range${(atLow || nearLow) ? " near-low" : ""}">${stats.days}d $${stats.low.toFixed(0)} to $${stats.high.toFixed(0)}${flag}</div>`;
       vendorLines = rangeLine + vendorLines;
     }
 
-    // Best price across all in stock vendors (TCGPlayer / Card Kingdom).
-    // Headlines the cheapest place to actually buy the sealed deck right now.
-    const bv = bestVendorPrice(d);
-    if (bv && bv.all.length >= 2) {
-      // Savings vs the next-cheapest vendor (runner-up), not the priciest.
-      const spread = bv.all[1].price - bv.best.price;
-      if (spread >= 0.5) {
-        vendorLines = `<div class="price-best">🏆 Best of ${bv.all.length}: <a href="${safeUrl(bv.best.url)}" target="_blank" rel="noopener noreferrer">$${bv.best.price.toFixed(2)}</a> @ ${bv.best.vendor} <span class="price-best-save">save $${spread.toFixed(2)}</span></div>` + vendorLines;
-      }
-    }
-
-    // Price display — three-layer priority:
-    //   1. LIVE: TCGPlayer Market from prices.json (with TCG Low as a sub-note)
-    //   2. SNAPSHOT: baked-in verified price from April 2026 research
-    //   3. MSRP: fallback when we have nothing better
-    const hasLive = !!live;
-    const hasSnapshot = d.currentPrice != null && d.priceSource != null;
-
+    // Price display: the cheapest place to buy right now (effectivePrice), or
+    // MSRP for reference when no vendor has a live price.
     let priceBlock;
-    if (hasLive) {
-      const lowNote = live.price_low != null
-        ? `<span class="price-low-note">$${live.price_low.toFixed(2)}</span>`
-        : "";
+    if (best) {
+      let note = "";
+      if (best.vendor === "TCGPlayer") {
+        if (best.kind === "Market" && live.price_low != null && live.price_low < live.price) {
+          note = `<span class="price-low-note" title="Lowest current TCGPlayer listing"><span class="note-key">low </span>$${live.price_low.toFixed(2)}</span>`;
+        } else if (best.price > live.price) {
+          note = `<span class="price-low-note" title="TCGPlayer Market is below every current listing, so it is not a price you can pay"><span class="note-key">Market </span>$${live.price.toFixed(2)}</span>`;
+        }
+      } else if (ck && ck.qty != null) {
+        note = `<span class="price-low-note">${ck.qty} in stock</span>`;
+      }
+      const label = best.vendor === "TCGPlayer" ? `TCGPlayer ${escapeHtml(best.kind)}` : "Card Kingdom";
       priceBlock = `
         <div class="price-row">
           <div>
-            <div class="price-label">Live · TCG Market</div>
-            <span class="price-main">$${live.price.toFixed(2)}</span>
-            <span class="price-live-dot" title="Live price — updated daily">●</span>
+            <div class="price-label" title="Cheapest tracked vendor right now">Live · <a href="${safeUrl(best.url)}" target="_blank" rel="noopener noreferrer">${label}${forDeck}</a></div>
+            <span class="price-main">$${best.price.toFixed(2)}</span>
+            <span class="price-live-dot" title="Live price, updated daily">●</span>
             ${spark}
-            ${lowNote}
-            ${msrpLine}
-          </div>
-          ${badge}
-        </div>
-        ${vendorLines}`;
-    } else if (hasSnapshot) {
-      const priceVal = `$${d.currentPrice.toFixed(2)}`;
-      const sourceTag = `<span class="price-source">${escapeHtml(d.priceSource)}</span>`;
-      priceBlock = `
-        <div class="price-row">
-          <div>
-            <div class="price-label">Snapshot</div>
-            <span class="price-main">${priceVal}</span>${sourceTag}
+            ${note}
             ${msrpLine}
           </div>
           ${badge}
@@ -2412,43 +2790,49 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
           <div>
             <div class="price-label">MSRP reference</div>
             <span class="price-main price-unverified">${msrpBig}</span>
-            <span class="price-checkprompt">check vendors below for current price</span>
+            <span class="price-checkprompt">no live price today, check vendors below</span>
           </div>
         </div>
         ${vendorLines}`;
     }
 
+    // Singles: buy = cheaper retail total; sell = the real CK buylist, with the
+    // TCG 70% figure shown only as a labelled estimate when CK has none.
     const crack = getCrackValue(d);
-    let singlesLine;
+    let singlesLine = "";
     if (crack) {
       const buy = crackBuyValue(d);
       const sell = crackSellValue(d);
-      // Profitable to crack only if you'd SELL for more than the sealed price.
-      const worth = ep != null && sell && sell.value > ep;
-      const buyStr = buy ? `buy ~$${buy.value.toFixed(0)}` : "";
-      const sellStr = sell ? `sell ~$${sell.value.toFixed(0)}${sell.estimated ? "*" : ""}` : "";
+      const arb = crackArbitrage(d);
+      const worth = !!(arb && arb.profitable);
+      const short = v => v === "Card Kingdom" ? "CK" : "TCG";
+      const buyStr = buy ? `buy ~$${buy.value.toFixed(0)} ${short(buy.vendor)}` : "";
+      let sellStr = "";
+      if (sell && sell.value != null) sellStr = `sell ~$${sell.value.toFixed(0)} CK buylist`;
+      else if (sell && sell.estimate != null) sellStr = `sell <span class="crack-est" title="Estimate: 70% of TCGPlayer retail. Card Kingdom has no buylist total for this deck, so no profit is claimed.">~$${sell.estimate.toFixed(0)} est.</span>`;
       const both = [buyStr, sellStr].filter(Boolean).join(" / ");
-      // Chase-card breakdown: the few cards driving most of the value.
+      // Chase card breakdown: the few cards driving most of the value. Top
+      // card prices are TCGPlayer retail, so the share uses the TCG total too.
       let chase = "";
-      if (Array.isArray(crack.top_cards) && crack.top_cards.length && buy && buy.value > 0) {
-        const top = crack.top_cards.slice(0, 3);
-        const topSum = top.reduce((s, c) => s + (c.price || 0), 0);
-        const share = Math.round((topSum / buy.value) * 100);
+      const basis = posNum(crack.tcg) ?? posNum(crack.cardkingdom);
+      const top = (Array.isArray(crack.top_cards) ? crack.top_cards : []).filter(c => c && posNum(c.price)).slice(0, 3);
+      if (top.length && basis) {
+        const topSum = top.reduce((s, c) => s + c.price, 0);
+        const share = Math.round((topSum / basis) * 100);
         const items = top.map(c => `${escapeHtml(c.name)} <span class="chase-price">$${c.price.toFixed(0)}</span>`).join(", ");
         chase = `<div class="chase-cards">Top cards: ${items}${share >= 25 ? ` <span class="chase-share">· ${share}% of value</span>` : ""}</div>`;
       }
-      singlesLine = `<span class="crack-value${worth ? " worth" : ""}"><strong>Singles (NM):</strong> ${both}${worth ? ' <span class="crack-flag">▲ profit to crack</span>' : ""}</span>${chase}`;
-    } else if (d.singlesValue) {
-      singlesLine = `<span><strong>Singles</strong> ~$${d.singlesValue.toFixed(0)}</span>`;
-    } else {
-      singlesLine = "";
+      const flag = worth
+        ? ` <span class="crack-flag" title="Card Kingdom buylist total minus today's best sealed price, before sales tax, shipping and condition grading. Shown only above the larger of $${CRACK_MIN_PROFIT} or ${Math.round(CRACK_MIN_PROFIT_PCT * 100)}% of the sealed price.">▲ profit to crack +$${arb.margin.toFixed(0)} before fees</span>`
+        : "";
+      if (both) singlesLine = `<span class="crack-value${worth ? " worth" : ""}"><strong>Singles (NM):</strong> ${both}${flag}</span>${chase}`;
     }
 
     const metaBits = [singlesLine].filter(Boolean).join("");
 
-    // Power rating via ScryCheck (scrycheck.com) — rule-based analysis with 93% bracket accuracy
-    // 24 decks have baked-in scores from ScryCheck's published per-precon pages (April 2026).
-    // For the remaining 87, we link directly to their ScryCheck analysis page.
+    // Power rating from ScryCheck (scrycheck.com): automated estimates copied
+    // into decks.json where ScryCheck publishes a score; other decks link to
+    // their ScryCheck page instead.
     const scryCheckUrl = d.scryCheckSlug
       ? `https://scrycheck.com/precons/${encodeURIComponent(d.scryCheckSlug)}`
       : "https://scrycheck.com/precons";
@@ -2463,12 +2847,12 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
           <span class="power-score">${d.powerScore.toFixed(1)}</span>
           <span class="power-divider">/ 10</span>
           <span class="power-bracket ${bClass}">${d.powerBracket}</span>
-          <a class="power-scan" href="${safeUrl(scryCheckUrl)}" target="_blank" rel="noopener noreferrer" title="Full ScryCheck analysis">details →</a>
+          <a class="power-scan" href="${safeUrl(scryCheckUrl)}" target="_blank" rel="noopener noreferrer" title="Full ScryCheck analysis">details<span class="sr-only"> on ScryCheck${forDeck}</span> →</a>
         </div>`;
     } else {
       powerLine = `
         <div class="power-row">
-          <a class="power-scan" href="${safeUrl(scryCheckUrl)}" target="_blank" rel="noopener noreferrer" title="View power analysis on ScryCheck">⚡ Analyze on ScryCheck →</a>
+          <a class="power-scan" href="${safeUrl(scryCheckUrl)}" target="_blank" rel="noopener noreferrer" title="View power analysis on ScryCheck">⚡ Analyze on ScryCheck${forDeck} →</a>
         </div>`;
     }
 
@@ -2476,21 +2860,24 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     // deep-links to the exact product page; otherwise falls back to a search.
     const vendorBtns = vendors.map(v => {
       const href = (v.key === "tcg" && live?.url) ? live.url : v.url(d);
-      return `<a class="vendor-btn" href="${safeUrl(href)}" target="_blank" rel="noopener noreferrer" title="${v.label}">${v.label}</a>`;
+      return `<a class="vendor-btn" href="${safeUrl(href)}" target="_blank" rel="noopener noreferrer" title="${v.label}">${v.label}${forDeck}</a>`;
     }).join("");
 
     // Set-bundle note: if this deck is part of a known TCGPlayer bundle
-    // (Commander Deck Case), show price + "saves $X" if buying-as-bundle
-    // beats summing the individual decks.
+    // (Commander Deck Case), show its price, plus "saves $X" only when buying
+    // the bundle really beats summing the individual decks (a zero, negative
+    // or missing saving shows no savings line at all).
     const bundle = getBundleForDeck(d);
     let bundleNote = "";
     if (bundle) {
-      const savings = (bundle.savings && bundle.savings > 0)
-        ? `<span class="bundle-savings">saves $${bundle.savings.toFixed(2)}</span>`
+      const sv = posNum(bundle.savings);
+      const savings = (sv != null && Math.round(sv * 100) > 0)
+        ? `<span class="bundle-savings">saves $${sv.toFixed(2)}</span>`
         : "";
+      const count = Number.isInteger(bundle.deck_count) ? bundle.deck_count : bundle.deck_ids.length;
       bundleNote = `
         <div class="bundle-note">
-          <span><span class="bundle-label">Set bundle</span> · all ${bundle.deck_count} decks · <a href="${safeUrl(bundle.url)}" target="_blank" rel="noopener noreferrer">$${bundle.price.toFixed(2)}</a></span>
+          <span><span class="bundle-label">Set bundle</span> · all ${count} decks · <a href="${safeUrl(bundle.url)}" target="_blank" rel="noopener noreferrer">$${bundle.price.toFixed(2)}<span class="sr-only"> set bundle including ${nm}</span></a></span>
           ${savings}
         </div>`;
     }
@@ -2500,23 +2887,24 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const sigChip = sig ? `<span class="buy-signal ${sig.level}" title="${escapeHtml(sig.reasons.join(" · "))}">${sigLabels[sig.level]}</span>` : "";
     const signalsRow = sigChip ? `<div class="signals-row">${sigChip}</div>` : "";
 
-    // Price-target input (watched cards only).
+    // Price target input (watched cards only). Compared against the same best
+    // price the card headlines.
     const targetLine = isWatching ? `
         <div class="target-row${belowTarget ? " hit" : ""}">
-          <label>Target $<input type="number" class="target-input" data-target="${d.id}" value="${target != null ? (Number(target) || "") : ""}" min="0" step="1" placeholder="—"></label>
+          <label>Target $<span class="sr-only"> price${forDeck}</span><input type="number" class="target-input" data-target="${d.id}" value="${target != null ? target : ""}" min="0.01" step="0.01" inputmode="decimal" placeholder="—"></label>
           ${belowTarget ? '<span class="target-hit">▼ below target!</span>' : ""}
         </div>` : "";
 
     return `
       <article class="${classes.join(" ")}" data-id="${d.id}">
-        <button class="watch-toggle ${isWatching ? 'checked' : ''}" data-watch="${d.id}" title="${isWatching ? 'Watching' : 'Add to watchlist'}" aria-label="Toggle watchlist" aria-pressed="${isWatching}">${isWatching ? '★' : '☆'}</button>
-        <button class="own-toggle ${isOwned ? 'checked' : ''}" data-id="${d.id}" title="${isOwned ? 'Owned' : 'Mark as owned'}" aria-label="Toggle owned" aria-pressed="${isOwned}">${isOwned ? '✓' : ''}</button>
+        <button type="button" class="watch-toggle ${isWatching ? 'checked' : ''}" data-watch="${d.id}" title="${isWatching ? 'Watching' : 'Add to watchlist'}" aria-label="Watch ${nm}" aria-pressed="${isWatching}">${isWatching ? '★' : '☆'}</button>
+        <button type="button" class="own-toggle ${isOwned ? 'checked' : ''}" data-id="${d.id}" title="${isOwned ? 'Owned' : 'Mark as owned'}" aria-label="Own ${nm}" aria-pressed="${isOwned}">${isOwned ? '✓' : ''}</button>
         <div class="card-top">
           <div>
-            <div class="card-name">${escapeHtml(d.name)}</div>
+            <h3 class="card-name">${escapeHtml(d.name)}</h3>
             <div class="card-setrow">
               <span class="card-colors">${manaPips(d.colors)}</span>
-              <span class="card-set">${escapeHtml(d.set)} · ${formatDate(d.releaseDate)}</span>
+              <span class="card-set">${escapeHtml(d.set)}${d.releaseDate ? ` · ${formatDate(d.releaseDate)}` : ""}</span>
             </div>
           </div>
         </div>
@@ -2531,29 +2919,95 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         ${targetLine}
         <label class="compare-toggle">
           <input type="checkbox" data-compare="${d.id}" ${isComparing ? 'checked' : ''}>
-          Add to compare
+          Add to compare<span class="sr-only">: ${nm}</span>
         </label>
       </article>
     `;
   }
 
+  // The grid holds EVERY deck, in sort order, and filters only hide cards
+  // (applyFilter). Typing a search therefore flips `hidden` on 121 cards
+  // instead of rebuilding 6,800 elements per keystroke. renderGrid() rebuilds
+  // only when the cards themselves change: sort order, saved state, data.
   function renderGrid() {
-    const filtered = filterDecks();
-    const sorted = sortDecks(filtered);
+    const keep = focusedCardControl();
+    // Render each card on its own: a card that throws costs that one card,
+    // never the whole grid.
+    grid.innerHTML = sortDecks(PRECONS).map(d => {
+      try { return renderCard(d); }
+      catch (e) { console.error(`Could not render deck ${d.id}:`, e); return ""; }
+    }).join("") + `<div class="empty" id="gridEmpty" hidden>No decks match these filters. Try relaxing the search or resetting the color pips.</div>`;
+    applyFilter();
+    if (keep) restoreCardFocus(keep);
+  }
 
-    resultCount.textContent = sorted.length === PRECONS.length
-      ? `Showing all ${sorted.length} decks`
-      : `Showing ${sorted.length} of ${PRECONS.length} decks`;
-
-    if (sorted.length === 0) {
-      grid.innerHTML = `<div class="empty">No decks match these filters. Try relaxing the search or resetting the color pips.</div>`;
-      return;
+  function applyFilter() {
+    const show = new Set(filterDecks().map(d => d.id));
+    let shown = 0;
+    for (const card of grid.querySelectorAll("article[data-id]")) {
+      const on = show.has(card.dataset.id);
+      card.hidden = !on;
+      if (on) shown++;
     }
+    resultCount.textContent = shown === PRECONS.length
+      ? `Showing all ${shown} decks`
+      : `Showing ${shown} of ${PRECONS.length} decks`;
+    const empty = $("gridEmpty");
+    if (empty) empty.hidden = shown > 0;
+  }
 
-    grid.innerHTML = sorted.map(renderCard).join("");
+  // Rebuilding the grid destroys whatever control had keyboard focus (focus
+  // fell to <body> and the next Tab went back to card 1). Remember which
+  // control of which card was focused and put focus back on the same one.
+  // Controls are found by role, not position, since a card's controls change
+  // (watching adds the target input).
+  const CARD_CONTROLS = [".watch-toggle", ".own-toggle", "input[data-target]", "input[data-compare]",
+    "[data-chart-trigger]", ".power-scan", ".vendor-btn", ".price-label a"];
+  function focusedCardControl() {
+    const el = document.activeElement;
+    const card = el && el !== document.body && grid.contains(el) ? el.closest("article[data-id]") : null;
+    if (!card) return null;
+    const sel = CARD_CONTROLS.find(s => el.matches(s));
+    const order = [...grid.querySelectorAll("article[data-id]:not([hidden])")];
+    return { id: card.dataset.id, sel, index: order.indexOf(card) };
+  }
+  function restoreCardFocus(keep) {
+    const visible = [...grid.querySelectorAll("article[data-id]:not([hidden])")];
+    // The same card if it is still shown; otherwise (unwatched while showing
+    // only watched decks) the card that took its place, then the count line.
+    let card = visible.find(c => c.dataset.id === keep.id);
+    if (!card && visible.length) card = visible[Math.min(Math.max(keep.index, 0), visible.length - 1)];
+    const target = card && (card.querySelector(keep.sel || CARD_CONTROLS[0]) || card.querySelector(CARD_CONTROLS[0]));
+    (target || resultCount).focus();
   }
 
   // ---------- Staple finder (reverse card -> cheapest precon) ----------
+  // Rank every card in the index against the query: exact name, then a whole
+  // word match ("rift" finds Cyclonic Rift), then a word that starts with the
+  // query, then a plain substring ("rift" inside Mulldrifter). Scanning the
+  // whole index before ranking matters: stopping at the first few substring
+  // hits in file order picked Mulldrifter over Cyclonic Rift. Lower is better.
+  function stapleMatches(query) {
+    const q = query.toLowerCase();
+    const qn = q.replace(/[^a-z0-9]+/g, "");
+    const qWords = q.split(/[^a-z0-9]+/).filter(Boolean);
+    if (!qn) return [];
+    const out = [];
+    // Object.entries lists own keys only, so "constructor" can't resolve to
+    // Object.prototype.constructor the way CARD_INDEX[qn] did.
+    for (const [k, v] of Object.entries(CARD_INDEX)) {
+      if (!v || typeof v.name !== "string" || !k.includes(qn)) continue;
+      const words = v.name.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+      let score = 3;
+      if (k === qn) score = 0;
+      else if (qWords.length === 1 && words.includes(qWords[0])) score = 1;
+      else if (words.some(w => w.startsWith(qWords[0] || qn))) score = 2;
+      out.push({ v, score });
+    }
+    out.sort((a, b) => a.score - b.score || a.v.name.length - b.v.name.length || a.v.name.localeCompare(b.v.name));
+    return out.map(x => x.v);
+  }
+
   async function renderStapleResults(query) {
     const box = $("stapleResults");
     if (!box) return;
@@ -2569,42 +3023,36 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       if (!CARD_INDEX) { box.innerHTML = '<div class="staple-empty">Card index unavailable.</div>'; return; }
     }
 
-    const qn = q.replace(/[^a-z0-9]+/g, "");
-    // Find matching card entries: exact-normalized first, then substring.
-    let matches = [];
-    const exact = CARD_INDEX[qn];
-    if (exact) matches.push(exact);
-    for (const [k, v] of Object.entries(CARD_INDEX)) {
-      if (v === exact) continue;
-      if (k.includes(qn)) matches.push(v);
-      if (matches.length >= 6) break;
-    }
+    const matches = stapleMatches(q);
     if (matches.length === 0) { box.innerHTML = `<div class="staple-empty">No tracked precon contains a card matching “${escapeHtml(query)}”.</div>`; return; }
 
-    // Use the single best (shortest-name) match's decks. Rank by the BEST
-    // price across all vendors — the panel promises "cheapest", so ranking by
-    // TCGPlayer alone would contradict the best-price logic used elsewhere.
-    matches.sort((a, b) => a.name.length - b.name.length);
+    // Show the best match's decks, and offer the next few names in case the
+    // user meant one of those. Rank decks by the BEST price across vendors,
+    // the same price the cards headline.
     const card = matches[0];
+    const alts = matches.slice(1, 6);
+    const altLine = alts.length
+      ? `<div class="staple-alts">Did you mean ${alts.map(a => `<button type="button" class="staple-alt" data-staple-alt="${escapeHtml(a.name)}">${escapeHtml(a.name)}</button>`).join("")}</div>`
+      : "";
     const byId = Object.fromEntries(PRECONS.map(d => [d.id, d]));
-    const decks = (card.decks || [])
-      .map(id => byId[id]).filter(Boolean)
+    const decks = (Array.isArray(card.decks) ? card.decks : [])
+      .map(id => byId[canonicalId(id) || id]).filter(Boolean)
       .map(d => {
         const bv = bestVendorPrice(d);
-        return { d, ep: bv ? bv.best.price : effectivePrice(d), vendor: bv ? bv.best.vendor : null };
+        return { d, ep: bv ? bv.best.price : null, vendor: bv ? bv.best.vendor : null };
       })
       .sort((a, b) => (a.ep ?? Infinity) - (b.ep ?? Infinity));
-    if (decks.length === 0) { box.innerHTML = `<div class="staple-empty">No priced precon currently lists ${escapeHtml(card.name)}.</div>`; return; }
+    if (decks.length === 0) { box.innerHTML = `<div class="staple-empty">No tracked precon currently lists ${escapeHtml(card.name)}.</div>${altLine}`; return; }
 
     const head = `<div class="staple-empty">Cheapest precons containing <span class="staple-cardname">${escapeHtml(card.name)}</span>:</div>`;
     box.innerHTML = head + decks.map(({ d, ep, vendor }) => `
-      <div class="staple-row" data-staple-id="${escapeHtml(d.id)}" role="button" tabindex="0" aria-label="View price history for ${escapeHtml(d.name)}">
+      <div class="staple-row" data-staple-id="${escapeHtml(d.id)}" role="button" tabindex="0">
         <div>
-          <div class="staple-row-name">${escapeHtml(d.name)}</div>
+          <div class="staple-row-name">${escapeHtml(d.name)}<span class="sr-only">, open price history</span></div>
           <div class="staple-row-set">${escapeHtml(d.set)}${vendor ? ` · ${escapeHtml(vendor)}` : ""}</div>
         </div>
         <div class="staple-row-price">${ep != null ? "$" + ep.toFixed(2) : "—"}</div>
-      </div>`).join("");
+      </div>`).join("") + altLine;
   }
 
   // ---------- Deal of the Day ----------
@@ -2613,7 +3061,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
   // pick naturally changes day to day. Components (each capped so no single
   // factor dominates):
   //   - discount vs MSRP        (player value)
-  //   - nearness to 90-day low  (timing: "won't get cheaper")
+  //   - nearness to its low     (timing: "won't get cheaper")
   //   - cross-vendor savings    (in stock Card Kingdom cheaper than TCG)
   //   - downward trend          (still falling)
   //   - crack-to-sell margin    (speculator upside)
@@ -2627,25 +3075,27 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     if (disc > 0) { score += Math.min(disc, 50) * 0.8; }      // up to 40 pts
     if (disc >= 12) reasons.push(`${disc.toFixed(0)}% below MSRP`);
 
+    // Same low tests as the card's badge, so the banner never claims a low
+    // the card beside it does not show.
     const stats = getPriceStats(d);
-    if (stats) {
-      if (ep <= stats.low * 1.02) { score += 25; reasons.push("at its 90-day low"); }
-      else if (ep <= stats.low * 1.05) { score += 18; reasons.push("near 90-day low"); }
-      else if (stats.posInRange <= 0.35) { score += 8; reasons.push("low in 90-day range"); }
+    if (stats && stats.moved) {
+      if (isAllTimeLow(d)) { score += 25; reasons.push(`at its ${stats.days} day low`); }
+      else if (ep <= stats.low * 1.05) { score += 18; reasons.push(`near its ${stats.days} day low`); }
+      else if (stats.posInRange <= 0.35) { score += 8; reasons.push(`low in its ${stats.days} day range`); }
       if (stats.trend <= -0.05) { score += 8; reasons.push("trending down"); }
     }
 
-    const bv = bestVendorPrice(d), live = getLivePrice(d);
-    if (bv && live && bv.best.vendor !== "TCGPlayer" && bv.best.price < live.price) {
-      const save = live.price - bv.best.price;
+    const bv = bestVendorPrice(d), tb = tcgBuyPrice(getLivePrice(d));
+    if (bv && tb && bv.best.vendor !== "TCGPlayer" && bv.best.price < tb.price) {
+      const save = tb.price - bv.best.price;
       score += Math.min(save, 15);
       reasons.push(`$${save.toFixed(2)} cheaper at ${bv.best.vendor}`);
     }
 
-    const arb = crackArbitrage(d);   // sell value − sealed (net profit to crack)
-    if (arb && arb.margin > 0) {
+    const arb = crackArbitrage(d);   // CK buylist minus sealed (net profit to crack)
+    if (arb && arb.profitable) {
       score += Math.min(arb.margin, 30) * 0.5;   // up to 15 pts
-      reasons.push(`+$${arb.margin.toFixed(0)} crack-to-sell`);
+      reasons.push(`+$${arb.margin.toFixed(0)} to crack and sell, before fees`);
     }
 
     return { d, ep, score, disc, reasons };
@@ -2664,14 +3114,14 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     const why = top.reasons.slice(0, 3).join('<span class="dod-sep">·</span>') || "best overall value today";
     const msrp = d.msrp ? `<span class="dod-msrp">$${d.msrp.toFixed(2)}</span> MSRP` : "";
     el.hidden = false;
+    // The whole banner opens the chart on click; keyboard and screen reader
+    // users get a real button on the deck name, so the reasons and price
+    // stay readable instead of being replaced by one aria-label.
     el.dataset.dealId = d.id;
-    el.setAttribute("role", "button");
-    el.setAttribute("tabindex", "0");
-    el.setAttribute("aria-label", "View price history for " + d.name);
     el.innerHTML = `
-      <span class="dod-flag">★ Deal of the day</span>
+      <h2 class="dod-flag" id="dodFlag">★ Deal of the day</h2>
       <div class="dod-main">
-        <div class="dod-name">${escapeHtml(d.name)}</div>
+        <div class="dod-name"><button type="button" class="dod-open">${escapeHtml(d.name)}<span class="sr-only">, open price history</span></button></div>
         <div class="dod-why">${why}</div>
       </div>
       <div class="dod-price">
@@ -2693,32 +3143,35 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       const disc = discountPct(d);
       const arb = crackArbitrage(d);
       const atLow = isAllTimeLow(d), nearLow = isNearLow(d);
-      let score = disc + (atLow ? 25 : nearLow ? 15 : 0) + (arb && arb.margin > 0 ? Math.min(arb.margin, 30) * 0.4 : 0);
+      let score = disc + (atLow ? 25 : nearLow ? 15 : 0) + (arb && arb.profitable ? Math.min(arb.margin, 30) * 0.4 : 0);
       if (score < 8) continue;
-      const tag = disc >= 12 ? `${disc.toFixed(0)}% off` : atLow ? "all-time low" : nearLow ? "near low" : "good value";
+      const tag = disc >= 12 ? `${disc.toFixed(0)}% off` : atLow ? "all time low" : nearLow ? "near low" : "good value";
       items.push({ kind: "deck", id: d.id, name: d.name, price: ep, tag, score });
     }
 
     // Boxes: value = EV over price (how much singles exceed box cost).
     const boxes = getBoxes() || {};
     for (const [sn, rows] of Object.entries(boxes)) {
-      for (const b of rows) {
-        if (typeof b.ev !== "number" || !b.price) continue;
-        const ratio = b.ev / b.price;          // >1 means singles beat box price
+      for (const b of (Array.isArray(rows) ? rows : [])) {
+        const tb = b && typeof b.ev === "number" ? boxBuyPrice(b) : null;
+        if (!tb) continue;
+        const ratio = b.ev / tb.price;         // >1 means singles beat box price
         const score = (ratio - 1) * 60;         // scale into the same ballpark
         if (score < 8) continue;
-        items.push({ kind: "box", id: `${sn}::${b.type}`, name: `${sn} — ${b.label}`, price: b.price,
+        items.push({ kind: "box", id: `${sn}::${b.type}`, name: boxNameParts(b).name || `${sn} ${b.label || "box"}`, price: tb.price,
                      tag: `EV ≈ $${b.ev.toFixed(0)}`, score });
       }
     }
 
-    // Bundles: value = savings vs buying decks individually.
+    // Bundles: value = savings vs buying decks individually. They have no
+    // chart, so they link straight to the bundle's product page.
     for (const [bid, b] of Object.entries(LIVE_PRICES?.bundles || {})) {
-      if (!b.savings || b.savings <= 0) continue;
-      const score = Math.min(b.savings, 80) * 0.5;
+      const sv = posNum(b?.savings);
+      if (sv == null || !posNum(b.price)) continue;
+      const score = Math.min(sv, 80) * 0.5;
       if (score < 8) continue;
-      items.push({ kind: "bundle", id: bid, name: b.name || b.set, price: b.price,
-                   tag: `saves $${b.savings.toFixed(0)}`, score });
+      items.push({ kind: "bundle", id: bid, name: b.name || b.set, price: b.price, url: b.url,
+                   tag: `saves $${sv.toFixed(0)}`, score });
     }
 
     items.sort((a, b) => b.score - a.score);
@@ -2726,12 +3179,13 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     if (top.length === 0) { el.hidden = true; return; }
     el.hidden = false;
     const kindLabel = { deck: "Deck", box: "Box", bundle: "Bundle" };
-    grid.innerHTML = top.map(x => `
-      <button type="button" class="best-deal uf-item" data-uf-kind="${x.kind}" data-uf-id="${escapeHtml(x.id)}">
+    const inner = x => `
         <span class="uf-kind uf-${x.kind}">${kindLabel[x.kind]}</span>
         <span class="bd-name">${escapeHtml(x.name)}</span>
-        <span class="bd-price">$${x.price.toFixed(2)} <span class="bd-disc">${x.tag}</span></span>
-      </button>`).join("");
+        <span class="bd-price">$${x.price.toFixed(2)} <span class="bd-disc">${escapeHtml(x.tag)}</span></span>`;
+    grid.innerHTML = top.map(x => x.kind === "bundle"
+      ? `<a class="best-deal uf-item" href="${safeUrl(x.url)}" target="_blank" rel="noopener noreferrer">${inner(x)}</a>`
+      : `<button type="button" class="best-deal uf-item" data-uf-kind="${x.kind}" data-uf-id="${escapeHtml(x.id)}">${inner(x)}</button>`).join("");
   }
 
   // renderBestDeals() and renderCrackDeals() were removed — see the note where
@@ -2752,45 +3206,61 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     }
     const setNames = Object.keys(boxes).sort((a, b) => (setDate[b] || "").localeCompare(setDate[a] || ""));
     body.innerHTML = setNames.map(sn => {
-      const items = boxes[sn].map(b => {
+      const rows = (Array.isArray(boxes[sn]) ? boxes[sn] : []).filter(b => b && posNum(b.price));
+      if (!rows.length) return "";
+      // Head the group with the boxes' own set name when they all share one
+      // ("Universes Beyond: Fallout", not the deck catalog's "Fallout Commander").
+      const ownSets = [...new Set(rows.map(b => boxNameParts(b).set))];
+      const heading = (ownSets.length === 1 && ownSets[0]) ? ownSets[0] : sn;
+      const items = rows.map(b => {
+        const parts = boxNameParts(b);
+        // Headline: the TCGPlayer price you can pay, as on deck cards. When
+        // Market sits below every listing, the lowest listing leads and
+        // Market is shown as a note.
+        const tb = boxBuyPrice(b);
+        const tcgNote = tb.price > b.price
+          ? `<span class="box-item-low" title="TCGPlayer Market is below every current listing, so it is not a price you can pay">lowest listing · Market $${b.price.toFixed(2)}</span>`
+          : (b.price_low != null && b.price_low < b.price) ? `<span class="box-item-low">TCG low $${b.price_low.toFixed(2)}</span>` : "";
         // Sparkline from this box's history series, if available.
         const hist = BOX_HISTORY && BOX_HISTORY[`${sn}::${b.type}`];
-        const spark = (hist && hist.length >= 2)
-          ? sparklineSvg(hist.map(s => ({ tcg: s.price })))   // sparklineSvg reads .tcg
+        const spark = (Array.isArray(hist) && hist.length >= 2)
+          ? sparklineSvg(boxPoints(sn, b), parts.name || `${sn} ${b.label || "box"}`)
           : "";
         // Expected-value estimate line (when computed). Green when EV beats
         // the box price (cracking ~breaks even/profits), muted otherwise.
         let evLine = "";
         if (typeof b.ev === "number") {
-          const good = b.ev >= b.price;
+          const good = b.ev >= tb.price;
           evLine = `<span class="box-ev${good ? " good" : ""}">est. singles ≈ $${b.ev.toFixed(0)}*</span>`;
         }
         // Card Kingdom second vendor for the box (retail + stock).
         let ckLine = "";
         if (typeof b.ck_price === "number") {
           const oos = (b.ck_qty != null && b.ck_qty <= 0);
-          const cheaper = !oos && b.ck_price < b.price;
-          const tail = oos ? " (out of stock)" : cheaper ? ` · save $${(b.price - b.ck_price).toFixed(2)}` : "";
+          // Against the TCGPlayer headline, the price you can pay there.
+          const tcgBuy = tb.price;
+          const cheaper = !oos && b.ck_price < tcgBuy;
+          const tail = oos ? " (out of stock)" : cheaper ? ` · save $${(tcgBuy - b.ck_price).toFixed(2)}` : "";
           ckLine = `<span class="box-ck${cheaper ? " cheaper" : ""}">CK $${b.ck_price.toFixed(2)}${tail}</span>`;
         }
         const ckLink = b.ck_url
-          ? `<a class="box-item-link" href="${safeUrl(b.ck_url)}" target="_blank" rel="noopener noreferrer">view on Card Kingdom →</a>`
+          ? `<a class="box-item-link" href="${safeUrl(b.ck_url)}" target="_blank" rel="noopener noreferrer">view on Card Kingdom<span class="sr-only">: ${escapeHtml(boxNameParts(b).name || sn)}</span> →</a>`
           : "";
         return `
-        <div class="box-item" data-box-set="${escapeHtml(sn)}" data-box-type="${escapeHtml(b.type)}" data-box-label="${escapeHtml(b.label)}" role="button" tabindex="0" title="Click for price history">
-          <span class="box-item-type">${escapeHtml(b.label)}</span>
-          <span class="box-item-price">$${b.price.toFixed(2)} ${spark}</span>
-          ${(b.price_low != null && b.price_low < b.price) ? `<span class="box-item-low">TCG low $${b.price_low.toFixed(2)}</span>` : ""}
+        <div class="box-item" data-box-set="${escapeHtml(sn)}" data-box-type="${escapeHtml(b.type)}" title="${escapeHtml(parts.name || b.label)} · click for price history">
+          <span class="box-item-type">${escapeHtml(parts.kind)}</span>
+          <span class="box-item-price">$${tb.price.toFixed(2)} ${spark}</span>
+          ${tcgNote}
           ${ckLine}
           ${evLine}
-          <a class="box-item-link" href="${safeUrl(b.url)}" target="_blank" rel="noopener noreferrer">view on TCGPlayer →</a>
+          <a class="box-item-link" href="${safeUrl(b.url)}" target="_blank" rel="noopener noreferrer">view on TCGPlayer<span class="sr-only">: ${escapeHtml(parts.name || sn)}</span> →</a>
           ${ckLink}
         </div>`;
       }).join("");
-      return `<div class="box-set"><div class="box-set-name">${escapeHtml(sn)}</div><div class="box-grid">${items}</div></div>`;
+      return `<div class="box-set"><div class="box-set-name">${escapeHtml(heading)}</div><div class="box-grid">${items}</div></div>`;
     }).join("");
     // Show the EV methodology note only if at least one box has an EV.
-    const anyEv = Object.values(boxes).some(rows => rows.some(r => typeof r.ev === "number"));
+    const anyEv = Object.values(boxes).some(rows => Array.isArray(rows) && rows.some(r => r && typeof r.ev === "number"));
     const note = $("boxEvNote"); if (note) note.hidden = !anyEv;
   }
 
@@ -2830,10 +3300,12 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       ["Colors", decks.map(d => manaPips(d.colors))],
       ["Commander", decks.map(d => escapeHtml(d.commander || "—"))],
       ["MSRP", decks.map(d => d.msrp ? dollars(d.msrp) : "—")],
-      ["Live price", decks.map((d, i) => {
-        const ep = effectivePrice(d);
-        const cls = (ep === minPrice && isFinite(ep)) ? "best" : "";
-        return `<span class="${cls}">${dollars(ep)}</span>`;
+      ["Best price", decks.map((d, i) => {
+        const bv = bestVendorPrice(d);
+        const ep = bv ? bv.best.price : null;
+        const cls = (ep != null && ep === minPrice) ? "best" : "";
+        const where = bv ? ` <span style="color:var(--ink-muted); font-size:11px;">${escapeHtml(bv.best.vendor)}</span>` : "";
+        return `<span class="${cls}">${dollars(ep)}</span>${where}`;
       })],
       ["Discount", decks.map((d, i) => {
         const cls = (discounts[i] === maxDiscount && maxDiscount > 0) ? "best" : "";
@@ -2843,8 +3315,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         const cls = (powers[i] === maxPower && maxPower >= 0) ? "best" : "";
         return `<span class="${cls}">${d.powerScore != null ? d.powerScore.toFixed(1) + " " + (d.powerBracket || "") : "—"}</span>`;
       })],
-      ["Singles · buy (NM)", decks.map(d => { const b = crackBuyValue(d); if (b) { const p = []; if (b.tcg != null) p.push(`TCG $${b.tcg.toFixed(0)}`); if (b.ck != null) p.push(`CK $${b.ck.toFixed(0)}`); return p.join(" · "); } return d.singlesValue ? `~$${d.singlesValue} est.` : "—"; })],
-      ["Singles · sell", decks.map(d => { const sv = crackSellValue(d); if (sv) { const p = []; if (sv.ck != null) p.push(`CK $${sv.ck.toFixed(0)}`); if (sv.tcg != null) p.push(`TCG $${sv.tcg.toFixed(0)}*`); return p.join(" · "); } return "—"; })],
+      ["Singles · buy (NM)", decks.map(d => { const b = crackBuyValue(d); if (b) { const p = []; if (b.tcg != null) p.push(`TCG $${b.tcg.toFixed(0)}`); if (b.ck != null) p.push(`CK $${b.ck.toFixed(0)}`); return p.join(" · "); } return "—"; })],
+      ["Singles · sell", decks.map(d => { const sv = crackSellValue(d); if (sv) { const p = []; if (sv.ck != null) p.push(`CK buylist $${sv.ck.toFixed(0)}`); if (sv.estimate != null) p.push(`TCG est. $${sv.estimate.toFixed(0)}`); return p.join(" · "); } return "—"; })],
       ["Strategy", decks.map(d => `<span style="font-size:12px; line-height:1.45;">${escapeHtml(d.desc)}</span>`)],
     ];
 
@@ -2853,6 +3325,14 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     ).join("");
 
     compareTableWrap.innerHTML = `<div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="compare-table"><thead><tr><th></th>${headers}</tr></thead><tbody>${body}</tbody></table></div>`;
+  }
+
+  // Year options come from the catalog, so a new year's decks get an option
+  // without editing the markup.
+  function fillYearFilter() {
+    const years = [...new Set(PRECONS.map(d => d.releaseDate.slice(0, 4)).filter(Boolean))].sort().reverse();
+    yearFilter.querySelectorAll("option:not([value='all'])").forEach(o => o.remove());
+    for (const y of years) yearFilter.add(new Option(y, y));
   }
 
   // ---------- URL state (shareable filters) ----------
@@ -2904,10 +3384,21 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     history.replaceState(null, "", url);
   }
 
-  // Wrap renderGrid so URL state stays in sync without scattering write calls.
+  // Filters only hide and show cards; a new sort order rebuilds the grid.
+  // Both keep the URL state in sync without scattering write calls.
   function refresh() {
     writeUrlState();
+    applyFilter();
+  }
+  function refreshSort() {
+    writeUrlState();
     renderGrid();
+  }
+  // Search waits for a pause in typing instead of filtering on every key.
+  let searchTimer = null;
+  function onSearchInput() {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(refresh, 120);
   }
 
   // ---------- Stats ----------
@@ -2917,22 +3408,44 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     if (!el || !grid) return;
     const owned = PRECONS.filter(d => ownedSet.has(d.id));
     if (owned.length === 0) { el.hidden = true; return; }
-    const msrp = owned.reduce((s, d) => s + (d.msrp || 0), 0);
-    const now = owned.reduce((s, d) => s + (effectivePrice(d) || 0), 0);
-    const singles = owned.reduce((s, d) => {
-      const c = getCrackValue(d); return s + (c && c.tcg ? c.tcg : 0);
-    }, 0);
+    // Value and cost cover the SAME decks: only those with both a live price
+    // and an MSRP. A deck missing either is left out of both sums and counted
+    // by what it lacks, never added as $0 (which faked a loss or a gain).
+    const { priced, unpriced, noPrice, noMsrp, msrp, now } = ownedTotals(owned);
+    const singlesDecks = owned.filter(d => posNum(getCrackValue(d)?.tcg) != null);
+    const singles = singlesDecks.reduce((s, d) => s + getCrackValue(d).tcg, 0);
     const delta = now - msrp;
     const deltaPct = msrp > 0 ? (delta / msrp) * 100 : 0;
     const dirn = delta > 0.5 ? "up" : delta < -0.5 ? "down" : "";
     const sign = delta >= 0 ? "+" : "−";
+    const has = priced.length > 0;
+    const unpricedNote = unpriced ? `<div class="pf-sub">${missingText(noPrice, noMsrp)}, not counted</div>` : "";
     el.hidden = false;
     grid.innerHTML = `
-      <div class="pf-stat"><div class="pf-label">Decks owned</div><div class="pf-val">${owned.length}</div></div>
-      <div class="pf-stat"><div class="pf-label">Market value now</div><div class="pf-val">$${now.toFixed(0)}</div><div class="pf-sub">sealed, live TCG</div></div>
-      <div class="pf-stat"><div class="pf-label">Paid at MSRP</div><div class="pf-val">$${msrp.toFixed(0)}</div></div>
-      <div class="pf-stat"><div class="pf-label">vs MSRP</div><div class="pf-val ${dirn}">${sign}$${Math.abs(delta).toFixed(0)}</div><div class="pf-sub">${sign}${Math.abs(deltaPct).toFixed(0)}%</div></div>
-      <div class="pf-stat"><div class="pf-label">Singles value</div><div class="pf-val">$${singles.toFixed(0)}</div><div class="pf-sub">if cracked (retail)</div></div>`;
+      <div class="pf-stat"><div class="pf-label">Decks owned</div><div class="pf-val">${owned.length}</div>${unpricedNote}</div>
+      <div class="pf-stat"><div class="pf-label">Value now</div><div class="pf-val">${has ? `$${now.toFixed(0)}` : "n/a"}</div><div class="pf-sub">sealed, best live price</div></div>
+      <div class="pf-stat"><div class="pf-label">Paid at MSRP</div><div class="pf-val">${has ? `$${msrp.toFixed(0)}` : "n/a"}</div>${unpriced && has ? `<div class="pf-sub">for the ${priced.length} counted</div>` : ""}</div>
+      <div class="pf-stat"><div class="pf-label">vs MSRP</div><div class="pf-val ${has ? dirn : ""}">${has ? `${sign}$${Math.abs(delta).toFixed(0)}` : "n/a"}</div><div class="pf-sub">${has ? `${sign}${Math.abs(deltaPct).toFixed(0)}%` : "no deck with both a price and an MSRP"}</div></div>
+      <div class="pf-stat"><div class="pf-label">Singles value</div><div class="pf-val">${singlesDecks.length ? `$${singles.toFixed(0)}` : "n/a"}</div><div class="pf-sub">if cracked (TCG retail)${singlesDecks.length < owned.length ? `, ${singlesDecks.length} of ${owned.length} decks` : ""}</div></div>`;
+  }
+
+  // Totals over owned decks that have both a live price and an MSRP.
+  // noPrice: no live price today; noMsrp: priced, but MSRP unknown.
+  function ownedTotals(owned) {
+    const priced = owned.filter(d => effectivePrice(d) != null && d.msrp != null);
+    return {
+      priced,
+      unpriced: owned.length - priced.length,
+      noPrice: owned.filter(d => effectivePrice(d) == null).length,
+      noMsrp: owned.filter(d => effectivePrice(d) != null && d.msrp == null).length,
+      msrp: priced.reduce((s, d) => s + d.msrp, 0),
+      now: priced.reduce((s, d) => s + effectivePrice(d), 0),
+    };
+  }
+
+  // "2 with no live price, 1 MSRP unknown"
+  function missingText(noPrice, noMsrp) {
+    return [noPrice ? `${noPrice} with no live price` : "", noMsrp ? `${noMsrp} MSRP unknown` : ""].filter(Boolean).join(", ");
   }
 
   function renderStats() {
@@ -2943,23 +3456,31 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
     // Header meta, derived from the loaded data (never hardcode a date — it
     // silently goes stale and misrepresents how fresh the prices are).
+    // Dated by the scrape's UTC calendar day, the same day the price history
+    // and its charts use (the scrape runs near 05:00 UTC, which is still the
+    // previous evening in US time zones).
     const upd = LIVE_PRICES?.updated_at ? new Date(LIVE_PRICES.updated_at) : null;
     if (upd && !isNaN(upd)) {
       $("lastUpdated").textContent = upd.toLocaleDateString(undefined,
-        { year: "numeric", month: "long", day: "numeric" });
+        { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
     }
     const rel = PRECONS.map(d => d.releaseDate).filter(Boolean).sort();
     if (rel.length) {
-      $("coverageRange").textContent = `${formatDate(rel[0])} — ${formatDate(rel[rel.length - 1])}`;
+      $("coverageRange").textContent = `${formatDate(rel[0])} to ${formatDate(rel[rel.length - 1])}`;
     }
 
     const owned = PRECONS.filter(d => ownedSet.has(d.id));
     $("statOwned").textContent = owned.length;
-    const totalMsrp = owned.reduce((sum, d) => sum + (d.msrp || 0), 0);
-    const ownedNow = owned.reduce((sum, d) => sum + (effectivePrice(d) || 0), 0);
-    $("statOwnedValue").textContent = owned.length
-      ? `$${totalMsrp.toFixed(0)} MSRP · ~$${ownedNow.toFixed(0)} now`
-      : "— paid at MSRP";
+    const ot = ownedTotals(owned);
+    const unpricedTail = ot.unpriced ? ` · ${missingText(ot.noPrice, ot.noMsrp)}` : "";
+    $("statOwnedValue").textContent = !owned.length ? "— paid at MSRP"
+      : ot.priced.length ? `$${ot.msrp.toFixed(0)} MSRP · ~$${ot.now.toFixed(0)} now${unpricedTail}`
+      : missingText(ot.noPrice, ot.noMsrp);
+
+    const msrps = PRECONS.map(d => d.msrp).filter(v => v != null).sort((a, b) => a - b);
+    $("statMsrpRange").textContent = msrps.length ? `MSRP runs $${msrps[0].toFixed(2)} to $${msrps[msrps.length - 1].toFixed(2)}` : "";
+    const scored = PRECONS.filter(d => d.powerScore != null && d.powerBracket).length;
+    const pc = $("powerCoverage"); if (pc) pc.textContent = `${scored} of ${PRECONS.length} decks scored inline.`;
 
     const withPricing = PRECONS.filter(d => effectivePrice(d) != null && d.msrp);
     const bestDeal = withPricing.reduce((best, d) => {
@@ -2970,20 +3491,21 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       $("statBestName").textContent = bestDeal.name;
     }
 
+    // No live price anywhere means no median: say nothing rather than "$0".
     const prices = withPricing.map(d => effectivePrice(d)).sort((a, b) => a - b);
-    const median = prices.length ? prices[Math.floor(prices.length / 2)] : 0;
-    $("statMedian").textContent = `$${median.toFixed(0)}`;
+    $("statMedian").textContent = prices.length ? `$${prices[Math.floor(prices.length / 2)].toFixed(0)}` : "n/a";
 
     // Live-price status badge
     const statusEl = $("liveStatus");
     if (statusEl) {
       if (LIVE_PRICES) {
         const date = new Date(LIVE_PRICES.updated_at);
-        const tcgHits = Object.values(LIVE_PRICES.vendors.tcgplayer || {}).filter(v => v.price).length;
-        statusEl.innerHTML = `<span class="live-dot">●</span> Live · ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })} · ${tcgHits} TCG`;
+        const hits = v => Object.values(LIVE_PRICES.vendors?.[v] || {}).filter(x => posNum(x?.price)).length;
+        const day = isNaN(date) ? "" : ` · ${date.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })}`;
+        statusEl.innerHTML = `<span class="live-dot">●</span> Live${day} · ${hits("tcgplayer")} TCG · ${hits("cardkingdom")} CK`;
         statusEl.className = "live-status ok";
       } else {
-        statusEl.innerHTML = `<span class="live-dot offline">○</span> Snapshot only · no live data`;
+        statusEl.innerHTML = `<span class="live-dot offline">○</span> No live data · MSRP only`;
         statusEl.className = "live-status offline";
       }
     }
@@ -2991,10 +3513,10 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
   // ---------- Wire up events ----------
   function wireEvents() {
-    searchInput.addEventListener("input", refresh);
+    searchInput.addEventListener("input", onSearchInput);
     yearFilter.addEventListener("change", refresh);
     typeFilter.addEventListener("change", refresh);
-    sortSelect.addEventListener("change", refresh);
+    sortSelect.addEventListener("change", refreshSort);
 
     colorFilter.addEventListener("click", e => {
       const btn = e.target.closest(".color-btn");
@@ -3054,7 +3576,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       });
       watchOnlyChip.classList.remove("active");
       watchOnlyChip.setAttribute("aria-pressed", "false");
-      refresh();
+      clearTimeout(searchTimer);
+      refreshSort();   // the sort may have changed too
     });
 
     // Event delegation for the per-card buttons (own/watch/compare/sparkline).
@@ -3062,8 +3585,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       const ownBtn = e.target.closest(".own-toggle");
       if (ownBtn) {
         const id = ownBtn.dataset.id;
-        if (ownedSet.has(id)) ownedSet.delete(id); else ownedSet.add(id);
-        await saveOwned();
+        await toggleSavedId("owned", id, !ownedSet.has(id));
         renderStats();
         renderPortfolio();
         renderGrid();
@@ -3072,8 +3594,7 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       const watchBtn = e.target.closest(".watch-toggle");
       if (watchBtn) {
         const id = watchBtn.dataset.watch;
-        if (watchSet.has(id)) watchSet.delete(id); else watchSet.add(id);
-        await saveWatched();
+        await toggleSavedId("watched", id, !watchSet.has(id));
         renderGrid();
         return;
       }
@@ -3096,9 +3617,27 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       const tInput = e.target.closest("input[data-target]");
       if (tInput) {
         const id = tInput.dataset.target;
-        const val = parseFloat(tInput.value);
-        if (!isNaN(val) && val > 0) targets[id] = val; else delete targets[id];
-        await saveTargets();
+        const raw = tInput.value.trim();
+        // Only an explicitly emptied field clears a target. Anything else
+        // that is not a plain positive price (0, a negative, "12abc", 1e6) is
+        // rejected and the saved target is put back, so a stray keystroke
+        // can't silently delete an alert.
+        if (raw === "" && !tInput.validity.badInput) {
+          await setSavedTarget(id, null);
+        } else if (/^\d{1,6}(\.\d{1,2})?$/.test(raw) && Number(raw) > 0) {
+          await setSavedTarget(id, Number(raw));
+        } else {
+          const prev = targets[id];
+          tInput.value = prev != null ? String(prev) : "";
+          const row = tInput.closest(".target-row");
+          if (row && !row.querySelector(".target-err")) {
+            row.insertAdjacentHTML("beforeend", '<span class="target-err" role="status">enter a price like 45 or 45.50</span>');
+          }
+          return;
+        }
+        // A change fired by Tab arrives before focus reaches the next control;
+        // wait for it so renderGrid() keeps focus there, not on <body>.
+        await new Promise(r => setTimeout(r, 0));
         renderGrid();
         return;
       }
@@ -3126,24 +3665,19 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     });
     $("compareOpen").addEventListener("click", () => {
       renderCompareModal();
-      lastFocused = document.activeElement;
-      compareModal.classList.add("visible");
-      $("compareModalClose").focus();
+      openModal(compareModal, $("compareModalClose"));
     });
-    $("compareModalClose").addEventListener("click", () => {
-      compareModal.classList.remove("visible");
-      restoreFocus();
-    });
+    $("compareModalClose").addEventListener("click", closeModal);
     compareModal.addEventListener("click", e => {
       // Click on the dim backdrop (not the inner panel) closes the modal.
-      if (e.target === compareModal) { compareModal.classList.remove("visible"); restoreFocus(); }
+      if (e.target === compareModal) closeModal();
     });
 
     // Chart modal close + range buttons + ESC
     const chartModal = $("chartModal");
-    $("chartModalClose").addEventListener("click", () => { chartModal.classList.remove("visible"); restoreFocus(); });
+    $("chartModalClose").addEventListener("click", closeModal);
     chartModal.addEventListener("click", e => {
-      if (e.target === chartModal) { chartModal.classList.remove("visible"); restoreFocus(); }
+      if (e.target === chartModal) closeModal();
     });
     chartModal.querySelectorAll(".range-btn").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -3151,18 +3685,15 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
         chartModal.querySelectorAll(".range-btn").forEach(b => {
           const on = b === btn;
           b.classList.toggle("active", on);
-          b.setAttribute("aria-selected", on ? "true" : "false");
+          b.setAttribute("aria-pressed", on ? "true" : "false");
         });
         renderChart();
       });
     });
 
     document.addEventListener("keydown", e => {
-      if (e.key !== "Escape") return;
-      const wasOpen = compareModal.classList.contains("visible") || chartModal.classList.contains("visible");
-      compareModal.classList.remove("visible");
-      chartModal.classList.remove("visible");
-      if (wasOpen) restoreFocus();
+      if (e.key === "Escape" && openModalEl) { e.preventDefault(); closeModal(); return; }
+      trapTab(e);
     });
 
     $("themeToggle").addEventListener("click", toggleTheme);
@@ -3170,29 +3701,24 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     ["dealOfDay"].forEach(id => {
       const root = $(id);
       if (!root) return;
+      // Enter and Space on the inner button arrive here as a click.
       root.addEventListener("click", e => {
         const btn = e.target.closest("[data-deal-id]");
         if (btn) openChart(btn.dataset.dealId);
       });
-      root.addEventListener("keydown", e => {
-        if (e.key !== "Enter" && e.key !== " ") return;
-        const btn = e.target.closest("[data-deal-id]");
-        if (btn) { e.preventDefault(); openChart(btn.dataset.dealId); }
-      });
     });
     // Unified feed: deck items open the deck chart; box items open the box
-    // chart (id is "<set>::<type>"); bundles just deep-link via the deck list.
+    // chart (id is "<set>::<type>"); bundles are plain product links.
     $("unifiedFeed").addEventListener("click", e => {
       const btn = e.target.closest("[data-uf-kind]");
       if (!btn) return;
       const kind = btn.dataset.ufKind, id = btn.dataset.ufId;
       if (kind === "deck") openChart(id);
       else if (kind === "box") {
-        const [sn, type] = id.split("::");
-        const label = (getBoxes()?.[sn] || []).find(b => b.type === type)?.label || "Box";
-        openBoxChart(sn, type, label);
+        const i = id.lastIndexOf("::");
+        openBoxChart(id.slice(0, i), id.slice(i + 2));
       }
-      // bundles: no per-item chart; clicking is a no-op for now.
+      // Bundles render as links to their product page, not buttons.
     });
     // Staple finder: live search + click a result to open that deck's chart.
     const stapleInput = $("stapleInput");
@@ -3200,6 +3726,8 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
       stapleInput.addEventListener("input", e => renderStapleResults(e.target.value));
       const sr = $("stapleResults");
       sr.addEventListener("click", e => {
+        const alt = e.target.closest("[data-staple-alt]");
+        if (alt) { stapleInput.value = alt.dataset.stapleAlt; renderStapleResults(stapleInput.value); return; }
         const row = e.target.closest("[data-staple-id]");
         if (row) openChart(row.dataset.stapleId);
       });
@@ -3220,50 +3748,107 @@ footer a:hover { text-decoration: underline; color: var(--burgundy); }
     $("boxBody").addEventListener("click", e => {
       if (e.target.closest(".box-item-link")) return;  // let the real link navigate
       const item = e.target.closest(".box-item");
-      if (item) openBoxChart(item.dataset.boxSet, item.dataset.boxType, item.dataset.boxLabel);
+      if (item) openBoxChart(item.dataset.boxSet, item.dataset.boxType);
     });
+    // From the keyboard, a box's chart opens from its sparkline button.
     $("boxBody").addEventListener("keydown", e => {
-      if (e.key !== "Enter" && e.key !== " ") return;
-      if (e.target.closest(".box-item-link")) return;  // let the real link activate (matches click handler)
+      if ((e.key !== "Enter" && e.key !== " ") || !e.target.matches?.("[data-chart-trigger]")) return;
       const item = e.target.closest(".box-item");
-      if (item) { e.preventDefault(); openBoxChart(item.dataset.boxSet, item.dataset.boxType, item.dataset.boxLabel); }
+      if (item) { e.preventDefault(); openBoxChart(item.dataset.boxSet, item.dataset.boxType); }
     });
 
-    // The footer link goes to a generic issue form; per-card "report" links
-    // (added below) prefill with deck context. Both open in a new tab.
+    // Another tab (or the installed app) changed saved data: reload it so this
+    // tab neither shows stale state nor writes it back over the newer data.
+    const SYNCED_KEYS = ["precon-owned", "precon-watched", "precon-targets", "precon-theme"];
+    window.addEventListener("storage", async e => {
+      // Only saved data; the storage probe (precon-probe) must not trigger a
+      // full rebuild in every other open tab on each page load.
+      if (e.key !== null && !SYNCED_KEYS.includes(e.key)) return;
+      if (e.key === "precon-theme") { await loadTheme(); return; }
+      if (!PRECONS.length) return;
+      await Promise.all([loadOwned(), loadWatched(), loadTargets()]);
+      renderStats();
+      renderPortfolio();
+      renderGrid();
+    });
   }
 
   // ---------- Init ----------
+  // Run one render step on its own, so a failure in (say) the box panel can't
+  // take down the deck grid or the stats with it.
+  function safely(name, fn) {
+    try { fn(); return true; } catch (e) { console.error(`Render step ${name} failed:`, e); return false; }
+  }
+
+  function probeStorage() {
+    if (window.storage && window.storage.set) return;
+    try {
+      localStorage.setItem("precon-probe", "1");
+      localStorage.removeItem("precon-probe");
+    } catch (e) { showStorageWarning(); }
+  }
+
+  let historyLoad = null;
+  let historyReady = false;   // true once the history fetch has settled
   async function init() {
     wireEvents();
     await loadTheme();
+    probeStorage();
     try {
       // Decks are required for any render; fetch in parallel with everything
       // else but don't render until we have them.
+      // Price history (~650 KB) starts downloading now but is NOT awaited:
+      // it only adds sparklines, ranges and signals, so the cards paint
+      // without it and are redrawn once it arrives (see below).
+      historyLoad = loadHistory().catch(() => null);
       await Promise.all([
         loadDecks(),
-        loadOwned(),
-        loadWatched(),
-        loadTargets(),
         loadLivePrices().catch(() => null),
-        loadHistory().catch(() => null),
-        // cards_index.json (~440 KB) is NOT loaded here — the staple finder
-        // fetches it lazily on first search so it can't delay first paint.
+        // cards_index.json (~440 KB) is NOT loaded here either: the staple
+        // finder fetches it lazily on first search.
       ]);
-      readUrlState();
-      updateStaleBanner();
-      renderStats();
-      renderDealOfDay();
-      renderUnifiedFeed();
-      renderBoxes();
-      renderPortfolio();
-      if (CARD_INDEX) $("stapleFinder").hidden = false;
-      renderGrid();
-      renderCompareBar();
     } catch (e) {
       console.error("Failed to load decks:", e);
-      grid.innerHTML = `<div class="empty" role="alert">Couldn't load the deck archive. Refresh to retry, or check your connection.</div>`;
+      grid.innerHTML = e && e.dataError
+        ? `<div class="empty" role="alert">The deck catalog could not be read. This is a data problem on our side, not your connection. Please <a href="https://github.com/${REPO_SLUG}/issues/new" target="_blank" rel="noopener noreferrer">report it</a>.</div>`
+        : `<div class="empty" role="alert">Couldn't load the deck archive. Refresh to retry, or check your connection.</div>`;
       resultCount.textContent = "Load failed";
+      return;
+    }
+    // Saved state is read after decks.json, so renamed ids (formerIds) can be
+    // mapped and ids that no longer exist dropped.
+    await Promise.all([loadOwned(), loadWatched(), loadTargets()]);
+    await migrateSavedIds();
+    safely("years", fillYearFilter);
+    safely("url", readUrlState);
+    safely("stale", updateStaleBanner);
+    safely("stats", renderStats);
+    // Deal of the Day and the feed rank by history (lows, ranges), so they
+    // wait for it and render once: drawn early they would switch to a
+    // different pick, and reorder under the pointer, when history arrives.
+    safely("boxes", renderBoxes);
+    safely("portfolio", renderPortfolio);
+    // The card index loads lazily on first search, so the finder is shown
+    // up front (it reports "Card index unavailable." if that load fails).
+    $("stapleFinder").hidden = false;
+    if (!safely("grid", renderGrid)) {
+      grid.innerHTML = `<div class="empty" role="alert">Something went wrong showing the decks. Please <a href="https://github.com/${REPO_SLUG}/issues/new" target="_blank" rel="noopener noreferrer">report it</a>.</div>`;
+    }
+    safely("compare", renderCompareBar);
+
+    // Second pass once history is in: everything that reads it.
+    await historyLoad;
+    historyReady = true;
+    safely("deal", renderDealOfDay);
+    safely("feed", renderUnifiedFeed);
+    if (!PRICE_HISTORY && !BOX_HISTORY) {
+      if (openModalEl === $("chartModal")) safely("chart", renderChart);
+      return;
+    }
+    safely("grid", renderGrid);
+    safely("boxes", renderBoxes);
+    if (openModalEl === $("chartModal") && chartPointsFn) {
+      safely("chart", () => { chartCurrentPoints = chartPointsFn(); renderChart(); });
     }
   }
 
