@@ -4,7 +4,7 @@ A record of where MTG Tracker's prices come from, how accurate they are, and
 which sources were evaluated and deliberately **not** adopted. Written so these
 decisions don't get re-litigated.
 
-Last reviewed: **2026-07-23**
+Last reviewed: **2026-10-07**
 
 ---
 
@@ -14,8 +14,6 @@ Last reviewed: **2026-07-23**
 |---|---|---|
 | **TCGplayer Market** (via [TCGCSV](https://tcgcsv.com/)) | Primary price anchor for decks + sealed boxes | Free public mirror of TCGplayer's API, ~24h fresh |
 | **Card Kingdom** | Retail + buylist for decks and boxes | Free public [sealed pricelist API](https://api.cardkingdom.com/api/sealed_pricelist), no auth |
-| **Mana Pool** | 4th vendor + **realized sales** for decks and boxes | Free public [API](https://manapool.com/api/v1/prices/sealed), no auth |
-| **Zulus Games** | Third vendor (partial: ~18/115 decks) | Direct JSON search endpoint |
 | **MTGJSON** | Decklists, singles prices (crack value), booster models (box EV) | Free, MIT-licensed |
 
 ### How accurate is this?
@@ -39,6 +37,46 @@ TCGplayer Market specifically).
 ---
 
 ## Evaluated and rejected
+
+### Zulus Games: dropped 2026-10-07 (terms, accuracy and cost)
+
+Used as a third deck vendor until 2026-10-07, then removed completely.
+
+- **Scraped against its Terms of Service.** The scraper hit its storefront search
+  endpoint with rotating, spoofed browser User Agents and a forged Referer. That is
+  not a sanctioned access route, and no honest version of it exists.
+- **Thin coverage.** It matched only about 27 of 121 decks.
+- **It sent buyers to sold out listings.** 15 of its 16 "best price" wins were sold
+  out: the API reports an `available` flag for every product and the scraper never
+  read it. Sold out asks sit near MSRP while the real offers are gone, so they won
+  the best price headline, Deal of the Day and the price history `best` series.
+- **It cost the most.** About 80% of each daily run's time went to Zulus requests.
+
+### Mana Pool: dropped 2026-10-07 (terms)
+
+Used from 2026-07-24 to 2026-10-07 as the fourth vendor and the **only** source of
+realized sales, then removed completely.
+
+- **Its terms bar automated downloading and redistribution of its data without
+  written consent.** A public daily tracker does both, and we never had that consent.
+  Mana Pool comes back only with written permission.
+- **What went with it:** every sold side signal (the "last sold", "avg sold" and
+  "vs asking" lines on decks and boxes), Mana Pool box prices, and the self
+  contradiction guard that voided any Mana Pool ask under half its own recent sales.
+
+After both removals the price vendors are TCGplayer (via TCGCSV) and Card Kingdom
+(official sealed pricelist API). On 2026-10-07 `prices_history.json` was migrated to
+match: the `zulus` and `mp` fields were stripped from every deck entry, `best` was
+recomputed from `tcg` and `ck`, and entries left identical to the previous one were
+dropped.
+
+That cost coverage on seven decks that only Zulus and/or Mana Pool priced, because
+TCGCSV and Card Kingdom find no product for them: Silverquill Statement, Prismari
+Performance, Witherbloom Witchcraft, Lorehold Legacies and Quantum Quandrix (the
+Strixhaven Commander decks), plus Draconic Domination and Vampiric Bloodlust. They
+now fall back to the MSRP reference and have no price history; their series, and
+Faerie Schemes' Mana Pool only series, were removed from `prices_history.json`.
+Better TCGCSV matching for the Strixhaven decks would win most of them back.
 
 ### Amazon — rejected (feasibility **and** value)
 
@@ -129,11 +167,10 @@ independent venues.
 1. **No European market.** Cardmarket (EUR) prices are independently determined, not
    a currency conversion of US prices. We are effectively a **US-only** view — and
    that is a deliberate scope choice, not an oversight.
-2. ~~**No independent realized-price cross-check.**~~ **CLOSED (2026-07-24)** — Mana
-   Pool's free public API returns `recent_sales`: actual completed transactions with
-   timestamp, price and quantity. We now show "last sold" on 95 decks and 58 box rows.
-   This is what PriceCharting was going to cost $49/mo for. It is a *non-eBay*,
-   *non-TCGplayer* realized signal, so it is genuinely independent of our anchor.
+2. **No independent realized price cross check.** Reopened on 2026-10-07. From
+   2026-07-24 Mana Pool's `recent_sales` filled this gap, but its terms bar the way
+   we used it (see Evaluated and rejected), so it was dropped. TCGplayer Market is
+   itself a realized sales consensus, but nothing independent of it checks it now.
 3. **No other large US retailers** (SCG, ChannelFireball, CoolStuffInc). These are
    *ask* prices that sit at or above the realized market, so they add less than they
    appear to.
@@ -148,5 +185,5 @@ Ranked by value-per-effort, and both far better value than Amazon:
    fetchable realized-eBay signal found; would add an independent cross-check.
 2. **Cardmarket EUR via Scryfall/MTGJSON** — the practical way to get EU coverage
    without Cardmarket's restricted API.
-3. Optionally one or two more US retailer asks to widen the best-buy-side view that
-   Zulus only partly fills.
+3. Optionally one or two more US retailer asks to widen the buy side view, but only
+   from retailers whose terms allow automated collection and display.

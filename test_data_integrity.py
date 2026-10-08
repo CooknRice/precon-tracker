@@ -133,7 +133,9 @@ def test_history_shape():
             assert prev_date is None or entry["date"] > prev_date, \
                 f"history {did}: dates not strictly increasing ({prev_date} -> {entry['date']})"
             prev_date = entry["date"]
-            for k in ("tcg", "zulus", "ck", "best"):
+            extra = set(entry) - {"date", "tcg", "ck", "best"}
+            assert not extra, f"history {did} {entry['date']}: unexpected keys {sorted(extra)}"
+            for k in ("tcg", "ck", "best"):
                 if k in entry:
                     assert isinstance(entry[k], (int, float)) and entry[k] > 0
     # Box history (optional key): keyed "<set>::<type>", entries {date, price}.
@@ -246,53 +248,6 @@ def test_boxes_ck():
                     f"box {set_name}/{r.get('type')} CK/TCG ratio {ratio:.2f} out of range"
 
 
-def _check_sold(sold, where):
-    """Shared shape check for a realized-sales summary block."""
-    assert isinstance(sold, dict), f"{where} sold not an object"
-    for k in ("last", "avg"):
-        assert isinstance(sold.get(k), (int, float)) and sold[k] > 0, f"{where} sold.{k} bad"
-    assert isinstance(sold.get("n"), int) and sold["n"] >= 1, f"{where} sold.n bad"
-    if sold.get("last_date") is not None:
-        assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", sold["last_date"]), f"{where} sold.last_date bad"
-
-
-def test_vendors_manapool():
-    """Mana Pool vendor map: real deck ids, sane prices, valid realized sales."""
-    prices = load("prices.json")
-    deck_ids = {d["id"] for d in load("decks.json")}
-    mp = prices["vendors"].get("manapool", {})
-    assert mp, "vendors.manapool missing"
-    ok_status = {"ok", "out-of-stock", "no-match", "unavailable"}
-    for did, e in mp.items():
-        assert did in deck_ids, f"manapool has stale deck id {did}"
-        assert "url" in e, f"manapool {did} missing url"
-        if e.get("status") is not None:
-            assert e["status"] in ok_status, f"manapool {did} bad status {e['status']}"
-        for k in ("price", "market"):
-            if e.get(k) is not None:
-                assert isinstance(e[k], (int, float)) and e[k] > 0, f"manapool {did}.{k} bad"
-        if e.get("qty") is not None:
-            assert isinstance(e["qty"], int) and e["qty"] >= 0, f"manapool {did} bad qty"
-        if e.get("sold") is not None:
-            _check_sold(e["sold"], f"manapool {did}")
-
-
-def test_boxes_manapool():
-    """Box rows: Mana Pool price/qty/url and realized-sales block are well-formed."""
-    prices = load("prices.json")
-    for set_name, rows in prices.get("boxes", {}).items():
-        for r in rows:
-            where = f"box {set_name}/{r.get('type')}"
-            if r.get("mp_price") is not None:
-                assert isinstance(r["mp_price"], (int, float)) and r["mp_price"] > 0, f"{where} bad mp_price"
-            if r.get("mp_qty") is not None:
-                assert isinstance(r["mp_qty"], int) and r["mp_qty"] >= 0, f"{where} bad mp_qty"
-            if r.get("mp_url") is not None:
-                assert str(r["mp_url"]).startswith("http"), f"{where} bad mp_url"
-            if r.get("sold") is not None:
-                _check_sold(r["sold"], where)
-
-
 def test_history_best_is_min():
     """`best` must equal the cheapest vendor recorded that day — it drives the
     all time low badge, so a wrong value misleads directly."""
@@ -302,7 +257,7 @@ def test_history_best_is_min():
     history = json.loads(p.read_text())
     for did, series in history.get("decks", {}).items():
         for e in series:
-            vals = [e[k] for k in ("tcg", "zulus", "ck", "mp") if isinstance(e.get(k), (int, float))]
+            vals = [e[k] for k in ("tcg", "ck") if isinstance(e.get(k), (int, float))]
             if not vals or "best" not in e:
                 continue
             assert abs(e["best"] - min(vals)) < 0.011, (
@@ -336,34 +291,27 @@ def test_no_wrong_product_matches():
 
 
 def test_vendor_price_sanity():
-    """No vendor should be wildly below every other vendor for the same deck.
+    """Card Kingdom and TCGPlayer must be quoting the same product for a deck.
 
-    A genuine sale is one thing; less than half of what the other vendors agree
-    on is almost always a mismatched listing.
+    With only two vendors there is no consensus to judge against, and the two
+    legitimately drift apart: Card Kingdom keeps fixed retail asks (often for
+    sold out stock) while TCGPlayer Market moves. Over 90 days of history the
+    TCG/CK ratio ran from about 0.52 to 1.77, so the band is wide (0.3 either
+    way). It still catches the gross mismatches, such as a prerelease pack
+    priced about 74% under the deck; test_no_wrong_product_matches covers the
+    subtler ones.
     """
     prices = load("prices.json")
-    v = prices["vendors"]
-    for did in {k for m in v.values() for k in m}:
-        quotes = {name: (m.get(did) or {}).get("price") for name, m in v.items()}
-        quotes = {k: p for k, p in quotes.items() if p}
-        if len(quotes) < 3:
-            continue                    # need a real consensus to judge against
-        for name, p in quotes.items():
-            others = [q for k, q in quotes.items() if k != name]
-            assert p >= min(others) * 0.5, (
-                f"{name}/{did} = ${p:.2f} is under half the cheapest other "
-                f"vendor (${min(others):.2f}) — likely a wrong product")
-
-
-def test_manapool_price_vs_own_sales():
-    """Mana Pool's asking price must not contradict its own realized sales."""
-    prices = load("prices.json")
-    for did, e in prices["vendors"].get("manapool", {}).items():
-        price, sold = e.get("price"), e.get("sold") or {}
-        if price and sold.get("avg"):
-            assert price >= sold["avg"] * 0.5, (
-                f"manapool/{did}: asking ${price:.2f} vs its own realized avg "
-                f"${sold['avg']:.2f} — mismatched listing")
+    tcg = prices["vendors"].get("tcgplayer", {})
+    ck = prices["vendors"].get("cardkingdom", {})
+    for did in tcg.keys() & ck.keys():
+        t, c = (tcg[did] or {}).get("price"), (ck[did] or {}).get("price")
+        if not (t and c):
+            continue
+        for name, p, other in (("tcgplayer", t, c), ("cardkingdom", c, t)):
+            assert p >= other * 0.3, (
+                f"{name}/{did} = ${p:.2f} is under 0.3 times the other vendor "
+                f"(${other:.2f}), likely a wrong product")
 
 
 if __name__ == "__main__":

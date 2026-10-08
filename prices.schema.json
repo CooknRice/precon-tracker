@@ -21,77 +21,23 @@
       "type": "object",
       "required": [
         "tcgplayer",
-        "cardkingdom",
-        "zulus",
-        "manapool"
+        "cardkingdom"
       ],
-      "additionalProperties": {
-        "type": "object",
-        "additionalProperties": {
+      "properties": {
+        "tcgplayer": {
           "type": "object",
-          "properties": {
-            "price": {
-              "type": [
-                "number",
-                "null"
-              ],
-              "minimum": 0
-            },
-            "url": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "status": {
-              "type": "string"
-            },
-            "qty": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "buy": {
-              "type": [
-                "number",
-                "null"
-              ],
-              "minimum": 0
-            },
-            "market": {
-              "type": [
-                "number",
-                "null"
-              ],
-              "minimum": 0
-            },
-            "sold": {
-              "type": "object",
-              "properties": {
-                "last": {
-                  "type": "number",
-                  "minimum": 0
-                },
-                "last_date": {
-                  "type": "string"
-                },
-                "avg": {
-                  "type": "number",
-                  "minimum": 0
-                },
-                "n": {
-                  "type": "integer",
-                  "minimum": 1
-                }
-              },
-              "required": [
-                "last",
-                "avg",
-                "n"
-              ]
-            }
+          "additionalProperties": {
+            "$ref": "#/definitions/vendor_entry"
+          }
+        },
+        "cardkingdom": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/vendor_entry"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "crack": {
       "type": "object",
@@ -223,48 +169,6 @@
                 "null"
               ],
               "minimum": 0
-            },
-            "mp_price": {
-              "type": [
-                "number",
-                "null"
-              ],
-              "minimum": 0
-            },
-            "mp_qty": {
-              "type": "integer",
-              "minimum": 0
-            },
-            "mp_url": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "sold": {
-              "type": "object",
-              "properties": {
-                "last": {
-                  "type": "number",
-                  "minimum": 0
-                },
-                "last_date": {
-                  "type": "string"
-                },
-                "avg": {
-                  "type": "number",
-                  "minimum": 0
-                },
-                "n": {
-                  "type": "integer",
-                  "minimum": 1
-                }
-              },
-              "required": [
-                "last",
-                "avg",
-                "n"
-              ]
             }
           }
         }
@@ -307,6 +211,40 @@
             ],
             "exclusiveMinimum": 0
           }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "vendor_entry": {
+      "type": "object",
+      "properties": {
+        "price": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string"
+        },
+        "qty": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "buy": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
         }
       }
     }
