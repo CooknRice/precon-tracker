@@ -1,7 +1,7 @@
 {
   "name": "MTG Tracker",
   "short_name": "MTG Tracker",
-  "description": "MTG price tracker for Commander precons, sealed booster boxes, and bundles — live multi-vendor prices, history charts, and buy signals.",
+  "description": "MTG price tracker for Commander precons, sealed booster boxes, and bundles: TCGplayer and Card Kingdom prices, history charts, and buy signals.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -9,8 +9,10 @@
   "background_color": "#15120e",
   "theme_color": "#15120e",
   "icons": [
-    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
-    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "./icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "./icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
