@@ -1,0 +1,92 @@
+name: Validate data and page
+# Checks every push to main and every pull request, without scraping. Pages
+# serves main straight away, so this is the fast signal (a failure email within
+# minutes) that a hand edit to decks.json, the page or the scraper broke
+# something, instead of the next daily scrape tripping over it hours later.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install deps
+        run: pip install --require-hashes -r requirements.txt
+
+      - name: Validate decks.json
+        run: python test_data_integrity.py --catalog
+
+      - name: Run data integrity tests
+        # A catalog change lands before the next scrape regenerates prices for
+        # it, so id sets that differ between decks.json and the generated files
+        # are reported but allowed here. The scrape job enforces them.
+        run: python test_data_integrity.py --pending-scrape
+
+      - name: Compile the Python
+        run: python -m py_compile scrape_prices.py test_data_integrity.py
+
+      - name: Check page and service worker syntax
+        # Parse only: a syntax error in the inline script blanks the page for
+        # every visitor. node ships on the GitHub hosted Ubuntu image.
+        run: |
+          mkdir -p "$RUNNER_TEMP/js"
+          python - "$RUNNER_TEMP/js" <<'PY'
+          import json, sys
+          from html.parser import HTMLParser
+          from pathlib import Path
+          out = Path(sys.argv[1])
+
+          class Scripts(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=False)
+                  self.inline, self.cur = [], None
+              def handle_starttag(self, tag, attrs):
+                  a = dict(attrs)
+                  if tag == "script" and "src" not in a:
+                      kind = (a.get("type") or "text/javascript").lower()
+                      if kind in ("text/javascript", "application/javascript", "module"):
+                          self.cur = (kind, [])
+              def handle_endtag(self, tag):
+                  if tag == "script" and self.cur:
+                      self.inline.append(self.cur)
+                      self.cur = None
+              def handle_data(self, data):
+                  if self.cur:
+                      self.cur[1].append(data)
+
+          p = Scripts()
+          p.feed(Path("index.html").read_text())
+          assert p.inline, "no inline script found in index.html"
+          for i, (kind, parts) in enumerate(p.inline):
+              ext = "mjs" if kind == "module" else "js"
+              (out / f"index-{i}.{ext}").write_text("".join(parts))
+          json.loads(Path("manifest.webmanifest").read_text())
+          print(f"{len(p.inline)} inline script(s) extracted, manifest OK")
+          PY
+          node --version
+          for f in "$RUNNER_TEMP"/js/* sw.js; do
+            node --check "$f"
+            echo "syntax OK: $f"
+          done

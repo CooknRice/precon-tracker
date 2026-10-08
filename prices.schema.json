@@ -11,7 +11,10 @@
   ],
   "properties": {
     "updated_at": {
-      "type": "string"
+      "type": "string",
+      "minLength": 10,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}",
+      "description": "ISO 8601 UTC timestamp of the run. test_prices_header parses it fully (a format: date-time claim would need rfc3339-validator to be enforced)."
     },
     "deck_count": {
       "type": "integer",
@@ -101,10 +104,11 @@
                 },
                 "price": {
                   "type": "number",
-                  "minimum": 0
+                  "exclusiveMinimum": 0
                 }
               }
-            }
+            },
+            "maxItems": 4
           }
         }
       }
@@ -143,8 +147,11 @@
               "minimum": 0
             },
             "ev": {
-              "type": "number",
-              "minimum": 0
+              "type": [
+                "number",
+                "null"
+              ],
+              "exclusiveMinimum": 0
             },
             "ck_price": {
               "type": [
@@ -169,6 +176,21 @@
                 "null"
               ],
               "minimum": 0
+            },
+            "price_source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           }
         }
@@ -210,7 +232,94 @@
               "null"
             ],
             "exclusiveMinimum": 0
+          },
+          "price_source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "set": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "snippet": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "individual_basis": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "How individual_total was priced: cheapest_buyable means each deck at its cheapest buyable vendor price (see components)."
+          },
+          "components": {
+            "type": "array",
+            "description": "One row per member deck, in deck_ids order: the vendor and price counted toward individual_total.",
+            "items": {
+              "type": "object",
+              "required": [
+                "deck_id",
+                "vendor",
+                "price"
+              ],
+              "properties": {
+                "deck_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "vendor": {
+                  "enum": [
+                    "tcgplayer",
+                    "cardkingdom",
+                    null
+                  ]
+                },
+                "price": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "exclusiveMinimum": 0
+                }
+              }
+            }
           }
+        }
+      }
+    },
+    "upstream": {
+      "type": "object",
+      "description": "Publish time of each upstream feed this run read: tcgcsv from last-updated.txt (ISO timestamp), mtgjson from Meta.json meta.date (YYYY-MM-DD).",
+      "properties": {
+        "tcgcsv": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mtgjson": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     }
@@ -224,7 +333,7 @@
             "number",
             "null"
           ],
-          "minimum": 0
+          "exclusiveMinimum": 0
         },
         "url": {
           "type": [
@@ -245,8 +354,32 @@
             "null"
           ],
           "minimum": 0
+        },
+        "price_low": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "price_source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "snippet": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
-      }
+      },
+      "required": [
+        "price",
+        "url",
+        "status"
+      ]
     }
   }
 }
