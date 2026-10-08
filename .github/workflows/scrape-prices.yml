@@ -1,20 +1,21 @@
 name: Scrape precon prices
-# Add scraper workflow
-# Runs every day at 13:00 UTC (6 AM Pacific) and on manual trigger.
+# Runs daily at 01:23 UTC (6:23 PM PDT, 5:23 PM PST) and on manual trigger.
+# TCGCSV republishes its TCGplayer snapshot around 20:05 UTC, so every run
+# reads that evening's snapshot. GitHub often starts scheduled runs hours late;
+# from 01:23 even a 10 hour delay stays on the same UTC date, so each history
+# day gets exactly one snapshot. The odd minute avoids the top of hour queue.
 on:
   schedule:
-    - cron: '0 13 * * *'
-  workflow_dispatch: {}
+    - cron: '23 1 * * *'
+  workflow_dispatch:
+    inputs:
+      allow_price_jumps:
+        description: 'Let many decks or boxes move sharply since their previous day (an intentional matcher fix)'
+        type: boolean
+        default: false
 
-# Allow committing prices.json back to the repo.
-permissions:
-  contents: write
-
-# Opt into Node.js 24 for reusable actions (checkout, setup-python, etc.)
-# ahead of GitHub's June 2026 deprecation of Node 20. Safe to remove once
-# Node 24 becomes the runner default.
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+# Nothing by default; each job asks for what it needs.
+permissions: {}
 
 # Queue (don't cancel) so a manual run can't race a scheduled run on the
 # commit/push of prices.json.
@@ -23,72 +24,99 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Runs every third party package (pip installs, the scraper, vendor data)
+  # with a read only token, and hands the three data files to the commit job.
   scrape:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    permissions:
+      contents: read
     steps:
       - name: Check out repo
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: '3.11'
+          python-version: '3.12'
           cache: 'pip'
 
       - name: Install deps
-        run: pip install -r requirements.txt
+        run: pip install --require-hashes -r requirements.txt
 
-      - name: Validate decks.json against schema
+      - name: Validate decks.json
+        run: python test_data_integrity.py --catalog
+
+      - name: Keep the last committed data for comparison
         run: |
-          python - <<'PY'
-          import json, jsonschema
-          schema = json.load(open("decks.schema.json"))
-          data = json.load(open("decks.json"))
-          jsonschema.validate(data, schema)
-          ids = [x["id"] for x in data]
-          assert len(ids) == len(set(ids)), "duplicate deck ids"
-          print(f"decks.json OK: {len(data)} decks, schema valid")
-          PY
+          mkdir -p "$RUNNER_TEMP/previous"
+          cp prices.json prices_history.json cards_index.json "$RUNNER_TEMP/previous/"
 
       - name: Run scraper
         run: python scrape_prices.py
 
-      - name: Validate prices.json
-        # Refuse to commit a corrupt or partial scrape. Phases 3/4 (crack/boxes)
-        # are non-fatal in the scraper, so guard their output here too: a run
-        # that silently wipes singles or box pricing must not overwrite good data.
-        run: |
-          python - <<'PY'
-          import json, jsonschema
-          data = json.load(open("prices.json"))
-          jsonschema.validate(data, json.load(open("prices.schema.json")))
-          assert "vendors" in data and "tcgplayer" in data["vendors"], "missing tcgplayer vendor"
-          tcg = data["vendors"]["tcgplayer"]
-          hits = sum(1 for v in tcg.values() if v.get("price") is not None)
-          # Floors set with headroom under steady state (~103 TCG / ~104 CK /
-          # 111 crack / 25 boxes) so a partial regression is caught, not just a
-          # total outage. Card Kingdom is now a tracked vendor — guard it too.
-          assert hits > 90, f"only {hits} TCG hits — refusing to commit a likely-broken scrape"
-          ck = data["vendors"].get("cardkingdom", {})
-          ck_hits = sum(1 for v in ck.values() if v.get("price") is not None)
-          assert ck_hits > 50, f"only {ck_hits} Card Kingdom hits — CK pricing likely broke"
-          crack = data.get("crack", {})
-          assert len(crack) > 95, f"only {len(crack)} crack entries — singles pricing likely broke"
-          boxes = data.get("boxes", {})
-          assert len(boxes) > 18, f"only {len(boxes)} box sets — box pricing likely broke"
-          import os
-          assert os.path.exists("cards_index.json"), "cards_index.json missing"
-          ci = json.load(open("cards_index.json")).get("cards", {})
-          assert len(ci) > 1000, f"only {len(ci)} cards in index — reverse index likely broke"
-          print(f"prices.json OK: {hits} TCG, {ck_hits} CK, {len(crack)} crack, {len(boxes)} boxes, {len(ci)} index cards")
-          PY
+      - name: Gate and test the new data
+        # Refuse to publish a corrupt, partial or stale scrape: every data test,
+        # coverage floors, upstream freshness, and no sharp drop against the
+        # last committed run. See the --gate notes in test_data_integrity.py.
+        # A manual run can set allow_price_jumps; scheduled runs never do.
+        env:
+          ALLOW_PRICE_JUMPS: ${{ inputs.allow_price_jumps && '1' || '' }}
+        run: python test_data_integrity.py --gate --previous "$RUNNER_TEMP/previous"
 
-      - name: Run data-integrity tests
-        # The full suite (schema + cross-file invariants) against the freshly
-        # scraped data. Previously this only ever ran locally, so nothing in CI
-        # actually enforced it.
-        run: python test_data_integrity.py
+      - name: Hand the data to the commit job
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: scraped-data
+          path: |
+            prices.json
+            prices_history.json
+            cards_index.json
+          if-no-files-found: error
+          retention-days: 5
+
+  # Holds the write token, so it runs no third party code: system git and the
+  # runner's own python3 standard library only.
+  commit:
+    needs: scrape
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Fetch the scraped data
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: scraped-data
+          path: ${{ runner.temp }}/scraped
+
+      - name: Check and place the data files
+        # Only the three expected files, each strict JSON (no NaN or Infinity).
+        run: |
+          /usr/bin/python3 - "$RUNNER_TEMP/scraped" <<'PY'
+          import json, math, pathlib, shutil, sys
+          src = pathlib.Path(sys.argv[1])
+          want = {"prices.json", "prices_history.json", "cards_index.json"}
+          got = {p.relative_to(src).as_posix() for p in src.rglob("*") if p.is_file()}
+          assert got == want, f"unexpected artifact contents: {sorted(got)}"
+          def bad(x):
+              raise ValueError(f"non standard JSON number {x}")
+          def finite(x):
+              v = float(x)
+              if not math.isfinite(v):
+                  raise ValueError(f"number out of range: {x}")
+              return v
+          for name in sorted(want):
+              json.loads((src / name).read_text(), parse_constant=bad, parse_float=finite)
+          for name in sorted(want):
+              shutil.copyfile(src / name, name)
+          print("artifact OK")
+          PY
 
       - name: Commit updated prices.json
         run: |
