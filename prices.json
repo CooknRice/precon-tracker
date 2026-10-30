@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-30T20:18:53.153947+00:00",
+  "updated_at": "2026-10-30T22:02:00.254691+00:00",
   "deck_count": 121,
   "vendors": {
     "cardkingdom": {
@@ -231,7 +231,7 @@
         "price": 69.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/tarkir-dragonstorm-commander-deck-temur-roar",
         "status": "ok",
-        "qty": 1,
+        "qty": 0,
         "buy": 45.0
       },
       "living-energy": {
@@ -277,11 +277,11 @@
         "buy": 150.0
       },
       "family-matters": {
-        "price": 44.99,
+        "price": 49.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/bloomburrow-commander-deck-family-matters",
         "status": "ok",
         "qty": 1,
-        "buy": 29.0
+        "buy": 32.0
       },
       "squirreled-away": {
         "price": 89.99,
@@ -2146,8 +2146,8 @@
       "price_low": 256.0,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 325.25,
-      "savings": 45.91,
+      "individual_total": 338.23,
+      "savings": 58.89,
       "url": "https://www.tcgplayer.com/product/619669/magic-tarkir-dragonstorm-commander-deck-case",
       "snippet": "Tarkir: Dragonstorm Commander Deck Case",
       "components": [
@@ -2177,9 +2177,9 @@
         },
         {
           "deck_id": "temur-roar",
-          "vendor": "cardkingdom",
-          "price": 69.99,
-          "kind": "in stock"
+          "vendor": "tcgplayer",
+          "price": 82.97,
+          "kind": "Market"
         }
       ],
       "individual_basis": "cheapest_payable"
@@ -6606,6 +6606,26 @@
         "ck_buy": 227.0
       }
     ],
+    "Assassin's Creed": [
+      {
+        "type": "collector",
+        "kind": "collector",
+        "label": "Collector Booster Box",
+        "name": "Universes Beyond: Assassin's Creed - Collector Booster Display",
+        "price": 554.94,
+        "price_low": 537.99,
+        "price_source": "Market",
+        "url": "https://www.tcgplayer.com/product/541225/magic-universes-beyond-assassin-s-creed-collector-booster-display",
+        "set_release": "2024-07-05",
+        "ev": 321.25,
+        "ev_coverage": 0.999,
+        "packs": 12,
+        "ck_price": 749.99,
+        "ck_qty": 3,
+        "ck_url": "https://www.cardkingdom.com/mtg-sealed/universes-beyond-assassins-creed-collector-booster-box",
+        "ck_buy": 450.0
+      }
+    ],
     "Bloomburrow Commander": [
       {
         "type": "play",
@@ -7477,7 +7497,7 @@
         "url": "https://www.tcgplayer.com/product/706142/magic-star-trek-collector-booster-display",
         "set_release": "2026-11-13",
         "ck_price": 499.99,
-        "ck_qty": 1,
+        "ck_qty": 0,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/star-trek-collector-booster-box",
         "ck_buy": null
       }
