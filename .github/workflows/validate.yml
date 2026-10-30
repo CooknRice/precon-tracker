@@ -27,6 +27,8 @@ jobs:
           persist-credentials: false
 
       - name: Set up Python
+        # v7.1.0 (6d4fd22b, 2026-10-22) fixes advisories in the action's bundled
+        # undici and js-yaml; Dependabot proposes it once it is two weeks old.
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
@@ -43,6 +45,12 @@ jobs:
         # it, so id sets that differ between decks.json and the generated files
         # are reported but allowed here. The scrape job enforces them.
         run: python test_data_integrity.py --pending-scrape
+
+      - name: Check the page shell
+        # The CSP in index.html allows the inline script by its sha256 only,
+        # so a script edit without a new hash blanks the page. Also checks
+        # that every file the manifest and the service worker name exists.
+        run: python test_data_integrity.py --page
 
       - name: Compile the Python
         run: python -m py_compile scrape_prices.py test_data_integrity.py
