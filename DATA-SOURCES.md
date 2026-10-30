@@ -232,11 +232,12 @@ run, about 150 requests; caching it is deferred (see the log).
   when the two differ, so the headline, the saving and its basis follow one
   rule.
 - The page shows "saves $X" only when the saving rounds to at least $0.01,
-  with the basis beside it. On 2026-10-30, 28 of 33 bundles show a saving.
-- Example: the Star Trek Commander Deck Case (MTGJSON's Set of 4) is $223.63
-  at TCGplayer Market. Its four decks on that basis (TCGplayer Market $66.67
-  and $72.62, Card Kingdom in stock $64.99 twice) total $269.27, so it saves
-  $45.64.
+  with the basis beside it. On 2026-10-30, 24 of 33 bundles show a saving.
+- Example: the Star Trek Commander Deck Case (MTGJSON's Set of 4) is $223.61
+  at TCGplayer Market, which is the price you can pay (its lowest listing,
+  $215.00, is below Market). Its four decks at their cheapest payable prices
+  (TCGplayer Market $64.96, $64.87 and $69.94, Card Kingdom in stock $64.99)
+  total $264.76, so it saves $41.15.
 
 ---
 
@@ -248,25 +249,31 @@ have no Commander precon of ours.
 
 | Set | TCGplayer group | `set_release` | Rows on 2026-10-30 |
 |---|---|---|---|
-| The Hobbit | 24683 | 2026-08-14 | Play $126.17 (EV $63.33, 30 packs), Collector $620.25 (EV $489.64, 12 packs) |
-| Mystery Booster Commander Edition | 24777 | 2026-10-01 | Booster Display $365.83 (no EV: MTGJSON has no pack count; no Card Kingdom listing) |
+| The Hobbit | 24683 | 2026-08-14 | Play $129.07 (EV $63.33, 30 packs; CK $179.99), Collector $621.92 (EV $489.64, 12 packs; CK $999.99) |
+| Mystery Booster Commander Edition | 24777 | 2026-10-19 | Booster Display $364.83 (no EV: MTGJSON has no pack count yet; no Card Kingdom listing) |
+| Assassin's Creed | 23446 | 2024-07-05 | Collector $554.94 (EV $321.25, 12 packs; CK $749.99) |
 
 - A box only set is matched like any other (its own main TCGplayer group, Card
   Kingdom by edition and kind), and its history is kept and pruned the same
   way. Removing a set from the list drops its box rows and, on the next run,
   its box history.
+- Assassin's Creed had been on the page since July through two catalog
+  entries that turned out to be products that never existed. Removing those
+  entries would have dropped its real collector box and 32 days of history, so
+  it is listed here instead and its history was carried over.
 - Mystery Booster Commander Edition carries "Commander" in its name, so it is
   also in `DRAFTABLE_COMMANDER`; otherwise the main group matcher would skip it
   as a precon group.
-- Its `set_release` is TCGCSV's `publishedOn` (2026-10-01), not MTGJSON's
-  release date (2026-10-19). The page orders box only sets by it and prints its
-  month under the set name ("Oct 2026"), or the preorder text when it is in the
-  future. With MTGJSON's date the set would sort above Reality Fracture (decks
-  dated 2026-10-02) instead of below it.
+- `set_release` is MTGJSON's release date for the set (matched by set code,
+  else by name), else the later of the TCGplayer group's `publishedOn` and the
+  box SKUs' presale release date. `publishedOn` can be a placeholder: for
+  Mystery Booster Commander Edition it says 2026-10-01, but the product came
+  out on 2026-10-19. The page prints the month under a box only set's name
+  ("Oct 2026"), or the preorder text when the date is in the future.
 - **Order on the page**: box sets are ordered by the newest deck release in the
-  set, else by `set_release`, newest first. Star Trek therefore sorts by its
-  decks' 2026-11-13, then come Reality Fracture, Mystery Booster Commander
-  Edition and The Hobbit.
+  set, else by `set_release`, newest first. Today that is Star Trek (its decks'
+  2026-11-13), Mystery Booster Commander Edition, Reality Fracture, and so on
+  down to The Hobbit and, further down, Assassin's Creed.
 
 ---
 
@@ -386,31 +393,29 @@ set name; leave them.
 
 Each runs once and is recorded by name in `migrations`:
 
-- `ck_sold_out_2026_10`: until October the history recorded Card Kingdom
-  prices on days it was sold out, drawing flat `best` lines nobody could pay.
-  `CK_SOLD_OUT_2026` in `scrape_prices.py` holds each deck's sold out days,
-  read from the git history of `prices.json` (the last run of each UTC day)
-  from `CK_SOLD_OUT_FROM` (2026-06-20, the first run with stock counts) to
-  `CK_SOLD_OUT_THROUGH` (2026-10-08). The migration rebuilds each deck series
-  from the prices in force each day; applied to the canonical history on
-  2026-10-30, it rebuilt 69 deck series, so 2672 sold out deck days no longer
-  count a CK price.
+- `ck_sold_out_2026_10` and `ck_sold_out_2026_10b`: until October the history
+  recorded Card Kingdom prices on days it was sold out, drawing flat `best`
+  lines nobody could pay. `CK_SOLD_OUT_2026` in `scrape_prices.py` holds each
+  deck's sold out days, read from the git history of `prices.json` (the last
+  run of each UTC day) from `CK_SOLD_OUT_FROM` (2026-06-20, the first run with
+  stock counts) to `CK_SOLD_OUT_THROUGH` (2026-10-30, the last run of the old
+  scraper on main). The rebuild replays each deck series from the prices in
+  force each day, without `ck` on sold out days. The table was first read up
+  to 2026-10-08 (`ck_sold_out_2026_10`); the old scraper kept writing sold out
+  prices on main until this change replaced it, so the table was read again up
+  to 2026-10-30, and a history that already had the first migration gets
+  `ck_sold_out_2026_10b`: `CK_10B_IN_STOCK` puts back in stock prices the first
+  pass left out, then the rebuild runs again from 2026-10-08. Run on main's
+  history as of 2026-10-30, the two together rebuild 73 deck series, so 3088
+  sold out deck days no longer count a CK price. The scraper also reads the
+  stock in the previous run's `prices.json` for that run's date and warns
+  about any later date it cannot check. The table can go once its dates leave
+  the 90 day window (after 2027-01-28).
 - `bad_points_2026_10`: drops values under 0.4 times their series median, plus
   `KNOWN_BAD_HISTORY` (the peace-offering-woe CK series, which was really the
   Bloomburrow deck). On the canonical history it removed nothing: the outliers
   it targeted were Zulus and Mana Pool values already stripped on 2026-10-07,
   and peace-offering-woe left the catalog.
-
-The first run on the canonical history logged `::warning::history: Card
-Kingdom stock unknown for <dates>` for the 19 dates from 2026-10-09 to
-2026-10-28: the old scraper kept running on main after `CK_SOLD_OUT_THROUGH`,
-so Card Kingdom prices it recorded on those dates while sold out are still in
-`best`. Because `ck_sold_out_2026_10` is now listed in `migrations`, widening
-the table under the same name does nothing; regenerate `CK_SOLD_OUT_2026` from
-the git history of `prices.json` up to the deploy date, move
-`CK_SOLD_OUT_THROUGH`, and give the migration a new name (for example
-`ck_sold_out_2026_10b`). The table can be deleted once its dates leave the
-90 day window (after 2027-01-27 if it is extended to 2026-10-28).
 
 ---
 
