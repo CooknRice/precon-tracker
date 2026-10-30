@@ -18,9 +18,6 @@
     ],
     "desc": "Four color planeswalker deck led by Jace: each turn he draws two cards and filters one away, he can trade one of your creatures or planeswalkers for a random new one from the top of your library, and opponents must pay a tax to attack him.",
     "msrp": 49.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-10-02",
     "powerScore": 4.7,
     "powerBracket": "B2"
   },
@@ -37,9 +34,6 @@
     "commander": "Giada, Font of Hope",
     "desc": "Mono white Angels: Giada makes every Angel enter with extra +1/+1 counters for each Angel already in play, and taps for mana to cast them. A beginner friendly flying army that snowballs.",
     "msrp": 29.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-10-02",
     "powerScore": 5.0,
     "powerBracket": "B3"
   },
@@ -56,9 +50,6 @@
     "commander": "Sai, Master Thopterist",
     "desc": "Mono blue artifacts: every artifact you cast makes a 1/1 flying Thopter with Sai, and spare artifacts can be sacrificed to draw cards. A simple, steady value engine.",
     "msrp": 29.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-10-02",
     "powerScore": 4.8,
     "powerBracket": "B2"
   },
@@ -75,9 +66,6 @@
     "commander": "Ghoulcaller Gisa",
     "desc": "Mono black Zombies and sacrifice: Gisa turns one creature into a horde of 2/2 Zombies equal to its power, so every body you sacrifice comes back as an army.",
     "msrp": 29.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-10-02",
     "powerScore": 4.5,
     "powerBracket": "B2"
   },
@@ -94,9 +82,6 @@
     "commander": "Lathliss, Dragon Queen",
     "desc": "Mono red Dragons: each nontoken Dragon you play brings a free 5/5 flying Dragon token with Lathliss, and she can pump the whole flight. Big fliers, fast clocks.",
     "msrp": 29.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-10-02",
     "powerScore": 4.8,
     "powerBracket": "B2"
   },
@@ -113,9 +98,6 @@
     "commander": "Ghalta, Primal Hunger",
     "desc": "Mono green stompy: Elf and Druid ramp into Dinosaurs and other big creatures, then Ghalta costs almost nothing to cast and tramples over blockers.",
     "msrp": 29.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-10-02",
     "powerScore": 5.3,
     "powerBracket": "B3"
   },
@@ -134,9 +116,6 @@
     "commander": "Captain America, Team Leader",
     "desc": "Jeskai Heroes team up: rally a squad, suit them up with Equipment, and pile on +1/+1 counters. Captain America throws his shield to repeatedly buff and protect the team.",
     "msrp": 74.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-06-26",
     "power": 3.0,
     "powerScore": 4.6,
     "powerBracket": "B2"
@@ -155,9 +134,6 @@
     "commander": "T'Challa, the Black Panther",
     "desc": "Selesnya Wakandan forces grind value through creatures and support abilities, building a resilient board on the path to victory.",
     "msrp": 74.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-06-26",
     "power": 3.0,
     "powerScore": 3.8,
     "powerBracket": "B2"
@@ -175,17 +151,14 @@
       "R",
       "G"
     ],
-    "commander": "Invisible Woman",
+    "commander": "Mister Fantastic",
     "altCommanders": [
-      "Mister Fantastic",
+      "Invisible Woman",
       "Human Torch",
       "The Thing"
     ],
     "desc": "Four color (no black) noncreature spell engine: Invisible Woman's Walls hold the line while you push scientific innovation, then the team launches a heavy counterattack. Pick any of the four members to lead.",
     "msrp": 74.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-06-26",
     "power": 3.0,
     "powerScore": 4.8,
     "powerBracket": "B2"
@@ -205,9 +178,6 @@
     "commander": "Doctor Doom, King of Latveria",
     "desc": "Grixis villains scheme with connive to grow units and drain opponents. Loki offers an alternate build for deceptive tactics that copy the best villain.",
     "msrp": 74.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-06-26",
     "power": 3.0,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -229,10 +199,6 @@
     ],
     "desc": "X spells and +1/+1 counters in one tight package. Zimone makes X spells cheaper as she grows, and nearly every payoff in the deck scales with mana. Pure Simic ramp into haymakers.",
     "msrp": 49.99,
-    "currentPrice": 49.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-24",
-    "singlesValue": 19,
     "power": 2.5,
     "powerScore": 3.8,
     "powerBracket": "B2"
@@ -254,10 +220,6 @@
     ],
     "desc": "Auras on opponents' creatures to goad them into attacking each other while you draw cards. Highest reprint value of the Strixhaven cycle. Political and passive aggressive.",
     "msrp": 49.99,
-    "currentPrice": 49.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-24",
-    "singlesValue": 214,
     "power": 2.5,
     "powerScore": 3.8,
     "powerBracket": "B2"
@@ -279,9 +241,6 @@
     ],
     "desc": "Cast big instants and sorceries: at the beginning of combat on your turn, if you've cast one this turn, Rootha makes a flying, hasty X/X Elemental, where X is the greatest mana value among them. Rewards you for going big instead of going wide. Pairs with the new Prepared mechanic.",
     "msrp": 49.99,
-    "currentPrice": 49.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-24",
     "power": 2.0,
     "powerScore": 4.8,
     "powerBracket": "B2"
@@ -303,9 +262,6 @@
     ],
     "desc": "Create Spirits as cards leave your graveyard, then buff them to close out. A unique Boros graveyard strategy, not typical aggro. Heavy on first time reprints.",
     "msrp": 49.99,
-    "currentPrice": 49.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -327,10 +283,6 @@
     ],
     "desc": "Create Pests and sacrifice them for life, cards, and stackable counters. Classic Golgari attrition tuned for Strixhaven's biology department.",
     "msrp": 49.99,
-    "currentPrice": 49.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-24",
-    "singlesValue": 134,
     "power": 2.0,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -349,19 +301,16 @@
       "R",
       "G"
     ],
-    "commander": "Heroes in a Half Shell",
+    "commander": "Leonardo, the Balance",
     "altCommanders": [
-      "Leonardo, the Balance",
       "Donatello, the Brains",
       "Splinter, the Mentor",
       "Raphael, the Muscle",
-      "Michelangelo, the Heart"
+      "Michelangelo, the Heart",
+      "Heroes in a Half Shell"
     ],
-    "desc": "Five color go wide with +1/+1 counters on turtles, mutants, and ninjas. Character Select mechanic lets you partner Leonardo with any of the other four turtles or Splinter.",
+    "desc": "Five color go wide with +1/+1 counters on turtles, mutants, and ninjas. Character Select mechanic lets you partner Leonardo with any of the other three turtles or Splinter.",
     "msrp": 69.99,
-    "currentPrice": 59.99,
-    "priceSource": "Amazon",
-    "priceDate": "2026-04-13",
     "power": 2.5,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -386,9 +335,6 @@
     ],
     "desc": "Cheat big Elementals in with evoke, then sacrifice and copy them for value. Includes Fury, Endurance, and the first ever reprint of Timeless Lotus.",
     "msrp": 49.99,
-    "currentPrice": 35.1,
-    "priceSource": "Amazon",
-    "priceDate": "2026-04-13",
     "power": 2.5,
     "powerScore": 5.7,
     "powerBracket": "B3"
@@ -411,9 +357,6 @@
     ],
     "desc": "Spread -1/-1 counters to grind opponents out, then steal their weakened creatures. Jund attrition. Necroskitter, Massacre Girl, Flourishing Defenses included.",
     "msrp": 49.99,
-    "currentPrice": 38.45,
-    "priceSource": "Amazon",
-    "priceDate": "2026-04-13",
     "power": 2.0,
     "powerScore": 5.8,
     "powerBracket": "B3"
@@ -436,10 +379,6 @@
     ],
     "desc": "Artifacts and proliferate in Jeskai colors, with a Spacecraft as commander. Reprint value well above MSRP. EDHREC grade A.",
     "msrp": 44.99,
-    "currentPrice": 31.75,
-    "priceSource": "MTGStocks",
-    "priceDate": "2026-04-23",
-    "singlesValue": 113,
     "power": 3.0,
     "powerScore": 5.1,
     "powerBracket": "B3"
@@ -460,11 +399,8 @@
     "altCommanders": [
       "Szarel, Genesis Shepherd"
     ],
-    "desc": "Sacrifice lands to grow a seedship, then drain opponents when lands die. One shot kill potential with Sylvan Safekeeper.",
+    "desc": "Sacrifice lands to the seedship Hearthhull to draw cards; once fully stationed it flies and drains each opponent for 2 whenever you sacrifice a land. Szarel lets you replay those lands from your graveyard.",
     "msrp": 44.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 6.2,
     "powerBracket": "B3"
@@ -487,9 +423,6 @@
     ],
     "desc": "Mardu reanimator focused on creatures with power 3 or less: Terra returns them when she deals combat damage. FF6 World of Ruin flavor.",
     "msrp": 69.99,
-    "currentPrice": 42.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.2,
     "powerBracket": "B3"
@@ -510,11 +443,8 @@
     "altCommanders": [
       "Tifa, Martial Artist"
     ],
-    "desc": "Equipment focused Naya voltron: push creatures to 7+ power with Swords of X and Y. Tutors for weapons, buffs attackers. FF7 flavor tightly integrated.",
+    "desc": "Equipment focused Naya voltron: Cloud draws a card for each equipped attacker and makes two Treasures when he attacks with 7 or more power. Tutors for weapons, buffs attackers. FF7 flavor tightly integrated.",
     "msrp": 69.99,
-    "currentPrice": 54.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.8,
     "powerBracket": "B3"
@@ -537,9 +467,6 @@
     ],
     "desc": "Bant counter manipulation: move counters between permanents, proliferate them, deal combat damage to snowball. FF10 flavor with Summons and Blitzball.",
     "msrp": 69.99,
-    "currentPrice": 64.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 6.4,
     "powerBracket": "B3"
@@ -562,9 +489,6 @@
     ],
     "desc": "Esper spellslinger control. Y'shtola drains life on big noncreature spells, drawing you four cards per rotation through the right setup. FF14 flavor.",
     "msrp": 69.99,
-    "currentPrice": 64.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.8,
     "powerBracket": "B3"
@@ -587,9 +511,6 @@
     ],
     "desc": "Spellslinger tempo in Jeskai colors, not dragon tribal despite the set. Shiko and Narset copies your second spell each turn if it targets, or draws you a card if it doesn't, fed by about 30 instants and sorceries. Elsha leads a prowess Monk token alternate.",
     "msrp": 44.99,
-    "currentPrice": 34.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 6.6,
     "powerBracket": "B3"
@@ -612,9 +533,6 @@
     ],
     "desc": "Abzan defenders and toughness midrange. Felothar sacrifices creatures for card draw equal to toughness. Inspired by Doran.",
     "msrp": 44.99,
-    "currentPrice": 49.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 6.0,
     "powerBracket": "B3"
@@ -635,11 +553,8 @@
     "altCommanders": [
       "Kotis, Sibsig Champion"
     ],
-    "desc": "Sultai graveyard value with triggers whenever cards leave the graveyard. Kotis returns as a zombie druid; Teval is the clan's Spirit Dragon.",
+    "desc": "Sultai graveyard value: Teval, the clan's Spirit Dragon, mills on every attack and makes a 2/2 Zombie Druid whenever cards leave your graveyard, while Kotis lets you cast a creature from your graveyard once each turn.",
     "msrp": 44.99,
-    "currentPrice": 59.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.4,
     "powerBracket": "B3"
@@ -662,9 +577,6 @@
     ],
     "desc": "Mardu tokens and sacrifice aggro. Make attackers, swing in, sacrifice them for value. Zurgo leads the new Mardu clan.",
     "msrp": 44.99,
-    "currentPrice": 44.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.2,
     "powerBracket": "B3"
@@ -687,9 +599,6 @@
     ],
     "desc": "Temur ramp into big dragons. Ureni is the Spirit Dragon of wisdom. The closest thing in the set to classic dragon tribal.",
     "msrp": 44.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 6.0,
     "powerBracket": "B3"
@@ -712,9 +621,6 @@
     ],
     "desc": "Temur energy + artifact creatures. Saheeli generates energy on artifact casts; Pia spends it on flying Aetherjet vehicle tokens. Kaladesh flavor on steroids.",
     "msrp": 44.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.7,
     "powerBracket": "B3"
@@ -737,9 +643,6 @@
     ],
     "desc": "Esper zombie discard with Eternalize. Naktamun (Amonkhet) flavor: draw and discard for value while raising mummies.",
     "msrp": 44.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 3.0,
     "powerScore": 5.4,
     "powerBracket": "B3"
@@ -762,9 +665,6 @@
     ],
     "desc": "Esper enchantments with miracle cost reduction. Aminatou surveils each upkeep and discounts enchantments by 4 via miracle. One of the stronger precon commanders in years.",
     "msrp": 44.99,
-    "currentPrice": 44.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 3.0,
     "powerScore": 5.6,
     "powerBracket": "B3"
@@ -784,11 +684,8 @@
     "altCommanders": [
       "Rendmaw, Creaking Nest"
     ],
-    "desc": "Golgari delirium reanimator. Fill the graveyard, hit four card types, return big permanents. Rendmaw scales with how many card types you have.",
+    "desc": "Golgari delirium reanimator. Fill the graveyard, hit four card types, return big permanents. Rendmaw gives every player a goaded 2/2 flier whenever you play a card with two or more card types.",
     "msrp": 44.99,
-    "currentPrice": 34.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.5,
     "powerBracket": "B2"
@@ -810,9 +707,6 @@
     ],
     "desc": "Simic manifest dread and landfall. Flip face down cards at instant speed, churn the library for value. The original Zimone, before the 2026 Quandrix version.",
     "msrp": 44.99,
-    "currentPrice": 39.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 6.2,
     "powerBracket": "B3"
@@ -832,11 +726,8 @@
     "altCommanders": [
       "The Lord of Pain"
     ],
-    "desc": "Rakdos group slug. Constantly deal damage to everyone; Valgavoth grows and devours opponents' fallen souls. Pure attrition villainy.",
+    "desc": "Rakdos group slug. Constantly deal damage to everyone; Valgavoth grows and draws a card the first time each opponent loses life on their own turn. Pure attrition villainy.",
     "msrp": 44.99,
-    "currentPrice": 119.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.4,
     "powerBracket": "B3"
@@ -859,9 +750,6 @@
     ],
     "desc": "Jeskai Offspring go wide. Drop a little extra mana on cast for a 1/1 token copy. Zinnia makes Offspring for any creature in your deck for two mana.",
     "msrp": 44.99,
-    "currentPrice": 33.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.9,
     "powerBracket": "B3"
@@ -883,9 +771,6 @@
     ],
     "desc": "Golgari squirrel tribal with token mana. Tap tokens for any color to fuel bigger spells. Best reprint value of the Bloomburrow cycle: Chatterfang, Saw in Half, Beledros Witherbloom.",
     "msrp": 44.99,
-    "currentPrice": 54.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.4,
     "powerBracket": "B3"
@@ -907,9 +792,6 @@
     ],
     "desc": "Gruul artifact and enchantment animator. On your turn, your artifacts and enchantments with mana value 4 or more (other than Equipment and Auras) become 4/4 indestructible hasty Elementals. Novel build around.",
     "msrp": 44.99,
-    "currentPrice": 39.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 6.2,
     "powerBracket": "B3"
@@ -932,9 +814,6 @@
     ],
     "desc": "Bant group hug with +1/+1 counters. Ms. Bumbleflower gives opponents cards but counters and evasion go to you. A rare group hug deck with a real win condition.",
     "msrp": 44.99,
-    "currentPrice": 44.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.2,
     "powerBracket": "B3"
@@ -957,9 +836,6 @@
     ],
     "desc": "Jeskai energy + artifacts. Generate energy, spend for card draw, creatures, burn. A fresh mechanic finally in Commander.",
     "msrp": 59.99,
-    "currentPrice": 44.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.6,
     "powerBracket": "B3"
@@ -984,9 +860,6 @@
     ],
     "desc": "Five color colorless Eldrazi. Ulalek uses colorless hybrid mana and copies Eldrazi spells and triggered abilities. Ramp into apocalypse.",
     "msrp": 59.99,
-    "currentPrice": 105.0,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 3.0,
     "powerScore": 6.3,
     "powerBracket": "B3"
@@ -1009,9 +882,6 @@
     ],
     "desc": "Jund Lhurgoyf tribal. Disa makes Tarmogoyf tokens from your graveyard. Many players prefer Coram as commander for flexibility.",
     "msrp": 59.99,
-    "currentPrice": 44.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.2,
     "powerBracket": "B3"
@@ -1033,9 +903,6 @@
     ],
     "desc": "Simic lands matter with 'everything counters.' Omo puts a counter that gives a land all land types. Urzatron and gates synergy.",
     "msrp": 59.99,
-    "currentPrice": 59.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.7,
     "powerBracket": "B3"
@@ -1058,9 +925,6 @@
     ],
     "desc": "Mardu outlaw tribal + treasure. Hire Assassins/Mercenaries/Pirates/Rogues/Warlocks. Vihaan animates treasures into 3/3 outlaws.",
     "msrp": 44.99,
-    "currentPrice": 119.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 3.0,
     "powerScore": 5.5,
     "powerBracket": "B3"
@@ -1083,9 +947,6 @@
     ],
     "desc": "Sultai theft. Exile opponents' cards when doing combat damage, cast them at a discount. Chaos politics.",
     "msrp": 44.99,
-    "currentPrice": 199.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.7,
     "powerBracket": "B3"
@@ -1107,9 +968,6 @@
     ],
     "desc": "Izzet spellslinger that rewards casting several spells a turn. Plot mechanic for instant speed tempo plays. Copies instants and sorceries when you cast multiple in a turn.",
     "msrp": 44.99,
-    "currentPrice": 179.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.5,
     "powerBracket": "B3"
@@ -1132,9 +990,6 @@
     ],
     "desc": "Naya Desert lands matter. Discard lands early, bring them back, create Plant armies. Yuma gets cheaper for every land in your graveyard.",
     "msrp": 44.99,
-    "currentPrice": 79.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.3,
     "powerBracket": "B3"
@@ -1157,9 +1012,6 @@
     ],
     "desc": "Naya voltron with auras and equipment. Dogmeat mills for auras/equipment, creates Junk tokens for impulse draw. Preston is the aura focused alternate.",
     "msrp": 59.99,
-    "currentPrice": 59.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -1182,9 +1034,6 @@
     ],
     "desc": "Sultai rad counters and proliferate. Distribute rad to opponents to mill them and buff your mutants. New mechanic exclusive to this set.",
     "msrp": 59.99,
-    "currentPrice": 129.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 3.0,
     "powerScore": 5.2,
     "powerBracket": "B3"
@@ -1207,9 +1056,6 @@
     ],
     "desc": "Mardu go wide aggro with Caesar's Legion theme. Human soldier tribal, token armies, modal combat triggers.",
     "msrp": 59.99,
-    "currentPrice": 79.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.3,
     "powerBracket": "B3"
@@ -1232,9 +1078,6 @@
     ],
     "desc": "Jeskai energy + artifacts. Generate energy on artifact casts, play prewar technology, assemble Liberty Prime and crush the enemy.",
     "msrp": 59.99,
-    "currentPrice": 44.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.8,
     "powerBracket": "B3"
@@ -1255,11 +1098,8 @@
     "altCommanders": [
       "Sophia, Dogged Detective"
     ],
-    "desc": "Bant Clues and card draw: Morska investigates every upkeep, has no maximum hand size and grows two +1/+1 counters whenever you draw your second card in a turn.",
+    "desc": "Bant Clues and card draw: Morska investigates every upkeep, has no maximum hand size and gets two +1/+1 counters whenever you draw your second card in a turn.",
     "msrp": 44.99,
-    "currentPrice": 29.99,
-    "priceSource": "GeekeryGames",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.3,
     "powerBracket": "B3"
@@ -1281,9 +1121,6 @@
     ],
     "desc": "Dimir surveil + finality counter reanimator. Cards with finality counters recurse in new ways. Grave interaction without infinite loops.",
     "msrp": 44.99,
-    "currentPrice": 44.99,
-    "priceSource": "GeekeryGames",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.6,
     "powerBracket": "B3"
@@ -1305,9 +1142,6 @@
     ],
     "desc": "Boros goad: whenever Nelly Borca attacks she suspects a creature and goads every suspected creature, and when opponents' creatures hit each other you draw a card too.",
     "msrp": 44.99,
-    "currentPrice": 49.99,
-    "priceSource": "GeekeryGames",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.1,
     "powerBracket": "B3"
@@ -1330,9 +1164,6 @@
     ],
     "desc": "Naya face down matters: disguise, morph, megamorph, manifest. Flip creatures up for combat blowouts.",
     "msrp": 44.99,
-    "currentPrice": 44.99,
-    "priceSource": "GeekeryGames",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.1,
     "powerBracket": "B3"
@@ -1355,9 +1186,6 @@
     ],
     "desc": "Grixis Pirate tribal. Cast cards opponents own when plundering, treasure production, raid triggers.",
     "msrp": 44.99,
-    "currentPrice": 34.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.3,
     "powerBracket": "B3"
@@ -1380,9 +1208,6 @@
     ],
     "desc": "Naya Dinosaurs with discover: whenever Pantlaza or another Dinosaur enters, discover X equal to its toughness once each turn, casting free spells off the top of your library.",
     "msrp": 44.99,
-    "currentPrice": 69.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.8,
     "powerBracket": "B3"
@@ -1404,9 +1229,6 @@
     ],
     "desc": "Orzhov Vampires. Sacrifice fodder for Vampire tokens, Clavileño turns creatures into a growing army.",
     "msrp": 44.99,
-    "currentPrice": 44.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.3,
     "powerBracket": "B3"
@@ -1428,9 +1250,6 @@
     ],
     "desc": "Simic Merfolk and explore: Hakbal makes every Merfolk explore at the start of combat, and each attack puts an extra land onto the battlefield or draws a card.",
     "msrp": 44.99,
-    "currentPrice": 39.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.8,
     "powerBracket": "B3"
@@ -1449,11 +1268,8 @@
     ],
     "commander": "The Fourth Doctor",
     "partner": "Sarah Jane Smith",
-    "desc": "Bant historic matters with the Fourth Doctor and his companion Sarah Jane Smith: play historic cards off the top of your library, make Food along the way and investigate whenever you cast a historic spell.",
+    "desc": "Bant historic matters with the Fourth Doctor and his companion Sarah Jane Smith: once each turn play a historic card off the top of your library and make a Food, and investigate the first time you cast a historic spell each turn.",
     "msrp": 54.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.3,
     "powerBracket": "B3"
@@ -1474,9 +1290,6 @@
     "partner": "Rose Tyler",
     "desc": "Jeskai time counters with the Tenth Doctor and Rose Tyler: every attack exiles a card and gives it suspend, time travel speeds those spells along, and Rose grows with each time counter.",
     "msrp": 54.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 4.6,
     "powerBracket": "B3"
@@ -1497,9 +1310,6 @@
     "partner": "Yasmin Khan",
     "desc": "Temur paradox with the Thirteenth Doctor and Yasmin Khan: each spell cast from anywhere other than your hand puts a +1/+1 counter on a creature, Yasmin exiles cards you may play, and creatures with counters untap at your end step.",
     "msrp": 54.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.5,
     "powerBracket": "B2"
@@ -1522,9 +1332,6 @@
     ],
     "desc": "Grixis villains led by Davros: make an opponent lose 3 or more life in a turn to create a menace Dalek and force a villainous choice between your card draw and their discard.",
     "msrp": 54.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.8,
     "powerBracket": "B2"
@@ -1546,9 +1353,6 @@
     ],
     "desc": "Selesnya Roles and enchantments: Ellivere attaches a Virtuous Role whenever she enters or attacks, and enchanted creatures draw you a card when they connect.",
     "msrp": 44.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.5,
     "powerBracket": "B3"
@@ -1570,9 +1374,6 @@
     ],
     "desc": "Dimir Faeries in the air: Tegwyll has flying and deathtouch, pumps your other Faeries, and draws you a card whenever one of them dies.",
     "msrp": 44.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 6.1,
     "powerBracket": "B3"
@@ -1597,9 +1398,6 @@
     ],
     "desc": "Five color sliver tribal with graveyard recursion. Sliver Gravemother gives every Sliver creature card in your graveyard encore, and the legend rule doesn't apply to your Slivers. Contains staples; priced accordingly.",
     "msrp": 74.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 3.0,
     "powerScore": 4.8,
     "powerBracket": "B2"
@@ -1620,9 +1418,6 @@
     ],
     "desc": "Colorless eldrazi ramp. Wastes tribal that swings into Annihilator. Includes Eldrazi Temple, Sensei's Divining Top.",
     "msrp": 74.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -1645,9 +1440,6 @@
     ],
     "desc": "Abzan enchantments: Anikthea gives your enchantment creatures menace and, whenever she enters or attacks, returns an enchantment from your graveyard as a 3/3 Zombie copy.",
     "msrp": 74.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 3.0,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -1670,9 +1462,6 @@
     ],
     "desc": "Jeskai superfriends. Planeswalker tribal with emblems and ultimate triggers as a core theme.",
     "msrp": 74.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.7,
     "powerBracket": "B3"
@@ -1695,9 +1484,6 @@
     ],
     "desc": "Grixis Orcs and amass: casting Sauron amasses Orcs 5, mills five and reanimates a creature, and the Ring tempts you whenever an opposing commander dies. Iconic IP, beloved precon.",
     "msrp": 59.99,
-    "currentPrice": 89.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 3.0,
     "powerScore": 5.0,
     "powerBracket": "B3"
@@ -1716,11 +1502,8 @@
     ],
     "commander": "Frodo, Adventurous Hobbit",
     "partner": "Sam, Loyal Attendant",
-    "desc": "Abzan Hobbits and Food with partners Frodo and Sam: Sam makes a Food every combat and cheapens Food abilities, and gaining 3 life in a turn lets the Ring tempt Frodo into drawing cards.",
+    "desc": "Abzan Hobbits and Food with partners Frodo and Sam: Sam makes a Food every combat on your turn and cheapens Food abilities, and when Frodo attacks after you gained 3 life that turn, the Ring tempts you and he can draw a card.",
     "msrp": 59.99,
-    "currentPrice": 74.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -1740,11 +1523,8 @@
     "altCommanders": [
       "Gandalf, Westward Voyager"
     ],
-    "desc": "Simic Elves voting: whenever another Elf enters, Galadriel calls a vote each combat that either lets the Ring tempt you and grows a creature or draws you a card.",
+    "desc": "Simic Elves voting: at the start of your combat, if another Elf entered this turn, Galadriel calls a vote that either has the Ring tempt you and grow its bearer or draws you a card.",
     "msrp": 59.99,
-    "currentPrice": 59.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 4.6,
     "powerBracket": "B2"
@@ -1767,9 +1547,6 @@
     ],
     "desc": "Jeskai Humans go wide: whenever another Human entered this turn, Éowyn makes two 2/2 Knights with trample and haste at the start of combat, then draws once you control six or more Humans.",
     "msrp": 59.99,
-    "currentPrice": 59.99,
-    "priceSource": "CardKingdom",
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.3,
     "powerBracket": "B3"
@@ -1792,9 +1569,6 @@
     ],
     "desc": "Naya +1/+1 counters with the Backup mechanic. Shalai and Hallar turn counter placement into direct damage.",
     "msrp": 44.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 4.6,
     "powerBracket": "B2"
@@ -1817,9 +1591,6 @@
     ],
     "desc": "Jeskai convoke + creature tokens. Tap tiny creatures to cast big spells. Saint Traft is often the better commander option.",
     "msrp": 44.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.4,
     "powerBracket": "B2"
@@ -1841,9 +1612,6 @@
     ],
     "desc": "Orzhov phyrexian + Incubator tokens. Brimaz creates Incubators that flip into big phyrexians. Moira and Teshar enable a historic reanimator alternate.",
     "msrp": 44.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.3,
     "powerBracket": "B2"
@@ -1866,9 +1634,6 @@
     ],
     "desc": "Esper Knights with horsemanship. Knight tribal in three colors, vampire knight subtheme via Elenda & Azor.",
     "msrp": 44.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -1891,9 +1656,6 @@
     ],
     "desc": "Temur artifact tokens. Clues, Food, Blood, Treasures all care about unique types. Rashmi and Ragavan steal spells for free.",
     "msrp": 44.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.2,
     "powerBracket": "B2"
@@ -1912,9 +1674,6 @@
     "commander": "Neyali, Suns' Vanguard",
     "desc": "Boros Mirran survivors. Go wide, double strike, equip, smash through Phyrexia's horrors.",
     "msrp": 44.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 1.5,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -1934,9 +1693,6 @@
     "commander": "Ixhel, Scion of Atraxa",
     "desc": "Abzan poison: toxic creatures and proliferate push toward 10 poison counters, and Ixhel lets you play cards from the libraries of opponents with three or more poison counters.",
     "msrp": 44.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.0,
     "powerBracket": "B3"
@@ -1956,11 +1712,8 @@
       "U"
     ],
     "commander": "Isperia, Supreme Judge",
-    "desc": "Azorius flying tribal. Beginner friendly with a clear game plan: fly over, swing through the air, draw cards on attacks.",
+    "desc": "Azorius flying tribal. Beginner friendly with a clear game plan: fly over, swing through the air, and Isperia draws you a card whenever a creature attacks you.",
     "msrp": 24.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 1.5,
     "powerScore": 5.0,
     "powerBracket": "B3"
@@ -1979,9 +1732,6 @@
     "commander": "Gisa and Geralf",
     "desc": "Dimir Zombies starter: Gisa and Geralf mill four cards on entering and let you cast a Zombie from your graveyard once each turn.",
     "msrp": 24.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 1.5,
     "powerScore": 4.4,
     "powerBracket": "B2"
@@ -2000,9 +1750,6 @@
     "commander": "Emmara, Soul of the Accord",
     "desc": "Selesnya tokens going wide. Beginner friendly with a clear game plan, significantly power crept by 2026 but a good chassis.",
     "msrp": 24.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 1.5,
     "powerScore": 4.5,
     "powerBracket": "B2"
@@ -2021,9 +1768,6 @@
     "commander": "Kardur, Doomscourge",
     "desc": "Rakdos goad starter: Kardur forces opposing creatures to attack each other until your next turn, and every attacking creature that dies drains each opponent for 1.",
     "msrp": 24.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 1.5,
     "powerScore": 4.6,
     "powerBracket": "B2"
@@ -2045,9 +1789,6 @@
     "commander": "Atarka, World Render",
     "desc": "Gruul Dragons starter: Atarka, World Render gives every attacking Dragon double strike, so a few big fliers end games fast.",
     "msrp": 24.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 1.5,
     "powerScore": 4.2,
     "powerBracket": "B2"
@@ -2070,9 +1811,6 @@
     ],
     "desc": "Esper artifact creatures: Urza gives them menace, makes a growing Construct token every end step and costs less for each artifact creature you control.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.1,
     "powerBracket": "B3"
@@ -2095,9 +1833,6 @@
     ],
     "desc": "Grixis artifacts: each combat Mishra copies one of your noncreature artifacts as a hasty 4/4 Construct, so artifacts with strong enter effects pay off again every turn.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.1,
     "powerBracket": "B3"
@@ -2118,11 +1853,8 @@
     "altCommanders": [
       "Marneus Calgar"
     ],
-    "desc": "Esper Space Marines / Imperium humans tribal. Heroic combat and protective counterspells.",
+    "desc": "Esper Imperium humans and Space Marines: Greyfax gives your other creatures +1/+0 and vigilance and taps an opposing creature to investigate, with a few protective counterspells.",
     "msrp": 49.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.6,
     "powerBracket": "B2"
@@ -2143,9 +1875,6 @@
     ],
     "desc": "Mono black Necron artifact horde. Reanimate, sacrifice, flood the board with undying robot aliens.",
     "msrp": 49.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.5,
     "powerBracket": "B2"
@@ -2168,9 +1897,6 @@
     ],
     "desc": "Temur counters and big creatures: the Swarmlord draws you a card whenever a creature with a counter on it dies, and comes back bigger each time you recast it.",
     "msrp": 49.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.9,
     "powerBracket": "B2"
@@ -2193,9 +1919,6 @@
     ],
     "desc": "Grixis cascade: once opponents have lost life this turn, Abaddon gives the spells you cast from hand cascade up to that amount, so early damage turns into free spells.",
     "msrp": 49.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 3.0,
     "powerScore": 5.1,
     "powerBracket": "B3"
@@ -2215,9 +1938,6 @@
     "commander": "Dihada, Binder of Wills",
     "desc": "Mardu legendary tribal. Every legendary triggers Dihada for card filtering and tokens.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 4.6,
     "powerBracket": "B2"
@@ -2237,11 +1957,8 @@
       "G"
     ],
     "commander": "Jared Carthalion",
-    "desc": "Five color painland shell. Domain counting, monarch/initiative subthemes.",
+    "desc": "Five color all colors matters: Jared Carthalion makes 3/3 Kavu tokens that are every color, backed by converge, cascade and payoffs for multicolored spells.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.5,
     "powerBracket": "B3"
@@ -2263,9 +1980,6 @@
     ],
     "desc": "Orzhov party: Nalia casts Clerics, Rogues, Warriors and Wizards off the top of your library, and a full party gives every creature a +1/+1 counter and deathtouch each combat.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.8,
     "powerBracket": "B4"
@@ -2287,9 +2001,6 @@
     ],
     "desc": "Dimir horror tribal with mill. Reanimate from opponents' graveyards after milling them into submission.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.1,
     "powerBracket": "B3"
@@ -2309,11 +2020,8 @@
     "altCommanders": [
       "Durnan of the Yawning Portal"
     ],
-    "desc": "Gruul wolves that cast from exile. Impulse draw from top of library, cast werewolves at instant speed, grow the pack.",
+    "desc": "Gruul wolves that cast from exile: Faldorn makes a 2/2 Wolf whenever you cast a spell or play a land from exile, and can discard a card to exile your top card and play it that turn.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.3,
     "powerBracket": "B3"
@@ -2335,9 +2043,6 @@
     ],
     "desc": "Izzet Dragons and goad: Firkraag goads a creature whenever your Dragons attack, then grows and draws you a card when forced attackers hit your opponents.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.0,
     "powerBracket": "B3"
@@ -2360,9 +2065,6 @@
     ],
     "desc": "Esper connive: whenever you attack, Kamiz makes an attacker unblockable and has it connive, then gives a smaller attacker double strike.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.1,
     "powerBracket": "B3"
@@ -2385,9 +2087,6 @@
     ],
     "desc": "Grixis spellslinger with casualty. Sacrifice creatures on cast to copy instants and sorceries.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 4.6,
     "powerBracket": "B2"
@@ -2408,11 +2107,8 @@
     "altCommanders": [
       "The Beamtown Bullies"
     ],
-    "desc": "Jund blitz: cast creatures cheap, they die at end of turn, sacrifice for value.",
+    "desc": "Jund blitz: Henzie gives your creature spells with mana value 4 or more blitz, so they attack with haste and draw you a card when they die at end of turn, and blitz gets cheaper each time you recast him.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.1,
     "powerBracket": "B3"
@@ -2435,9 +2131,6 @@
     ],
     "desc": "Naya token party. Cats, Dogs, anything wide. Kitt Kanto rides whatever you can assemble.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -2460,9 +2153,6 @@
     ],
     "desc": "Bant shield counters. Counters protect creatures and can be cashed in for utility. Slow, resilient, deliberate.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 1.5,
     "powerScore": 4.4,
     "powerBracket": "B2"
@@ -2484,9 +2174,6 @@
     ],
     "desc": "Gruul modified creatures (counters, Equipment, Auras): Chishiro makes a 2/2 menace Spirit whenever an Aura or Equipment enters, and grows every modified creature at your end step.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 4.2,
     "powerBracket": "B2"
@@ -2508,9 +2195,6 @@
     ],
     "desc": "Azorius Vehicles and Equipment: Kotori sets every Vehicle's crew to 2 and gives an artifact creature lifelink and vigilance each combat. Crew things, swing things, go tall in a deck type that rarely gets love.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 1.5,
     "powerScore": 5.4,
     "powerBracket": "B3"
@@ -2535,9 +2219,6 @@
     ],
     "desc": "Rakdos vampire tribal with Blood tokens. Drain, aggro, vampire swarm: Crimson Vow's signature theme.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 4.3,
     "powerBracket": "B2"
@@ -2559,9 +2240,6 @@
     ],
     "desc": "Azorius spirit flying tribal. Go wide in the air: Millicent makes a flying Spirit whenever a nontoken Spirit dies or deals combat damage.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -2583,9 +2261,6 @@
     ],
     "desc": "Selesnya human/coven tribal. Coven triggers (three creatures of different power) reward board diversity.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 4.5,
     "powerBracket": "B2"
@@ -2607,9 +2282,6 @@
     ],
     "desc": "Dimir zombie decay. Wilhelt turns every dying zombie into a new one, so the board keeps refilling itself.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 5.5,
     "powerBracket": "B3"
@@ -2632,9 +2304,6 @@
     ],
     "desc": "Bant voltron with Auras and Equipment. Galea lets you look at the top card of your library any time and cast Aura and Equipment spells from there, and Equipment cast that way attaches as it enters.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -2657,9 +2326,6 @@
     ],
     "desc": "Esper dungeon crawl: Sefris ventures into the dungeon whenever creature cards hit your graveyard, and completing a dungeon reanimates a creature.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.2,
     "powerBracket": "B3"
@@ -2679,11 +2345,8 @@
     "altCommanders": [
       "Klauth, Unrivaled Ancient"
     ],
-    "desc": "Gruul dragon tribal. Take damage to trigger elementals and dragons, brute force, Jund style.",
+    "desc": "Gruul dragon tribal: whenever Vrondiss is dealt damage it makes a 5/4 Dragon Spirit, and every dice roll lets it damage itself for another. Brute force over finesse.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 5.3,
     "powerBracket": "B3"
@@ -2705,9 +2368,6 @@
     ],
     "desc": "Rakdos impulse draw and treasure. Prosper exiles cards from top of library, casts them, pays with treasures.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -2729,9 +2389,6 @@
     ],
     "desc": "Orzhov political. Breena draws cards and doubles counters when opponents attack each other. The OG Strixhaven precon.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.5,
     "powerBracket": "B2"
@@ -2753,9 +2410,6 @@
     ],
     "desc": "Izzet spells matter. Zaffai scales rewards with spell mana value: cast big, get huge triggers.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 4.7,
     "powerBracket": "B2"
@@ -2775,11 +2429,8 @@
     "altCommanders": [
       "Gyome, Master Chef"
     ],
-    "desc": "Golgari life as a resource. Pay life to grow Willowdusk, then hand those counters to your biggest threat.",
+    "desc": "Golgari life as a resource. Gain life or pay it, then Willowdusk puts +1/+1 counters equal to the larger amount on your biggest threat.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.0,
     "powerScore": 3.9,
     "powerBracket": "B2"
@@ -2801,9 +2452,6 @@
     ],
     "desc": "Boros artifact recursion. Osgir sacrifices artifacts to pump your attackers, then exiles artifact cards from your graveyard to make two token copies of each.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.2,
     "powerBracket": "B2"
@@ -2825,9 +2473,6 @@
     ],
     "desc": "Simic token doubling. Parallel Lives in the command zone. The original Quandrix precon before 2026's Unlimited.",
     "msrp": 39.99,
-    "currentPrice": null,
-    "priceSource": null,
-    "priceDate": "2026-04-23",
     "power": 2.5,
     "powerScore": 4.5,
     "powerBracket": "B2"
