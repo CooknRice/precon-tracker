@@ -111,8 +111,9 @@ function timer(ms) {
 async function fromPage(event, url) {
   const scope = new URL(self.registration.scope).pathname;
   const isShell = url.pathname === scope || url.pathname === scope + "index.html";
-  // Fetch the app by its one URL (static hosting ignores the query), so every
-  // filtered URL shares one HTTP cache entry and revalidates with a 304.
+  // Fetch the app by its one URL (static hosting ignores the query), so the
+  // worker's request for any filtered URL reuses one HTTP cache entry and
+  // revalidates with a 304.
   const req = isShell
     ? new Request(SHELL_KEY, { cache: event.request.cache, mode: "same-origin" })
     : event.request;
