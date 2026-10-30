@@ -1,7 +1,7 @@
 {
   "name": "MTG Tracker",
   "short_name": "MTG Tracker",
-  "description": "Daily prices for Commander precons released since 2021, plus sealed booster boxes and set bundles from the same sets, checked at TCGplayer and Card Kingdom, with price history and buy signals.",
+  "description": "Daily prices for Commander precons from 2021 onward, including preorders, plus sealed booster boxes and set bundles for those sets and a few others, checked at TCGplayer and Card Kingdom, with price history and buy signals.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

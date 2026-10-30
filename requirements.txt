@@ -5,6 +5,9 @@
 # To update: pick versions at least two weeks old, list every file's sha256
 # from https://pypi.org/pypi/<package>/<version>/json, then check with
 # pip install --require-hashes -r requirements.txt in a clean venv.
+# A release that fixes a published advisory is exempt from the two weeks:
+# take it as soon as it is out. Hashed pins never update themselves, so
+# .github/dependabot.yml opens a weekly pull request for newer versions.
 
 requests==2.34.2 \
     --hash=sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0 \
@@ -15,9 +18,11 @@ jsonschema==4.26.0 \
 attrs==26.1.0 \
     --hash=sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309 \
     --hash=sha256:d03ceb89cb322a8fd706d4fb91940737b6642aa36998fe130a9bc96c985eff32
-certifi==2026.7.22 \
-    --hash=sha256:62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775 \
-    --hash=sha256:741e2c3b351ddf169a738da9f2c048608ff7f2c5cc02f1ebc6b118bb090d5d55
+# 2026.10.19 drops the emSign ECC Root CA G3 root (GHSA-6q48-6c7w-9gw2,
+# PYSEC-2026-4320); every older certifi still trusts it.
+certifi==2026.10.19 \
+    --hash=sha256:035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae \
+    --hash=sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b
 charset-normalizer==3.5.1 \
     --hash=sha256:00668ebb0609751758682eb0b5857e7c35b9f00e84dfdef062e103244ec94d45 \
     --hash=sha256:012a22b88a77ca2e59b98ac5889b0deb604147666032f45e6d6e217634d2550d \

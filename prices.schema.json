@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "prices.json \u2014 machine-generated daily by scrape_prices.py",
+  "title": "prices.json, machine generated daily by scrape_prices.py",
   "type": "object",
   "required": [
     "updated_at",
@@ -80,15 +80,18 @@
           },
           "card_count": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 0,
+            "description": "Cards in the decklist, counted as copies: a 100 card Commander deck reports 100."
           },
           "priced": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 0,
+            "description": "Card copies with a price."
           },
           "missing": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 0,
+            "description": "Card copies with no price."
           },
           "top_cards": {
             "type": "array",
@@ -109,9 +112,18 @@
               }
             },
             "maxItems": 4
+          },
+          "carried_from": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}",
+            "description": "Set only when this run's phase was cut short or failed: the value is the previous run's, fetched at this time (at most 3 days before updated_at)."
           }
         }
-      }
+      },
+      "description": "Singles value per released deck id, from MTGJSON decklists and card prices. A deck with no MTGJSON decklist yet (a preorder) has no entry."
     },
     "boxes": {
       "type": "object",
@@ -121,7 +133,8 @@
           "type": "object",
           "required": [
             "type",
-            "price"
+            "price",
+            "set_release"
           ],
           "properties": {
             "type": {
@@ -131,6 +144,17 @@
                 "collector",
                 "jumpstart"
               ]
+            },
+            "kind": {
+              "enum": [
+                "play",
+                "draft",
+                "set",
+                "collector",
+                "jumpstart",
+                "booster"
+              ],
+              "description": "Booster kind of the SKU priced. type play holds play, draft, set or booster (a box whose name names no kind, labelled Booster Box)."
             },
             "label": {
               "type": "string"
@@ -151,7 +175,8 @@
                 "number",
                 "null"
               ],
-              "exclusiveMinimum": 0
+              "exclusiveMinimum": 0,
+              "description": "Expected TCGplayer retail value of the cards worth at least box_ev_basis.bulk_threshold each, over the real pack count; present only when ev_coverage reaches box_ev_basis.min_coverage."
             },
             "ck_price": {
               "type": [
@@ -161,7 +186,10 @@
               "minimum": 0
             },
             "ck_qty": {
-              "type": "integer",
+              "type": [
+                "integer",
+                "null"
+              ],
               "minimum": 0
             },
             "ck_url": {
@@ -191,8 +219,67 @@
                 "string",
                 "null"
               ]
+            },
+            "packs": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Booster packs in the priced SKU, from MTGJSON sealed product contents (box topper packs excluded)."
+            },
+            "ev_coverage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Share of the box's estimated value backed by real card prices (value weighted); present whenever ev is."
+            },
+            "set_release": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "format": "date",
+              "description": "Release date of the set (publishedOn of its main TCGCSV group), shared by every row of the set; the page orders box sets by it when no deck of the set gives a date. Null when TCGCSV gives none."
+            },
+            "carried_from": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}",
+              "description": "Set only when this run's phase was cut short or failed: the value is the previous run's, fetched at this time (at most 3 days before updated_at)."
             }
           }
+        }
+      },
+      "description": "Sealed box rows per set: every set in decks.json plus the scraper's BOX_ONLY_SETS."
+    },
+    "box_ev_basis": {
+      "type": "object",
+      "description": "The rules behind boxes[][].ev, which the page's EV note states.",
+      "required": [
+        "bulk_threshold",
+        "min_coverage"
+      ],
+      "properties": {
+        "prices": {
+          "type": "string"
+        },
+        "bulk_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Cards under this many dollars count as bulk_value."
+        },
+        "bulk_value": {
+          "type": "number",
+          "minimum": 0
+        },
+        "min_coverage": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "box_toppers": {
+          "type": "boolean"
         }
       }
     },
@@ -264,11 +351,12 @@
             ]
           },
           "individual_basis": {
-            "type": [
-              "string",
-              "null"
+            "enum": [
+              "cheapest_payable",
+              "cheapest_buyable",
+              null
             ],
-            "description": "How individual_total was priced: cheapest_buyable means each deck at its cheapest buyable vendor price (see components)."
+            "description": "How individual_total and savings were priced. cheapest_payable: each deck at its cheapest price a buyer can pay today (TCGplayer Market, or its lowest listing when Market sits below every listing, or Card Kingdom in stock), and the bundle at its own payable price. cheapest_buyable: the older basis, TCGplayer Market or Card Kingdom in stock."
           },
           "components": {
             "type": "array",
@@ -298,9 +386,36 @@
                     "null"
                   ],
                   "exclusiveMinimum": 0
+                },
+                "kind": {
+                  "enum": [
+                    "Market",
+                    "lowest listing",
+                    "Mid",
+                    "in stock",
+                    null
+                  ],
+                  "description": "Which price the component counts: TCGplayer Market, its lowest listing (when Market sits below every listing, or as a fallback), Mid (fallback), or Card Kingdom in stock."
                 }
               }
             }
+          },
+          "contents_source": {
+            "enum": [
+              "mtgjson",
+              "name",
+              "price",
+              null
+            ],
+            "description": "How the deck count was verified: mtgjson (MTGJSON sealed contents list each deck once), name (a count in the product name) or price (unverified, price near the members' total)."
+          },
+          "price_low": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0,
+            "description": "Lowest current TCGplayer listing for the bundle. When it is above price (Market), it is the price a buyer can pay."
           }
         }
       }
@@ -345,8 +460,12 @@
           "type": "string"
         },
         "qty": {
-          "type": "integer",
-          "minimum": 0
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Card Kingdom stock; null means unknown (treated as in stock), 0 sold out."
         },
         "buy": {
           "type": [

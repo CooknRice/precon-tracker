@@ -1,0 +1,25 @@
+# Weekly update pull requests for the hashed pins in requirements.txt and the
+# commit SHA pins of the workflow actions, which never update themselves.
+# The cooldown keeps the two week rule from requirements.txt: a version is
+# proposed once it is 14 days old. Security updates skip the cooldown, but
+# they need Dependabot alerts on (Settings > Advanced Security).
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 14
+    groups:
+      python:
+        patterns: ["*"]
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 14
+    groups:
+      actions:
+        patterns: ["*"]

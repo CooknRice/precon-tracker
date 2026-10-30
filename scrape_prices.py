@@ -53,14 +53,16 @@ MIN_TCG_HIT_SHARE = 0.4
 
 def min_tcg_hits(n_decks: int) -> int:
     """TCGPlayer hits a run needs to count as healthy, for a catalog of
-    n_decks: 47 of 117 decks today, about half the usual 109."""
+    n_decks: MIN_TCG_HIT_SHARE of it, rounded up. A normal run prices nearly
+    every deck, so the floor sits far below it."""
     return max(1, math.ceil(MIN_TCG_HIT_SHARE * n_decks))
 
 # Run time budget. The workflow kills the job at 25 minutes and then commits
-# nothing, so the fetch phases share one deadline: once it passes, no phase
-# starts another request. One request can still overrun it by its own worst
-# case (4 attempts at TIMEOUT, backoff, capped Retry-After, capped body read),
-# about 4 minutes, which leaves room for setup, tests and the commit.
+# nothing, so the fetch phases share one deadline: every request checks it
+# first (budget_left, or a PhaseGuard), so once it passes no phase starts
+# another request. The one request in flight can still overrun it by its own
+# worst case (4 attempts at TIMEOUT, backoff, capped Retry-After, capped body
+# read), about 4 minutes, which leaves room for setup, tests and the commit.
 RUN_BUDGET_SECONDS = 15 * 60
 REQUEST_MAX_SECONDS = 120   # wall clock cap on reading one response body
 RETRY_AFTER_CAP = 10        # seconds; a server's Retry-After is honoured up to this
@@ -690,23 +692,24 @@ def ck_search_url(name: str) -> str:
 # Kingdom API path that resolves off site, a scheme other than https, user
 # info before the host) is replaced by that vendor's search link, so
 # prices.json never sends a buyer to a third party. The page checks again.
+# The rule is the CI gate's on_host (test_data_integrity.py), character set
+# included: a link kept here that the gate rejected would block every run.
 VENDOR_HOSTS = {"tcgplayer": "www.tcgplayer.com", "cardkingdom": "www.cardkingdom.com"}
-_URL_CHARS = re.compile(r"[A-Za-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+")
+_URL_CHARS = re.compile(r"[A-Za-z0-9\-._~:/?#\[\]!$&'()*+,;=%]+")
 
 
 def vendor_url_ok(url, vendor: str) -> bool:
-    """Is `url` an https link on `vendor`'s own host (VENDOR_HOSTS)? Only
-    plain URL characters are allowed, so no space, backslash or control
+    """Is `url` an https link whose host part is exactly `vendor`'s host
+    (VENDOR_HOSTS), with no port, user info or other spelling? Only plain URL
+    characters are allowed ('@' is not), so no space, backslash or control
     character can make a browser read a different host than Python does."""
     if not isinstance(url, str) or not _URL_CHARS.fullmatch(url):
         return False
     try:
         parts = urllib.parse.urlsplit(url)
-        port = parts.port
     except ValueError:
         return False
-    return (parts.scheme == "https" and parts.hostname == VENDOR_HOSTS[vendor]
-            and parts.username is None and parts.password is None and port is None)
+    return parts.scheme == "https" and parts.netloc == VENDOR_HOSTS[vendor]
 
 
 def enforce_vendor_hosts(output: dict, decks: list) -> int:
@@ -790,6 +793,9 @@ def fetch_all_tcgcsv(decks: list, shared: dict | None = None) -> tuple[dict, dic
         except Exception as e:
             errs.append(f"products: {e}")
         try:
+            # The budget can run out during the products request.
+            if budget_left() <= 0:
+                raise TimeoutError("run time budget spent")
             result["prices"] = flatten_prices(fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/{gid}/prices", session).get("results", []))
         except Exception as e:
             errs.append(f"prices: {e}")
@@ -911,6 +917,8 @@ def fetch_all_tcgcsv(decks: list, shared: dict | None = None) -> tuple[dict, dic
     # bundle SKU holds. Optional: without it the name and price checks apply.
     contents: dict = {}
     try:
+        if budget_left() <= 0:
+            raise TimeoutError("run time budget spent")
         contents = sealed_deck_contents(_get_setlist(make_session(TCGCSV_UA)))
         print(f"  {len(contents)} multi deck products with MTGJSON contents", flush=True)
     except Exception as e:
@@ -947,7 +955,11 @@ def fetch_all_tcgcsv(decks: list, shared: dict | None = None) -> tuple[dict, dic
             "set": set_name,
             "deck_ids": deck_ids,
             "deck_count": len(deck_ids),
+            # As for decks and boxes: price is TCGplayer Market (or the
+            # fallback price_source names) and price_low the lowest listing;
+            # price_bundles works out the price a buyer can pay from both.
             "price": float(eff),
+            "price_low": float(low) if low is not None else None,
             "price_source": src,
             "contents_source": contents_source,  # "mtgjson" | "name" | "price"
             "individual_total": None,
@@ -1032,6 +1044,10 @@ def build_deck_mtgjson_map(decks: list, session: requests.Session) -> dict:
                               for m in by_norm[norm(d["name"])])
             print(f"  crack: [{d['id']}] skipped, the MTGJSON decklists named "
                   f"{d['name']!r} are from another release: {other}", flush=True)
+        elif d["id"] not in DECK_FILE_OVERRIDES:
+            # Usual for a preorder: MTGJSON publishes decklists near release.
+            # The deck gets no crack value (nothing is carried for it).
+            print(f"  crack: [{d['id']}] no MTGJSON decklist yet, crack value left out", flush=True)
     # Apply overrides, but only if the target file actually exists in the
     # current DeckList (guards against a renamed/removed MTGJSON file).
     for did, fn in DECK_FILE_OVERRIDES.items():
@@ -1129,6 +1145,8 @@ def fetch_crack_values(decks: list, session: requests.Session,
     # their previous values forward instead of dropping them.
     failed: list = []
     fetch_crack_values.failed_ids = failed
+    if not guard.ok():
+        return {}  # run budget spent: main() carries the previous values
     deck_map = build_deck_mtgjson_map(decks, session)
     print(f"  crack: matched {len(deck_map)}/{len(decks)} decks to MTGJSON", flush=True)
     if not deck_map:
@@ -1270,7 +1288,62 @@ DRAFTABLE_COMMANDER = {
     "commandermasters",
     "commanderlegends",
     "commanderlegendsbattleforbaldursgate",
+    "mysteryboostercommanderedition",
 }
+
+# Sets whose booster boxes are priced although no deck of ours belongs to
+# them; fetch_box_prices adds them to the decks' sets. A set removed from
+# here loses its box rows, and its box history on the next run.
+BOX_ONLY_SETS = (
+    "The Hobbit",                         # TCGCSV group 24683, 2026-08-14
+    "Mystery Booster Commander Edition",  # TCGCSV group 24777
+    # Tracked since July through two catalog entries that turned out to be
+    # products that never existed; kept so its real boxes stay on the page.
+    "Assassin's Creed",
+)
+
+
+def box_sets(decks: list) -> list:
+    """Every set the box phase prices: the decks' sets plus BOX_ONLY_SETS."""
+    return sorted({d.get("set") for d in decks if d.get("set")} | set(BOX_ONLY_SETS))
+
+
+def group_release(group: dict | None) -> str | None:
+    """ISO date a TCGCSV group was published (its set's release), or None."""
+    day = str((group or {}).get("publishedOn") or "")[:10]
+    return day if _ISO_DATE.match(day) else None
+
+
+def set_release_date(set_name: str, group: dict | None, products: list = ()) -> str | None:
+    """ISO date a set's sealed product came out, for a box row's set_release.
+    MTGJSON's releaseDate for the set, matched by the TCGCSV group's
+    abbreviation (its set code) or else by name, from the SetList this run
+    already downloaded (no request here). Without it, the later of the
+    group's publishedOn and the newest presaleInfo.releasedOn among
+    `products` (the box SKUs priced): publishedOn can be a placeholder
+    (Mystery Booster Commander Edition's reads 2026-10-01, a month before
+    its boxes shipped). None when no source gives a date."""
+    setlist = getattr(_get_setlist, "_cache", None) or []
+    code = str((group or {}).get("abbreviation") or "").upper()
+    names = {norm(_clean_set_name(set_name)), norm(set_name)}
+    by_code = by_name = None
+    for s in setlist:
+        if not isinstance(s, dict):
+            continue
+        day = str(s.get("releaseDate") or "")[:10]
+        if not _ISO_DATE.match(day):
+            continue
+        if code and str(s.get("code") or "").upper() == code:
+            by_code = day
+        elif by_name is None and norm(s.get("name") or "") in names:
+            by_name = day
+    if by_code or by_name:
+        return by_code or by_name
+    days = [group_release(group)]
+    for p in products or ():
+        days.append(str(((p or {}).get("presaleInfo") or {}).get("releasedOn") or "")[:10])
+    days = [d for d in days if d and _ISO_DATE.match(d)]
+    return max(days) if days else None
 
 
 def _clean_set_name(s: str) -> str:
@@ -1357,6 +1430,11 @@ def _classify_box(name: str) -> str | None:
     # (Draft/Set predate Play Boosters, introduced 2024).
     if "play booster" in l or "draft booster" in l or "set booster" in l:
         return "play"
+    # A box named just 'Booster Display' after the set name names no kind
+    # ('Mystery Booster Commander Edition - Booster Display'): it is the set's
+    # one booster box. 'Theme Booster Display' and the like do not qualify.
+    if re.search(r"(^|\s-\s)booster (display|box)$", l):
+        return "play"
     return None
 
 # Human labels for the 3 box types.
@@ -1365,13 +1443,28 @@ BOX_TYPE_LABELS = {"play": "Booster Box", "collector": "Collector Booster Box", 
 # on) and, before them, Draft and Set Booster boxes, which differ in price,
 # pack count and contents. Each box row records the kind it priced, and the
 # label names it, so nothing compares or charts one kind against another.
+# Kind 'booster' is a box whose name says no kind (a plain 'Booster Display'),
+# the same key Card Kingdom's plain 'Booster Box' gets in _index_ck_sealed.
 BOX_KIND_LABELS = {"play": "Play Booster Box", "draft": "Draft Booster Box",
                    "set": "Set Booster Box", "collector": "Collector Booster Box",
-                   "jumpstart": "Jumpstart Box"}
+                   "jumpstart": "Jumpstart Box", "booster": "Booster Box"}
 # When a set sells several kinds, the box row shows the first one priced, in
 # this order: the Play Booster box, else the Draft box (the standard box of
 # its era), else the Set Booster box.
 PLAY_KIND_ORDER = ("play", "draft", "set")
+
+
+# Words that mark a box as a variant of the set's regular box of the same
+# kind (another product at another price): 'Special Edition Collector
+# Booster Box', 'Jumpstart Vol. 2 Booster Display', a Japanese language box,
+# a convention edition. A plain 'Edition' is part of many set names.
+BOX_VARIANT_RE = re.compile(
+    r"special edition|\bvol(ume)?\b\.?\s*\d|non[- ]english|japanese|convention edition", re.I)
+
+
+def is_box_variant(name: str) -> bool:
+    """Does a box SKU name (TCGplayer or Card Kingdom) mark a variant?"""
+    return bool(BOX_VARIANT_RE.search(name or ""))
 
 
 def box_kind(name: str) -> str | None:
@@ -1602,9 +1695,13 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
     the UI note: cards under BOX_EV_BULK_THRESHOLD count as 0, box toppers are
     left out. sku_names and sku_ids give the priced SKU's name and TCGplayer
     product id per box type. Returns {} when the set, booster or price data
-    isn't available, and leaves out a type whose coverage is too low."""
+    isn't available, and leaves out a type with no booster model, no MTGJSON
+    pack count or too low a coverage."""
     code = setcode_map.get(norm(_clean_set_name(set_name))) or setcode_map.get(norm(set_name))
     if not code:
+        return {}
+    if budget_left() <= 0:
+        print(f"  ev: [{set_name}] run time budget spent, EV left out", flush=True)
         return {}
     try:
         sdata = fetch_json(f"{MTGJSON_BASE}/{code}.json", session).get("data", {})
@@ -1613,9 +1710,13 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
         return {}
     booster = sdata.get("booster") or {}
     if not booster:
+        # Usual for a set before release: MTGJSON adds the model later.
+        print(f"  ev: [{set_name}] MTGJSON {code} has no booster model yet, EV left out", flush=True)
         return {}
     # Shared AllPricesToday (one download per run, reused from the crack phase).
     try:
+        if getattr(_get_allprices, "_data", None) is None and budget_left() <= 0:
+            raise TimeoutError("run time budget spent")
         allp = _get_allprices(session)
     except Exception as e:
         print(f"  ev: AllPrices download failed: {e}", flush=True)
@@ -1646,12 +1747,20 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
         else:
             bkey = BOX_BOOSTER_KEY.get(t)
             cfg = booster.get(bkey) if bkey else None
-            # SKU name unknown: pre-2024 sets predate Play Boosters.
+            # SKU name unknown: sets before 2024 predate Play Boosters.
             if not cfg and t == "play":
                 cfg = booster.get("draft") or booster.get("set")
         if not cfg:
-            if kind:
-                print(f"  ev: [{set_name}] no MTGJSON '{kind}' booster model for {sku}", flush=True)
+            print(f"  ev: [{set_name}] {t}: no MTGJSON '{kind or 'booster'}' booster "
+                  f"model for {sku!r}, EV left out", flush=True)
+            continue
+        # The pack count of the SKU we actually priced, from MTGJSON's sealed
+        # contents. A typical count is a guess (many boxes break the pattern),
+        # so without a real one the EV is left out rather than guessed.
+        packs, src = box_pack_count(sealed, (sku_ids or {}).get(t), kind, sku, t)
+        if src != "mtgjson":
+            print(f"  ev: [{set_name}] {t}: no MTGJSON pack count for {sku!r}, "
+                  f"EV left out", flush=True)
             continue
         pack_ev, coverage = _pack_ev_from_booster(cfg, price_of, BOX_EV_BULK_THRESHOLD,
                                                   rarities.get)
@@ -1660,11 +1769,6 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
             if pack_ev is not None:
                 print(f"  ev: [{set_name}] {t} skipped, coverage {coverage:.2f}", flush=True)
             continue
-        # Multiply by the pack count of the SKU we actually priced.
-        packs, src = box_pack_count(sealed, (sku_ids or {}).get(t), kind, sku, t)
-        if src != "mtgjson":
-            print(f"  ev: [{set_name}] {t}: no MTGJSON contents for {sku!r}, "
-                  f"assuming {packs} packs", flush=True)
         out[t] = {"ev": round(pack_ev * packs, 2), "ev_coverage": round(coverage, 3),
                   "packs": packs}
     return out
@@ -1777,17 +1881,35 @@ def _index_ck_sealed(data: list) -> dict:
         # Draft and a Set Booster box for many sets, and the TCG row must be
         # compared with the same kind. A plain 'Booster Box' says no kind.
         t = box_kind(name) or ("booster" if t == "play" else t)
+        # Only the set's plain box of each kind: a Special Edition or Vol. 2
+        # box shares the edition and kind but is another product.
+        if is_box_variant(name):
+            continue
         cand = {"retail": retail, "qty": qty, "buy": buy, "qty_buy": qty_buy,
-                "url": url, "name": name}
+                "url": url, "name": name, "edition": item.get("edition") or ""}
         slot = boxes_idx.setdefault(ed_norm, {})
         prev = slot.get(t)
-        # Prefer a priced, in-stock candidate over an unpriced / out-of-stock one.
-        better = (prev is None
-                  or (prev.get("retail") is None and retail is not None)
-                  or (retail is not None and (prev.get("qty") or 0) == 0 and (qty or 0) > 0))
-        if better:
+        if prev is None or _ck_box_rank(cand, t) < _ck_box_rank(prev, t):
             slot[t] = cand
     return {"decks": decks_idx, "boxes": boxes_idx}
+
+
+# Names of a box kind as Card Kingdom spells it after the edition name.
+CK_BOX_KIND_NAMES = {"play": ("Play Booster Box",), "draft": ("Draft Booster Box",),
+                     "set": ("Set Booster Box",), "collector": ("Collector Booster Box",),
+                     "jumpstart": ("Jumpstart Booster Box", "Jumpstart Box"),
+                     "booster": ("Booster Box",)}
+
+
+def _ck_box_rank(cand: dict, kind: str) -> tuple:
+    """Sort key among CK box SKUs of one edition and kind: the SKU named just
+    '<edition> <kind> Booster Box' first, then a priced one, then the shortest
+    name. Stock only breaks a tie between SKUs of the same name, so a sold
+    out box is never swapped for a different product that has stock."""
+    name = cand.get("name") or ""
+    plain = {norm(cand.get("edition") or "") + norm(k) for k in CK_BOX_KIND_NAMES.get(kind, ())}
+    return (norm(name) not in plain, cand.get("retail") is None, len(name), name,
+            (cand.get("qty") or 0) == 0)
 
 
 def fetch_ck_sealed(session: requests.Session) -> dict:
@@ -1867,38 +1989,64 @@ def match_ck_decks(decks: list, ck_decks: list) -> dict:
     return out
 
 
-def cheapest_buyable(tcg: dict | None, ck: dict | None) -> tuple | None:
-    """(vendor, price) of the cheapest price a buyer can act on today: the
-    TCGplayer price, or Card Kingdom's when it has stock (an unknown stock
-    count counts as in stock, as on the page). None when neither applies."""
+def tcg_pay_price(rec: dict | None) -> tuple | None:
+    """(price, kind) a buyer can pay at TCGplayer for a deck, bundle or box
+    record with price, price_low and price_source. Market comes from past
+    sales; when it sits below every current listing nobody offers it, so the
+    lowest listing is the price ('lowest listing'). Otherwise the recorded
+    price, named by its source ('Market', or 'lowest listing' / 'Mid' for a
+    fallback). The page's tcgBuyPrice applies the same rule. None when the
+    record has no price."""
+    p = _finite((rec or {}).get("price"))
+    if p is None or p <= 0:
+        return None
+    low = _finite(rec.get("price_low"))
+    if low is not None and low > p:
+        return low, "lowest listing"
+    src = rec.get("price_source") or "Market"
+    return p, {"Market": "Market", "Low": "lowest listing"}.get(src, src)
+
+
+def cheapest_payable(tcg: dict | None, ck: dict | None) -> tuple | None:
+    """(vendor, price, kind) of the cheapest price a buyer can pay for a deck
+    today, by the page's bestVendorPrice rule: TCGplayer at tcg_pay_price, or
+    Card Kingdom when it has stock (an unknown stock count counts as in
+    stock, as on the page), never a sold out CK price. A tie goes to
+    TCGplayer. None when neither applies."""
     opts = []
-    if (tcg or {}).get("price") is not None:
-        opts.append(("tcgplayer", float(tcg["price"])))
-    if (ck or {}).get("price") is not None and (ck.get("qty") is None or ck["qty"] > 0):
-        opts.append(("cardkingdom", float(ck["price"])))
+    tp = tcg_pay_price(tcg)
+    if tp:
+        opts.append(("tcgplayer", float(tp[0]), tp[1]))
+    c = _finite((ck or {}).get("price"))
+    if c is not None and c > 0 and (ck.get("qty") is None or ck["qty"] > 0):
+        opts.append(("cardkingdom", float(c), "in stock"))
     return min(opts, key=lambda o: o[1]) if opts else None
 
 
 def price_bundles(bundles: dict, tcg_results: dict, ck_results: dict) -> None:
-    """Fill each bundle's savings in place, against buying every deck on its
-    own at its cheapest buyable price (see cheapest_buyable).
+    """Fill each bundle's saving in place: the bundle at the price a buyer can
+    pay (tcg_pay_price: its lowest listing when Market sits below every
+    listing) against buying every deck on its own at its cheapest payable
+    price (cheapest_payable, individual_basis 'cheapest_payable').
 
-    `components` records the deck, vendor and price behind every part of
-    `individual_total`, so the page can show how the saving was worked out.
-    A deck with no buyable price leaves the total and the saving unset, since
-    counting it as $0 would understate the total."""
+    `components` records the deck, vendor, price and kind behind every part
+    of `individual_total`, so the page can show how the saving was worked
+    out. A deck with no payable price leaves the total and the saving unset,
+    since counting it as $0 would understate the total."""
     for b in bundles.values():
         comps = []
         for did in b.get("deck_ids", []):
-            pick = cheapest_buyable(tcg_results.get(did), ck_results.get(did))
+            pick = cheapest_payable(tcg_results.get(did), ck_results.get(did))
             comps.append({"deck_id": did,
                           "vendor": pick[0] if pick else None,
-                          "price": round(pick[1], 2) if pick else None})
+                          "price": round(pick[1], 2) if pick else None,
+                          "kind": pick[2] if pick else None})
         b["components"] = comps
-        b["individual_basis"] = "cheapest_buyable"
-        if comps and all(c["price"] is not None for c in comps):
+        b["individual_basis"] = "cheapest_payable"
+        pay = tcg_pay_price(b)
+        if pay and comps and all(c["price"] is not None for c in comps):
             total = round(sum(c["price"] for c in comps), 2)
-            raw = round(total - b["price"], 2)
+            raw = round(total - pay[0], 2)
             b["individual_total"] = total
             # Only a positive saving is reported (bundle cheaper than parts).
             b["savings"] = raw if raw > 0 else None
@@ -1907,7 +2055,8 @@ def price_bundles(bundles: dict, tcg_results: dict, ck_results: dict) -> None:
             b["savings"] = None
         sav = f"saves ${b['savings']:.2f}" if b["savings"] else "no saving"
         tot = f"${b['individual_total']:.2f}" if b["individual_total"] is not None else "n/a"
-        print(f"  bundle [{b.get('set')}] ${b['price']:.2f} vs decks {tot}: {sav}", flush=True)
+        paid = f"${pay[0]:.2f} {pay[1]}" if pay else "no price"
+        print(f"  bundle [{b.get('set')}] {paid} vs decks {tot}: {sav}", flush=True)
 
 
 def _ck_box_for(ck_boxes: dict, set_name: str, box_type: str) -> dict | None:
@@ -1915,26 +2064,47 @@ def _ck_box_for(ck_boxes: dict, set_name: str, box_type: str) -> dict | None:
     kind (play, draft, set, collector, jumpstart). CK box editions track the
     main set name (e.g. 'Bloomburrow'), but our box phase iterates the decks'
     set field which may carry 'Commander'/parentheticals ('Bloomburrow
-    Commander'). Match the cleaned name first, then the raw name as fallback."""
+    Commander'). Match the cleaned name first, then the raw name. CK spells
+    some editions differently ('Universes Beyond: Doctor Who' for 'Doctor
+    Who Commander'), so then compare distinctive words (CK_EDITION_NOISE
+    dropped): they must be the same words, not a subset (a subset would match
+    'Commander Masters' to 'Double Masters'), and only one edition may match.
+    The kind always has to agree."""
     if not ck_boxes:
         return None
-    key = norm(_clean_set_name(set_name))
-    return (ck_boxes.get(key) or ck_boxes.get(norm(set_name)) or {}).get(box_type)
+    for key in (norm(_clean_set_name(set_name)), norm(set_name)):
+        rec = (ck_boxes.get(key) or {}).get(box_type)
+        if rec:
+            return rec
+    want = [w for w in (tokenize(_clean_set_name(set_name)) - CK_EDITION_NOISE,
+                        tokenize(set_name) - CK_EDITION_NOISE) if w]
+    hits = []
+    for slot in ck_boxes.values():
+        rec = (slot or {}).get(box_type)
+        if rec and (tokenize(rec.get("edition") or "") - CK_EDITION_NOISE) in want:
+            hits.append(rec)
+    return hits[0] if len(hits) == 1 else None
 
 
 def fetch_box_prices(decks: list, session: requests.Session, groups: list,
                      ck_boxes: dict | None = None, guard: PhaseGuard | None = None,
                      group_cache: dict | None = None) -> dict:
-    """For each unique set among the decks, find its main-set group and price
-    the Play/Collector/Jumpstart boxes. Returns { set_name: [ {type, kind,
-    label, name, price, price_low, price_source, url, ev} ] }. `kind` is the
-    booster kind of the SKU priced (play, draft, set, collector, jumpstart);
-    the Card Kingdom price and the EV model always use that same kind.
+    """For each set the decks belong to, plus BOX_ONLY_SETS (see box_sets),
+    find its main set group and price the Play/Collector/Jumpstart boxes.
+    Returns { set_name: [ {type, kind, label, name, price, price_low,
+    price_source, url, set_release, ev} ] }. `kind` is the booster kind of
+    the SKU priced (play, draft, set, collector, jumpstart, or booster for a
+    box whose name says no kind); the Card Kingdom price and the EV model
+    always use that same kind, and each SKU is the set's plain box of its
+    kind, never a variant (is_box_variant). `set_release` is the date the
+    set's sealed product came out (set_release_date: MTGJSON's releaseDate,
+    else TCGCSV's dates; null if no source gives one). A set whose group
+    fails to download is listed in fetch_box_prices.failed_sets.
     `ev` is an expected value ESTIMATE of the singles in a box worth at least
     BOX_EV_BULK_THRESHOLD each, from MTGJSON's published booster model and the
     box's real pack count (`packs`); `ev_coverage` is the share of that value
-    backed by real prices. All three are omitted when the model or prices
-    aren't available.
+    backed by real prices. All three are omitted when the model, the MTGJSON
+    pack count or the prices aren't available.
     Resilient: sets with no boxes (Commander-only products) are simply omitted.
     `guard` ends the set loop early (run budget or repeated failures).
     `group_cache` holds groups phase 1 already fetched ({groupId: {products,
@@ -1942,9 +2112,13 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
     again.
     """
     guard = guard or PhaseGuard("boxes")
-    sets = sorted({d.get("set", "") for d in decks if d.get("set")})
+    sets = box_sets(decks)
     setcode_map = _build_setcode_map(session)
     out: dict = {}
+    # Sets whose group could not be downloaded; main() carries their rows
+    # from the previous run instead of dropping the set for the day.
+    failed: list = []
+    fetch_box_prices.failed_sets = failed
     for set_name in sets:
         g = find_main_set_group(groups, set_name)
         if not g:
@@ -1957,9 +2131,12 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
         else:
             try:
                 prods = fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/{g['groupId']}/products", session).get("results", [])
+                if not guard.ok():
+                    break  # the budget ran out during the products request
                 prices = flatten_prices(fetch_tcgcsv_json(f"{MAGIC_CATEGORY}/{g['groupId']}/prices", session).get("results", []))
             except Exception as e:
                 print(f"  boxes: [{set_name}] fetch failed: {e}", flush=True)
+                failed.append(set_name)
                 guard.failure(g["groupId"])
                 time.sleep(0.3)  # stay polite even on the error path
                 continue
@@ -1970,15 +2147,18 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
         candidates: dict = {}
         for p in prods:
             t = _classify_box(p.get("name") or "")
-            if t:
+            # Only the set's plain box of each kind: a Special Edition or
+            # Vol. 2 display is another product (see is_box_variant).
+            if t and not is_box_variant(p.get("name")):
                 candidates.setdefault(t, []).append(p)
         rows = []
         for t, plist in candidates.items():
-            if t == "play":
-                # Stable choice across days (Play, then Draft, then Set), so
-                # the row does not hop between products in API order.
-                plist = sorted(plist, key=lambda p: PLAY_KIND_ORDER.index(box_kind(p.get("name")))
-                               if box_kind(p.get("name")) in PLAY_KIND_ORDER else len(PLAY_KIND_ORDER))
+            # Stable choice across days, never API order: for 'play' the Play,
+            # then Draft, then Set Booster box; then the shortest name.
+            plist = sorted(plist, key=lambda p: (
+                PLAY_KIND_ORDER.index(box_kind(p.get("name")))
+                if t == "play" and box_kind(p.get("name")) in PLAY_KIND_ORDER else len(PLAY_KIND_ORDER),
+                len(p.get("name") or ""), p.get("name") or "", p.get("productId") or 0))
             chosen = None
             for p in plist:
                 row = prices.get(p["productId"]) or {}
@@ -1994,9 +2174,10 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
                 continue
             p, eff, low, src = chosen
             pid = p["productId"]
-            kind = box_kind(p.get("name")) or t
+            kind = box_kind(p.get("name")) or ("booster" if t == "play" else t)
             rows.append({
                 "_pid": pid,
+                "_product": p,
                 "type": t,
                 "kind": kind,
                 "label": BOX_KIND_LABELS.get(kind) or BOX_TYPE_LABELS[t],
@@ -2007,6 +2188,10 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
                 "url": tcg_product_url(pid, p.get("name", "")),
             })
         if rows:
+            # One date for every row of the set (the page orders sets by it).
+            release = set_release_date(set_name, g, [r.pop("_product") for r in rows])
+            for r in rows:
+                r["set_release"] = release
             # Expected-value estimate per box type (best-effort).
             try:
                 ev_map = compute_box_ev(set_name, setcode_map, session,
@@ -2244,17 +2429,28 @@ def main() -> None:
         if crack_carried:
             print(f"Crack: carried {', '.join(crack_carried)} from the previous run "
                   f"(decklist fetch failed)", flush=True)
-    if box_guard.cut_short:
-        got = carry_forward(box_results, previous.get("boxes"),
-                            sorted({d.get("set", "") for d in decks if d.get("set")}),
-                            previous.get("updated_at"))
-        # A carried EV without ev_coverage predates the bulk threshold and the
-        # real pack counts, and can overstate a box several times: drop it.
-        for set_name in got:
-            for r in box_results[set_name]:
-                if "ev_coverage" not in r:
-                    r.pop("ev", None)
-        print(f"Boxes: carried {len(got)} sets from the previous run ({box_guard.cut_short})", flush=True)
+    # Box rows: a phase cut short keeps every set it did not reach; one that
+    # ran to the end keeps the sets whose group failed to download.
+    box_carry = box_sets(decks) if box_guard.cut_short \
+        else getattr(fetch_box_prices, "failed_sets", [])
+    got = carry_forward(box_results, previous.get("boxes"), box_carry,
+                        previous.get("updated_at")) if box_carry else []
+    groups_seen = tcgcsv_shared.get("groups") or []
+    for set_name in got:
+        for r in box_results[set_name]:
+            # A carried EV without ev_coverage predates the bulk threshold
+            # and the real pack counts, and can overstate a box several
+            # times: drop it.
+            if "ev_coverage" not in r:
+                r.pop("ev", None)
+            # Rows written before set_release existed get it now, so the
+            # page can still order the set.
+            if not r.get("set_release"):
+                r["set_release"] = set_release_date(
+                    set_name, find_main_set_group(groups_seen, set_name))
+    if got:
+        why = box_guard.cut_short or "group fetch failed"
+        print(f"Boxes: carried {', '.join(got)} from the previous run ({why})", flush=True)
 
     # --- Coverage gate: never let a degraded run clobber good data ----------
     tcg_hits = sum(1 for v in tcg_results.values() if v.get("price") is not None)
@@ -2442,89 +2638,121 @@ HISTORY_OUTLIER_RATIO = 0.4
 
 # Card Kingdom keeps a retail price on sold out SKUs, and until 2026-10 the
 # history recorded it as if it could be bought, which drew flat 'best' lines
-# at prices nobody could pay. Read off the git history of prices.json: per
-# deck, inclusive MMDD ranges in 2026 of the UTC days whose last run had a CK
-# price with qty 0 (a day with no run keeps the day before's state). Runs
-# recorded CK stock from CK_SOLD_OUT_FROM on, so every day from then to
+# at prices nobody could pay. Read off the git history of main's prices.json:
+# per deck, inclusive MMDD ranges in 2026 of the UTC days whose last run had
+# a CK price with qty 0 (a day with no run keeps the day before's state).
+# Runs recorded CK stock from CK_SOLD_OUT_FROM on, so every day from then to
 # CK_SOLD_OUT_THROUGH not in a deck's ranges had it in stock. A one off
 # migration (backfill_ck_sold_out) rebuilds each listed deck's series on
-# those days from the prices in force, without 'ck' on sold out days. The
-# table was read up to the run of 2026-10-08 05:06 UTC. The scraper
-# before this change kept writing sold out prices until the change is
-# deployed, so the migration also reads the stock in the previous run's
+# those days from the prices in force, without 'ck' on sold out days.
+#
+# The table was first read up to the run of 2026-10-08 05:06 UTC and applied
+# as migration ck_sold_out_2026_10. The scraper before this change kept
+# writing sold out prices on main until it was replaced, so the table was
+# read again up to the run of 2026-10-30 18:31 UTC (5f5bb2c), which also
+# corrects 2026-10-08 (that day's last run had tramplesaurus-rex and
+# wretched-ranks in stock). A history that already has ck_sold_out_2026_10
+# gets ck_sold_out_2026_10b: the same rebuild from 2026-10-08 on, after
+# CK_10B_IN_STOCK puts back the in stock prices the first one removed. The
+# migration also reads the stock in the previous run's
 # prices.json for that run's date, and warns about any later date it cannot
-# check (regenerate the table up to the deploy date and give the migration a
-# new name to cover those). The table can go once its dates have aged out of
-# the window (after 2027-01-07).
+# check (if the old scraper runs on main again before this change replaces
+# it, regenerate the table up to that run and give the migration a new
+# name). The table can go once its dates have aged out of the window (after
+# 2027-01-28).
 CK_SOLD_OUT_FROM = "2026-06-20"
-CK_SOLD_OUT_THROUGH = "2026-10-08"
+CK_SOLD_OUT_THROUGH = "2026-10-30"
 CK_SOLD_OUT_2026 = {
-    "abzan-armor": "0713-0721 0724-0803 0806 0809-0821 0824-0825 0828-0908 0929-1008",
-    "ahoy-mateys": "0622-0625 0708-0710 0712-0726 0729-0731 0810-0827 0831-0916 0920-1008",
-    "animated-army": "0620-0722 0801-0820 0822-0830 0902-0908 0910-0915 0919-1008",
+    "abzan-armor": "0713-0721 0724-0803 0806 0809-0821 0824-0825 0828-0908 0929-1009 1016",
+    "ahoy-mateys": "0622-0625 0708-0710 0712-0726 0729-0731 0810-0827 0831-0916 0920-1011",
+    "animated-army": "0620-0722 0801-0820 0822-0830 0902-0908 0910-0915 0919-1009 1012-1018",
+    "aura-of-courage": "1022-1023",
     "avengers-assemble": "0621 0623",
-    "blame-game": "0620-0629 0712-0821 0823-0904 0906-0911 0913-1008",
-    "blast-from-the-past": "0620-0629 0712-0713 0727-0824 0925-1008",
-    "blood-rites": "0620-0625 0723-0812 0824-0916 0925-1008",
+    "bedecked-brokers": "1016-1028",
+    "blame-game": "0620-0629 0712-0821 0823-0904 0906-0911 0913-1018 1030",
+    "blast-from-the-past": "0620-0629 0712-0713 0727-0824 0925-1008 1016-1018",
+    "blood-rites": "0620-0625 0723-0812 0824-0916 0925-1011 1016-1018 1020-1025",
     "cabaretti-cacophony": "0804-0810",
-    "call-for-backup": "0620-0622 0708-0723 0730-0813 0823-0908 0910-1004",
+    "call-for-backup": "0620-0622 0708-0723 0730-0813 0823-0908 0910-1004 1009-1030",
+    "calling-all-angels": "1018-1023 1026-1030",
     "chaos-incarnate": "0909-0913 0924-1004",
     "corrupting-influence": "0629-0630 0730-0813",
-    "coven-counters": "0912-0920 1001-1005",
+    "coven-counters": "0912-0920 1001-1005 1010-1011 1022-1030",
     "creative-energy": "0709-0710 0718-0721 0729-0731 0819-0824",
-    "dance-of-the-elements": "1001-1008",
-    "deadly-disguise": "0627-0629 0730-0810 0812-0826 0831-0908 0914-1008",
-    "death-toll": "0723-0731 0908 0925-1001 1004-1008",
-    "deep-clue-sea": "0620-0702 0704-0731 0804-0810 0906-0908 0916-0923 0925-1008",
-    "desert-bloom": "0804-0820 0831-0908",
+    "dance-of-the-elements": "1001-1018",
+    "deadly-disguise": "0627-0629 0730-0810 0812-0826 0831-0908 0914-1030",
+    "death-toll": "0723-0731 0908 0925-1001 1004-1011 1014 1016-1018",
+    "deep-clue-sea": "0620-0702 0704-0731 0804-0810 0906-0908 0916-0923 0925-1030",
+    "desert-bloom": "0804-0820 0831-0908 1023-1030",
     "doom-prevails": "0621 0623 0625-0626 0628",
-    "dungeons-of-death": "0806-0810 0818-0901",
+    "dungeons-of-death": "0806-0810 0818-0901 1026-1028",
     "eldrazi-incursion": "0620-0623 0625-0706 0708-0723 0727-0731",
-    "elven-council": "0620-0623 0730-0806 0809-0908 0919-0920 0925",
+    "elven-council": "0620-0623 0730-0806 0809-0908 0919-0920 0925 1016-1022 1027-1028",
     "endless-punishment": "0620-0720 0722-0723 0824-0826 0831-0903 0910 0912-0916 0924-1004",
-    "enduring-enchantments": "0722-0804 0808-0817 0822-0920 0922-1008",
-    "explorers-of-the-deep": "0625 0703-0710 0712-0812 0814-0916 0918-1008",
-    "family-matters": "0620-0707 1001-1008",
-    "food-and-fellowship": "0620-0622 0709-0710 0718-0723 0725-0810 0812-0825 0913",
+    "enduring-enchantments": "0722-0804 0808-0817 0822-0920 0922-1015",
+    "exit-from-exile": "1024-1025 1030",
+    "explorers-of-the-deep": "0625 0703-0710 0712-0812 0814-0916 0918-1009 1011 1016-1018 1020-1022 1024-1025 1029-1030",
+    "family-matters": "0620-0707 1001-1009 1011-1018 1029",
+    "food-and-fellowship": "0620-0622 0709-0710 0718-0723 0725-0810 0812-0825 0913 1013-1018 1024-1025",
     "grand-larceny": "0620-0623 0625-0626 0702 0704-0713 0817-0909",
     "grave-danger": "0912-1004",
-    "graveyard-overdrive": "0620-0629 0702-0723 0727 0729-0731 0804-0830 0917-0923 0925-1008",
+    "graveyard-overdrive": "0620-0629 0702-0723 0727 0729-0731 0804-0830 0917-0923 0925-1009 1011",
     "growing-threat": "0620-0622 0706-0723 0725-0812",
     "hail-caesar": "0620-0623 0625-0630 0702-0723 0725-0804 0806-0904 0906-0914",
-    "jeskai-striker": "0910 0925-1008",
-    "jump-scare": "0621-0622 0706-0723 0829-0908 0912-0916 0929-1001 1005-1008",
-    "legends-legacy": "0623-0702 0709-0713 0904-0911 0916-0925 0930-1001 1003-1008",
-    "mardu-surge": "0724-0727 0729-0821 0823-0831 0904-0908 0914-0916 0925-1008",
+    "jeskai-striker": "0910 0925-1011",
+    "jump-scare": "0621-0622 0706-0723 0829-0908 0912-0916 0929-1001 1005-1011",
+    "legends-legacy": "0623-0702 0709-0713 0904-0911 0916-0925 0930-1001 1003-1008 1021-1030",
+    "mardu-surge": "0724-0727 0729-0821 0823-0831 0904-0908 0914-0916 0925-1011 1014-1016 1021 1029-1030",
     "masters-of-evil": "0620-0629 0701-0713 0719-0723 0726-0824",
-    "miracle-worker": "0629 0705-0713 0716-0731 0804-0817 0906-0920 1006-1008",
+    "miracle-worker": "0629 0705-0713 0716-0731 0804-0817 0906-0920 1006-1011 1021",
     "mishras-burnished-banner": "0620-0804 0816-0817 0916-0925",
-    "most-wanted": "0704-0715 0814-0908 0917-0921 0930-1008",
+    "most-wanted": "0704-0715 0814-0908 0917-0921 0930-1029",
     "mutant-menace": "0625-0629 0707-0714 0716-0723 0726-0803 0807-0817 0822-0902",
-    "necron-dynasties": "1006-1008",
+    "necron-dynasties": "1006-1009 1013-1015 1029-1030",
     "painbow": "0730-0810",
     "paradox-power": "0620-0622 0704-0713 0724-0731 0813-0824",
-    "peace-offering-blb": "0620-0629 0701-0714 0716-0720 0810-0813 0816-0817 0820-0907 0909-0928 1001-1008",
-    "planeswalker-party": "0620-0629 0714-0817 0826-0827 0901-0907 0909-0920 0929-1008",
-    "revenant-recon": "0625-0629 0730-0826 0831-0910 0916-1008",
-    "riders-of-rohan": "0620-0623 0704-0714 0727-0803 0808-0824",
+    "peace-offering-blb": "0620-0629 0701-0714 0716-0720 0810-0813 0816-0817 0820-0907 0909-0928 1001-1009 1011-1018",
+    "planeswalker-party": "0620-0629 0714-0817 0826-0827 0901-0907 0909-0920 0929-1025",
+    "quick-draw": "1028-1029",
+    "reign-of-dragons": "1023 1026-1030",
+    "revenant-recon": "0625-0629 0730-0826 0831-0910 0916-1018",
+    "riders-of-rohan": "0620-0623 0704-0714 0727-0803 0808-0824 1024-1025",
     "science": "0729-0804 0808-0810 0813-0904",
     "scrappy-survivors": "0620-0623 0625-0629 0701-0708 0710 0712-0723 0725-0904",
     "silverquill-influence": "0916-0920",
-    "squirreled-away": "0620-0629 0701-0722 0730-0812 0815-0824 0827-0830 0901-0915 0925-0928 0930-1008",
-    "sultai-arisen": "0620-0705 0707-0908 0930-1008",
-    "temur-roar": "0620-0713 0715-0723 0725-0804 0806-0908 0911-0916 0918-0928 0930-1008",
-    "the-hosts-of-mordor": "0620-0623 0629-0723 0725-0825 0904-0907 0909-0913 0920-0921 0926-0927 0930-1005 1007-1008",
-    "timey-wimey": "0620-0622 0628-0629 0706-0714 0718-0731 0802-0824 0902 0904-0907 0917-0923 1001-1008",
-    "tinker-time": "0620-0622 0624-0710 0717-0720 0822-0824 0827-0910 0921-1004",
+    "squirreled-away": "0620-0629 0701-0722 0730-0812 0815-0824 0827-0830 0901-0915 0925-0928 0930-1009 1011 1015-1018 1020-1021",
+    "sultai-arisen": "0620-0705 0707-0908 0930-1009 1011 1014-1016",
+    "temur-roar": "0620-0713 0715-0723 0725-0804 0806-0908 0911-0916 0918-0928 0930-1009 1011-1016 1019 1029",
+    "the-hosts-of-mordor": "0620-0623 0629-0723 0725-0825 0904-0907 0909-0913 0920-0921 0926-0927 0930-1005 1007-1009 1012-1022",
+    "timey-wimey": "0620-0622 0628-0629 0706-0714 0718-0731 0802-0824 0902 0904-0907 0917-0923 1001-1008 1010-1011 1013-1018",
+    "tinker-time": "0620-0622 0624-0710 0717-0720 0822-0824 0827-0910 0921-1004 1011-1030",
     "token-triumph": "0906-0908 0917-0920 0924-1004",
-    "tramplesaurus-rex": "1007-1008",
-    "tricky-terrain": "0620-0629 0713-0723 0730-0731 0825-0830 0910-0911 0913 0917-0923 1001-1004 1006-1008",
+    "tramplesaurus-rex": "1007 1019-1023 1025-1030",
+    "tricky-terrain": "0620-0629 0713-0723 0730-0731 0825-0830 0910-0911 0913 0917-0923 1001-1004 1006-1009 1011 1013-1025 1028-1029",
     "turtle-power": "0720-0727",
+    "undead-unleashed": "1019-1022 1027-1028",
     "urzas-iron-alliance": "0620-0626 0712 0714-0716 0720-0804 0912-0925",
-    "veloci-ramp-tor": "0620-0625 0702-0716 0718-0719 0721-0803 0805-0812 0815-0827 0831-0916 0923-1008",
-    "virtue-and-valor": "0620-0629 0702-0710 0712-0713 0718-0722 0727-0819 0824 0826-0913 0915-1008",
-    "witherbloom-pestilence": "0904-0914 0919-0920 0926-1001 1004-1005",
-    "wretched-ranks": "1007-1008",
+    "veloci-ramp-tor": "0620-0625 0702-0716 0718-0719 0721-0803 0805-0812 0815-0827 0831-0916 0923-1009 1011 1014-1018",
+    "virtue-and-valor": "0620-0629 0702-0710 0712-0713 0718-0722 0727-0819 0824 0826-0913 0915-1012 1015-1019",
+    "witherbloom-pestilence": "0904-0914 0919-0920 0926-1001 1004-1005 1009-1015 1021",
+    "wretched-ranks": "1007 1021-1023 1027-1030",
+}
+# First day ck_sold_out_2026_10b rebuilds: the last day of the first table.
+CK_SOLD_OUT_10B_FROM = "2026-10-08"
+# In stock Card Kingdom prices that ck_sold_out_2026_10 left out: deck ->
+# {day: CK price in force on main that day}. The first table wrongly had
+# tramplesaurus-rex and wretched-ranks sold out on 2026-10-08, and for the
+# other decks a sold out range ended on 2026-10-08, so the entry without
+# 'ck' stayed in force on the in stock days after it until the next change.
+# Read off main's prices_history.json at the merge (5950000).
+CK_10B_IN_STOCK = {
+    "blast-from-the-past": {"2026-10-09": 64.99},
+    "enduring-enchantments": {"2026-10-16": 219.99, "2026-10-17": 219.99, "2026-10-18": 219.99},
+    "graveyard-overdrive": {"2026-10-10": 74.99},
+    "legends-legacy": {"2026-10-09": 179.99, "2026-10-10": 179.99},
+    "timey-wimey": {"2026-10-09": 139.99},
+    "tramplesaurus-rex": {"2026-10-08": 59.99},
+    "wretched-ranks": {"2026-10-08": 39.99},
 }
 
 # Prices recorded from a product that a later matching fix rejected: deck id
@@ -2695,14 +2923,43 @@ def previous_ck_stock(previous: dict | None, id_map: dict) -> tuple:
     return date, stock
 
 
+def restore_ck_in_stock(decks_history: dict, id_map: dict) -> int:
+    """Put back the in stock Card Kingdom prices that ck_sold_out_2026_10
+    left out (CK_10B_IN_STOCK), in place: on each listed day whose entry in
+    force has no 'ck', a day entry with the prices in force plus that CK
+    price. Only for a history that migration already rebuilt. Returns how
+    many deck days it restored."""
+    n = 0
+    for key, by_day in CK_10B_IN_STOCK.items():
+        did = id_map.get(key, key)
+        for day, price in sorted(by_day.items()):
+            series = decks_history.get(did)
+            if not series:
+                break
+            in_force = None
+            for e in sorted(series, key=lambda e: e["date"]):
+                if e["date"] <= day:
+                    in_force = e
+            if in_force is None or "ck" in in_force:
+                continue
+            vals = {k: in_force[k] for k in HISTORY_VENDORS if k in in_force}
+            vals["ck"] = price
+            decks_history[did] = clean_deck_series(
+                [e for e in series if e["date"] != day] + [{"date": day, **vals}])
+            n += 1
+    return n
+
+
 def backfill_ck_sold_out(decks_history: dict, id_map: dict,
-                         previous: dict | None = None) -> tuple:
+                         previous: dict | None = None,
+                         first: str = CK_SOLD_OUT_FROM) -> tuple:
     """Rebuild the series of decks Card Kingdom had sold out on some known
     day, so that on every day whose stock is known, the prices in force hold
     'ck' only when it could be bought.
 
-    Known days are CK_SOLD_OUT_FROM to CK_SOLD_OUT_THROUGH (sold out per
-    CK_SOLD_OUT_2026, in stock otherwise), plus the previous run's date when
+    Known days are `first` (CK_SOLD_OUT_FROM unless given) to
+    CK_SOLD_OUT_THROUGH (sold out per CK_SOLD_OUT_2026, in stock otherwise),
+    plus the previous run's date when
     that run's prices.json gives the deck's stock (it covers the last run of
     the old scraper, which can come after the table). Entries record changes,
     so fixing only entries dated inside a sold out range left the entry in
@@ -2712,7 +2969,7 @@ def backfill_ck_sold_out(decks_history: dict, id_map: dict,
     migration, minus 'ck' when sold out, and clean_deck_series folds the days
     back into changes. A day with nothing left is a 'nothing buyable' marker.
     Returns (sold out deck days that had a CK price in force, decks rebuilt)."""
-    known = _iso_days(CK_SOLD_OUT_FROM, CK_SOLD_OUT_THROUGH)
+    known = _iso_days(max(first, CK_SOLD_OUT_FROM), CK_SOLD_OUT_THROUGH)
     sold_by_deck = {id_map.get(k, k): {d for d in known if _in_mmdd_ranges(d, spec)}
                     for k, spec in CK_SOLD_OUT_2026.items()}
     prev_date, prev_stock = previous_ck_stock(previous, id_map)
@@ -2794,16 +3051,32 @@ def run_history_migrations(history: dict, decks: list, previous: dict | None = N
     normalize_box_history(boxes_history)
     boxes_history = {k: clean_box_series(v) for k, v in boxes_history.items()}
     id_map = migrate_history_ids(decks_history, decks)
-    # Box series of a set no longer in decks.json go the way of deleted
-    # decks' series; an archive key '<set>::<type>@<kind>' belongs to <set>.
-    tracked_sets = {d.get("set") for d in decks if d.get("set")}
+    # Box series of a set the box phase no longer prices (not in decks.json
+    # nor BOX_ONLY_SETS) go the way of deleted decks' series; an archive key
+    # '<set>::<type>@<kind>' belongs to <set>.
+    tracked_sets = set(box_sets(decks))
     for key in sorted(k for k in boxes_history if box_key_parts(k)[0] not in tracked_sets):
         n = len(boxes_history.pop(key))
-        print(f"  history: dropped {n} entries of box {key}, set no longer in decks.json", flush=True)
+        print(f"  history: dropped {n} entries of box {key}, set no longer tracked", flush=True)
     applied = [m for m in history.get("migrations") or [] if isinstance(m, str)]
 
+    # Sold out Card Kingdom prices: a history without the first migration
+    # gets the whole table at once and counts as having both; one that has
+    # it gets the rebuild of the days the table was extended by.
+    soldout_ran = False
     if "ck_sold_out_2026_10" not in applied:
         n, n_decks = backfill_ck_sold_out(decks_history, id_map, previous)
+        applied += ["ck_sold_out_2026_10", "ck_sold_out_2026_10b"]
+        soldout_ran = True
+    elif "ck_sold_out_2026_10b" not in applied:
+        back = restore_ck_in_stock(decks_history, id_map)
+        print(f"  history: restored {back} in stock Card Kingdom deck days "
+              f"the first sold out migration left out", flush=True)
+        n, n_decks = backfill_ck_sold_out(decks_history, id_map, previous,
+                                          first=CK_SOLD_OUT_10B_FROM)
+        applied.append("ck_sold_out_2026_10b")
+        soldout_ran = True
+    if soldout_ran:
         print(f"  history: rebuilt {n_decks} deck series on days of known Card Kingdom "
               f"stock; {n} sold out deck days no longer count a CK price", flush=True)
         prev_date = str((previous or {}).get("updated_at") or "")[:10]
@@ -2815,7 +3088,6 @@ def run_history_migrations(history: dict, decks: list, previous: dict | None = N
             print(f"::warning::history: Card Kingdom stock unknown for {', '.join(unchecked)} "
                   f"(after CK_SOLD_OUT_THROUGH {CK_SOLD_OUT_THROUGH}); sold out prices "
                   f"recorded on those dates were kept", flush=True)
-        applied.append("ck_sold_out_2026_10")
     if "bad_points_2026_10" not in applied:
         removed = purge_bad_points(decks_history, boxes_history, id_map)
         for key, date, field, value, med in removed:
@@ -2843,7 +3115,9 @@ def deck_vendor_state(did: str, tcg_results: dict, ck_results: dict) -> tuple[di
       listing price, and splicing it in would make the Market series jump
       between two kinds of price, so such a day records no tcg (unknown).
     - ck counts only when in stock (the page's bestVendorPrice rule), so
-      history best is always a price that could be paid."""
+      history best is the lower of TCGplayer Market and Card Kingdom in
+      stock, never a sold out CK price. Market itself can sit below every
+      listing; the history keeps it as the Market series all the same."""
     vendors: dict = {}
     gone: set = set()
     tcg = tcg_results.get(did) or {}
@@ -2943,8 +3217,9 @@ def update_history(decks: list, tcg_results: dict,
         "boxes": { "<set>::<type>": [{date, price, kind}, ...],
                    "<set>::<type>@<kind>": archived entries of another kind } }
     `tcg` is the TCGplayer Market price, `ck` is recorded only while Card
-    Kingdom has stock, and `best` is the lowest price in the entry, so every
-    chart, range and signal built on it uses prices that could be paid. A
+    Kingdom has stock, and `best` is the lowest price in the entry: the lower
+    of TCGplayer Market and Card Kingdom in stock, never a sold out CK price.
+    A
     bare {date} entry means neither vendor had a price from that date (see
     record_deck_entry). An entry is added only when a price changes; the
     first entry may predate the window (see trim_to_window).
@@ -2993,8 +3268,8 @@ def update_history(decks: list, tcg_results: dict,
         decks_history[did] = trim_to_window(decks_history[did], cutoff)
     for key in list(boxes_history):
         # Archived kinds get no carry in, so they disappear once their last
-        # entry leaves the window. (Sets no longer in decks.json were already
-        # pruned by run_history_migrations.)
+        # entry leaves the window. (Sets no longer tracked, see box_sets, were
+        # already pruned by run_history_migrations.)
         live = box_key_parts(key)[2] is None
         series = trim_to_window(boxes_history[key], cutoff, carry_in=live)
         if series:

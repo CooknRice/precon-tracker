@@ -1,5 +1,81 @@
 [
   {
+    "id": "federation-fleet",
+    "scryCheckSlug": "federation-fleet",
+    "name": "Federation Fleet",
+    "set": "Star Trek",
+    "setType": "standard",
+    "releaseDate": "2026-11-13",
+    "colors": [
+      "W",
+      "U",
+      "R"
+    ],
+    "commander": "Jean-Luc Picard, Luminary",
+    "altCommanders": [
+      "Captain Janeway, Endgame"
+    ],
+    "desc": "Jeskai historic and Spacecraft deck led by Picard: he draws a card whenever another historic permanent with mana value 3 or greater enters, and each turn you draw your second card he grows a creature and charges a Spacecraft. Captain Janeway leads an aggressive Officer token alternate.",
+    "msrp": 74.99
+  },
+  {
+    "id": "landing-party",
+    "scryCheckSlug": "landing-party",
+    "name": "Landing Party",
+    "set": "Star Trek",
+    "setType": "standard",
+    "releaseDate": "2026-11-13",
+    "colors": [
+      "W",
+      "U",
+      "G"
+    ],
+    "commander": "Commander Spock",
+    "altCommanders": [
+      "Captain Kirk, Boldly Going"
+    ],
+    "desc": "Bant lands and landfall: whenever Commander Spock enters or attacks he reveals your top card and casts it for free if its mana value is no more than the number of differently named lands you control. Captain Kirk leads a Spacecraft alternate that keeps the Starship Enterprise on hand.",
+    "msrp": 74.99
+  },
+  {
+    "id": "klingon-fury",
+    "scryCheckSlug": "klingon-fury",
+    "name": "Klingon Fury",
+    "set": "Star Trek",
+    "setType": "standard",
+    "releaseDate": "2026-11-13",
+    "colors": [
+      "W",
+      "B",
+      "R"
+    ],
+    "commander": "Worf, Defiant Commander",
+    "altCommanders": [
+      "Kor, Cause of Vengeance"
+    ],
+    "desc": "Mardu Klingon Warriors that attack the whole table: Worf brings a hasty 2/1 Warrior, and his battlefront ability lets you play one card off the top of your library for each opponent you attacked. Kor leads a sacrifice alternate that pumps Klingons and Warriors.",
+    "msrp": 74.99
+  },
+  {
+    "id": "we-are-the-borg",
+    "scryCheckSlug": "we-are-the-borg",
+    "name": "We Are the Borg",
+    "set": "Star Trek",
+    "setType": "standard",
+    "releaseDate": "2026-11-13",
+    "colors": [
+      "W",
+      "U",
+      "B"
+    ],
+    "commander": "The Borg Queen",
+    "altCommanders": [
+      "Locutus of Borg"
+    ],
+    "desc": "Esper artifact creatures and Borg tokens: The Borg Queen gives artifact creatures +2/+2, and whenever she enters or attacks she assimilates the first creature card off an opponent's library onto your side. Locutus of Borg leads a lifelink alternate whose artifact creatures make 1/1 Borg tokens on combat damage.",
+    "msrp": 74.99
+  },
+  {
     "id": "multiverse-reforged",
     "scryCheckSlug": "multiverse-reforged",
     "name": "Multiverse Reforged",
