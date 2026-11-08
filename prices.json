@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-07T07:18:17.521755+00:00",
+  "updated_at": "2026-11-08T07:30:05.958594+00:00",
   "deck_count": 121,
   "vendors": {
     "cardkingdom": {
@@ -287,7 +287,7 @@
         "price": 89.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/bloomburrow-commander-deck-squirreled-away",
         "status": "ok",
-        "qty": 1,
+        "qty": 0,
         "buy": 58.0
       },
       "animated-army": {
@@ -322,7 +322,7 @@
         "price": 74.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/modern-horizons-3-commander-deck-graveyard-overdrive",
         "status": "ok",
-        "qty": 3,
+        "qty": 2,
         "buy": 48.0
       },
       "tricky-terrain": {
@@ -399,7 +399,7 @@
         "price": 109.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/murders-at-karlov-manor-commander-deck-revenant-recon",
         "status": "ok",
-        "qty": 1,
+        "qty": 0,
         "buy": 71.0
       },
       "blame-game": {
@@ -427,7 +427,7 @@
         "price": 149.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/the-lost-caverns-of-ixalan-commander-deck-veloci-ramp-tor",
         "status": "ok",
-        "qty": 10,
+        "qty": 9,
         "buy": 97.0
       },
       "blood-rites": {
@@ -448,7 +448,7 @@
         "price": 64.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/universes-beyond-doctor-who-commander-deck-blast-from-the-past",
         "status": "ok",
-        "qty": 2,
+        "qty": 0,
         "buy": 42.0
       },
       "timey-wimey": {
@@ -518,7 +518,7 @@
         "price": 129.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/the-lord-of-the-rings-tales-of-middle-earth-commander-deck-the-hosts-of-mordor",
         "status": "ok",
-        "qty": 4,
+        "qty": 2,
         "buy": 84.0
       },
       "food-and-fellowship": {
@@ -560,7 +560,7 @@
         "price": 99.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/march-of-the-machine-commander-deck-growing-threat",
         "status": "ok",
-        "qty": 1,
+        "qty": 0,
         "buy": 65.0
       },
       "cavalry-charge": {
@@ -853,23 +853,23 @@
     },
     "tcgplayer": {
       "federation-fleet": {
-        "price": 59.5,
-        "price_low": 54.31,
+        "price": 57.6,
+        "price_low": 53.57,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/706167/magic-star-trek-commander-deck-federation-fleet",
         "status": "ok",
         "snippet": "Star Trek Commander Deck - Federation Fleet"
       },
       "landing-party": {
-        "price": 57.19,
-        "price_low": 57.19,
+        "price": 55.7,
+        "price_low": 51.29,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/706168/magic-star-trek-commander-deck-landing-party",
         "status": "ok",
         "snippet": "Star Trek Commander Deck - Landing Party"
       },
       "klingon-fury": {
-        "price": 59.7,
+        "price": 57.11,
         "price_low": 51.81,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/706169/magic-star-trek-commander-deck-klingon-fury",
@@ -877,15 +877,15 @@
         "snippet": "Star Trek Commander Deck - Klingon Fury"
       },
       "we-are-the-borg": {
-        "price": 66.12,
-        "price_low": 64.33,
+        "price": 64.42,
+        "price_low": 59.71,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/706171/magic-star-trek-commander-deck-we-are-the-borg",
         "status": "ok",
         "snippet": "Star Trek Commander Deck - We Are the Borg"
       },
       "multiverse-reforged": {
-        "price": 48.44,
+        "price": 47.94,
         "price_low": 41.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/692989/magic-reality-fracture-commander-deck-multiverse-reforged",
@@ -893,7 +893,7 @@
         "snippet": "Reality Fracture Commander Deck - Multiverse Reforged"
       },
       "calling-all-angels": {
-        "price": 48.64,
+        "price": 49.93,
         "price_low": 44.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/693140/magic-foundations-commander-deck-calling-all-angels",
@@ -901,7 +901,7 @@
         "snippet": "Foundations Commander Deck - Calling All Angels"
       },
       "keen-engineering": {
-        "price": 30.66,
+        "price": 30.62,
         "price_low": 25.92,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/693141/magic-foundations-commander-deck-keen-engineering",
@@ -909,7 +909,7 @@
         "snippet": "Foundations Commander Deck - Keen Engineering"
       },
       "wretched-ranks": {
-        "price": 41.92,
+        "price": 42.9,
         "price_low": 37.49,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/693142/magic-foundations-commander-deck-wretched-ranks",
@@ -917,7 +917,7 @@
         "snippet": "Foundations Commander Deck - Wretched Ranks"
       },
       "reign-of-dragons": {
-        "price": 47.4,
+        "price": 47.76,
         "price_low": 42.35,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/693143/magic-foundations-commander-deck-reign-of-dragons",
@@ -925,15 +925,15 @@
         "snippet": "Foundations Commander Deck - Reign of Dragons"
       },
       "tramplesaurus-rex": {
-        "price": 63.58,
-        "price_low": 53.99,
+        "price": 62.57,
+        "price_low": 55.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/693144/magic-foundations-commander-deck-tramplesaurus-rex",
         "status": "ok",
         "snippet": "Foundations Commander Deck - Tramplesaurus Rex"
       },
       "avengers-assemble": {
-        "price": 49.55,
+        "price": 48.91,
         "price_low": 39.25,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675634/magic-marvel-super-heroes-commander-deck-avengers-assemble",
@@ -941,15 +941,15 @@
         "snippet": "Marvel Super Heroes Commander Deck - Avengers Assemble"
       },
       "wakanda-forever": {
-        "price": 35.19,
-        "price_low": 30.0,
+        "price": 34.66,
+        "price_low": 32.42,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675633/magic-marvel-super-heroes-commander-deck-wakanda-forever",
         "status": "ok",
         "snippet": "Marvel Super Heroes Commander Deck - Wakanda Forever"
       },
       "the-fantastic-four": {
-        "price": 35.71,
+        "price": 35.6,
         "price_low": 29.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675632/magic-marvel-super-heroes-commander-deck-the-fantastic-four",
@@ -957,23 +957,23 @@
         "snippet": "Marvel Super Heroes Commander Deck - The Fantastic Four"
       },
       "doom-prevails": {
-        "price": 70.15,
-        "price_low": 58.85,
+        "price": 69.48,
+        "price_low": 58.01,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675631/magic-marvel-super-heroes-commander-deck-doom-prevails",
         "status": "ok",
         "snippet": "Marvel Super Heroes Commander Deck - Doom Prevails"
       },
       "quandrix-unlimited": {
-        "price": 38.92,
-        "price_low": 34.91,
+        "price": 39.16,
+        "price_low": 36.75,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675571/magic-secrets-of-strixhaven-commander-deck-quandrix-unlimited",
         "status": "ok",
         "snippet": "Secrets of Strixhaven Commander Deck - Quandrix Unlimited"
       },
       "silverquill-influence": {
-        "price": 65.26,
+        "price": 63.92,
         "price_low": 56.76,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675567/magic-secrets-of-strixhaven-commander-deck-silverquill-influence",
@@ -981,7 +981,7 @@
         "snippet": "Secrets of Strixhaven Commander Deck - Silverquill Influence"
       },
       "prismari-artistry": {
-        "price": 42.87,
+        "price": 42.84,
         "price_low": 34.95,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675568/magic-secrets-of-strixhaven-commander-deck-prismari-artistry",
@@ -989,7 +989,7 @@
         "snippet": "Secrets of Strixhaven Commander Deck - Prismari Artistry"
       },
       "lorehold-spirit": {
-        "price": 38.77,
+        "price": 39.07,
         "price_low": 30.48,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675570/magic-secrets-of-strixhaven-commander-deck-lorehold-spirit",
@@ -997,7 +997,7 @@
         "snippet": "Secrets of Strixhaven Commander Deck - Lorehold Spirit"
       },
       "witherbloom-pestilence": {
-        "price": 61.81,
+        "price": 61.79,
         "price_low": 48.61,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675569/magic-secrets-of-strixhaven-commander-deck-witherbloom-pestilence",
@@ -1005,15 +1005,15 @@
         "snippet": "Secrets of Strixhaven Commander Deck - Witherbloom Pestilence"
       },
       "turtle-power": {
-        "price": 42.98,
-        "price_low": 43.14,
+        "price": 46.14,
+        "price_low": 44.48,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/657865/magic-teenage-mutant-ninja-turtles-commander-deck-turtle-power",
         "status": "ok",
         "snippet": "Teenage Mutant Ninja Turtles Commander Deck - Turtle Power!"
       },
       "dance-of-the-elements": {
-        "price": 43.64,
+        "price": 43.71,
         "price_low": 31.96,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/656352/magic-lorwyn-eclipsed-commander-deck-dance-of-the-elements",
@@ -1021,47 +1021,47 @@
         "snippet": "Lorwyn Eclipsed Commander Deck - Dance of the Elements"
       },
       "blight-curse": {
-        "price": 35.97,
-        "price_low": 25.0,
+        "price": 35.36,
+        "price_low": 24.75,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/656354/magic-lorwyn-eclipsed-commander-deck-blight-curse",
         "status": "ok",
         "snippet": "Lorwyn Eclipsed Commander Deck - Blight Curse"
       },
       "counter-intelligence": {
-        "price": 39.01,
-        "price_low": 37.99,
+        "price": 40.21,
+        "price_low": 33.76,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619677/magic-edge-of-eternities-commander-deck-counter-intelligence",
         "status": "ok",
         "snippet": "Edge of Eternities Commander Deck - Counter Intelligence"
       },
       "world-shaper": {
-        "price": 49.32,
-        "price_low": 48.6,
+        "price": 49.48,
+        "price_low": 40.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619676/magic-edge-of-eternities-commander-deck-world-shaper",
         "status": "ok",
         "snippet": "Edge of Eternities Commander Deck - World Shaper"
       },
       "revival-trance": {
-        "price": 30.37,
-        "price_low": 25.0,
+        "price": 30.39,
+        "price_low": 29.4,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618903/magic-final-fantasy-commander-deck-final-fantasy-vi-revival-trance",
         "status": "ok",
         "snippet": "FINAL FANTASY Commander Deck - FINAL FANTASY VI Revival Trance"
       },
       "limit-break": {
-        "price": 43.32,
-        "price_low": 40.13,
+        "price": 45.01,
+        "price_low": 40.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618904/magic-final-fantasy-commander-deck-final-fantasy-vii-limit-break",
         "status": "ok",
         "snippet": "FINAL FANTASY Commander Deck - FINAL FANTASY VII Limit Break"
       },
       "counter-blitz": {
-        "price": 47.26,
+        "price": 47.54,
         "price_low": 43.74,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618905/magic-final-fantasy-commander-deck-final-fantasy-x-counter-blitz",
@@ -1069,7 +1069,7 @@
         "snippet": "FINAL FANTASY Commander Deck - FINAL FANTASY X Counter Blitz"
       },
       "scions-and-spellcraft": {
-        "price": 57.68,
+        "price": 57.83,
         "price_low": 55.55,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618906/magic-final-fantasy-commander-deck-final-fantasy-xiv-scions-spellcraft",
@@ -1077,7 +1077,7 @@
         "snippet": "FINAL FANTASY Commander Deck - FINAL FANTASY XIV Scions & Spellcraft"
       },
       "jeskai-striker": {
-        "price": 42.51,
+        "price": 42.39,
         "price_low": 35.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619665/magic-tarkir-dragonstorm-commander-deck-jeskai-striker",
@@ -1085,15 +1085,15 @@
         "snippet": "Tarkir: Dragonstorm Commander Deck - Jeskai Striker"
       },
       "abzan-armor": {
-        "price": 76.79,
-        "price_low": 65.0,
+        "price": 76.68,
+        "price_low": 60.83,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619664/magic-tarkir-dragonstorm-commander-deck-abzan-armor",
         "status": "ok",
         "snippet": "Tarkir: Dragonstorm Commander Deck - Abzan Armor"
       },
       "sultai-arisen": {
-        "price": 89.68,
+        "price": 90.12,
         "price_low": 85.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619666/magic-tarkir-dragonstorm-commander-deck-sultai-arisen",
@@ -1101,7 +1101,7 @@
         "snippet": "Tarkir: Dragonstorm Commander Deck - Sultai Arisen"
       },
       "mardu-surge": {
-        "price": 51.74,
+        "price": 51.56,
         "price_low": 44.98,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619667/magic-tarkir-dragonstorm-commander-deck-mardu-surge",
@@ -1109,15 +1109,15 @@
         "snippet": "Tarkir: Dragonstorm Commander Deck - Mardu Surge"
       },
       "temur-roar": {
-        "price": 82.4,
-        "price_low": 74.72,
+        "price": 82.38,
+        "price_low": 73.92,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619668/magic-tarkir-dragonstorm-commander-deck-temur-roar",
         "status": "ok",
         "snippet": "Tarkir: Dragonstorm Commander Deck - Temur Roar"
       },
       "living-energy": {
-        "price": 29.63,
+        "price": 28.71,
         "price_low": 22.44,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/604258/magic-aetherdrift-commander-deck-living-energy",
@@ -1125,8 +1125,8 @@
         "snippet": "Aetherdrift Commander Deck - Living Energy"
       },
       "eternal-might": {
-        "price": 37.63,
-        "price_low": 35.01,
+        "price": 37.17,
+        "price_low": 36.36,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/604259/magic-aetherdrift-commander-deck-eternal-might",
         "status": "ok",
@@ -1141,7 +1141,7 @@
         "snippet": "Duskmourn: House of Horror Commander Deck - Miracle Worker"
       },
       "death-toll": {
-        "price": 57.67,
+        "price": 57.48,
         "price_low": 54.85,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557254/magic-duskmourn-house-of-horror-commander-deck-death-toll",
@@ -1149,7 +1149,7 @@
         "snippet": "Duskmourn: House of Horror Commander Deck - Death Toll"
       },
       "jump-scare": {
-        "price": 67.86,
+        "price": 67.46,
         "price_low": 54.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557255/magic-duskmourn-house-of-horror-commander-deck-jump-scare",
@@ -1157,7 +1157,7 @@
         "snippet": "Duskmourn: House of Horror Commander Deck - Jump Scare!"
       },
       "endless-punishment": {
-        "price": 220.02,
+        "price": 219.5,
         "price_low": 199.98,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557256/magic-duskmourn-house-of-horror-commander-deck-endless-punishment",
@@ -1165,7 +1165,7 @@
         "snippet": "Duskmourn: House of Horror Commander Deck - Endless Punishment"
       },
       "family-matters": {
-        "price": 38.35,
+        "price": 37.64,
         "price_low": 29.29,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541247/magic-bloomburrow-commander-deck-family-matters",
@@ -1173,7 +1173,7 @@
         "snippet": "Bloomburrow Commander Deck - Family Matters"
       },
       "squirreled-away": {
-        "price": 90.75,
+        "price": 90.99,
         "price_low": 84.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541249/magic-bloomburrow-commander-deck-squirreled-away",
@@ -1181,7 +1181,7 @@
         "snippet": "Bloomburrow Commander Deck - Squirreled Away"
       },
       "animated-army": {
-        "price": 88.21,
+        "price": 87.48,
         "price_low": 69.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541246/magic-bloomburrow-commander-deck-animated-army",
@@ -1189,7 +1189,7 @@
         "snippet": "Bloomburrow Commander Deck - Animated Army"
       },
       "peace-offering-blb": {
-        "price": 114.89,
+        "price": 115.37,
         "price_low": 100.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541248/magic-bloomburrow-commander-deck-peace-offering",
@@ -1197,7 +1197,7 @@
         "snippet": "Bloomburrow Commander Deck - Peace Offering"
       },
       "creative-energy": {
-        "price": 49.61,
+        "price": 49.55,
         "price_low": 36.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541194/magic-modern-horizons-3-commander-deck-creative-energy",
@@ -1206,7 +1206,7 @@
       },
       "eldrazi-incursion": {
         "price": 197.63,
-        "price_low": 188.0,
+        "price_low": 186.76,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541195/magic-modern-horizons-3-commander-deck-eldrazi-incursion",
         "status": "ok",
@@ -1221,7 +1221,7 @@
         "snippet": "Modern Horizons 3 Commander Deck - Graveyard Overdrive"
       },
       "tricky-terrain": {
-        "price": 85.34,
+        "price": 85.72,
         "price_low": 77.5,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541193/magic-modern-horizons-3-commander-deck-tricky-terrain",
@@ -1229,7 +1229,7 @@
         "snippet": "Modern Horizons 3 Commander Deck - Tricky Terrain"
       },
       "most-wanted": {
-        "price": 169.47,
+        "price": 169.83,
         "price_low": 162.98,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541103/magic-outlaws-of-thunder-junction-commander-deck-most-wanted",
@@ -1245,7 +1245,7 @@
         "snippet": "Outlaws of Thunder Junction Commander Deck - Grand Larceny"
       },
       "quick-draw": {
-        "price": 187.76,
+        "price": 185.98,
         "price_low": 180.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541099/magic-outlaws-of-thunder-junction-commander-deck-quick-draw",
@@ -1261,7 +1261,7 @@
         "snippet": "Outlaws of Thunder Junction Commander Deck - Desert Bloom"
       },
       "scrappy-survivors": {
-        "price": 67.68,
+        "price": 67.09,
         "price_low": 58.95,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/522899/magic-universes-beyond-fallout-scrappy-survivors-commander-deck",
@@ -1269,23 +1269,23 @@
         "snippet": "Universes Beyond: Fallout - Scrappy Survivors Commander Deck"
       },
       "mutant-menace": {
-        "price": 113.41,
-        "price_low": 104.94,
+        "price": 112.06,
+        "price_low": 102.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/522902/magic-universes-beyond-fallout-mutant-menace-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Fallout - Mutant Menace Commander Deck"
       },
       "hail-caesar": {
-        "price": 66.99,
-        "price_low": 58.98,
+        "price": 66.19,
+        "price_low": 64.8,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/522903/magic-universes-beyond-fallout-hail-caesar-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Fallout - Hail, Caesar Commander Deck"
       },
       "science": {
-        "price": 40.32,
+        "price": 40.3,
         "price_low": 35.23,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/522905/magic-universes-beyond-fallout-science-commander-deck",
@@ -1326,14 +1326,14 @@
       },
       "ahoy-mateys": {
         "price": 46.75,
-        "price_low": 40.0,
+        "price_low": 36.95,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/517513/magic-the-lost-caverns-of-ixalan-commander-deck-ahoy-mateys",
         "status": "ok",
         "snippet": "The Lost Caverns of Ixalan Commander Deck - Ahoy Mateys"
       },
       "veloci-ramp-tor": {
-        "price": 133.97,
+        "price": 133.89,
         "price_low": 129.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/517516/magic-the-lost-caverns-of-ixalan-commander-deck-veloci-ramp-tor",
@@ -1341,7 +1341,7 @@
         "snippet": "The Lost Caverns of Ixalan Commander Deck - Veloci-Ramp-Tor"
       },
       "blood-rites": {
-        "price": 95.16,
+        "price": 95.44,
         "price_low": 85.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/517514/magic-the-lost-caverns-of-ixalan-commander-deck-blood-rites",
@@ -1349,7 +1349,7 @@
         "snippet": "The Lost Caverns of Ixalan Commander Deck - Blood Rites"
       },
       "explorers-of-the-deep": {
-        "price": 97.54,
+        "price": 97.49,
         "price_low": 85.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/517515/magic-the-lost-caverns-of-ixalan-commander-deck-explorers-of-the-deep",
@@ -1365,7 +1365,7 @@
         "snippet": "Universes Beyond: Doctor Who - Blast From the Past Commander Deck"
       },
       "timey-wimey": {
-        "price": 149.04,
+        "price": 147.74,
         "price_low": 127.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496072/magic-universes-beyond-doctor-who-timey-wimey-commander-deck",
@@ -1374,14 +1374,14 @@
       },
       "paradox-power": {
         "price": 58.77,
-        "price_low": 48.49,
+        "price_low": 48.44,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496073/magic-universes-beyond-doctor-who-paradox-power-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Doctor Who - Paradox Power Commander Deck"
       },
       "masters-of-evil": {
-        "price": 125.2,
+        "price": 123.65,
         "price_low": 106.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496070/magic-universes-beyond-doctor-who-masters-of-evil-commander-deck",
@@ -1390,7 +1390,7 @@
       },
       "virtue-and-valor": {
         "price": 114.62,
-        "price_low": 130.0,
+        "price_low": 139.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496044/magic-wilds-of-eldraine-commander-deck-virtue-and-valor",
         "status": "ok",
@@ -1398,7 +1398,7 @@
       },
       "fae-dominion": {
         "price": 269.85,
-        "price_low": 260.01,
+        "price_low": 258.96,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496043/magic-wilds-of-eldraine-commander-deck-fae-dominion",
         "status": "ok",
@@ -1406,7 +1406,7 @@
       },
       "sliver-swarm": {
         "price": 347.02,
-        "price_low": 344.94,
+        "price_low": 344.95,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484933/magic-commander-masters-commander-deck-sliver-swarm",
         "status": "ok",
@@ -1429,7 +1429,7 @@
         "snippet": "Commander Masters Commander Deck - Enduring Enchantments"
       },
       "planeswalker-party": {
-        "price": 196.94,
+        "price": 196.99,
         "price_low": 199.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484930/magic-commander-masters-commander-deck-planeswalker-party",
@@ -1437,7 +1437,7 @@
         "snippet": "Commander Masters Commander Deck - Planeswalker Party"
       },
       "the-hosts-of-mordor": {
-        "price": 125.22,
+        "price": 126.13,
         "price_low": 115.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/488293/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-deck-the-hosts-of-mordor",
@@ -1445,15 +1445,15 @@
         "snippet": "The Lord of the Rings: Tales of Middle-earth Commander Deck - The Hosts of Mordor"
       },
       "food-and-fellowship": {
-        "price": 93.97,
-        "price_low": 89.99,
+        "price": 94.37,
+        "price_low": 70.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/488294/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-deck-food-and-fellowship",
         "status": "ok",
         "snippet": "The Lord of the Rings: Tales of Middle-earth Commander Deck - Food and Fellowship"
       },
       "elven-council": {
-        "price": 64.86,
+        "price": 64.82,
         "price_low": 50.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/488295/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-deck-elven-council",
@@ -1461,8 +1461,8 @@
         "snippet": "The Lord of the Rings: Tales of Middle-earth Commander Deck - Elven Council"
       },
       "riders-of-rohan": {
-        "price": 78.38,
-        "price_low": 70.0,
+        "price": 77.57,
+        "price_low": 68.69,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/488296/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-deck-riders-of-rohan",
         "status": "ok",
@@ -1485,7 +1485,7 @@
         "snippet": "March of the Machine Commander Deck - Divine Convocation"
       },
       "growing-threat": {
-        "price": 85.25,
+        "price": 86.05,
         "price_low": 85.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484590/magic-march-of-the-machine-commander-deck-growing-threat",
@@ -1494,14 +1494,14 @@
       },
       "cavalry-charge": {
         "price": 146.97,
-        "price_low": 142.99,
+        "price_low": 141.5,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484589/magic-march-of-the-machine-commander-deck-cavalry-charge",
         "status": "ok",
         "snippet": "March of the Machine Commander Deck - Cavalry Charge"
       },
       "tinker-time": {
-        "price": 53.67,
+        "price": 53.43,
         "price_low": 43.98,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484591/magic-march-of-the-machine-commander-deck-tinker-time",
@@ -1518,14 +1518,14 @@
       },
       "corrupting-influence": {
         "price": 312.07,
-        "price_low": 336.98,
+        "price_low": 339.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/475566/magic-phyrexia-all-will-be-one-commander-deck-corrupting-influence",
         "status": "ok",
         "snippet": "Phyrexia: All Will Be One Commander Deck - Corrupting Influence"
       },
       "first-flight": {
-        "price": 27.36,
+        "price": 27.31,
         "price_low": 22.05,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/448434/magic-starter-commander-deck-first-flight",
@@ -1533,7 +1533,7 @@
         "snippet": "Starter Commander Deck - First Flight"
       },
       "grave-danger": {
-        "price": 34.51,
+        "price": 34.37,
         "price_low": 29.5,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/448432/magic-starter-commander-deck-grave-danger",
@@ -1549,7 +1549,7 @@
         "snippet": "Starter Commander Deck - Token Triumph"
       },
       "chaos-incarnate": {
-        "price": 35.57,
+        "price": 35.45,
         "price_low": 32.38,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/448435/magic-starter-commander-deck-chaos-incarnate",
@@ -1581,16 +1581,16 @@
         "snippet": "The Brothers' War Commander Deck - Mishra's Burnished Banner"
       },
       "forces-of-the-imperium": {
-        "price": 233.91,
-        "price_low": 219.86,
+        "price": 230.78,
+        "price_low": 219.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/272320/magic-universes-beyond-warhammer-40-000-forces-of-the-imperium-commander-deck",
         "status": "ok",
         "snippet": "Universes Beyond: Warhammer 40,000 - Forces of the Imperium Commander Deck"
       },
       "necron-dynasties": {
-        "price": 283.29,
-        "price_low": 299.55,
+        "price": 283.69,
+        "price_low": 309.55,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/272308/magic-universes-beyond-warhammer-40-000-necron-dynasties-commander-deck",
         "status": "ok",
@@ -1606,7 +1606,7 @@
       },
       "the-ruinous-powers": {
         "price": 195.0,
-        "price_low": 233.89,
+        "price_low": 240.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/272315/magic-universes-beyond-warhammer-40-000-the-ruinous-powers-commander-deck",
         "status": "ok",
@@ -1622,14 +1622,14 @@
       },
       "painbow": {
         "price": 114.7,
-        "price_low": 108.0,
+        "price_low": 107.96,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/279816/magic-dominaria-united-commander-deck-painbow",
         "status": "ok",
         "snippet": "Dominaria United Commander Deck - Painbow"
       },
       "party-time": {
-        "price": 174.76,
+        "price": 174.79,
         "price_low": 155.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/267025/magic-commander-legends-battle-for-baldur-s-gate-party-time-commander-deck",
@@ -1637,15 +1637,15 @@
         "snippet": "Commander Legends: Battle for Baldur's Gate - Party Time Commander Deck"
       },
       "mind-flayarrrs": {
-        "price": 300.09,
-        "price_low": 288.98,
+        "price": 299.65,
+        "price_low": 290.95,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/267027/magic-commander-legends-battle-for-baldur-s-gate-mind-flayarrrs-commander-deck",
         "status": "ok",
         "snippet": "Commander Legends: Battle for Baldur's Gate - Mind Flayarrrs Commander Deck"
       },
       "exit-from-exile": {
-        "price": 173.45,
+        "price": 173.65,
         "price_low": 155.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/267031/magic-commander-legends-battle-for-baldur-s-gate-exit-from-exile-commander-deck",
@@ -1725,7 +1725,7 @@
         "snippet": "Innistrad: Crimson Vow Commander Deck - Vampiric Bloodline"
       },
       "spirit-squadron": {
-        "price": 77.44,
+        "price": 76.64,
         "price_low": 49.98,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/246465/magic-innistrad-crimson-vow-commander-deck-spirit-squadron",
@@ -1750,7 +1750,7 @@
       },
       "aura-of-courage": {
         "price": 86.87,
-        "price_low": 81.99,
+        "price_low": 82.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/238759/magic-adventures-in-the-forgotten-realms-aura-of-courage-commander-deck",
         "status": "ok",
@@ -1758,7 +1758,7 @@
       },
       "dungeons-of-death": {
         "price": 98.22,
-        "price_low": 91.01,
+        "price_low": 93.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/238757/magic-adventures-in-the-forgotten-realms-dungeons-of-death-commander-deck",
         "status": "ok",
@@ -1789,7 +1789,7 @@
         "snippet": "Commander 2021 Deck - Silverquill Statement"
       },
       "prismari-performance": {
-        "price": 58.65,
+        "price": 59.56,
         "price_low": 56.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/235089/magic-commander-2021-deck-prismari-performance",
@@ -1813,8 +1813,8 @@
         "snippet": "Commander 2021 Deck - Lorehold Legacies"
       },
       "quantum-quandrix": {
-        "price": 76.83,
-        "price_low": 67.5,
+        "price": 76.53,
+        "price_low": 74.09,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/235090/magic-commander-2021-deck-quantum-quandrix",
         "status": "ok",
@@ -1833,37 +1833,37 @@
         "we-are-the-borg"
       ],
       "deck_count": 4,
-      "price": 206.08,
-      "price_low": 202.95,
+      "price": 221.15,
+      "price_low": 214.67,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 242.51,
-      "savings": 36.43,
+      "individual_total": 234.83,
+      "savings": 13.68,
       "url": "https://www.tcgplayer.com/product/706179/magic-star-trek-commander-deck-case",
       "snippet": "Star Trek Commander Deck Case",
       "components": [
         {
           "deck_id": "federation-fleet",
           "vendor": "tcgplayer",
-          "price": 59.5,
+          "price": 57.6,
           "kind": "Market"
         },
         {
           "deck_id": "landing-party",
           "vendor": "tcgplayer",
-          "price": 57.19,
+          "price": 55.7,
           "kind": "Market"
         },
         {
           "deck_id": "klingon-fury",
           "vendor": "tcgplayer",
-          "price": 59.7,
+          "price": 57.11,
           "kind": "Market"
         },
         {
           "deck_id": "we-are-the-borg",
           "vendor": "tcgplayer",
-          "price": 66.12,
+          "price": 64.42,
           "kind": "Market"
         }
       ],
@@ -1880,19 +1880,19 @@
         "tramplesaurus-rex"
       ],
       "deck_count": 5,
-      "price": 197.21,
+      "price": 197.06,
       "price_low": 195.95,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 231.53,
-      "savings": 34.32,
+      "individual_total": 233.15,
+      "savings": 36.09,
       "url": "https://www.tcgplayer.com/product/707496/magic-foundations-commander-decks-set-of-5",
       "snippet": "Foundations Commander Decks [Set of 5]",
       "components": [
         {
           "deck_id": "calling-all-angels",
           "vendor": "tcgplayer",
-          "price": 48.64,
+          "price": 49.93,
           "kind": "Market"
         },
         {
@@ -1904,19 +1904,19 @@
         {
           "deck_id": "wretched-ranks",
           "vendor": "tcgplayer",
-          "price": 41.92,
+          "price": 42.9,
           "kind": "Market"
         },
         {
           "deck_id": "reign-of-dragons",
           "vendor": "tcgplayer",
-          "price": 47.4,
+          "price": 47.76,
           "kind": "Market"
         },
         {
           "deck_id": "tramplesaurus-rex",
           "vendor": "tcgplayer",
-          "price": 63.58,
+          "price": 62.57,
           "kind": "Market"
         }
       ],
@@ -1932,38 +1932,38 @@
         "doom-prevails"
       ],
       "deck_count": 4,
-      "price": 178.25,
-      "price_low": 179.93,
+      "price": 177.84,
+      "price_low": 179.92,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 190.44,
-      "savings": 10.51,
+      "individual_total": 188.65,
+      "savings": 8.73,
       "url": "https://www.tcgplayer.com/product/675635/magic-marvel-super-heroes-commander-deck-case",
       "snippet": "Marvel Super Heroes Commander Deck Case",
       "components": [
         {
           "deck_id": "avengers-assemble",
           "vendor": "tcgplayer",
-          "price": 49.55,
+          "price": 48.91,
           "kind": "Market"
         },
         {
           "deck_id": "wakanda-forever",
           "vendor": "tcgplayer",
-          "price": 35.19,
+          "price": 34.66,
           "kind": "Market"
         },
         {
           "deck_id": "the-fantastic-four",
           "vendor": "tcgplayer",
-          "price": 35.71,
+          "price": 35.6,
           "kind": "Market"
         },
         {
           "deck_id": "doom-prevails",
-          "vendor": "cardkingdom",
-          "price": 69.99,
-          "kind": "in stock"
+          "vendor": "tcgplayer",
+          "price": 69.48,
+          "kind": "Market"
         }
       ],
       "individual_basis": "cheapest_payable"
@@ -1980,42 +1980,42 @@
       ],
       "deck_count": 5,
       "price": 231.66,
-      "price_low": 208.0,
+      "price_low": 207.98,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 247.63,
-      "savings": 15.97,
+      "individual_total": 246.78,
+      "savings": 15.12,
       "url": "https://www.tcgplayer.com/product/675572/magic-secrets-of-strixhaven-commander-deck-case",
       "snippet": "Secrets of Strixhaven Commander Deck Case",
       "components": [
         {
           "deck_id": "quandrix-unlimited",
           "vendor": "tcgplayer",
-          "price": 38.92,
+          "price": 39.16,
           "kind": "Market"
         },
         {
           "deck_id": "silverquill-influence",
           "vendor": "tcgplayer",
-          "price": 65.26,
+          "price": 63.92,
           "kind": "Market"
         },
         {
           "deck_id": "prismari-artistry",
           "vendor": "tcgplayer",
-          "price": 42.87,
+          "price": 42.84,
           "kind": "Market"
         },
         {
           "deck_id": "lorehold-spirit",
           "vendor": "tcgplayer",
-          "price": 38.77,
+          "price": 39.07,
           "kind": "Market"
         },
         {
           "deck_id": "witherbloom-pestilence",
           "vendor": "tcgplayer",
-          "price": 61.81,
+          "price": 61.79,
           "kind": "Market"
         }
       ],
@@ -2029,25 +2029,25 @@
         "blight-curse"
       ],
       "deck_count": 2,
-      "price": 77.84,
-      "price_low": 74.78,
+      "price": 77.64,
+      "price_low": 74.88,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 79.61,
-      "savings": 1.77,
+      "individual_total": 79.07,
+      "savings": 1.43,
       "url": "https://www.tcgplayer.com/product/656923/magic-lorwyn-eclipsed-commander-decks-set-of-2",
       "snippet": "Lorwyn Eclipsed Commander Decks [Set of 2]",
       "components": [
         {
           "deck_id": "dance-of-the-elements",
           "vendor": "tcgplayer",
-          "price": 43.64,
+          "price": 43.71,
           "kind": "Market"
         },
         {
           "deck_id": "blight-curse",
           "vendor": "tcgplayer",
-          "price": 35.97,
+          "price": 35.36,
           "kind": "Market"
         }
       ],
@@ -2061,25 +2061,25 @@
         "world-shaper"
       ],
       "deck_count": 2,
-      "price": 81.11,
+      "price": 81.03,
       "price_low": 65.81,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 88.33,
-      "savings": 7.22,
+      "individual_total": 89.69,
+      "savings": 8.66,
       "url": "https://www.tcgplayer.com/product/636222/magic-edge-of-eternities-commander-decks-set-of-2",
       "snippet": "Edge of Eternities Commander Decks [Set of 2]",
       "components": [
         {
           "deck_id": "counter-intelligence",
           "vendor": "tcgplayer",
-          "price": 39.01,
+          "price": 40.21,
           "kind": "Market"
         },
         {
           "deck_id": "world-shaper",
           "vendor": "tcgplayer",
-          "price": 49.32,
+          "price": 49.48,
           "kind": "Market"
         }
       ],
@@ -2095,37 +2095,37 @@
         "scions-and-spellcraft"
       ],
       "deck_count": 4,
-      "price": 160.07,
-      "price_low": 164.98,
+      "price": 160.11,
+      "price_low": 152.83,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 178.63,
-      "savings": 13.65,
+      "individual_total": 180.77,
+      "savings": 20.66,
       "url": "https://www.tcgplayer.com/product/618907/magic-final-fantasy-commander-deck-display",
       "snippet": "FINAL FANTASY Commander Deck Display",
       "components": [
         {
           "deck_id": "revival-trance",
           "vendor": "tcgplayer",
-          "price": 30.37,
+          "price": 30.39,
           "kind": "Market"
         },
         {
           "deck_id": "limit-break",
           "vendor": "tcgplayer",
-          "price": 43.32,
+          "price": 45.01,
           "kind": "Market"
         },
         {
           "deck_id": "counter-blitz",
           "vendor": "tcgplayer",
-          "price": 47.26,
+          "price": 47.54,
           "kind": "Market"
         },
         {
           "deck_id": "scions-and-spellcraft",
           "vendor": "tcgplayer",
-          "price": 57.68,
+          "price": 57.83,
           "kind": "Market"
         }
       ],
@@ -2142,19 +2142,19 @@
         "temur-roar"
       ],
       "deck_count": 5,
-      "price": 276.73,
-      "price_low": 254.98,
+      "price": 276.13,
+      "price_low": 254.91,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 336.32,
-      "savings": 59.59,
+      "individual_total": 336.44,
+      "savings": 60.31,
       "url": "https://www.tcgplayer.com/product/619669/magic-tarkir-dragonstorm-commander-deck-case",
       "snippet": "Tarkir: Dragonstorm Commander Deck Case",
       "components": [
         {
           "deck_id": "jeskai-striker",
           "vendor": "tcgplayer",
-          "price": 42.51,
+          "price": 42.39,
           "kind": "Market"
         },
         {
@@ -2166,19 +2166,19 @@
         {
           "deck_id": "sultai-arisen",
           "vendor": "tcgplayer",
-          "price": 89.68,
+          "price": 90.12,
           "kind": "Market"
         },
         {
           "deck_id": "mardu-surge",
           "vendor": "tcgplayer",
-          "price": 51.74,
+          "price": 51.56,
           "kind": "Market"
         },
         {
           "deck_id": "temur-roar",
           "vendor": "tcgplayer",
-          "price": 82.4,
+          "price": 82.38,
           "kind": "Market"
         }
       ],
@@ -2196,21 +2196,21 @@
       "price_low": 60.25,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 67.26,
-      "savings": 2.72,
+      "individual_total": 65.88,
+      "savings": 1.34,
       "url": "https://www.tcgplayer.com/product/609612/magic-aetherdrift-commander-decks-set-of-2",
       "snippet": "Aetherdrift Commander Decks [Set of 2]",
       "components": [
         {
           "deck_id": "living-energy",
           "vendor": "tcgplayer",
-          "price": 29.63,
+          "price": 28.71,
           "kind": "Market"
         },
         {
           "deck_id": "eternal-might",
           "vendor": "tcgplayer",
-          "price": 37.63,
+          "price": 37.17,
           "kind": "Market"
         }
       ],
@@ -2226,12 +2226,12 @@
         "endless-punishment"
       ],
       "deck_count": 4,
-      "price": 337.36,
+      "price": 338.85,
       "price_low": 339.91,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 420.54,
-      "savings": 80.63,
+      "individual_total": 419.43,
+      "savings": 79.52,
       "url": "https://www.tcgplayer.com/product/557257/magic-duskmourn-house-of-horror-commander-deck-display",
       "snippet": "Duskmourn: House of Horror - Commander Deck Display",
       "components": [
@@ -2244,19 +2244,19 @@
         {
           "deck_id": "death-toll",
           "vendor": "tcgplayer",
-          "price": 57.67,
+          "price": 57.48,
           "kind": "Market"
         },
         {
           "deck_id": "jump-scare",
           "vendor": "tcgplayer",
-          "price": 67.86,
+          "price": 67.46,
           "kind": "Market"
         },
         {
           "deck_id": "endless-punishment",
           "vendor": "tcgplayer",
-          "price": 220.02,
+          "price": 219.5,
           "kind": "Market"
         }
       ],
@@ -2272,37 +2272,37 @@
         "peace-offering-blb"
       ],
       "deck_count": 4,
-      "price": 253.16,
+      "price": 253.12,
       "price_low": 239.99,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 331.44,
-      "savings": 78.28,
+      "individual_total": 331.48,
+      "savings": 78.36,
       "url": "https://www.tcgplayer.com/product/541250/magic-bloomburrow-commander-deck-display",
       "snippet": "Bloomburrow Commander Deck Display",
       "components": [
         {
           "deck_id": "family-matters",
           "vendor": "tcgplayer",
-          "price": 38.35,
+          "price": 37.64,
           "kind": "Market"
         },
         {
           "deck_id": "squirreled-away",
-          "vendor": "cardkingdom",
-          "price": 89.99,
-          "kind": "in stock"
+          "vendor": "tcgplayer",
+          "price": 90.99,
+          "kind": "Market"
         },
         {
           "deck_id": "animated-army",
           "vendor": "tcgplayer",
-          "price": 88.21,
+          "price": 87.48,
           "kind": "Market"
         },
         {
           "deck_id": "peace-offering-blb",
           "vendor": "tcgplayer",
-          "price": 114.89,
+          "price": 115.37,
           "kind": "Market"
         }
       ],
@@ -2318,19 +2318,19 @@
         "tricky-terrain"
       ],
       "deck_count": 4,
-      "price": 359.9,
-      "price_low": 325.0,
+      "price": 358.94,
+      "price_low": 324.83,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 395.27,
-      "savings": 35.37,
+      "individual_total": 395.59,
+      "savings": 36.65,
       "url": "https://www.tcgplayer.com/product/541196/magic-modern-horizons-3-commander-deck-display",
       "snippet": "Modern Horizons 3 Commander Deck Display",
       "components": [
         {
           "deck_id": "creative-energy",
           "vendor": "tcgplayer",
-          "price": 49.61,
+          "price": 49.55,
           "kind": "Market"
         },
         {
@@ -2348,7 +2348,7 @@
         {
           "deck_id": "tricky-terrain",
           "vendor": "tcgplayer",
-          "price": 85.34,
+          "price": 85.72,
           "kind": "Market"
         }
       ],
@@ -2368,8 +2368,8 @@
       "price_low": 660.0,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 667.58,
-      "savings": 7.58,
+      "individual_total": 665.8,
+      "savings": 5.8,
       "url": "https://www.tcgplayer.com/product/541105/magic-outlaws-of-thunder-junction-commander-deck-display",
       "snippet": "Outlaws of Thunder Junction Commander Deck Display",
       "components": [
@@ -2388,7 +2388,7 @@
         {
           "deck_id": "quick-draw",
           "vendor": "tcgplayer",
-          "price": 187.76,
+          "price": 185.98,
           "kind": "Market"
         },
         {
@@ -2410,37 +2410,37 @@
         "science"
       ],
       "deck_count": 4,
-      "price": 239.68,
+      "price": 237.72,
       "price_low": 231.87,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 288.4,
-      "savings": 48.72,
+      "individual_total": 285.64,
+      "savings": 47.92,
       "url": "https://www.tcgplayer.com/product/524616/magic-universes-beyond-fallout-commander-deck-case",
       "snippet": "Universes Beyond: Fallout Commander Deck Case",
       "components": [
         {
           "deck_id": "scrappy-survivors",
           "vendor": "tcgplayer",
-          "price": 67.68,
+          "price": 67.09,
           "kind": "Market"
         },
         {
           "deck_id": "mutant-menace",
           "vendor": "tcgplayer",
-          "price": 113.41,
+          "price": 112.06,
           "kind": "Market"
         },
         {
           "deck_id": "hail-caesar",
           "vendor": "tcgplayer",
-          "price": 66.99,
+          "price": 66.19,
           "kind": "Market"
         },
         {
           "deck_id": "science",
           "vendor": "tcgplayer",
-          "price": 40.32,
+          "price": 40.3,
           "kind": "Market"
         }
       ],
@@ -2457,7 +2457,7 @@
       ],
       "deck_count": 4,
       "price": 390.97,
-      "price_low": 454.9,
+      "price_low": 449.7,
       "price_source": "Market",
       "contents_source": "mtgjson",
       "individual_total": 416.64,
@@ -2506,8 +2506,8 @@
       "price_low": 303.98,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 373.42,
-      "savings": 40.64,
+      "individual_total": 373.57,
+      "savings": 40.79,
       "url": "https://www.tcgplayer.com/product/517517/magic-the-lost-caverns-of-ixalan-commander-deck-case",
       "snippet": "The Lost Caverns of Ixalan Commander Deck Case",
       "components": [
@@ -2520,19 +2520,19 @@
         {
           "deck_id": "veloci-ramp-tor",
           "vendor": "tcgplayer",
-          "price": 133.97,
+          "price": 133.89,
           "kind": "Market"
         },
         {
           "deck_id": "blood-rites",
           "vendor": "tcgplayer",
-          "price": 95.16,
+          "price": 95.44,
           "kind": "Market"
         },
         {
           "deck_id": "explorers-of-the-deep",
           "vendor": "tcgplayer",
-          "price": 97.54,
+          "price": 97.49,
           "kind": "Market"
         }
       ],
@@ -2548,12 +2548,12 @@
         "masters-of-evil"
       ],
       "deck_count": 4,
-      "price": 338.05,
-      "price_low": 325.99,
+      "price": 337.04,
+      "price_low": 308.86,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 392.02,
-      "savings": 53.97,
+      "individual_total": 389.17,
+      "savings": 52.13,
       "url": "https://www.tcgplayer.com/product/496074/magic-universes-beyond-doctor-who-commander-deck-display",
       "snippet": "Universes Beyond: Doctor Who - Commander Deck Display",
       "components": [
@@ -2566,7 +2566,7 @@
         {
           "deck_id": "timey-wimey",
           "vendor": "tcgplayer",
-          "price": 149.04,
+          "price": 147.74,
           "kind": "Market"
         },
         {
@@ -2578,7 +2578,7 @@
         {
           "deck_id": "masters-of-evil",
           "vendor": "tcgplayer",
-          "price": 125.2,
+          "price": 123.65,
           "kind": "Market"
         }
       ],
@@ -2596,7 +2596,7 @@
       "price_low": 485.0,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 399.85,
+      "individual_total": 409.84,
       "savings": null,
       "url": "https://www.tcgplayer.com/product/496045/magic-wilds-of-eldraine-commander-decks-set-of-2",
       "snippet": "Wilds of Eldraine Commander Decks [Set of 2]",
@@ -2604,7 +2604,7 @@
         {
           "deck_id": "virtue-and-valor",
           "vendor": "tcgplayer",
-          "price": 130.0,
+          "price": 139.99,
           "kind": "lowest listing"
         },
         {
@@ -2672,37 +2672,37 @@
         "riders-of-rohan"
       ],
       "deck_count": 4,
-      "price": 315.0,
+      "price": 313.65,
       "price_low": 309.9,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 362.43,
-      "savings": 47.43,
+      "individual_total": 362.89,
+      "savings": 49.24,
       "url": "https://www.tcgplayer.com/product/488297/magic-the-lord-of-the-rings-tales-of-middle-earth-commander-decks-set-of-4",
       "snippet": "The Lord of the Rings: Tales of Middle-earth Commander Decks [Set of 4]",
       "components": [
         {
           "deck_id": "the-hosts-of-mordor",
           "vendor": "tcgplayer",
-          "price": 125.22,
+          "price": 126.13,
           "kind": "Market"
         },
         {
           "deck_id": "food-and-fellowship",
           "vendor": "tcgplayer",
-          "price": 93.97,
+          "price": 94.37,
           "kind": "Market"
         },
         {
           "deck_id": "elven-council",
           "vendor": "tcgplayer",
-          "price": 64.86,
+          "price": 64.82,
           "kind": "Market"
         },
         {
           "deck_id": "riders-of-rohan",
           "vendor": "tcgplayer",
-          "price": 78.38,
+          "price": 77.57,
           "kind": "Market"
         }
       ],
@@ -2723,7 +2723,7 @@
       "price_low": 449.99,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 448.62,
+      "individual_total": 449.18,
       "savings": null,
       "url": "https://www.tcgplayer.com/product/484593/magic-march-of-the-machine-commander-decks-set-of-5",
       "snippet": "March of the Machine Commander Decks [Set of 5]",
@@ -2743,7 +2743,7 @@
         {
           "deck_id": "growing-threat",
           "vendor": "tcgplayer",
-          "price": 85.25,
+          "price": 86.05,
           "kind": "Market"
         },
         {
@@ -2755,7 +2755,7 @@
         {
           "deck_id": "tinker-time",
           "vendor": "tcgplayer",
-          "price": 53.67,
+          "price": 53.43,
           "kind": "Market"
         }
       ],
@@ -2773,7 +2773,7 @@
       "price_low": 449.99,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 429.73,
+      "individual_total": 432.74,
       "savings": null,
       "url": "https://www.tcgplayer.com/product/475568/magic-phyrexia-all-will-be-one-commander-decks-set-of-2",
       "snippet": "Phyrexia: All Will Be One Commander Decks [Set of 2]",
@@ -2787,7 +2787,7 @@
         {
           "deck_id": "corrupting-influence",
           "vendor": "tcgplayer",
-          "price": 336.98,
+          "price": 339.99,
           "kind": "lowest listing"
         }
       ],
@@ -2804,25 +2804,25 @@
         "draconic-destruction"
       ],
       "deck_count": 5,
-      "price": 137.14,
+      "price": 136.8,
       "price_low": 131.49,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 175.57,
-      "savings": 38.43,
+      "individual_total": 175.26,
+      "savings": 38.46,
       "url": "https://www.tcgplayer.com/product/448437/magic-starter-commander-deck-set-of-5",
       "snippet": "Starter Commander Deck - Set of 5",
       "components": [
         {
           "deck_id": "first-flight",
           "vendor": "tcgplayer",
-          "price": 27.36,
+          "price": 27.31,
           "kind": "Market"
         },
         {
           "deck_id": "grave-danger",
           "vendor": "tcgplayer",
-          "price": 34.51,
+          "price": 34.37,
           "kind": "Market"
         },
         {
@@ -2834,7 +2834,7 @@
         {
           "deck_id": "chaos-incarnate",
           "vendor": "tcgplayer",
-          "price": 35.57,
+          "price": 35.45,
           "kind": "Market"
         },
         {
@@ -2855,7 +2855,7 @@
       ],
       "deck_count": 2,
       "price": 262.46,
-      "price_low": 299.99,
+      "price_low": 349.99,
       "price_source": "Market",
       "contents_source": "mtgjson",
       "individual_total": 252.48,
@@ -2892,21 +2892,21 @@
       "price_low": 825.0,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 953.44,
-      "savings": 128.44,
+      "individual_total": 960.31,
+      "savings": 135.31,
       "url": "https://www.tcgplayer.com/product/272321/magic-universes-beyond-warhammer-40-000-commander-deck-case",
       "snippet": "Universes Beyond: Warhammer 40,000 - Commander Deck Case",
       "components": [
         {
           "deck_id": "forces-of-the-imperium",
           "vendor": "tcgplayer",
-          "price": 233.91,
+          "price": 230.78,
           "kind": "Market"
         },
         {
           "deck_id": "necron-dynasties",
           "vendor": "tcgplayer",
-          "price": 299.55,
+          "price": 309.55,
           "kind": "lowest listing"
         },
         {
@@ -2970,27 +2970,27 @@
       "price_low": 689.99,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 806.82,
-      "savings": 96.37,
+      "individual_total": 806.71,
+      "savings": 96.26,
       "url": "https://www.tcgplayer.com/product/271583/magic-commander-legends-battle-for-baldur-s-gate-commander-deck-display",
       "snippet": "Commander Legends: Battle for Baldur's Gate - Commander Deck Display",
       "components": [
         {
           "deck_id": "party-time",
           "vendor": "tcgplayer",
-          "price": 174.76,
+          "price": 174.79,
           "kind": "Market"
         },
         {
           "deck_id": "mind-flayarrrs",
-          "vendor": "cardkingdom",
-          "price": 299.99,
-          "kind": "in stock"
+          "vendor": "tcgplayer",
+          "price": 299.65,
+          "kind": "Market"
         },
         {
           "deck_id": "exit-from-exile",
           "vendor": "tcgplayer",
-          "price": 173.45,
+          "price": 173.65,
           "kind": "Market"
         },
         {
@@ -3099,8 +3099,8 @@
       "price_low": 210.0,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 226.41,
-      "savings": 16.41,
+      "individual_total": 225.61,
+      "savings": 15.61,
       "url": "https://www.tcgplayer.com/product/250501/magic-innistrad-crimson-vow-commander-decks-set-of-2",
       "snippet": "Innistrad: Crimson Vow - Commander Decks [Set of 2]",
       "components": [
@@ -3113,7 +3113,7 @@
         {
           "deck_id": "spirit-squadron",
           "vendor": "tcgplayer",
-          "price": 77.44,
+          "price": 76.64,
           "kind": "Market"
         }
       ],
@@ -3128,7 +3128,7 @@
       ],
       "deck_count": 2,
       "price": 214.97,
-      "price_low": 225.0,
+      "price_low": 205.0,
       "price_source": "Market",
       "contents_source": "mtgjson",
       "individual_total": 207.12,
@@ -3212,8 +3212,8 @@
       "price_low": 319.99,
       "price_source": "Market",
       "contents_source": "mtgjson",
-      "individual_total": 363.51,
-      "savings": 24.52,
+      "individual_total": 364.12,
+      "savings": 25.13,
       "url": "https://www.tcgplayer.com/product/235087/magic-commander-2021-set-of-5",
       "snippet": "Commander 2021 - Set of 5",
       "components": [
@@ -3226,7 +3226,7 @@
         {
           "deck_id": "prismari-performance",
           "vendor": "tcgplayer",
-          "price": 58.65,
+          "price": 59.56,
           "kind": "Market"
         },
         {
@@ -3244,7 +3244,7 @@
         {
           "deck_id": "quantum-quandrix",
           "vendor": "tcgplayer",
-          "price": 76.83,
+          "price": 76.53,
           "kind": "Market"
         }
       ],
@@ -3253,9 +3253,9 @@
   },
   "crack": {
     "federation-fleet": {
-      "tcg": 181.08,
-      "cardkingdom": 193.3,
-      "sell_tcg": 126.76,
+      "tcg": 177.09,
+      "cardkingdom": 148.76,
+      "sell_tcg": 123.96,
       "sell_cardkingdom": null,
       "sell_tcg_estimated": true,
       "card_count": 100,
@@ -3264,26 +3264,26 @@
       "top_cards": [
         {
           "name": "Jean-Luc Picard, Luminary",
-          "price": 18.3
+          "price": 16.49
         },
         {
           "name": "Spot, Felis catus",
-          "price": 13.17
-        },
-        {
-          "name": "Alhammarret's Archive",
-          "price": 11.99
+          "price": 10.54
         },
         {
           "name": "Training Center",
-          "price": 10.75
+          "price": 6.78
+        },
+        {
+          "name": "Rom and Leeta, Unlikely Pair",
+          "price": 6.34
         }
       ]
     },
     "landing-party": {
-      "tcg": 255.94,
-      "cardkingdom": 242.38,
-      "sell_tcg": 179.16,
+      "tcg": 245.37,
+      "cardkingdom": 208.9,
+      "sell_tcg": 171.76,
       "sell_cardkingdom": null,
       "sell_tcg_estimated": true,
       "card_count": 100,
@@ -3292,26 +3292,26 @@
       "top_cards": [
         {
           "name": "Starship Enterprise",
-          "price": 14.81
+          "price": 13.03
         },
         {
           "name": "Exploration",
-          "price": 12.71
+          "price": 10.92
         },
         {
-          "name": "Sea of Clouds",
-          "price": 11.99
+          "name": "Chief Kyle, Transporter Tech",
+          "price": 9.97
         },
         {
-          "name": "Command Chair",
-          "price": 11.87
+          "name": "Heroic Intervention",
+          "price": 9.95
         }
       ]
     },
     "klingon-fury": {
-      "tcg": 128.9,
-      "cardkingdom": 185.72,
-      "sell_tcg": 90.23,
+      "tcg": 134.55,
+      "cardkingdom": 144.38,
+      "sell_tcg": 94.18,
       "sell_cardkingdom": null,
       "sell_tcg_estimated": true,
       "card_count": 100,
@@ -3320,55 +3320,55 @@
       "top_cards": [
         {
           "name": "Own the Day",
-          "price": 23.14
+          "price": 13.27
+        },
+        {
+          "name": "The Sword of Kahless",
+          "price": 8.36
         },
         {
           "name": "The Beacon of Kahless",
-          "price": 13.17
+          "price": 8.19
         },
         {
-          "name": "Vault of Champions",
-          "price": 10.53
-        },
-        {
-          "name": "World at War",
-          "price": 9.99
+          "name": "Worf, Defiant Commander",
+          "price": 7.27
         }
       ]
     },
     "we-are-the-borg": {
-      "tcg": 153.61,
-      "cardkingdom": 175.3,
-      "sell_tcg": 107.53,
-      "sell_cardkingdom": null,
+      "tcg": 158.56,
+      "cardkingdom": 150.06,
+      "sell_tcg": 110.99,
+      "sell_cardkingdom": 0.65,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
       "missing": 0,
       "top_cards": [
         {
-          "name": "Unwinding Clock",
-          "price": 14.23
+          "name": "The Borg Queen",
+          "price": 12.02
         },
         {
           "name": "Hugh, First of Many",
-          "price": 13.84
+          "price": 11.69
         },
         {
-          "name": "The Borg Queen",
-          "price": 13.42
+          "name": "Unwinding Clock",
+          "price": 9.57
         },
         {
           "name": "Morphic Pool",
-          "price": 12.4
+          "price": 8.07
         }
       ]
     },
     "multiverse-reforged": {
-      "tcg": 79.85,
-      "cardkingdom": 129.62,
-      "sell_tcg": 55.9,
-      "sell_cardkingdom": 32.98,
+      "tcg": 81.29,
+      "cardkingdom": 128.72,
+      "sell_tcg": 56.9,
+      "sell_cardkingdom": 32.8,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3376,27 +3376,27 @@
       "top_cards": [
         {
           "name": "Avacyn, Angel of Horror",
-          "price": 12.63
+          "price": 12.57
         },
         {
           "name": "Flawless Maneuver",
-          "price": 7.78
+          "price": 7.99
         },
         {
           "name": "Reflecting Pool",
-          "price": 5.41
+          "price": 5.39
         },
         {
           "name": "Darksteel Angel",
-          "price": 3.34
+          "price": 3.4
         }
       ]
     },
     "calling-all-angels": {
-      "tcg": 55.74,
-      "cardkingdom": 74.39,
-      "sell_tcg": 39.02,
-      "sell_cardkingdom": 19.22,
+      "tcg": 55.88,
+      "cardkingdom": 80.26,
+      "sell_tcg": 39.12,
+      "sell_cardkingdom": 18.73,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3404,27 +3404,27 @@
       "top_cards": [
         {
           "name": "Giada, Font of Hope",
-          "price": 5.94
+          "price": 6.17
         },
         {
           "name": "Norn's Choirmaster",
-          "price": 3.94
+          "price": 3.9
         },
         {
           "name": "Vanquisher's Banner",
-          "price": 3.81
+          "price": 3.84
         },
         {
           "name": "Starnheim Aspirant",
-          "price": 3.15
+          "price": 3.04
         }
       ]
     },
     "keen-engineering": {
-      "tcg": 53.11,
-      "cardkingdom": 88.68,
-      "sell_tcg": 37.18,
-      "sell_cardkingdom": 23.69,
+      "tcg": 53.98,
+      "cardkingdom": 96.05,
+      "sell_tcg": 37.79,
+      "sell_cardkingdom": 24.64,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3432,15 +3432,15 @@
       "top_cards": [
         {
           "name": "Scrawling Crawler",
-          "price": 4.49
+          "price": 4.67
         },
         {
           "name": "Forsaken Monument",
-          "price": 3.57
+          "price": 3.78
         },
         {
           "name": "Misleading Signpost",
-          "price": 3.44
+          "price": 3.43
         },
         {
           "name": "All Is Dust",
@@ -3449,10 +3449,10 @@
       ]
     },
     "wretched-ranks": {
-      "tcg": 55.68,
-      "cardkingdom": 77.47,
-      "sell_tcg": 38.98,
-      "sell_cardkingdom": 23.23,
+      "tcg": 56.25,
+      "cardkingdom": 95.48,
+      "sell_tcg": 39.38,
+      "sell_cardkingdom": 22.73,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3460,27 +3460,27 @@
       "top_cards": [
         {
           "name": "Undead Warchief",
-          "price": 4.96
+          "price": 5.01
         },
         {
           "name": "Ayara, First of Locthwain",
-          "price": 4.58
+          "price": 4.55
         },
         {
           "name": "Ghoulcaller Gisa",
-          "price": 3.44
+          "price": 3.46
         },
         {
           "name": "Phyrexian Arena",
-          "price": 3.03
+          "price": 3.07
         }
       ]
     },
     "reign-of-dragons": {
-      "tcg": 62.34,
-      "cardkingdom": 89.89,
-      "sell_tcg": 43.64,
-      "sell_cardkingdom": 25.94,
+      "tcg": 62.28,
+      "cardkingdom": 100.8,
+      "sell_tcg": 43.6,
+      "sell_cardkingdom": 23.23,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3488,27 +3488,27 @@
       "top_cards": [
         {
           "name": "Herald's Horn",
-          "price": 5.57
+          "price": 5.75
         },
         {
           "name": "Utvara Hellkite",
-          "price": 4.94
+          "price": 4.68
         },
         {
           "name": "Lathliss, Dragon Queen",
-          "price": 4.83
+          "price": 4.42
         },
         {
           "name": "Chandra's Ignition",
-          "price": 3.7
+          "price": 3.69
         }
       ]
     },
     "tramplesaurus-rex": {
-      "tcg": 69.41,
-      "cardkingdom": 82.68,
-      "sell_tcg": 48.59,
-      "sell_cardkingdom": 36.63,
+      "tcg": 70.17,
+      "cardkingdom": 118.91,
+      "sell_tcg": 49.12,
+      "sell_cardkingdom": 37.01,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3516,27 +3516,27 @@
       "top_cards": [
         {
           "name": "Birds of Paradise",
-          "price": 8.55
-        },
-        {
-          "name": "Surrak and Goreclaw",
-          "price": 5.55
+          "price": 8.3
         },
         {
           "name": "Beast Whisperer",
-          "price": 5.53
+          "price": 5.77
+        },
+        {
+          "name": "Surrak and Goreclaw",
+          "price": 5.58
         },
         {
           "name": "Witch's Clinic",
-          "price": 5.24
+          "price": 5.05
         }
       ]
     },
     "avengers-assemble": {
-      "tcg": 68.02,
-      "cardkingdom": 117.02,
-      "sell_tcg": 47.61,
-      "sell_cardkingdom": 23.69,
+      "tcg": 67.52,
+      "cardkingdom": 116.82,
+      "sell_tcg": 47.26,
+      "sell_cardkingdom": 21.8,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3544,27 +3544,27 @@
       "top_cards": [
         {
           "name": "Spectator Seating",
-          "price": 5.44
+          "price": 5.5
         },
         {
           "name": "Kindred Discovery",
-          "price": 5.16
+          "price": 5.05
         },
         {
           "name": "Raise the Palisade",
-          "price": 4.64
+          "price": 4.55
         },
         {
           "name": "Black Widow, Agile Avenger",
-          "price": 3.38
+          "price": 3.36
         }
       ]
     },
     "wakanda-forever": {
-      "tcg": 67.67,
-      "cardkingdom": 118.14,
-      "sell_tcg": 47.37,
-      "sell_cardkingdom": 27.94,
+      "tcg": 66.95,
+      "cardkingdom": 118.44,
+      "sell_tcg": 46.86,
+      "sell_cardkingdom": 28.5,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3572,27 +3572,27 @@
       "top_cards": [
         {
           "name": "Birds of Paradise",
-          "price": 8.46
+          "price": 8.47
         },
         {
           "name": "Bountiful Promenade",
-          "price": 5.75
+          "price": 5.63
         },
         {
           "name": "Helm of the Host",
-          "price": 4.92
+          "price": 4.27
         },
         {
           "name": "Hammer of Nazahn",
-          "price": 3.6
+          "price": 3.43
         }
       ]
     },
     "the-fantastic-four": {
-      "tcg": 65.45,
-      "cardkingdom": 106.74,
-      "sell_tcg": 45.81,
-      "sell_cardkingdom": 23.93,
+      "tcg": 64.52,
+      "cardkingdom": 108.14,
+      "sell_tcg": 45.16,
+      "sell_cardkingdom": 25.01,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3600,27 +3600,27 @@
       "top_cards": [
         {
           "name": "Galactus, Devourer of Worlds",
-          "price": 5.58
+          "price": 5.47
         },
         {
           "name": "Three Visits",
-          "price": 5.17
+          "price": 5.12
         },
         {
           "name": "Lightning Greaves",
-          "price": 4.87
+          "price": 4.85
         },
         {
           "name": "Clever Concealment",
-          "price": 4.75
+          "price": 4.72
         }
       ]
     },
     "doom-prevails": {
-      "tcg": 98.56,
-      "cardkingdom": 150.36,
-      "sell_tcg": 68.99,
-      "sell_cardkingdom": 44.03,
+      "tcg": 97.28,
+      "cardkingdom": 152.16,
+      "sell_tcg": 68.1,
+      "sell_cardkingdom": 44.33,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3628,55 +3628,55 @@
       "top_cards": [
         {
           "name": "Black Market Connections",
-          "price": 12.87
+          "price": 12.74
         },
         {
           "name": "Luxury Suite",
-          "price": 8.3
+          "price": 8.14
         },
         {
           "name": "Spark Double",
-          "price": 8.27
+          "price": 7.86
         },
         {
           "name": "Skullclamp",
-          "price": 6.3
+          "price": 6.09
         }
       ]
     },
     "quandrix-unlimited": {
-      "tcg": 75.17,
-      "cardkingdom": 117.55,
-      "sell_tcg": 52.62,
-      "sell_cardkingdom": 27.06,
+      "tcg": 74.8,
+      "cardkingdom": 119.33,
+      "sell_tcg": 52.36,
+      "sell_cardkingdom": 27.46,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
       "missing": 0,
       "top_cards": [
         {
-          "name": "Ozolith, the Shattered Spire",
-          "price": 6.98
+          "name": "Turbulent Wilderness",
+          "price": 6.69
         },
         {
-          "name": "Turbulent Wilderness",
-          "price": 6.66
+          "name": "Ozolith, the Shattered Spire",
+          "price": 6.65
         },
         {
           "name": "Three Visits",
-          "price": 5.32
+          "price": 5.08
         },
         {
           "name": "Kami of Whispered Hopes",
-          "price": 5.01
+          "price": 4.98
         }
       ]
     },
     "silverquill-influence": {
-      "tcg": 93.94,
-      "cardkingdom": 133.63,
-      "sell_tcg": 65.76,
-      "sell_cardkingdom": 42.81,
+      "tcg": 94.31,
+      "cardkingdom": 131.53,
+      "sell_tcg": 66.02,
+      "sell_cardkingdom": 43.56,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3684,27 +3684,27 @@
       "top_cards": [
         {
           "name": "Land Tax",
-          "price": 16.93
-        },
-        {
-          "name": "Animate Dead",
-          "price": 7.71
+          "price": 17.0
         },
         {
           "name": "Turbulent Moor",
-          "price": 7.56
+          "price": 7.52
+        },
+        {
+          "name": "Animate Dead",
+          "price": 7.41
         },
         {
           "name": "Ghostly Prison",
-          "price": 6.59
+          "price": 6.51
         }
       ]
     },
     "prismari-artistry": {
-      "tcg": 88.33,
-      "cardkingdom": 141.83,
-      "sell_tcg": 61.83,
-      "sell_cardkingdom": 42.09,
+      "tcg": 89.06,
+      "cardkingdom": 143.92,
+      "sell_tcg": 62.34,
+      "sell_cardkingdom": 42.07,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3712,27 +3712,27 @@
       "top_cards": [
         {
           "name": "Faerie Mastermind",
-          "price": 12.48
+          "price": 12.45
         },
         {
           "name": "Goldspan Dragon",
-          "price": 12.25
+          "price": 12.29
         },
         {
           "name": "Harmonic Prodigy",
-          "price": 7.46
+          "price": 7.68
         },
         {
           "name": "Turbulent Springs",
-          "price": 5.8
+          "price": 5.91
         }
       ]
     },
     "lorehold-spirit": {
-      "tcg": 76.57,
-      "cardkingdom": 119.16,
-      "sell_tcg": 53.6,
-      "sell_cardkingdom": 33.33,
+      "tcg": 76.78,
+      "cardkingdom": 121.84,
+      "sell_tcg": 53.75,
+      "sell_cardkingdom": 33.69,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3740,27 +3740,27 @@
       "top_cards": [
         {
           "name": "Moonshaker Cavalry",
-          "price": 9.96
+          "price": 10.11
         },
         {
           "name": "Emeria, the Sky Ruin",
-          "price": 8.07
+          "price": 8.09
         },
         {
           "name": "Turbulent Steppe",
-          "price": 7.26
+          "price": 7.35
         },
         {
           "name": "Bitterthorn, Nissa's Animus",
-          "price": 5.52
+          "price": 5.58
         }
       ]
     },
     "witherbloom-pestilence": {
-      "tcg": 80.3,
-      "cardkingdom": 137.9,
-      "sell_tcg": 56.21,
-      "sell_cardkingdom": 39.8,
+      "tcg": 80.95,
+      "cardkingdom": 145.7,
+      "sell_tcg": 56.66,
+      "sell_cardkingdom": 46.4,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3768,27 +3768,27 @@
       "top_cards": [
         {
           "name": "Turbulent Fen",
-          "price": 8.41
+          "price": 8.44
         },
         {
           "name": "Ohran Frostfang",
-          "price": 7.39
+          "price": 7.37
         },
         {
           "name": "Stensian Sanguinist // Exsanguinate",
-          "price": 7.04
+          "price": 7.09
         },
         {
           "name": "Toxic Deluge",
-          "price": 5.82
+          "price": 5.74
         }
       ]
     },
     "turtle-power": {
-      "tcg": 73.87,
-      "cardkingdom": 127.45,
-      "sell_tcg": 51.71,
-      "sell_cardkingdom": 31.02,
+      "tcg": 72.78,
+      "cardkingdom": 127.74,
+      "sell_tcg": 50.95,
+      "sell_cardkingdom": 27.99,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3796,27 +3796,27 @@
       "top_cards": [
         {
           "name": "City of Brass",
-          "price": 11.49
+          "price": 11.2
         },
         {
           "name": "Spire Garden",
-          "price": 5.89
+          "price": 5.83
         },
         {
           "name": "Undergrowth Stadium",
-          "price": 5.17
+          "price": 5.08
         },
         {
           "name": "Irma, Part-Time Mutant",
-          "price": 3.48
+          "price": 3.4
         }
       ]
     },
     "dance-of-the-elements": {
-      "tcg": 63.6,
-      "cardkingdom": 102.7,
-      "sell_tcg": 44.52,
-      "sell_cardkingdom": 24.46,
+      "tcg": 64.0,
+      "cardkingdom": 102.8,
+      "sell_tcg": 44.8,
+      "sell_cardkingdom": 24.68,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3824,11 +3824,11 @@
       "top_cards": [
         {
           "name": "Springleaf Parade",
-          "price": 7.2
+          "price": 7.43
         },
         {
           "name": "Selvala, Heart of the Wilds",
-          "price": 5.77
+          "price": 5.8
         },
         {
           "name": "Abundant Countryside",
@@ -3836,15 +3836,15 @@
         },
         {
           "name": "Timeless Lotus",
-          "price": 4.07
+          "price": 4.09
         }
       ]
     },
     "blight-curse": {
-      "tcg": 53.51,
-      "cardkingdom": 94.63,
-      "sell_tcg": 37.46,
-      "sell_cardkingdom": 18.35,
+      "tcg": 53.36,
+      "cardkingdom": 93.93,
+      "sell_tcg": 37.35,
+      "sell_cardkingdom": 19.52,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3852,27 +3852,27 @@
       "top_cards": [
         {
           "name": "Chimil, the Inner Sun",
-          "price": 8.69
+          "price": 8.51
         },
         {
           "name": "Vraska, Betrayal's Sting",
-          "price": 4.9
+          "price": 4.59
         },
         {
           "name": "Evolution Sage",
-          "price": 3.51
+          "price": 3.4
         },
         {
           "name": "Tree of Perdition",
-          "price": 2.98
+          "price": 3.01
         }
       ]
     },
     "counter-intelligence": {
-      "tcg": 76.71,
-      "cardkingdom": 118.56,
-      "sell_tcg": 53.7,
-      "sell_cardkingdom": 31.32,
+      "tcg": 76.78,
+      "cardkingdom": 113.67,
+      "sell_tcg": 53.75,
+      "sell_cardkingdom": 30.45,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3880,27 +3880,27 @@
       "top_cards": [
         {
           "name": "Swan Song",
-          "price": 11.77
+          "price": 11.92
         },
         {
           "name": "Uthros Research Craft",
-          "price": 6.94
+          "price": 7.07
         },
         {
           "name": "Ripples of Potential",
-          "price": 5.4
+          "price": 5.32
         },
         {
           "name": "Karn's Bastion",
-          "price": 3.56
+          "price": 3.59
         }
       ]
     },
     "world-shaper": {
-      "tcg": 54.76,
-      "cardkingdom": 104.19,
-      "sell_tcg": 38.33,
-      "sell_cardkingdom": 17.18,
+      "tcg": 55.24,
+      "cardkingdom": 101.98,
+      "sell_tcg": 38.67,
+      "sell_cardkingdom": 16.25,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3908,27 +3908,27 @@
       "top_cards": [
         {
           "name": "Braids, Arisen Nightmare",
-          "price": 4.04
+          "price": 4.26
         },
         {
           "name": "Exploration Broodship",
-          "price": 3.53
+          "price": 3.6
         },
         {
           "name": "Nature's Lore",
-          "price": 2.95
+          "price": 2.86
         },
         {
-          "name": "Horizon Explorer",
-          "price": 2.44
+          "name": "Oracle of Mul Daya",
+          "price": 2.53
         }
       ]
     },
     "revival-trance": {
-      "tcg": 46.66,
-      "cardkingdom": 96.34,
-      "sell_tcg": 32.66,
-      "sell_cardkingdom": 17.93,
+      "tcg": 46.7,
+      "cardkingdom": 95.84,
+      "sell_tcg": 32.69,
+      "sell_cardkingdom": 16.25,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3936,27 +3936,27 @@
       "top_cards": [
         {
           "name": "Reanimate",
-          "price": 8.68
+          "price": 8.65
         },
         {
           "name": "Pitiless Plunderer",
-          "price": 3.19
+          "price": 3.09
         },
         {
           "name": "Rise of the Dark Realms",
-          "price": 3.14
+          "price": 3.03
         },
         {
           "name": "Swiftfoot Boots",
-          "price": 2.85
+          "price": 2.51
         }
       ]
     },
     "limit-break": {
-      "tcg": 62.85,
-      "cardkingdom": 113.62,
-      "sell_tcg": 44.0,
-      "sell_cardkingdom": 29.48,
+      "tcg": 62.67,
+      "cardkingdom": 113.42,
+      "sell_tcg": 43.87,
+      "sell_cardkingdom": 29.9,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3964,27 +3964,27 @@
       "top_cards": [
         {
           "name": "Skullclamp",
-          "price": 4.87
+          "price": 4.97
         },
         {
           "name": "Clever Concealment",
-          "price": 4.83
+          "price": 4.75
         },
         {
           "name": "Professional Face-Breaker",
-          "price": 4.67
+          "price": 4.3
         },
         {
           "name": "Lightning Greaves",
-          "price": 4.23
+          "price": 4.17
         }
       ]
     },
     "counter-blitz": {
-      "tcg": 60.0,
-      "cardkingdom": 108.06,
-      "sell_tcg": 42.0,
-      "sell_cardkingdom": 23.0,
+      "tcg": 59.37,
+      "cardkingdom": 108.36,
+      "sell_tcg": 41.56,
+      "sell_cardkingdom": 23.27,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -3992,55 +3992,55 @@
       "top_cards": [
         {
           "name": "Walking Ballista",
-          "price": 5.45
+          "price": 5.48
         },
         {
           "name": "Three Visits",
-          "price": 4.95
+          "price": 5.0
         },
         {
           "name": "Sphere Grid",
-          "price": 4.8
+          "price": 4.98
         },
         {
           "name": "Farewell",
-          "price": 4.12
+          "price": 4.03
         }
       ]
     },
     "scions-and-spellcraft": {
-      "tcg": 61.16,
-      "cardkingdom": 117.35,
-      "sell_tcg": 42.81,
-      "sell_cardkingdom": 21.98,
+      "tcg": 61.19,
+      "cardkingdom": 122.75,
+      "sell_tcg": 42.83,
+      "sell_cardkingdom": 24.23,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
       "missing": 0,
       "top_cards": [
         {
-          "name": "Snuff Out",
-          "price": 5.41
-        },
-        {
-          "name": "Baleful Strix",
-          "price": 5.33
+          "name": "Tataru Taru",
+          "price": 5.48
         },
         {
           "name": "Authority of the Consuls",
-          "price": 5.29
+          "price": 5.36
         },
         {
-          "name": "Tataru Taru",
+          "name": "Baleful Strix",
+          "price": 5.31
+        },
+        {
+          "name": "Snuff Out",
           "price": 5.23
         }
       ]
     },
     "jeskai-striker": {
-      "tcg": 75.34,
-      "cardkingdom": 118.79,
-      "sell_tcg": 52.74,
-      "sell_cardkingdom": 23.77,
+      "tcg": 75.62,
+      "cardkingdom": 114.7,
+      "sell_tcg": 52.93,
+      "sell_cardkingdom": 22.87,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4048,11 +4048,11 @@
       "top_cards": [
         {
           "name": "Ghostly Prison",
-          "price": 7.01
+          "price": 7.03
         },
         {
           "name": "Will of the Jeskai",
-          "price": 5.27
+          "price": 5.34
         },
         {
           "name": "Reliquary Tower",
@@ -4060,15 +4060,15 @@
         },
         {
           "name": "Curse of Opulence",
-          "price": 4.1
+          "price": 4.2
         }
       ]
     },
     "abzan-armor": {
-      "tcg": 90.13,
-      "cardkingdom": 144.28,
-      "sell_tcg": 63.09,
-      "sell_cardkingdom": 42.44,
+      "tcg": 90.32,
+      "cardkingdom": 143.89,
+      "sell_tcg": 63.22,
+      "sell_cardkingdom": 41.36,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4076,27 +4076,27 @@
       "top_cards": [
         {
           "name": "Seedborn Muse",
-          "price": 19.33
+          "price": 19.26
         },
         {
           "name": "Canopy Gargantuan",
-          "price": 4.7
+          "price": 4.86
         },
         {
           "name": "Will of the Abzan",
-          "price": 4.51
+          "price": 4.55
         },
         {
           "name": "Staff of Compleation",
-          "price": 3.95
+          "price": 3.88
         }
       ]
     },
     "sultai-arisen": {
-      "tcg": 120.0,
-      "cardkingdom": 187.75,
-      "sell_tcg": 84.0,
-      "sell_cardkingdom": 65.69,
+      "tcg": 120.64,
+      "cardkingdom": 178.55,
+      "sell_tcg": 84.45,
+      "sell_cardkingdom": 57.3,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4104,27 +4104,27 @@
       "top_cards": [
         {
           "name": "Colossal Grave-Reaver",
-          "price": 11.1
+          "price": 11.31
         },
         {
           "name": "Teval's Judgment",
-          "price": 10.59
+          "price": 10.78
         },
         {
           "name": "Command Beacon",
-          "price": 9.52
+          "price": 9.63
         },
         {
           "name": "Living Death",
-          "price": 5.92
+          "price": 5.85
         }
       ]
     },
     "mardu-surge": {
-      "tcg": 85.31,
-      "cardkingdom": 132.36,
-      "sell_tcg": 59.72,
-      "sell_cardkingdom": 36.38,
+      "tcg": 85.9,
+      "cardkingdom": 127.96,
+      "sell_tcg": 60.13,
+      "sell_cardkingdom": 35.85,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4132,7 +4132,7 @@
       "top_cards": [
         {
           "name": "Skullclamp",
-          "price": 6.19
+          "price": 5.93
         },
         {
           "name": "Will of the Mardu",
@@ -4140,19 +4140,19 @@
         },
         {
           "name": "Goldlust Triad",
-          "price": 5.12
+          "price": 5.35
         },
         {
           "name": "Lightning Greaves",
-          "price": 4.63
+          "price": 4.66
         }
       ]
     },
     "temur-roar": {
-      "tcg": 87.85,
-      "cardkingdom": 111.72,
-      "sell_tcg": 61.49,
-      "sell_cardkingdom": 22.24,
+      "tcg": 87.72,
+      "cardkingdom": 112.18,
+      "sell_tcg": 61.4,
+      "sell_cardkingdom": 23.03,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4160,55 +4160,55 @@
       "top_cards": [
         {
           "name": "Ureni of the Unwritten",
-          "price": 14.58
+          "price": 14.65
         },
         {
           "name": "Hellkite Courser",
-          "price": 4.42
-        },
-        {
-          "name": "Elemental Bond",
-          "price": 4.3
+          "price": 4.48
         },
         {
           "name": "Temur Ascendancy",
-          "price": 4.19
+          "price": 4.21
+        },
+        {
+          "name": "Elemental Bond",
+          "price": 4.06
         }
       ]
     },
     "living-energy": {
-      "tcg": 55.5,
-      "cardkingdom": 101.57,
-      "sell_tcg": 38.85,
-      "sell_cardkingdom": 22.02,
+      "tcg": 56.3,
+      "cardkingdom": 101.47,
+      "sell_tcg": 39.41,
+      "sell_cardkingdom": 20.87,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
       "missing": 0,
       "top_cards": [
         {
-          "name": "Stridehangar Automaton",
-          "price": 5.09
+          "name": "Academy Ruins",
+          "price": 4.95
         },
         {
-          "name": "Academy Ruins",
-          "price": 4.79
+          "name": "Stridehangar Automaton",
+          "price": 4.91
         },
         {
           "name": "Panharmonicon",
-          "price": 4.53
+          "price": 4.74
         },
         {
           "name": "Lightning Greaves",
-          "price": 3.81
+          "price": 4.01
         }
       ]
     },
     "eternal-might": {
-      "tcg": 47.88,
-      "cardkingdom": 89.28,
-      "sell_tcg": 33.52,
-      "sell_cardkingdom": 10.65,
+      "tcg": 47.94,
+      "cardkingdom": 89.47,
+      "sell_tcg": 33.56,
+      "sell_cardkingdom": 9.22,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4216,55 +4216,55 @@
       "top_cards": [
         {
           "name": "Renewed Solidarity",
-          "price": 3.38
+          "price": 3.44
         },
         {
           "name": "Bontu's Monument",
-          "price": 2.92
+          "price": 2.94
         },
         {
           "name": "The Scarab God",
-          "price": 2.8
+          "price": 2.86
         },
         {
           "name": "Damn",
-          "price": 1.69
+          "price": 1.73
         }
       ]
     },
     "miracle-worker": {
-      "tcg": 104.33,
-      "cardkingdom": 165.07,
-      "sell_tcg": 73.03,
-      "sell_cardkingdom": 53.14,
+      "tcg": 105.14,
+      "cardkingdom": 169.95,
+      "sell_tcg": 73.6,
+      "sell_cardkingdom": 54.44,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
       "missing": 0,
       "top_cards": [
         {
-          "name": "Ondu Spiritdancer",
-          "price": 9.88
+          "name": "Hall of Heliod's Generosity",
+          "price": 9.96
         },
         {
-          "name": "Hall of Heliod's Generosity",
-          "price": 9.79
+          "name": "Ondu Spiritdancer",
+          "price": 9.75
         },
         {
           "name": "Ancient Cellarspawn",
-          "price": 6.43
+          "price": 6.51
         },
         {
           "name": "Metamorphosis Fanatic",
-          "price": 6.13
+          "price": 6.11
         }
       ]
     },
     "death-toll": {
-      "tcg": 89.11,
-      "cardkingdom": 133.6,
-      "sell_tcg": 62.38,
-      "sell_cardkingdom": 31.33,
+      "tcg": 89.59,
+      "cardkingdom": 133.8,
+      "sell_tcg": 62.71,
+      "sell_cardkingdom": 37.93,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4272,7 +4272,7 @@
       "top_cards": [
         {
           "name": "Reanimate",
-          "price": 10.25
+          "price": 10.34
         },
         {
           "name": "Whip of Erebos",
@@ -4289,26 +4289,26 @@
       ]
     },
     "jump-scare": {
-      "tcg": 101.9,
-      "cardkingdom": 145.2,
-      "sell_tcg": 71.33,
-      "sell_cardkingdom": 39.99,
+      "tcg": 103.07,
+      "cardkingdom": 144.85,
+      "sell_tcg": 72.15,
+      "sell_cardkingdom": 40.8,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
       "missing": 0,
       "top_cards": [
         {
+          "name": "Aesi, Tyrant of Gyre Strait",
+          "price": 13.8
+        },
+        {
           "name": "Ashaya, Soul of the Wild",
-          "price": 13.82
+          "price": 13.73
         },
         {
           "name": "Giggling Skitterspike",
           "price": 13.37
-        },
-        {
-          "name": "Aesi, Tyrant of Gyre Strait",
-          "price": 12.6
         },
         {
           "name": "Scute Swarm",
@@ -4317,10 +4317,10 @@
       ]
     },
     "endless-punishment": {
-      "tcg": 209.78,
-      "cardkingdom": 262.94,
-      "sell_tcg": 146.85,
-      "sell_cardkingdom": 93.48,
+      "tcg": 209.29,
+      "cardkingdom": 266.33,
+      "sell_tcg": 146.5,
+      "sell_cardkingdom": 95.27,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4328,11 +4328,11 @@
       "top_cards": [
         {
           "name": "Valgavoth, Harrower of Souls",
-          "price": 26.61
+          "price": 26.63
         },
         {
           "name": "Persistent Constrictor",
-          "price": 13.56
+          "price": 13.49
         },
         {
           "name": "Witch's Clinic",
@@ -4340,15 +4340,15 @@
         },
         {
           "name": "The Lord of Pain",
-          "price": 12.13
+          "price": 12.17
         }
       ]
     },
     "family-matters": {
-      "tcg": 68.1,
-      "cardkingdom": 109.54,
-      "sell_tcg": 47.67,
-      "sell_cardkingdom": 28.71,
+      "tcg": 68.24,
+      "cardkingdom": 109.09,
+      "sell_tcg": 47.77,
+      "sell_cardkingdom": 28.99,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4356,27 +4356,27 @@
       "top_cards": [
         {
           "name": "Agate Instigator",
-          "price": 9.04
-        },
-        {
-          "name": "Helm of the Host",
-          "price": 6.27
+          "price": 8.93
         },
         {
           "name": "Pollywog Prodigy",
-          "price": 6.15
+          "price": 6.34
+        },
+        {
+          "name": "Helm of the Host",
+          "price": 6.24
         },
         {
           "name": "Jacked Rabbit",
-          "price": 4.13
+          "price": 4.26
         }
       ]
     },
     "squirreled-away": {
-      "tcg": 121.6,
-      "cardkingdom": 157.83,
-      "sell_tcg": 85.12,
-      "sell_cardkingdom": 43.24,
+      "tcg": 121.31,
+      "cardkingdom": 160.02,
+      "sell_tcg": 84.92,
+      "sell_cardkingdom": 42.38,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4388,7 +4388,7 @@
         },
         {
           "name": "Academy Manufactor",
-          "price": 8.52
+          "price": 8.51
         },
         {
           "name": "Toski, Bearer of Secrets",
@@ -4396,15 +4396,15 @@
         },
         {
           "name": "Beastmaster Ascension",
-          "price": 6.69
+          "price": 6.66
         }
       ]
     },
     "animated-army": {
-      "tcg": 103.24,
-      "cardkingdom": 143.01,
-      "sell_tcg": 72.27,
-      "sell_cardkingdom": 34.61,
+      "tcg": 102.81,
+      "cardkingdom": 144.1,
+      "sell_tcg": 71.97,
+      "sell_cardkingdom": 33.93,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4412,27 +4412,27 @@
       "top_cards": [
         {
           "name": "Alchemist's Talent",
-          "price": 15.22
+          "price": 14.88
         },
         {
           "name": "Lotus Cobra",
-          "price": 6.86
+          "price": 7.06
         },
         {
           "name": "Rain of Riches",
-          "price": 6.69
+          "price": 6.55
         },
         {
           "name": "Reliquary Tower",
-          "price": 5.17
+          "price": 5.11
         }
       ]
     },
     "peace-offering-blb": {
-      "tcg": 105.88,
-      "cardkingdom": 141.22,
-      "sell_tcg": 74.12,
-      "sell_cardkingdom": 36.03,
+      "tcg": 106.03,
+      "cardkingdom": 141.02,
+      "sell_tcg": 74.22,
+      "sell_cardkingdom": 36.76,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4440,27 +4440,27 @@
       "top_cards": [
         {
           "name": "Tempt with Bunnies",
-          "price": 8.19
+          "price": 8.28
         },
         {
           "name": "Twenty-Toed Toad",
-          "price": 7.05
+          "price": 6.98
         },
         {
           "name": "Kalonian Hydra",
-          "price": 6.27
+          "price": 6.25
         },
         {
           "name": "Loran of the Third Path",
-          "price": 5.66
+          "price": 5.72
         }
       ]
     },
     "creative-energy": {
-      "tcg": 78.39,
-      "cardkingdom": 116.7,
-      "sell_tcg": 54.87,
-      "sell_cardkingdom": 27.74,
+      "tcg": 78.97,
+      "cardkingdom": 115.5,
+      "sell_tcg": 55.28,
+      "sell_cardkingdom": 25.54,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4472,23 +4472,23 @@
         },
         {
           "name": "Goldspan Dragon",
-          "price": 12.33
+          "price": 12.4
         },
         {
           "name": "Farewell",
-          "price": 5.71
+          "price": 5.72
         },
         {
           "name": "Professional Face-Breaker",
-          "price": 5.25
+          "price": 5.13
         }
       ]
     },
     "eldrazi-incursion": {
-      "tcg": 165.51,
-      "cardkingdom": 197.92,
-      "sell_tcg": 115.86,
-      "sell_cardkingdom": 51.58,
+      "tcg": 165.54,
+      "cardkingdom": 198.32,
+      "sell_tcg": 115.88,
+      "sell_cardkingdom": 49.74,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4496,27 +4496,27 @@
       "top_cards": [
         {
           "name": "Eldrazi Confluence",
-          "price": 18.78
+          "price": 18.8
         },
         {
           "name": "Eldritch Immunity",
-          "price": 9.77
+          "price": 9.78
         },
         {
           "name": "Eldrazi Monument",
-          "price": 9.77
+          "price": 9.55
         },
         {
           "name": "Morophon, the Boundless",
-          "price": 7.7
+          "price": 7.64
         }
       ]
     },
     "graveyard-overdrive": {
-      "tcg": 101.74,
-      "cardkingdom": 150.15,
-      "sell_tcg": 71.22,
-      "sell_cardkingdom": 30.75,
+      "tcg": 101.34,
+      "cardkingdom": 153.04,
+      "sell_tcg": 70.94,
+      "sell_cardkingdom": 31.69,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4524,27 +4524,27 @@
       "top_cards": [
         {
           "name": "The Reaver Cleaver",
-          "price": 24.49
+          "price": 24.58
         },
         {
           "name": "Barrowgoyf",
-          "price": 13.03
+          "price": 12.64
         },
         {
           "name": "Selvala, Heart of the Wilds",
-          "price": 6.1
+          "price": 6.03
         },
         {
           "name": "Chandra's Ignition",
-          "price": 5.66
+          "price": 5.68
         }
       ]
     },
     "tricky-terrain": {
-      "tcg": 151.09,
-      "cardkingdom": 191.2,
-      "sell_tcg": 105.76,
-      "sell_cardkingdom": 59.91,
+      "tcg": 151.85,
+      "cardkingdom": 190.5,
+      "sell_tcg": 106.3,
+      "sell_cardkingdom": 59.81,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4552,11 +4552,11 @@
       "top_cards": [
         {
           "name": "Talon Gates of Madara",
-          "price": 34.34
+          "price": 34.93
         },
         {
           "name": "Yavimaya, Cradle of Growth",
-          "price": 14.11
+          "price": 13.86
         },
         {
           "name": "Dryad of the Ilysian Grove",
@@ -4564,15 +4564,15 @@
         },
         {
           "name": "Scute Swarm",
-          "price": 8.96
+          "price": 9.11
         }
       ]
     },
     "most-wanted": {
-      "tcg": 149.68,
-      "cardkingdom": 173.16,
-      "sell_tcg": 104.78,
-      "sell_cardkingdom": 56.36,
+      "tcg": 149.23,
+      "cardkingdom": 173.17,
+      "sell_tcg": 104.46,
+      "sell_cardkingdom": 56.12,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4580,7 +4580,7 @@
       "top_cards": [
         {
           "name": "Seize the Spotlight",
-          "price": 13.89
+          "price": 13.64
         },
         {
           "name": "Command Beacon",
@@ -4588,19 +4588,19 @@
         },
         {
           "name": "Academy Manufactor",
-          "price": 8.68
+          "price": 8.7
         },
         {
           "name": "Rain of Riches",
-          "price": 7.05
+          "price": 7.11
         }
       ]
     },
     "grand-larceny": {
-      "tcg": 162.71,
-      "cardkingdom": 187.09,
-      "sell_tcg": 113.9,
-      "sell_cardkingdom": 65.8,
+      "tcg": 162.98,
+      "cardkingdom": 189.6,
+      "sell_tcg": 114.09,
+      "sell_cardkingdom": 68.02,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4611,12 +4611,12 @@
           "price": 11.6
         },
         {
-          "name": "Orochi Soul-Reaver",
-          "price": 8.61
+          "name": "Tower Winder",
+          "price": 8.58
         },
         {
-          "name": "Tower Winder",
-          "price": 8.6
+          "name": "Orochi Soul-Reaver",
+          "price": 8.5
         },
         {
           "name": "Baleful Strix",
@@ -4625,10 +4625,10 @@
       ]
     },
     "quick-draw": {
-      "tcg": 124.5,
-      "cardkingdom": 143.87,
-      "sell_tcg": 87.15,
-      "sell_cardkingdom": 32.23,
+      "tcg": 124.34,
+      "cardkingdom": 144.07,
+      "sell_tcg": 87.04,
+      "sell_cardkingdom": 35.14,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4653,10 +4653,10 @@
       ]
     },
     "desert-bloom": {
-      "tcg": 103.17,
-      "cardkingdom": 133.44,
-      "sell_tcg": 72.22,
-      "sell_cardkingdom": 27.35,
+      "tcg": 103.05,
+      "cardkingdom": 132.29,
+      "sell_tcg": 72.13,
+      "sell_cardkingdom": 33.84,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4671,20 +4671,20 @@
           "price": 8.65
         },
         {
-          "name": "World Shaper",
-          "price": 6.31
+          "name": "Sand Scout",
+          "price": 6.17
         },
         {
-          "name": "Sand Scout",
-          "price": 6.08
+          "name": "World Shaper",
+          "price": 6.12
         }
       ]
     },
     "scrappy-survivors": {
-      "tcg": 101.4,
-      "cardkingdom": 147.46,
-      "sell_tcg": 70.98,
-      "sell_cardkingdom": 39.53,
+      "tcg": 102.9,
+      "cardkingdom": 147.36,
+      "sell_tcg": 72.03,
+      "sell_cardkingdom": 39.67,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4692,27 +4692,27 @@
       "top_cards": [
         {
           "name": "Heroic Intervention",
-          "price": 15.58
+          "price": 15.71
         },
         {
           "name": "Codsworth, Handy Helper",
-          "price": 13.79
+          "price": 13.94
         },
         {
           "name": "Silver Shroud Costume",
-          "price": 6.49
+          "price": 6.26
         },
         {
           "name": "Pip-Boy 3000",
-          "price": 4.94
+          "price": 4.95
         }
       ]
     },
     "mutant-menace": {
-      "tcg": 118.7,
-      "cardkingdom": 157.86,
-      "sell_tcg": 83.09,
-      "sell_cardkingdom": 22.56,
+      "tcg": 119.46,
+      "cardkingdom": 156.57,
+      "sell_tcg": 83.62,
+      "sell_cardkingdom": 23.79,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4720,27 +4720,27 @@
       "top_cards": [
         {
           "name": "Guardian Project",
-          "price": 11.61
+          "price": 11.42
         },
         {
           "name": "Power Fist",
-          "price": 9.86
+          "price": 9.87
         },
         {
           "name": "Branching Evolution",
-          "price": 7.83
+          "price": 7.82
         },
         {
           "name": "Rampaging Yao Guai",
-          "price": 6.24
+          "price": 6.25
         }
       ]
     },
     "hail-caesar": {
-      "tcg": 76.22,
-      "cardkingdom": 118.86,
-      "sell_tcg": 53.35,
-      "sell_cardkingdom": 28.55,
+      "tcg": 77.45,
+      "cardkingdom": 120.86,
+      "sell_tcg": 54.22,
+      "sell_cardkingdom": 27.88,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4748,27 +4748,27 @@
       "top_cards": [
         {
           "name": "Skullclamp",
-          "price": 5.3
+          "price": 5.27
         },
         {
           "name": "Black Market",
-          "price": 5.26
+          "price": 5.18
         },
         {
           "name": "Luck Bobblehead",
-          "price": 4.73
+          "price": 4.74
         },
         {
           "name": "Caesar, Legion's Emperor",
-          "price": 4.51
+          "price": 4.42
         }
       ]
     },
     "science": {
-      "tcg": 70.4,
-      "cardkingdom": 117.08,
-      "sell_tcg": 49.28,
-      "sell_cardkingdom": 26.3,
+      "tcg": 72.16,
+      "cardkingdom": 114.08,
+      "sell_tcg": 50.51,
+      "sell_cardkingdom": 29.41,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4776,27 +4776,27 @@
       "top_cards": [
         {
           "name": "Nuka-Cola Vending Machine",
-          "price": 15.11
+          "price": 14.57
         },
         {
           "name": "Panharmonicon",
-          "price": 4.79
+          "price": 4.87
         },
         {
           "name": "Lightning Greaves",
-          "price": 4.42
+          "price": 4.4
         },
         {
           "name": "Mystic Forge",
-          "price": 2.85
+          "price": 3.17
         }
       ]
     },
     "deep-clue-sea": {
-      "tcg": 130.13,
-      "cardkingdom": 153.08,
-      "sell_tcg": 91.09,
-      "sell_cardkingdom": 45.71,
+      "tcg": 129.64,
+      "cardkingdom": 152.99,
+      "sell_tcg": 90.75,
+      "sell_cardkingdom": 46.59,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4804,11 +4804,11 @@
       "top_cards": [
         {
           "name": "Bennie Bracks, Zoologist",
-          "price": 11.51
+          "price": 11.62
         },
         {
           "name": "Alandra, Sky Dreamer",
-          "price": 8.8
+          "price": 8.85
         },
         {
           "name": "Academy Manufactor",
@@ -4816,15 +4816,15 @@
         },
         {
           "name": "Adrix and Nev, Twincasters",
-          "price": 7.59
+          "price": 7.31
         }
       ]
     },
     "revenant-recon": {
-      "tcg": 137.97,
-      "cardkingdom": 187.66,
-      "sell_tcg": 96.58,
-      "sell_cardkingdom": 69.99,
+      "tcg": 137.55,
+      "cardkingdom": 187.22,
+      "sell_tcg": 96.28,
+      "sell_cardkingdom": 69.6,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4832,27 +4832,27 @@
       "top_cards": [
         {
           "name": "Necromancy",
-          "price": 18.24
+          "price": 18.22
         },
         {
           "name": "Reanimate",
-          "price": 9.49
+          "price": 9.6
         },
         {
           "name": "Animate Dead",
           "price": 7.61
         },
         {
-          "name": "Rise of the Dark Realms",
-          "price": 7.0
+          "name": "Baleful Strix",
+          "price": 7.13
         }
       ]
     },
     "blame-game": {
-      "tcg": 158.49,
-      "cardkingdom": 171.78,
-      "sell_tcg": 110.94,
-      "sell_cardkingdom": 77.13,
+      "tcg": 157.99,
+      "cardkingdom": 170.39,
+      "sell_tcg": 110.59,
+      "sell_cardkingdom": 76.39,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4860,7 +4860,7 @@
       "top_cards": [
         {
           "name": "Trouble in Pairs",
-          "price": 32.21
+          "price": 32.53
         },
         {
           "name": "Smuggler's Share",
@@ -4868,7 +4868,7 @@
         },
         {
           "name": "Gisela, Blade of Goldnight",
-          "price": 6.68
+          "price": 6.72
         },
         {
           "name": "Loran of the Third Path",
@@ -4877,10 +4877,10 @@
       ]
     },
     "deadly-disguise": {
-      "tcg": 146.43,
-      "cardkingdom": 199.35,
-      "sell_tcg": 102.5,
-      "sell_cardkingdom": 77.45,
+      "tcg": 145.98,
+      "cardkingdom": 198.55,
+      "sell_tcg": 102.19,
+      "sell_cardkingdom": 74.19,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4888,7 +4888,7 @@
       "top_cards": [
         {
           "name": "Jeska's Will",
-          "price": 40.67
+          "price": 40.16
         },
         {
           "name": "Seedborn Muse",
@@ -4896,19 +4896,19 @@
         },
         {
           "name": "Beast Whisperer",
-          "price": 8.15
+          "price": 8.3
         },
         {
           "name": "Neheb, the Eternal",
-          "price": 8.11
+          "price": 8.14
         }
       ]
     },
     "ahoy-mateys": {
-      "tcg": 86.66,
-      "cardkingdom": 125.64,
-      "sell_tcg": 60.66,
-      "sell_cardkingdom": 38.1,
+      "tcg": 87.43,
+      "cardkingdom": 126.58,
+      "sell_tcg": 61.2,
+      "sell_cardkingdom": 38.73,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4924,19 +4924,19 @@
         },
         {
           "name": "Windfall",
-          "price": 5.82
+          "price": 5.78
         },
         {
-          "name": "Shared Animosity",
-          "price": 5.32
+          "name": "Vanquisher's Banner",
+          "price": 5.59
         }
       ]
     },
     "veloci-ramp-tor": {
-      "tcg": 131.89,
-      "cardkingdom": 190.61,
-      "sell_tcg": 92.32,
-      "sell_cardkingdom": 61.51,
+      "tcg": 131.56,
+      "cardkingdom": 191.11,
+      "sell_tcg": 92.09,
+      "sell_cardkingdom": 62.11,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4944,15 +4944,15 @@
       "top_cards": [
         {
           "name": "Akroma's Will",
-          "price": 18.38
+          "price": 18.42
         },
         {
           "name": "Apex Altisaur",
-          "price": 9.16
+          "price": 9.2
         },
         {
           "name": "Xenagos, God of Revels",
-          "price": 8.98
+          "price": 9.0
         },
         {
           "name": "Wrathful Raptors",
@@ -4961,10 +4961,10 @@
       ]
     },
     "blood-rites": {
-      "tcg": 152.16,
-      "cardkingdom": 190.03,
-      "sell_tcg": 106.51,
-      "sell_cardkingdom": 69.76,
+      "tcg": 150.5,
+      "cardkingdom": 190.46,
+      "sell_tcg": 105.35,
+      "sell_cardkingdom": 69.52,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -4972,11 +4972,11 @@
       "top_cards": [
         {
           "name": "Exquisite Blood",
-          "price": 41.01
+          "price": 39.99
         },
         {
           "name": "Charismatic Conqueror",
-          "price": 26.31
+          "price": 26.08
         },
         {
           "name": "Blade of the Bloodchief",
@@ -4989,10 +4989,10 @@
       ]
     },
     "explorers-of-the-deep": {
-      "tcg": 100.14,
-      "cardkingdom": 143.4,
-      "sell_tcg": 70.1,
-      "sell_cardkingdom": 36.82,
+      "tcg": 100.06,
+      "cardkingdom": 145.04,
+      "sell_tcg": 70.04,
+      "sell_cardkingdom": 38.32,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5000,27 +5000,27 @@
       "top_cards": [
         {
           "name": "Herald of Secret Streams",
-          "price": 9.92
+          "price": 9.7
         },
         {
           "name": "Thassa, God of the Sea",
-          "price": 8.14
+          "price": 8.13
         },
         {
           "name": "Branching Evolution",
-          "price": 7.98
+          "price": 8.11
         },
         {
-          "name": "Ripples of Potential",
-          "price": 7.11
+          "name": "Kindred Discovery",
+          "price": 6.87
         }
       ]
     },
     "blast-from-the-past": {
-      "tcg": 103.57,
-      "cardkingdom": 133.41,
-      "sell_tcg": 72.5,
-      "sell_cardkingdom": 34.35,
+      "tcg": 103.71,
+      "cardkingdom": 133.01,
+      "sell_tcg": 72.6,
+      "sell_cardkingdom": 34.13,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5028,11 +5028,11 @@
       "top_cards": [
         {
           "name": "Heroic Intervention",
-          "price": 17.88
+          "price": 17.9
         },
         {
           "name": "Displaced Dinosaurs",
-          "price": 15.36
+          "price": 15.48
         },
         {
           "name": "Three Visits",
@@ -5040,15 +5040,15 @@
         },
         {
           "name": "City of Death",
-          "price": 4.39
+          "price": 4.47
         }
       ]
     },
     "timey-wimey": {
-      "tcg": 145.86,
-      "cardkingdom": 191.06,
-      "sell_tcg": 102.1,
-      "sell_cardkingdom": 54.48,
+      "tcg": 145.78,
+      "cardkingdom": 192.36,
+      "sell_tcg": 102.05,
+      "sell_cardkingdom": 57.9,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5056,27 +5056,27 @@
       "top_cards": [
         {
           "name": "Everybody Lives!",
-          "price": 16.73
+          "price": 16.77
         },
         {
           "name": "Nanogene Conversion",
-          "price": 10.26
+          "price": 10.35
         },
         {
           "name": "Wedding Ring",
-          "price": 9.29
+          "price": 9.26
         },
         {
           "name": "Flesh Duplicate",
-          "price": 8.94
+          "price": 8.89
         }
       ]
     },
     "paradox-power": {
-      "tcg": 99.14,
-      "cardkingdom": 144.67,
-      "sell_tcg": 69.4,
-      "sell_cardkingdom": 36.96,
+      "tcg": 99.44,
+      "cardkingdom": 143.87,
+      "sell_tcg": 69.61,
+      "sell_cardkingdom": 38.54,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5084,27 +5084,27 @@
       "top_cards": [
         {
           "name": "Danny Pink",
-          "price": 22.4
+          "price": 22.46
         },
         {
           "name": "Flaming Tyrannosaurus",
-          "price": 9.7
+          "price": 9.97
         },
         {
           "name": "Reliquary Tower",
-          "price": 5.47
+          "price": 5.6
         },
         {
           "name": "Quantum Misalignment",
-          "price": 5.06
+          "price": 4.96
         }
       ]
     },
     "masters-of-evil": {
-      "tcg": 168.6,
-      "cardkingdom": 222.84,
-      "sell_tcg": 118.02,
-      "sell_cardkingdom": 77.61,
+      "tcg": 167.66,
+      "cardkingdom": 225.74,
+      "sell_tcg": 117.36,
+      "sell_cardkingdom": 81.05,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5112,27 +5112,27 @@
       "top_cards": [
         {
           "name": "Cybermen Squadron",
-          "price": 23.57
+          "price": 23.8
         },
         {
           "name": "Cyberman Patrol",
-          "price": 14.53
+          "price": 14.46
         },
         {
           "name": "Auton Soldier",
-          "price": 13.73
+          "price": 13.65
         },
         {
           "name": "Wound Reflection",
-          "price": 9.72
+          "price": 9.78
         }
       ]
     },
     "virtue-and-valor": {
-      "tcg": 126.24,
-      "cardkingdom": 158.55,
-      "sell_tcg": 88.37,
-      "sell_cardkingdom": 51.56,
+      "tcg": 125.88,
+      "cardkingdom": 157.26,
+      "sell_tcg": 88.12,
+      "sell_cardkingdom": 50.61,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5140,11 +5140,11 @@
       "top_cards": [
         {
           "name": "Bear Umbra",
-          "price": 14.51
+          "price": 14.34
         },
         {
           "name": "Retether",
-          "price": 12.17
+          "price": 11.96
         },
         {
           "name": "Hall of Heliod's Generosity",
@@ -5157,10 +5157,10 @@
       ]
     },
     "fae-dominion": {
-      "tcg": 155.9,
-      "cardkingdom": 199.38,
-      "sell_tcg": 109.13,
-      "sell_cardkingdom": 53.02,
+      "tcg": 155.02,
+      "cardkingdom": 195.68,
+      "sell_tcg": 108.51,
+      "sell_cardkingdom": 43.35,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5172,23 +5172,23 @@
         },
         {
           "name": "Alela, Cunning Conqueror",
-          "price": 12.1
+          "price": 12.11
         },
         {
           "name": "Misleading Signpost",
-          "price": 11.6
+          "price": 11.1
         },
         {
           "name": "Glen Elendra Archmage",
-          "price": 9.55
+          "price": 9.49
         }
       ]
     },
     "sliver-swarm": {
-      "tcg": 203.23,
-      "cardkingdom": 237.56,
-      "sell_tcg": 142.26,
-      "sell_cardkingdom": 92.37,
+      "tcg": 203.0,
+      "cardkingdom": 238.37,
+      "sell_tcg": 142.1,
+      "sell_cardkingdom": 90.9,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5200,23 +5200,23 @@
         },
         {
           "name": "Sliver Hivelord",
-          "price": 15.85
+          "price": 15.52
         },
         {
           "name": "Hatchery Sliver",
-          "price": 13.16
+          "price": 13.28
         },
         {
           "name": "Lazotep Sliver",
-          "price": 8.72
+          "price": 8.77
         }
       ]
     },
     "eldrazi-unbound": {
-      "tcg": 293.3,
-      "cardkingdom": 343.78,
-      "sell_tcg": 205.31,
-      "sell_cardkingdom": 118.99,
+      "tcg": 292.11,
+      "cardkingdom": 343.98,
+      "sell_tcg": 204.48,
+      "sell_cardkingdom": 123.7,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5227,24 +5227,24 @@
           "price": 47.35
         },
         {
-          "name": "Rise of the Eldrazi",
-          "price": 26.29
+          "name": "Darksteel Monolith",
+          "price": 25.69
         },
         {
-          "name": "Darksteel Monolith",
-          "price": 25.7
+          "name": "Rise of the Eldrazi",
+          "price": 25.63
         },
         {
           "name": "It That Betrays",
-          "price": 14.62
+          "price": 14.64
         }
       ]
     },
     "enduring-enchantments": {
-      "tcg": 148.43,
-      "cardkingdom": 199.42,
-      "sell_tcg": 103.9,
-      "sell_cardkingdom": 66.37,
+      "tcg": 147.53,
+      "cardkingdom": 196.9,
+      "sell_tcg": 103.27,
+      "sell_cardkingdom": 66.04,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5252,27 +5252,27 @@
       "top_cards": [
         {
           "name": "Narci, Fable Singer",
-          "price": 11.88
+          "price": 11.86
         },
         {
           "name": "Starfield of Nyx",
-          "price": 10.88
+          "price": 10.75
         },
         {
           "name": "Dryad of the Ilysian Grove",
-          "price": 9.56
+          "price": 9.74
         },
         {
           "name": "Ondu Spiritdancer",
-          "price": 7.84
+          "price": 7.55
         }
       ]
     },
     "planeswalker-party": {
-      "tcg": 225.47,
-      "cardkingdom": 288.94,
-      "sell_tcg": 157.83,
-      "sell_cardkingdom": 87.36,
+      "tcg": 224.91,
+      "cardkingdom": 238.87,
+      "sell_tcg": 157.44,
+      "sell_cardkingdom": 88.68,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5280,27 +5280,27 @@
       "top_cards": [
         {
           "name": "Commodore Guff",
-          "price": 28.66
+          "price": 28.7
         },
         {
           "name": "Vronos, Masked Inquisitor",
-          "price": 19.68
+          "price": 19.6
         },
         {
           "name": "The Chain Veil",
-          "price": 19.04
+          "price": 18.45
         },
         {
           "name": "Chandra, Legacy of Fire",
-          "price": 13.48
+          "price": 13.25
         }
       ]
     },
     "the-hosts-of-mordor": {
-      "tcg": 124.2,
-      "cardkingdom": 167.3,
-      "sell_tcg": 86.94,
-      "sell_cardkingdom": 42.05,
+      "tcg": 125.11,
+      "cardkingdom": 167.6,
+      "sell_tcg": 87.58,
+      "sell_cardkingdom": 42.1,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5308,27 +5308,27 @@
       "top_cards": [
         {
           "name": "Cavern-Hoard Dragon",
-          "price": 20.86
+          "price": 20.96
         },
         {
           "name": "Reanimate",
-          "price": 10.62
+          "price": 10.61
         },
         {
           "name": "The Black Gate",
-          "price": 9.86
+          "price": 9.94
         },
         {
           "name": "Relic of Sauron",
-          "price": 8.8
+          "price": 8.65
         }
       ]
     },
     "food-and-fellowship": {
-      "tcg": 102.54,
-      "cardkingdom": 146.38,
-      "sell_tcg": 71.78,
-      "sell_cardkingdom": 50.93,
+      "tcg": 102.94,
+      "cardkingdom": 156.23,
+      "sell_tcg": 72.06,
+      "sell_cardkingdom": 49.25,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5336,7 +5336,7 @@
       "top_cards": [
         {
           "name": "Birds of Paradise",
-          "price": 12.43
+          "price": 12.2
         },
         {
           "name": "Essence Warden",
@@ -5348,15 +5348,15 @@
         },
         {
           "name": "Toxic Deluge",
-          "price": 6.0
+          "price": 6.02
         }
       ]
     },
     "elven-council": {
-      "tcg": 110.69,
-      "cardkingdom": 154.76,
-      "sell_tcg": 77.48,
-      "sell_cardkingdom": 47.74,
+      "tcg": 111.89,
+      "cardkingdom": 153.8,
+      "sell_tcg": 78.32,
+      "sell_cardkingdom": 46.38,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5364,27 +5364,27 @@
       "top_cards": [
         {
           "name": "Heroic Intervention",
-          "price": 15.91
+          "price": 16.4
         },
         {
           "name": "Swan Song",
-          "price": 12.49
+          "price": 12.85
         },
         {
           "name": "Raise the Palisade",
-          "price": 11.27
+          "price": 11.36
         },
         {
           "name": "Asceticism",
-          "price": 6.9
+          "price": 6.87
         }
       ]
     },
     "riders-of-rohan": {
-      "tcg": 86.02,
-      "cardkingdom": 123.5,
-      "sell_tcg": 60.21,
-      "sell_cardkingdom": 25.94,
+      "tcg": 87.06,
+      "cardkingdom": 125.79,
+      "sell_tcg": 60.94,
+      "sell_cardkingdom": 27.96,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5392,27 +5392,27 @@
       "top_cards": [
         {
           "name": "Gimli of the Glittering Caves",
-          "price": 13.45
+          "price": 13.41
         },
         {
           "name": "Vanquisher's Banner",
-          "price": 5.59
+          "price": 5.62
         },
         {
           "name": "Herald's Horn",
-          "price": 5.13
+          "price": 5.17
         },
         {
           "name": "Shared Animosity",
-          "price": 4.64
+          "price": 4.76
         }
       ]
     },
     "call-for-backup": {
-      "tcg": 108.33,
-      "cardkingdom": 141.41,
-      "sell_tcg": 75.83,
-      "sell_cardkingdom": 32.26,
+      "tcg": 108.35,
+      "cardkingdom": 145.08,
+      "sell_tcg": 75.85,
+      "sell_cardkingdom": 31.5,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5420,7 +5420,7 @@
       "top_cards": [
         {
           "name": "Uncivil Unrest",
-          "price": 18.58
+          "price": 18.7
         },
         {
           "name": "Shalai and Hallar",
@@ -5432,15 +5432,15 @@
         },
         {
           "name": "Kalonian Hydra",
-          "price": 6.23
+          "price": 6.19
         }
       ]
     },
     "divine-convocation": {
       "tcg": 95.27,
-      "cardkingdom": 128.29,
+      "cardkingdom": 130.84,
       "sell_tcg": 66.69,
-      "sell_cardkingdom": 31.93,
+      "sell_cardkingdom": 34.5,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5448,11 +5448,11 @@
       "top_cards": [
         {
           "name": "Nesting Dovehawk",
-          "price": 22.76
+          "price": 22.87
         },
         {
           "name": "The Locust God",
-          "price": 6.97
+          "price": 6.86
         },
         {
           "name": "Skullclamp",
@@ -5460,15 +5460,15 @@
         },
         {
           "name": "Suture Priest",
-          "price": 4.6
+          "price": 4.58
         }
       ]
     },
     "growing-threat": {
-      "tcg": 90.12,
-      "cardkingdom": 124.03,
-      "sell_tcg": 63.08,
-      "sell_cardkingdom": 31.61,
+      "tcg": 89.83,
+      "cardkingdom": 122.84,
+      "sell_tcg": 62.88,
+      "sell_cardkingdom": 30.36,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5480,11 +5480,11 @@
         },
         {
           "name": "Bitterthorn, Nissa's Animus",
-          "price": 5.7
+          "price": 5.71
         },
         {
           "name": "Massacre Wurm",
-          "price": 5.27
+          "price": 5.15
         },
         {
           "name": "Vault of the Archangel",
@@ -5493,10 +5493,10 @@
       ]
     },
     "cavalry-charge": {
-      "tcg": 97.48,
-      "cardkingdom": 128.01,
-      "sell_tcg": 68.24,
-      "sell_cardkingdom": 9.04,
+      "tcg": 97.2,
+      "cardkingdom": 127.07,
+      "sell_tcg": 68.04,
+      "sell_cardkingdom": 19.66,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5504,7 +5504,7 @@
       "top_cards": [
         {
           "name": "Chivalric Alliance",
-          "price": 14.5
+          "price": 14.39
         },
         {
           "name": "Herald's Horn",
@@ -5516,15 +5516,15 @@
         },
         {
           "name": "Herald of Hoofbeats",
-          "price": 5.59
+          "price": 5.54
         }
       ]
     },
     "tinker-time": {
-      "tcg": 76.19,
-      "cardkingdom": 106.05,
-      "sell_tcg": 53.33,
-      "sell_cardkingdom": 25.07,
+      "tcg": 76.11,
+      "cardkingdom": 105.7,
+      "sell_tcg": 53.28,
+      "sell_cardkingdom": 24.92,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5532,11 +5532,11 @@
       "top_cards": [
         {
           "name": "Academy Manufactor",
-          "price": 8.51
+          "price": 8.56
         },
         {
           "name": "Hedron Detonator",
-          "price": 7.23
+          "price": 7.1
         },
         {
           "name": "Curse of Opulence",
@@ -5544,15 +5544,15 @@
         },
         {
           "name": "Pain Distributor",
-          "price": 4.55
+          "price": 4.57
         }
       ]
     },
     "rebellion-rising": {
-      "tcg": 130.57,
-      "cardkingdom": 153.36,
-      "sell_tcg": 91.4,
-      "sell_cardkingdom": 35.32,
+      "tcg": 130.44,
+      "cardkingdom": 152.96,
+      "sell_tcg": 91.31,
+      "sell_cardkingdom": 35.95,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5560,7 +5560,7 @@
       "top_cards": [
         {
           "name": "Flawless Maneuver",
-          "price": 21.36
+          "price": 21.02
         },
         {
           "name": "Clever Concealment",
@@ -5568,7 +5568,7 @@
         },
         {
           "name": "Hexplate Wallbreaker",
-          "price": 6.96
+          "price": 6.91
         },
         {
           "name": "Call the Coppercoats",
@@ -5577,10 +5577,10 @@
       ]
     },
     "corrupting-influence": {
-      "tcg": 153.78,
-      "cardkingdom": 201.63,
-      "sell_tcg": 107.65,
-      "sell_cardkingdom": 65.24,
+      "tcg": 153.84,
+      "cardkingdom": 200.34,
+      "sell_tcg": 107.69,
+      "sell_cardkingdom": 63.96,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5588,7 +5588,7 @@
       "top_cards": [
         {
           "name": "Glistening Sphere",
-          "price": 13.27
+          "price": 13.37
         },
         {
           "name": "Phyresis Outbreak",
@@ -5600,15 +5600,15 @@
         },
         {
           "name": "Contaminant Grafter",
-          "price": 11.37
+          "price": 11.48
         }
       ]
     },
     "first-flight": {
-      "tcg": 41.02,
-      "cardkingdom": 79.04,
-      "sell_tcg": 28.71,
-      "sell_cardkingdom": 10.84,
+      "tcg": 40.99,
+      "cardkingdom": 78.64,
+      "sell_tcg": 28.69,
+      "sell_cardkingdom": 9.04,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5616,11 +5616,11 @@
       "top_cards": [
         {
           "name": "True Conviction",
-          "price": 5.42
+          "price": 5.49
         },
         {
           "name": "Sephara, Sky's Blade",
-          "price": 3.89
+          "price": 3.92
         },
         {
           "name": "Counterspell",
@@ -5628,15 +5628,15 @@
         },
         {
           "name": "Thought Vessel",
-          "price": 3.02
+          "price": 2.98
         }
       ]
     },
     "grave-danger": {
-      "tcg": 35.48,
-      "cardkingdom": 67.49,
-      "sell_tcg": 24.84,
-      "sell_cardkingdom": 7.98,
+      "tcg": 35.3,
+      "cardkingdom": 68.54,
+      "sell_tcg": 24.71,
+      "sell_cardkingdom": 7.63,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5644,15 +5644,15 @@
       "top_cards": [
         {
           "name": "Gray Merchant of Asphodel",
-          "price": 2.71
+          "price": 2.85
         },
         {
           "name": "Undermine",
-          "price": 2.56
+          "price": 2.54
         },
         {
           "name": "Sol Ring",
-          "price": 1.99
+          "price": 1.85
         },
         {
           "name": "Talisman of Dominance",
@@ -5661,10 +5661,10 @@
       ]
     },
     "token-triumph": {
-      "tcg": 36.39,
-      "cardkingdom": 73.72,
-      "sell_tcg": 25.47,
-      "sell_cardkingdom": 12.13,
+      "tcg": 36.25,
+      "cardkingdom": 69.13,
+      "sell_tcg": 25.38,
+      "sell_cardkingdom": 11.97,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5672,15 +5672,15 @@
       "top_cards": [
         {
           "name": "Champion of Lambholt",
-          "price": 3.95
+          "price": 3.9
         },
         {
           "name": "Idol of Oblivion",
-          "price": 2.76
+          "price": 2.75
         },
         {
           "name": "Sol Ring",
-          "price": 1.99
+          "price": 1.85
         },
         {
           "name": "Eternal Witness",
@@ -5689,10 +5689,10 @@
       ]
     },
     "chaos-incarnate": {
-      "tcg": 50.9,
-      "cardkingdom": 92.53,
-      "sell_tcg": 35.63,
-      "sell_cardkingdom": 15.4,
+      "tcg": 51.09,
+      "cardkingdom": 92.63,
+      "sell_tcg": 35.76,
+      "sell_cardkingdom": 15.7,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5700,15 +5700,15 @@
       "top_cards": [
         {
           "name": "Lightning Greaves",
-          "price": 4.45
+          "price": 4.47
         },
         {
           "name": "Soul Shatter",
-          "price": 4.0
+          "price": 4.14
         },
         {
           "name": "Nihil Spellbomb",
-          "price": 3.61
+          "price": 3.82
         },
         {
           "name": "Brash Taunter",
@@ -5717,10 +5717,10 @@
       ]
     },
     "draconic-destruction": {
-      "tcg": 46.38,
-      "cardkingdom": 73.85,
-      "sell_tcg": 32.47,
-      "sell_cardkingdom": 5.36,
+      "tcg": 46.26,
+      "cardkingdom": 76.45,
+      "sell_tcg": 32.38,
+      "sell_cardkingdom": 5.51,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5736,19 +5736,19 @@
         },
         {
           "name": "Vandalblast",
-          "price": 3.78
+          "price": 3.77
         },
         {
           "name": "Scourge of Valkas",
-          "price": 3.45
+          "price": 3.49
         }
       ]
     },
     "urzas-iron-alliance": {
-      "tcg": 125.17,
-      "cardkingdom": 189.28,
-      "sell_tcg": 87.62,
-      "sell_cardkingdom": 55.48,
+      "tcg": 125.04,
+      "cardkingdom": 188.64,
+      "sell_tcg": 87.53,
+      "sell_cardkingdom": 55.37,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5756,7 +5756,7 @@
       "top_cards": [
         {
           "name": "Relic of Progenitus",
-          "price": 7.3
+          "price": 7.2
         },
         {
           "name": "Skullclamp",
@@ -5768,15 +5768,15 @@
         },
         {
           "name": "Preordain",
-          "price": 5.24
+          "price": 5.19
         }
       ]
     },
     "mishras-burnished-banner": {
-      "tcg": 143.38,
-      "cardkingdom": 220.58,
-      "sell_tcg": 100.37,
-      "sell_cardkingdom": 70.71,
+      "tcg": 143.17,
+      "cardkingdom": 221.58,
+      "sell_tcg": 100.22,
+      "sell_cardkingdom": 69.11,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5792,19 +5792,19 @@
         },
         {
           "name": "Machine God's Effigy",
-          "price": 6.47
+          "price": 6.39
         },
         {
           "name": "Strionic Resonator",
-          "price": 5.94
+          "price": 5.86
         }
       ]
     },
     "forces-of-the-imperium": {
-      "tcg": 181.44,
-      "cardkingdom": 238.2,
-      "sell_tcg": 127.01,
-      "sell_cardkingdom": 88.69,
+      "tcg": 180.47,
+      "cardkingdom": 238.1,
+      "sell_tcg": 126.33,
+      "sell_cardkingdom": 87.44,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5812,27 +5812,27 @@
       "top_cards": [
         {
           "name": "Celestine, the Living Saint",
-          "price": 19.75
+          "price": 19.8
         },
         {
           "name": "Reaver Titan",
-          "price": 14.24
+          "price": 14.18
         },
         {
           "name": "Commissar Severina Raine",
-          "price": 13.36
+          "price": 13.27
         },
         {
-          "name": "Sister Hospitaller",
-          "price": 11.27
+          "name": "Vexilus Praetor",
+          "price": 11.25
         }
       ]
     },
     "necron-dynasties": {
-      "tcg": 236.23,
-      "cardkingdom": 282.78,
-      "sell_tcg": 165.36,
-      "sell_cardkingdom": 88.34,
+      "tcg": 235.12,
+      "cardkingdom": 286.18,
+      "sell_tcg": 164.58,
+      "sell_cardkingdom": 91.08,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5840,27 +5840,27 @@
       "top_cards": [
         {
           "name": "Cryptothrall",
-          "price": 23.13
+          "price": 23.19
         },
         {
           "name": "Sceptre of Eternal Glory",
-          "price": 14.28
+          "price": 14.18
         },
         {
           "name": "Resurrection Orb",
-          "price": 13.67
+          "price": 13.54
         },
         {
           "name": "Darkness",
-          "price": 13.43
+          "price": 13.28
         }
       ]
     },
     "tyranid-swarm": {
-      "tcg": 166.3,
-      "cardkingdom": 201.54,
-      "sell_tcg": 116.41,
-      "sell_cardkingdom": 64.57,
+      "tcg": 164.51,
+      "cardkingdom": 200.44,
+      "sell_tcg": 115.16,
+      "sell_cardkingdom": 66.14,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5868,11 +5868,11 @@
       "top_cards": [
         {
           "name": "Ghyrson Starn, Kelermorph",
-          "price": 25.81
+          "price": 25.37
         },
         {
           "name": "Shadow in the Warp",
-          "price": 14.86
+          "price": 14.85
         },
         {
           "name": "Biophagus",
@@ -5880,15 +5880,15 @@
         },
         {
           "name": "Sporocyst",
-          "price": 8.75
+          "price": 8.37
         }
       ]
     },
     "the-ruinous-powers": {
-      "tcg": 172.63,
-      "cardkingdom": 244.1,
-      "sell_tcg": 120.84,
-      "sell_cardkingdom": 96.33,
+      "tcg": 172.12,
+      "cardkingdom": 246.18,
+      "sell_tcg": 120.48,
+      "sell_cardkingdom": 97.6,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5896,7 +5896,7 @@
       "top_cards": [
         {
           "name": "Bloodthirster",
-          "price": 25.09
+          "price": 25.08
         },
         {
           "name": "Exalted Flamer of Tzeentch",
@@ -5904,19 +5904,19 @@
         },
         {
           "name": "Keeper of Secrets",
-          "price": 7.88
+          "price": 8.0
         },
         {
           "name": "Magnus the Red",
-          "price": 6.61
+          "price": 6.54
         }
       ]
     },
     "legends-legacy": {
-      "tcg": 184.77,
-      "cardkingdom": 226.84,
-      "sell_tcg": 129.34,
-      "sell_cardkingdom": 58.82,
+      "tcg": 184.85,
+      "cardkingdom": 225.98,
+      "sell_tcg": 129.4,
+      "sell_cardkingdom": 57.04,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5924,11 +5924,11 @@
       "top_cards": [
         {
           "name": "Shizo, Death's Storehouse",
-          "price": 32.26
+          "price": 32.42
         },
         {
           "name": "The Reaver Cleaver",
-          "price": 27.26
+          "price": 27.23
         },
         {
           "name": "Dihada, Binder of Wills",
@@ -5941,10 +5941,10 @@
       ]
     },
     "painbow": {
-      "tcg": 92.3,
-      "cardkingdom": 137.32,
-      "sell_tcg": 64.61,
-      "sell_cardkingdom": 43.22,
+      "tcg": 92.58,
+      "cardkingdom": 135.59,
+      "sell_tcg": 64.81,
+      "sell_cardkingdom": 47.0,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5952,27 +5952,27 @@
       "top_cards": [
         {
           "name": "Tiller Engine",
-          "price": 19.32
+          "price": 19.45
         },
         {
           "name": "Two-Headed Hellkite",
-          "price": 6.43
+          "price": 6.44
         },
         {
           "name": "Baleful Strix",
-          "price": 5.59
+          "price": 5.47
         },
         {
           "name": "Fallaji Wayfarer",
-          "price": 3.36
+          "price": 3.48
         }
       ]
     },
     "party-time": {
-      "tcg": 132.63,
-      "cardkingdom": 172.95,
-      "sell_tcg": 92.84,
-      "sell_cardkingdom": 60.19,
+      "tcg": 132.39,
+      "cardkingdom": 171.76,
+      "sell_tcg": 92.67,
+      "sell_cardkingdom": 62.86,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -5980,15 +5980,15 @@
       "top_cards": [
         {
           "name": "Black Market Connections",
-          "price": 14.98
-        },
-        {
-          "name": "Grim Hireling",
-          "price": 12.54
+          "price": 14.82
         },
         {
           "name": "Mother of Runes",
           "price": 12.5
+        },
+        {
+          "name": "Grim Hireling",
+          "price": 12.4
         },
         {
           "name": "Deep Gnome Terramancer",
@@ -5997,10 +5997,10 @@
       ]
     },
     "mind-flayarrrs": {
-      "tcg": 176.98,
-      "cardkingdom": 247.59,
-      "sell_tcg": 123.89,
-      "sell_cardkingdom": 100.59,
+      "tcg": 176.59,
+      "cardkingdom": 248.69,
+      "sell_tcg": 123.61,
+      "sell_cardkingdom": 101.44,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6008,27 +6008,27 @@
       "top_cards": [
         {
           "name": "Zellix, Sanity Flayer",
-          "price": 24.67
+          "price": 24.5
         },
         {
           "name": "Mindcrank",
-          "price": 13.2
+          "price": 13.13
         },
         {
           "name": "Captain N'ghathrod",
-          "price": 11.78
+          "price": 11.75
         },
         {
           "name": "Brainstealer Dragon",
-          "price": 10.99
+          "price": 10.81
         }
       ]
     },
     "exit-from-exile": {
-      "tcg": 153.71,
-      "cardkingdom": 206.18,
-      "sell_tcg": 107.6,
-      "sell_cardkingdom": 72.52,
+      "tcg": 153.43,
+      "cardkingdom": 207.38,
+      "sell_tcg": 107.4,
+      "sell_cardkingdom": 71.56,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6044,19 +6044,19 @@
         },
         {
           "name": "Delayed Blast Fireball",
-          "price": 15.74
+          "price": 15.76
         },
         {
           "name": "Nalfeshnee",
-          "price": 8.3
+          "price": 8.14
         }
       ]
     },
     "draconic-dissent": {
-      "tcg": 176.68,
-      "cardkingdom": 231.99,
-      "sell_tcg": 123.68,
-      "sell_cardkingdom": 68.97,
+      "tcg": 176.39,
+      "cardkingdom": 232.39,
+      "sell_tcg": 123.47,
+      "sell_cardkingdom": 69.2,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6064,15 +6064,15 @@
       "top_cards": [
         {
           "name": "Astral Dragon",
-          "price": 40.72
+          "price": 40.6
         },
         {
           "name": "Bothersome Quasit",
-          "price": 13.91
+          "price": 13.83
         },
         {
           "name": "Artificer Class",
-          "price": 13.28
+          "price": 13.37
         },
         {
           "name": "Baeloth Barrityl, Entertainer",
@@ -6081,10 +6081,10 @@
       ]
     },
     "obscura-operation": {
-      "tcg": 120.73,
-      "cardkingdom": 149.23,
-      "sell_tcg": 84.51,
-      "sell_cardkingdom": 38.15,
+      "tcg": 119.83,
+      "cardkingdom": 148.83,
+      "sell_tcg": 83.88,
+      "sell_cardkingdom": 38.27,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6092,15 +6092,15 @@
       "top_cards": [
         {
           "name": "Tivit, Seller of Secrets",
-          "price": 12.89
+          "price": 12.77
         },
         {
           "name": "Change of Plans",
-          "price": 12.75
+          "price": 12.67
         },
         {
           "name": "Smuggler's Share",
-          "price": 10.01
+          "price": 9.73
         },
         {
           "name": "Strionic Resonator",
@@ -6109,10 +6109,10 @@
       ]
     },
     "maestros-massacre": {
-      "tcg": 99.38,
-      "cardkingdom": 129.8,
-      "sell_tcg": 69.57,
-      "sell_cardkingdom": 35.98,
+      "tcg": 99.09,
+      "cardkingdom": 129.11,
+      "sell_tcg": 69.36,
+      "sell_cardkingdom": 36.4,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6120,11 +6120,11 @@
       "top_cards": [
         {
           "name": "Twinning Staff",
-          "price": 18.69
+          "price": 18.71
         },
         {
           "name": "Make an Example",
-          "price": 10.62
+          "price": 10.69
         },
         {
           "name": "Lightning Greaves",
@@ -6137,10 +6137,10 @@
       ]
     },
     "riveteers-rampage": {
-      "tcg": 94.72,
-      "cardkingdom": 132.14,
-      "sell_tcg": 66.3,
-      "sell_cardkingdom": 34.7,
+      "tcg": 94.61,
+      "cardkingdom": 131.25,
+      "sell_tcg": 66.23,
+      "sell_cardkingdom": 35.61,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6148,7 +6148,7 @@
       "top_cards": [
         {
           "name": "Jolene, the Plunder Queen",
-          "price": 9.58
+          "price": 9.67
         },
         {
           "name": "Rain of Riches",
@@ -6156,19 +6156,19 @@
         },
         {
           "name": "Industrial Advancement",
-          "price": 5.61
+          "price": 5.57
         },
         {
           "name": "World Shaper",
-          "price": 5.24
+          "price": 5.21
         }
       ]
     },
     "cabaretti-cacophony": {
-      "tcg": 143.34,
-      "cardkingdom": 190.34,
-      "sell_tcg": 100.34,
-      "sell_cardkingdom": 50.17,
+      "tcg": 143.11,
+      "cardkingdom": 189.84,
+      "sell_tcg": 100.18,
+      "sell_cardkingdom": 53.23,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6176,11 +6176,11 @@
       "top_cards": [
         {
           "name": "Master of Ceremonies",
-          "price": 16.11
+          "price": 15.99
         },
         {
           "name": "Seize the Spotlight",
-          "price": 13.87
+          "price": 13.89
         },
         {
           "name": "Life of the Party",
@@ -6188,15 +6188,15 @@
         },
         {
           "name": "Scute Swarm",
-          "price": 9.49
+          "price": 9.61
         }
       ]
     },
     "bedecked-brokers": {
-      "tcg": 100.89,
-      "cardkingdom": 127.53,
-      "sell_tcg": 70.62,
-      "sell_cardkingdom": 26.15,
+      "tcg": 100.61,
+      "cardkingdom": 125.15,
+      "sell_tcg": 70.43,
+      "sell_cardkingdom": 25.78,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6208,23 +6208,23 @@
         },
         {
           "name": "Power Conduit",
-          "price": 7.55
+          "price": 7.09
         },
         {
           "name": "Agent's Toolkit",
-          "price": 5.32
+          "price": 5.27
         },
         {
           "name": "Slippery Bogbonder",
-          "price": 4.95
+          "price": 4.93
         }
       ]
     },
     "upgrades-unleashed": {
-      "tcg": 93.62,
+      "tcg": 93.27,
       "cardkingdom": 124.34,
-      "sell_tcg": 65.53,
-      "sell_cardkingdom": 27.19,
+      "sell_tcg": 65.29,
+      "sell_cardkingdom": 26.37,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6232,15 +6232,15 @@
       "top_cards": [
         {
           "name": "Bear Umbra",
-          "price": 13.51
+          "price": 13.52
         },
         {
           "name": "Akki Battle Squad",
-          "price": 5.26
+          "price": 5.24
         },
         {
           "name": "Rhythm of the Wild",
-          "price": 4.98
+          "price": 4.94
         },
         {
           "name": "Rishkar's Expertise",
@@ -6249,10 +6249,10 @@
       ]
     },
     "buckle-up": {
-      "tcg": 77.57,
-      "cardkingdom": 107.68,
-      "sell_tcg": 54.3,
-      "sell_cardkingdom": 21.33,
+      "tcg": 77.59,
+      "cardkingdom": 105.18,
+      "sell_tcg": 54.31,
+      "sell_cardkingdom": 20.52,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6260,27 +6260,27 @@
       "top_cards": [
         {
           "name": "Imposter Mech",
-          "price": 7.14
+          "price": 7.24
         },
         {
           "name": "Cyberdrive Awakener",
-          "price": 5.2
+          "price": 5.17
         },
         {
           "name": "Shorikai, Genesis Engine",
-          "price": 4.38
+          "price": 4.27
         },
         {
           "name": "Swift Reconfiguration",
-          "price": 4.05
+          "price": 4.03
         }
       ]
     },
     "vampiric-bloodline": {
-      "tcg": 76.94,
-      "cardkingdom": 125.62,
-      "sell_tcg": 53.86,
-      "sell_cardkingdom": 37.59,
+      "tcg": 76.39,
+      "cardkingdom": 125.13,
+      "sell_tcg": 53.47,
+      "sell_cardkingdom": 36.79,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6288,11 +6288,11 @@
       "top_cards": [
         {
           "name": "Molten Echoes",
-          "price": 7.56
+          "price": 7.11
         },
         {
           "name": "Nirkana Revenant",
-          "price": 6.68
+          "price": 6.8
         },
         {
           "name": "Shadowgrange Archfiend",
@@ -6300,15 +6300,15 @@
         },
         {
           "name": "Malakir Bloodwitch",
-          "price": 3.76
+          "price": 3.66
         }
       ]
     },
     "spirit-squadron": {
-      "tcg": 60.82,
-      "cardkingdom": 99.38,
-      "sell_tcg": 42.57,
-      "sell_cardkingdom": 18.45,
+      "tcg": 60.92,
+      "cardkingdom": 99.28,
+      "sell_tcg": 42.64,
+      "sell_cardkingdom": 17.72,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6320,11 +6320,11 @@
         },
         {
           "name": "Ghostly Prison",
-          "price": 6.51
+          "price": 6.61
         },
         {
           "name": "Arcane Denial",
-          "price": 2.63
+          "price": 2.59
         },
         {
           "name": "Mirror Entity",
@@ -6333,10 +6333,10 @@
       ]
     },
     "coven-counters": {
-      "tcg": 53.34,
-      "cardkingdom": 91.42,
-      "sell_tcg": 37.34,
-      "sell_cardkingdom": 17.07,
+      "tcg": 53.32,
+      "cardkingdom": 91.61,
+      "sell_tcg": 37.32,
+      "sell_cardkingdom": 17.31,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6361,10 +6361,10 @@
       ]
     },
     "undead-unleashed": {
-      "tcg": 87.49,
-      "cardkingdom": 125.6,
-      "sell_tcg": 61.24,
-      "sell_cardkingdom": 20.36,
+      "tcg": 87.18,
+      "cardkingdom": 127.4,
+      "sell_tcg": 61.03,
+      "sell_cardkingdom": 21.29,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6376,7 +6376,7 @@
         },
         {
           "name": "Hordewing Skaab",
-          "price": 6.2
+          "price": 6.03
         },
         {
           "name": "Endless Ranks of the Dead",
@@ -6389,10 +6389,10 @@
       ]
     },
     "aura-of-courage": {
-      "tcg": 117.51,
-      "cardkingdom": 170.8,
-      "sell_tcg": 82.26,
-      "sell_cardkingdom": 57.79,
+      "tcg": 117.33,
+      "cardkingdom": 170.69,
+      "sell_tcg": 82.13,
+      "sell_cardkingdom": 56.5,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6400,11 +6400,11 @@
       "top_cards": [
         {
           "name": "Heroic Intervention",
-          "price": 17.04
+          "price": 17.02
         },
         {
           "name": "Robe of Stars",
-          "price": 13.87
+          "price": 13.79
         },
         {
           "name": "Winged Boots",
@@ -6417,10 +6417,10 @@
       ]
     },
     "dungeons-of-death": {
-      "tcg": 111.19,
-      "cardkingdom": 167.53,
-      "sell_tcg": 77.83,
-      "sell_cardkingdom": 61.7,
+      "tcg": 110.74,
+      "cardkingdom": 167.43,
+      "sell_tcg": 77.52,
+      "sell_cardkingdom": 63.07,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6432,23 +6432,23 @@
         },
         {
           "name": "Minn, Wily Illusionist",
-          "price": 9.28
+          "price": 9.19
         },
         {
           "name": "Radiant Solar",
-          "price": 8.44
+          "price": 8.14
         },
         {
           "name": "Nimbus Maze",
-          "price": 6.5
+          "price": 6.53
         }
       ]
     },
     "draconic-rage": {
-      "tcg": 112.88,
+      "tcg": 112.54,
       "cardkingdom": 159.98,
-      "sell_tcg": 79.02,
-      "sell_cardkingdom": 26.3,
+      "sell_tcg": 78.78,
+      "sell_cardkingdom": 34.14,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6456,7 +6456,7 @@
       "top_cards": [
         {
           "name": "Klauth, Unrivaled Ancient",
-          "price": 12.51
+          "price": 12.4
         },
         {
           "name": "Neverwinter Hydra",
@@ -6464,19 +6464,19 @@
         },
         {
           "name": "Wulfgar of Icewind Dale",
-          "price": 6.23
+          "price": 6.29
         },
         {
           "name": "Dragonborn Champion",
-          "price": 5.65
+          "price": 5.53
         }
       ]
     },
     "planar-portal": {
-      "tcg": 119.56,
-      "cardkingdom": 176.53,
-      "sell_tcg": 83.69,
-      "sell_cardkingdom": 53.33,
+      "tcg": 118.53,
+      "cardkingdom": 176.92,
+      "sell_tcg": 82.97,
+      "sell_cardkingdom": 53.65,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6488,23 +6488,23 @@
         },
         {
           "name": "Grim Hireling",
-          "price": 11.48
+          "price": 11.34
         },
         {
           "name": "Reckless Endeavor",
-          "price": 11.38
+          "price": 10.85
         },
         {
           "name": "Prosper, Tome-Bound",
-          "price": 7.43
+          "price": 7.22
         }
       ]
     },
     "silverquill-statement": {
-      "tcg": 106.92,
-      "cardkingdom": 166.76,
-      "sell_tcg": 74.84,
-      "sell_cardkingdom": 56.16,
+      "tcg": 106.22,
+      "cardkingdom": 166.87,
+      "sell_tcg": 74.35,
+      "sell_cardkingdom": 56.86,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6512,7 +6512,7 @@
       "top_cards": [
         {
           "name": "Tempting Contract",
-          "price": 10.32
+          "price": 10.12
         },
         {
           "name": "Stinging Study",
@@ -6529,10 +6529,10 @@
       ]
     },
     "prismari-performance": {
-      "tcg": 83.4,
-      "cardkingdom": 111.23,
-      "sell_tcg": 58.38,
-      "sell_cardkingdom": 24.99,
+      "tcg": 83.28,
+      "cardkingdom": 110.83,
+      "sell_tcg": 58.3,
+      "sell_cardkingdom": 26.5,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6540,7 +6540,7 @@
       "top_cards": [
         {
           "name": "Seething Song",
-          "price": 11.09
+          "price": 11.15
         },
         {
           "name": "Veyran, Voice of Duality",
@@ -6548,19 +6548,19 @@
         },
         {
           "name": "Reliquary Tower",
-          "price": 4.82
+          "price": 4.73
         },
         {
           "name": "Dualcaster Mage",
-          "price": 3.53
+          "price": 3.51
         }
       ]
     },
     "witherbloom-witchcraft": {
-      "tcg": 98.38,
+      "tcg": 98.23,
       "cardkingdom": 135.76,
-      "sell_tcg": 68.87,
-      "sell_cardkingdom": 27.3,
+      "sell_tcg": 68.76,
+      "sell_cardkingdom": 28.46,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6568,7 +6568,7 @@
       "top_cards": [
         {
           "name": "Witch's Clinic",
-          "price": 12.57
+          "price": 12.5
         },
         {
           "name": "Alhammarret's Archive",
@@ -6576,19 +6576,19 @@
         },
         {
           "name": "Venser's Journal",
-          "price": 8.73
+          "price": 8.61
         },
         {
           "name": "Sanguine Bond",
-          "price": 6.07
+          "price": 6.14
         }
       ]
     },
     "lorehold-legacies": {
-      "tcg": 89.26,
-      "cardkingdom": 129.94,
-      "sell_tcg": 62.48,
-      "sell_cardkingdom": 38.27,
+      "tcg": 89.58,
+      "cardkingdom": 130.74,
+      "sell_tcg": 62.71,
+      "sell_cardkingdom": 40.77,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6596,27 +6596,27 @@
       "top_cards": [
         {
           "name": "Thousand-Year Elixir",
-          "price": 17.9
+          "price": 17.83
         },
         {
           "name": "Boros Charm",
-          "price": 4.84
+          "price": 4.82
         },
         {
           "name": "Ancient Den",
-          "price": 3.9
+          "price": 4.01
         },
         {
           "name": "Hellkite Tyrant",
-          "price": 3.51
+          "price": 3.59
         }
       ]
     },
     "quantum-quandrix": {
-      "tcg": 82.61,
-      "cardkingdom": 118.37,
-      "sell_tcg": 57.83,
-      "sell_cardkingdom": 34.32,
+      "tcg": 82.44,
+      "cardkingdom": 118.97,
+      "sell_tcg": 57.71,
+      "sell_cardkingdom": 35.39,
       "sell_tcg_estimated": true,
       "card_count": 100,
       "priced": 100,
@@ -6624,7 +6624,7 @@
       "top_cards": [
         {
           "name": "Spawning Kraken",
-          "price": 12.69
+          "price": 12.57
         },
         {
           "name": "Adrix and Nev, Twincasters",
@@ -6632,11 +6632,11 @@
         },
         {
           "name": "Ruxa, Patient Professor",
-          "price": 5.99
+          "price": 6.06
         },
         {
           "name": "Idol of Oblivion",
-          "price": 4.31
+          "price": 4.24
         }
       ]
     }
@@ -6653,11 +6653,11 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/238730/magic-adventures-in-the-forgotten-realms-draft-booster-box",
         "set_release": "2021-07-23",
-        "ev": 95.57,
+        "ev": 95.69,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 249.99,
-        "ck_qty": 24,
+        "ck_qty": 23,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/adventures-in-the-forgotten-realms-draft-booster-box",
         "ck_buy": 150.0
       },
@@ -6671,7 +6671,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/238745/magic-adventures-in-the-forgotten-realms-collector-booster-display",
         "set_release": "2021-07-23",
-        "ev": 208.2,
+        "ev": 207.98,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 429.99,
@@ -6686,12 +6686,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Aetherdrift - Play Booster Display",
-        "price": 105.38,
+        "price": 105.55,
         "price_low": 92.42,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/604250/magic-aetherdrift-play-booster-display",
         "set_release": "2025-02-14",
-        "ev": 68.57,
+        "ev": 68.82,
         "ev_coverage": 1.0,
         "packs": 30,
         "ck_price": 114.99,
@@ -6709,7 +6709,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/604253/magic-aetherdrift-collector-booster-display",
         "set_release": "2025-02-14",
-        "ev": 138.11,
+        "ev": 137.99,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 349.99,
@@ -6729,7 +6729,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541225/magic-universes-beyond-assassin-s-creed-collector-booster-display",
         "set_release": "2024-07-05",
-        "ev": 323.12,
+        "ev": 323.29,
         "ev_coverage": 0.999,
         "packs": 12,
         "ck_price": 749.99,
@@ -6744,12 +6744,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Bloomburrow - Play Booster Display",
-        "price": 210.42,
+        "price": 209.26,
         "price_low": 199.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541235/magic-bloomburrow-play-booster-display",
         "set_release": "2024-08-02",
-        "ev": 158.02,
+        "ev": 156.35,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 249.99,
@@ -6767,7 +6767,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541238/magic-bloomburrow-collector-booster-display",
         "set_release": "2024-08-02",
-        "ev": 466.65,
+        "ev": 466.68,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 1699.99,
@@ -6787,7 +6787,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/267019/magic-commander-legends-battle-for-baldur-s-gate-draft-booster-box",
         "set_release": "2022-06-10",
-        "ev": 273.23,
+        "ev": 272.97,
         "ev_coverage": 1.0,
         "packs": 24,
         "ck_price": 349.99,
@@ -6800,12 +6800,12 @@
         "kind": "collector",
         "label": "Collector Booster Box",
         "name": "Commander Legends: Battle for Baldur's Gate - Collector Booster Display",
-        "price": 598.22,
+        "price": 598.13,
         "price_low": 605.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/267023/magic-commander-legends-battle-for-baldur-s-gate-collector-booster-display",
         "set_release": "2022-06-10",
-        "ev": 587.96,
+        "ev": 586.37,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 699.99,
@@ -6825,7 +6825,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484924/magic-commander-masters-draft-booster-box",
         "set_release": "2023-08-04",
-        "ev": 544.34,
+        "ev": 544.52,
         "ev_coverage": 1.0,
         "packs": 24,
         "ck_price": 599.99,
@@ -6839,11 +6839,11 @@
         "label": "Collector Booster Box",
         "name": "Commander Masters - Collector Booster Box",
         "price": 585.45,
-        "price_low": 563.0,
+        "price_low": 500.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484929/magic-commander-masters-collector-booster-box",
         "set_release": "2023-08-04",
-        "ev": 363.36,
+        "ev": 363.11,
         "ev_coverage": 1.0,
         "packs": 4,
         "ck_price": 599.99,
@@ -6858,12 +6858,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "FINAL FANTASY - Play Booster Display",
-        "price": 258.01,
-        "price_low": 246.0,
+        "price": 259.67,
+        "price_low": 257.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618890/magic-final-fantasy-play-booster-display",
         "set_release": "2025-06-13",
-        "ev": 173.53,
+        "ev": 172.93,
         "ev_coverage": 1.0,
         "packs": 30,
         "ck_price": 299.99,
@@ -6876,12 +6876,12 @@
         "kind": "collector",
         "label": "Collector Booster Box",
         "name": "FINAL FANTASY - Collector Booster Display",
-        "price": 1619.42,
-        "price_low": 1615.0,
+        "price": 1617.94,
+        "price_low": 1613.96,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/618893/magic-final-fantasy-collector-booster-display",
         "set_release": "2025-06-13",
-        "ev": 937.16,
+        "ev": 936.54,
         "ev_coverage": 0.997,
         "packs": 12,
         "ck_price": 2099.99,
@@ -6897,11 +6897,11 @@
         "label": "Collector Booster Box",
         "name": "Universes Beyond: Doctor Who - Collector Booster Display",
         "price": 714.12,
-        "price_low": 739.94,
+        "price_low": 739.91,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496076/magic-universes-beyond-doctor-who-collector-booster-display",
         "set_release": "2023-10-13",
-        "ev": 523.52,
+        "ev": 523.81,
         "ev_coverage": 0.996,
         "packs": 12,
         "ck_price": 899.99,
@@ -6916,12 +6916,12 @@
         "kind": "draft",
         "label": "Draft Booster Box",
         "name": "Dominaria United - Draft Booster Box",
-        "price": 185.78,
+        "price": 185.82,
         "price_low": 179.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/275403/magic-dominaria-united-draft-booster-box",
         "set_release": "2022-09-09",
-        "ev": 78.7,
+        "ev": 77.55,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 199.99,
@@ -6934,12 +6934,12 @@
         "kind": "collector",
         "label": "Collector Booster Box",
         "name": "Dominaria United - Collector Booster Display",
-        "price": 400.12,
+        "price": 400.18,
         "price_low": 395.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/275412/magic-dominaria-united-collector-booster-display",
         "set_release": "2022-09-09",
-        "ev": 220.74,
+        "ev": 220.63,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 449.99,
@@ -6952,12 +6952,12 @@
         "kind": "jumpstart",
         "label": "Jumpstart Box",
         "name": "Dominaria United - Jumpstart Booster Display",
-        "price": 92.29,
+        "price": 91.95,
         "price_low": 91.5,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/275428/magic-dominaria-united-jumpstart-booster-display",
         "set_release": "2022-09-09",
-        "ev": 60.82,
+        "ev": 60.1,
         "ev_coverage": 1.0,
         "packs": 18,
         "ck_price": 139.99,
@@ -6972,12 +6972,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Duskmourn: House of Horror - Play Booster Display",
-        "price": 207.68,
+        "price": 207.6,
         "price_low": 200.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557241/magic-duskmourn-house-of-horror-play-booster-display",
         "set_release": "2024-09-27",
-        "ev": 164.13,
+        "ev": 164.81,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 229.99,
@@ -6995,7 +6995,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/557244/magic-duskmourn-house-of-horror-collector-booster-display",
         "set_release": "2024-09-27",
-        "ev": 317.25,
+        "ev": 317.3,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 899.99,
@@ -7010,12 +7010,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Edge of Eternities - Play Booster Display",
-        "price": 196.15,
+        "price": 195.95,
         "price_low": 182.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619674/magic-edge-of-eternities-play-booster-display",
         "set_release": "2025-08-01",
-        "ev": 165.7,
+        "ev": 166.84,
         "ev_coverage": 1.0,
         "packs": 30,
         "ck_price": 249.99,
@@ -7033,7 +7033,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619672/magic-edge-of-eternities-collector-booster-display",
         "set_release": "2025-08-01",
-        "ev": 462.26,
+        "ev": 463.67,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 849.99,
@@ -7053,7 +7053,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/523185/magic-universes-beyond-fallout-collector-booster-display",
         "set_release": "2024-03-08",
-        "ev": 1004.36,
+        "ev": 1004.06,
         "ev_coverage": 0.99,
         "packs": 12,
         "ck_price": 2199.99,
@@ -7068,12 +7068,12 @@
         "kind": "draft",
         "label": "Draft Booster Box",
         "name": "Innistrad: Crimson Vow - Draft Booster Box",
-        "price": 154.13,
+        "price": 154.05,
         "price_low": 140.82,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/246467/magic-innistrad-crimson-vow-draft-booster-box",
         "set_release": "2021-11-19",
-        "ev": 63.75,
+        "ev": 67.97,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 149.99,
@@ -7091,7 +7091,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/246457/magic-innistrad-crimson-vow-collector-booster-display",
         "set_release": "2021-11-19",
-        "ev": 125.49,
+        "ev": 125.36,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 299.99,
@@ -7111,7 +7111,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/244379/magic-innistrad-midnight-hunt-draft-booster-box",
         "set_release": "2021-09-24",
-        "ev": 41.92,
+        "ev": 43.13,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 179.99,
@@ -7129,7 +7129,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/244384/magic-innistrad-midnight-hunt-collector-booster-display",
         "set_release": "2021-09-24",
-        "ev": 107.38,
+        "ev": 107.4,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 299.99,
@@ -7149,7 +7149,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/257557/magic-kamigawa-neon-dynasty-draft-booster-box",
         "set_release": "2022-02-18",
-        "ev": 155.67,
+        "ev": 155.52,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 299.99,
@@ -7162,12 +7162,12 @@
         "kind": "collector",
         "label": "Collector Booster Box",
         "name": "Kamigawa: Neon Dynasty - Collector Booster Display",
-        "price": 626.37,
-        "price_low": 617.94,
+        "price": 623.97,
+        "price_low": 600.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/257563/magic-kamigawa-neon-dynasty-collector-booster-display",
         "set_release": "2022-02-18",
-        "ev": 293.87,
+        "ev": 293.44,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 749.99,
@@ -7182,12 +7182,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Lorwyn Eclipsed - Play Booster Display",
-        "price": 101.79,
+        "price": 103.0,
         "price_low": 100.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/656312/magic-lorwyn-eclipsed-play-booster-display",
         "set_release": "2026-01-23",
-        "ev": 80.05,
+        "ev": 79.69,
         "ev_coverage": 1.0,
         "packs": 30,
         "ck_price": 139.99,
@@ -7205,7 +7205,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/656322/magic-lorwyn-eclipsed-collector-booster-display",
         "set_release": "2026-01-23",
-        "ev": 180.81,
+        "ev": 180.64,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 479.99,
@@ -7220,12 +7220,12 @@
         "kind": "draft",
         "label": "Draft Booster Box",
         "name": "March of the Machine - Draft Booster Box",
-        "price": 178.38,
-        "price_low": 178.38,
+        "price": 179.34,
+        "price_low": 174.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/475575/magic-march-of-the-machine-draft-booster-box",
         "set_release": "2023-04-21",
-        "ev": 163.52,
+        "ev": 163.41,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 229.99,
@@ -7239,7 +7239,7 @@
         "label": "Collector Booster Box",
         "name": "March of the Machine - Collector Booster Display",
         "price": 942.79,
-        "price_low": 881.48,
+        "price_low": 881.44,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/475584/magic-march-of-the-machine-collector-booster-display",
         "set_release": "2023-04-21",
@@ -7258,11 +7258,11 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/475582/magic-march-of-the-machine-jumpstart-booster-display",
         "set_release": "2023-04-21",
-        "ev": 124.14,
+        "ev": 124.91,
         "ev_coverage": 1.0,
         "packs": 18,
         "ck_price": 109.99,
-        "ck_qty": 9,
+        "ck_qty": 8,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/march-of-the-machine-jumpstart-booster-box",
         "ck_buy": 71.0
       }
@@ -7273,12 +7273,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Marvel Super Heroes - Play Booster Display",
-        "price": 104.43,
-        "price_low": 96.79,
+        "price": 102.85,
+        "price_low": 90.91,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675603/magic-marvel-super-heroes-play-booster-display",
         "set_release": "2026-06-26",
-        "ev": 63.21,
+        "ev": 65.34,
         "ev_coverage": 1.0,
         "packs": 30,
         "ck_price": 149.99,
@@ -7292,11 +7292,11 @@
         "label": "Collector Booster Box",
         "name": "Marvel Super Heroes - Collector Booster Display",
         "price": 456.22,
-        "price_low": 440.0,
+        "price_low": 434.86,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675606/magic-marvel-super-heroes-collector-booster-display",
         "set_release": "2026-06-26",
-        "ev": 344.23,
+        "ev": 342.88,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 499.99,
@@ -7309,12 +7309,12 @@
         "kind": "jumpstart",
         "label": "Jumpstart Box",
         "name": "Marvel Super Heroes - Jumpstart Booster Display",
-        "price": 95.35,
+        "price": 95.23,
         "price_low": 91.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675623/magic-marvel-super-heroes-jumpstart-booster-display",
         "set_release": "2026-06-26",
-        "ev": 141.55,
+        "ev": 142.33,
         "ev_coverage": 1.0,
         "packs": 24,
         "ck_price": 124.99,
@@ -7329,12 +7329,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Modern Horizons 3 - Play Booster Display",
-        "price": 308.68,
+        "price": 307.94,
         "price_low": 300.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541164/magic-modern-horizons-3-play-booster-display",
         "set_release": "2024-06-14",
-        "ev": 357.53,
+        "ev": 359.45,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 399.99,
@@ -7352,7 +7352,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541179/magic-modern-horizons-3-collector-booster-display",
         "set_release": "2024-06-14",
-        "ev": 613.44,
+        "ev": 613.51,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 1099.99,
@@ -7367,12 +7367,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Murders at Karlov Manor - Play Booster Display",
-        "price": 137.37,
-        "price_low": 132.96,
+        "price": 138.13,
+        "price_low": 132.95,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/529964/magic-murders-at-karlov-manor-play-booster-display",
         "set_release": "2024-02-09",
-        "ev": 152.83,
+        "ev": 152.66,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 149.99,
@@ -7390,7 +7390,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/529968/magic-murders-at-karlov-manor-collector-booster-display",
         "set_release": "2024-02-09",
-        "ev": 251.34,
+        "ev": 251.29,
         "ev_coverage": 0.995,
         "packs": 12,
         "ck_price": 399.99,
@@ -7405,8 +7405,8 @@
         "kind": "booster",
         "label": "Booster Box",
         "name": "Mystery Booster Commander Edition - Booster Display",
-        "price": 397.97,
-        "price_low": 397.99,
+        "price": 400.96,
+        "price_low": 398.49,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/709724/magic-mystery-booster-commander-edition-booster-display",
         "set_release": "2026-10-19"
@@ -7418,12 +7418,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Outlaws of Thunder Junction - Play Booster Display",
-        "price": 186.1,
+        "price": 186.44,
         "price_low": 187.01,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541084/magic-outlaws-of-thunder-junction-play-booster-display",
         "set_release": "2024-04-19",
-        "ev": 185.54,
+        "ev": 184.81,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 199.99,
@@ -7436,12 +7436,12 @@
         "kind": "collector",
         "label": "Collector Booster Box",
         "name": "Outlaws of Thunder Junction - Collector Booster Display",
-        "price": 489.36,
+        "price": 490.08,
         "price_low": 489.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/541090/magic-outlaws-of-thunder-junction-collector-booster-display",
         "set_release": "2024-04-19",
-        "ev": 289.17,
+        "ev": 288.87,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 549.99,
@@ -7456,12 +7456,12 @@
         "kind": "draft",
         "label": "Draft Booster Box",
         "name": "Phyrexia: All Will Be One - Draft Booster Box",
-        "price": 268.63,
+        "price": 268.83,
         "price_low": 256.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/451869/magic-phyrexia-all-will-be-one-draft-booster-box",
         "set_release": "2023-02-10",
-        "ev": 140.71,
+        "ev": 140.58,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 239.99,
@@ -7474,12 +7474,12 @@
         "kind": "collector",
         "label": "Collector Booster Box",
         "name": "Phyrexia: All Will Be One - Collector Booster Display",
-        "price": 1122.29,
+        "price": 1122.37,
         "price_low": 1035.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/451880/magic-phyrexia-all-will-be-one-collector-booster-display",
         "set_release": "2023-02-10",
-        "ev": 328.67,
+        "ev": 328.93,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 1499.99,
@@ -7492,12 +7492,12 @@
         "kind": "jumpstart",
         "label": "Jumpstart Box",
         "name": "Phyrexia: All Will Be One - Jumpstart Booster Display",
-        "price": 165.72,
+        "price": 167.06,
         "price_low": 169.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/451876/magic-phyrexia-all-will-be-one-jumpstart-booster-display",
         "set_release": "2023-02-10",
-        "ev": 62.51,
+        "ev": 62.42,
         "ev_coverage": 1.0,
         "packs": 18,
         "ck_price": 179.99,
@@ -7512,12 +7512,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Reality Fracture - Play Booster Display",
-        "price": 119.65,
+        "price": 120.86,
         "price_low": 115.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/692980/magic-reality-fracture-play-booster-display",
         "set_release": "2026-10-02",
-        "ev": 78.29,
+        "ev": 81.92,
         "ev_coverage": 1.0,
         "packs": 30,
         "ck_price": 154.99,
@@ -7530,12 +7530,12 @@
         "kind": "collector",
         "label": "Collector Booster Box",
         "name": "Reality Fracture - Collector Booster Display",
-        "price": 372.84,
-        "price_low": 373.0,
+        "price": 372.46,
+        "price_low": 370.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/692983/magic-reality-fracture-collector-booster-display",
         "set_release": "2026-10-02",
-        "ev": 249.03,
+        "ev": 244.71,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 574.99,
@@ -7550,12 +7550,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Secrets of Strixhaven - Play Booster Display",
-        "price": 145.36,
-        "price_low": 135.0,
+        "price": 144.78,
+        "price_low": 135.72,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675555/magic-secrets-of-strixhaven-play-booster-display",
         "set_release": "2026-04-24",
-        "ev": 77.23,
+        "ev": 76.99,
         "ev_coverage": 1.0,
         "packs": 30,
         "ck_price": 199.99,
@@ -7568,12 +7568,12 @@
         "kind": "collector",
         "label": "Collector Booster Box",
         "name": "Secrets of Strixhaven - Collector Booster Display",
-        "price": 494.99,
-        "price_low": 488.95,
+        "price": 495.09,
+        "price_low": 488.51,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/675558/magic-secrets-of-strixhaven-collector-booster-display",
         "set_release": "2026-04-24",
-        "ev": 312.69,
+        "ev": 312.67,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 599.99,
@@ -7588,8 +7588,8 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Star Trek - Play Booster Display",
-        "price": 114.33,
-        "price_low": 110.0,
+        "price": 115.32,
+        "price_low": 112.81,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/706138/magic-star-trek-play-booster-display",
         "set_release": "2026-11-13",
@@ -7603,8 +7603,8 @@
         "kind": "collector",
         "label": "Collector Booster Box",
         "name": "Star Trek - Collector Booster Display",
-        "price": 458.21,
-        "price_low": 445.0,
+        "price": 472.68,
+        "price_low": 460.14,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/706142/magic-star-trek-collector-booster-display",
         "set_release": "2026-11-13",
@@ -7620,12 +7620,12 @@
         "kind": "draft",
         "label": "Draft Booster Box",
         "name": "Streets of New Capenna - Draft Booster Box",
-        "price": 142.43,
+        "price": 142.35,
         "price_low": 137.35,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/264760/magic-streets-of-new-capenna-draft-booster-box",
         "set_release": "2022-04-29",
-        "ev": 83.02,
+        "ev": 82.91,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 174.99,
@@ -7639,11 +7639,11 @@
         "label": "Collector Booster Box",
         "name": "Streets of New Capenna - Collector Booster Display",
         "price": 314.65,
-        "price_low": 308.88,
+        "price_low": 314.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/264767/magic-streets-of-new-capenna-collector-booster-display",
         "set_release": "2022-04-29",
-        "ev": 171.22,
+        "ev": 171.41,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 349.99,
@@ -7658,16 +7658,16 @@
         "kind": "draft",
         "label": "Draft Booster Box",
         "name": "Strixhaven: School of Mages - Draft Booster Box",
-        "price": 186.42,
+        "price": 187.1,
         "price_low": 173.96,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/233249/magic-strixhaven-school-of-mages-draft-booster-box",
         "set_release": "2021-04-23",
-        "ev": 101.12,
+        "ev": 101.09,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 179.99,
-        "ck_qty": 14,
+        "ck_qty": 13,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/strixhaven-school-of-mages-draft-booster-box",
         "ck_buy": 117.0
       },
@@ -7681,7 +7681,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/233232/magic-strixhaven-school-of-mages-collector-booster-display",
         "set_release": "2021-04-23",
-        "ev": 440.74,
+        "ev": 439.99,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 649.99,
@@ -7696,12 +7696,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Tarkir: Dragonstorm - Play Booster Display",
-        "price": 166.62,
+        "price": 165.42,
         "price_low": 130.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619645/magic-tarkir-dragonstorm-play-booster-display",
         "set_release": "2025-04-11",
-        "ev": 113.74,
+        "ev": 114.41,
         "ev_coverage": 1.0,
         "packs": 30,
         "ck_price": 199.99,
@@ -7714,12 +7714,12 @@
         "kind": "collector",
         "label": "Collector Booster Box",
         "name": "Tarkir: Dragonstorm - Collector Booster Display",
-        "price": 509.67,
+        "price": 509.11,
         "price_low": 509.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/619649/magic-tarkir-dragonstorm-collector-booster-display",
         "set_release": "2025-04-11",
-        "ev": 366.67,
+        "ev": 366.54,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 649.99,
@@ -7734,12 +7734,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "Teenage Mutant Ninja Turtles - Play Booster Display",
-        "price": 103.23,
-        "price_low": 98.8,
+        "price": 101.8,
+        "price_low": 94.9,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/657849/magic-teenage-mutant-ninja-turtles-play-booster-display",
         "set_release": "2026-03-06",
-        "ev": 52.32,
+        "ev": 51.29,
         "ev_coverage": 1.0,
         "packs": 30,
         "ck_price": 119.99,
@@ -7752,12 +7752,12 @@
         "kind": "collector",
         "label": "Collector Booster Box",
         "name": "Teenage Mutant Ninja Turtles - Collector Booster Display",
-        "price": 431.65,
+        "price": 432.44,
         "price_low": 437.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/657852/magic-teenage-mutant-ninja-turtles-collector-booster-display",
         "set_release": "2026-03-06",
-        "ev": 249.49,
+        "ev": 249.55,
         "ev_coverage": 0.998,
         "packs": 12,
         "ck_price": 449.99,
@@ -7772,12 +7772,12 @@
         "kind": "draft",
         "label": "Draft Booster Box",
         "name": "The Brothers' War - Draft Booster Box",
-        "price": 225.69,
-        "price_low": 225.65,
+        "price": 225.92,
+        "price_low": 217.65,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/282226/magic-the-brothers-war-draft-booster-box",
         "set_release": "2022-11-18",
-        "ev": 147.83,
+        "ev": 148.13,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 249.99,
@@ -7795,7 +7795,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/282224/magic-the-brothers-war-collector-booster-display",
         "set_release": "2022-11-18",
-        "ev": 295.37,
+        "ev": 295.03,
         "ev_coverage": 0.99,
         "packs": 12,
         "ck_price": 999.99,
@@ -7808,12 +7808,12 @@
         "kind": "jumpstart",
         "label": "Jumpstart Box",
         "name": "The Brothers' War - Jumpstart Booster Display",
-        "price": 94.64,
+        "price": 95.96,
         "price_low": 119.99,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/449719/magic-the-brothers-war-jumpstart-booster-display",
         "set_release": "2022-11-18",
-        "ev": 26.24,
+        "ev": 26.13,
         "ev_coverage": 1.0,
         "packs": 18,
         "ck_price": 129.99,
@@ -7828,12 +7828,12 @@
         "kind": "play",
         "label": "Play Booster Box",
         "name": "The Hobbit - Play Booster Display",
-        "price": 131.33,
-        "price_low": 129.99,
+        "price": 130.52,
+        "price_low": 130.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/692960/magic-the-hobbit-play-booster-display",
         "set_release": "2026-08-14",
-        "ev": 61.16,
+        "ev": 62.04,
         "ev_coverage": 1.0,
         "packs": 30,
         "ck_price": 179.99,
@@ -7846,12 +7846,12 @@
         "kind": "collector",
         "label": "Collector Booster Box",
         "name": "The Hobbit - Collector Booster Display",
-        "price": 578.04,
-        "price_low": 588.0,
+        "price": 584.94,
+        "price_low": 581.95,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/692963/magic-the-hobbit-collector-booster-display",
         "set_release": "2026-08-14",
-        "ev": 477.7,
+        "ev": 474.27,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 749.99,
@@ -7866,12 +7866,12 @@
         "kind": "draft",
         "label": "Draft Booster Box",
         "name": "Universes Beyond: The Lord of the Rings: Tales of Middle-earth - Draft Booster Box",
-        "price": 426.78,
-        "price_low": 399.99,
+        "price": 424.92,
+        "price_low": 399.9,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484906/magic-universes-beyond-the-lord-of-the-rings-tales-of-middle-earth-draft-booster-box",
         "set_release": "2023-06-23",
-        "ev": 192.89,
+        "ev": 196.52,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 429.99,
@@ -7889,7 +7889,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484912/magic-universes-beyond-the-lord-of-the-rings-tales-of-middle-earth-collector-booster-display",
         "set_release": "2023-06-23",
-        "ev": 620.49,
+        "ev": 619.22,
         "ev_coverage": 0.999,
         "packs": 12,
         "ck_price": 2399.99,
@@ -7902,12 +7902,12 @@
         "kind": "jumpstart",
         "label": "Jumpstart Box",
         "name": "Universes Beyond: The Lord of the Rings: Tales of Middle-earth - Jumpstart Booster Box",
-        "price": 238.99,
-        "price_low": 209.0,
+        "price": 237.9,
+        "price_low": 230.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/484915/magic-universes-beyond-the-lord-of-the-rings-tales-of-middle-earth-jumpstart-booster-box",
         "set_release": "2023-06-23",
-        "ev": 126.72,
+        "ev": 126.73,
         "ev_coverage": 1.0,
         "packs": 18,
         "ck_price": 219.99,
@@ -7927,7 +7927,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/516619/magic-the-lost-caverns-of-ixalan-draft-booster-display",
         "set_release": "2023-11-17",
-        "ev": 123.3,
+        "ev": 123.1,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 299.99,
@@ -7945,7 +7945,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/516614/magic-the-lost-caverns-of-ixalan-collector-booster-display",
         "set_release": "2023-11-17",
-        "ev": 475.17,
+        "ev": 475.72,
         "ev_coverage": 0.978,
         "packs": 12,
         "ck_price": 1399.99,
@@ -7965,7 +7965,7 @@
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496035/magic-wilds-of-eldraine-draft-booster-display",
         "set_release": "2023-09-08",
-        "ev": 245.24,
+        "ev": 246.29,
         "ev_coverage": 1.0,
         "packs": 36,
         "ck_price": 349.99,
@@ -7978,12 +7978,12 @@
         "kind": "collector",
         "label": "Collector Booster Box",
         "name": "Wilds of Eldraine - Collector Booster Display",
-        "price": 909.87,
+        "price": 913.47,
         "price_low": 940.0,
         "price_source": "Market",
         "url": "https://www.tcgplayer.com/product/496041/magic-wilds-of-eldraine-collector-booster-display",
         "set_release": "2023-09-08",
-        "ev": 415.71,
+        "ev": 416.28,
         "ev_coverage": 1.0,
         "packs": 12,
         "ck_price": 1099.99,
@@ -8001,7 +8001,7 @@
     "box_toppers": false
   },
   "upstream": {
-    "tcgcsv": "2026-11-06T20:05:28+00:00",
-    "mtgjson": "2026-11-06"
+    "tcgcsv": "2026-11-07T20:05:27+00:00",
+    "mtgjson": "2026-11-07"
   }
 }
