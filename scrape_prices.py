@@ -31,6 +31,7 @@ import statistics
 import time
 import traceback
 import urllib.parse
+import zlib
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -1139,12 +1140,17 @@ def fetch_crack_values(decks: list, session: requests.Session,
     card_count, priced and missing count cards (copies), not decklist rows:
     a deck with 32 Plains in 2 rows counts 32.
     Returns { deck_id: {tcg, cardkingdom, card_count, priced, missing} }.
+    Every priced deck also gets its card list (fetch_crack_values.card_docs,
+    see deck_cards_doc), built from the same decklist rows and price lookups.
     """
     guard = guard or PhaseGuard("crack")
     # Decks whose decklist could not be fetched this run; main() carries
     # their previous values forward instead of dropping them.
     failed: list = []
     fetch_crack_values.failed_ids = failed
+    # Card list per priced deck, for cards/decks (written by update_card_files).
+    card_docs: dict = {}
+    fetch_crack_values.card_docs = card_docs
     if not guard.ok():
         return {}  # run budget spent: main() carries the previous values
     deck_map = build_deck_mtgjson_map(decks, session)
@@ -1155,6 +1161,7 @@ def fetch_crack_values(decks: list, session: requests.Session,
 
     # 1. Pull each deck's card list (uuid + count). Collect unique uuids.
     deck_cards: dict[str, list] = {}
+    deck_rows: dict[str, list] = {}   # card list rows, in step with deck_cards
     need_uuids: set = set()
     for d in decks:
         fn = deck_map.get(d["id"])
@@ -1172,6 +1179,7 @@ def fetch_crack_values(decks: list, session: requests.Session,
         guard.success()
         body = dj.get("data", {})
         cards = []
+        rows = []
         for board in ("commander", "mainBoard"):
             for c in body.get(board) or []:
                 u = c.get("uuid")
@@ -1184,7 +1192,9 @@ def fetch_crack_values(decks: list, session: requests.Session,
                 if u:
                     cards.append((u, cnt, nm, is_basic, fins))
                     need_uuids.add((u, fins))
+                    rows.append(deck_card_row(c, cnt, board))
         deck_cards[d["id"]] = cards
+        deck_rows[d["id"]] = rows
         time.sleep(0.05)
 
     # 2. Download today's prices once; keep only the printings we need (both
@@ -1201,17 +1211,19 @@ def fetch_crack_values(decks: list, session: requests.Session,
         guard.trip("price file download failed")
         return {}
     price_by_uuid: dict = {}
+    finish_by_uuid: dict = {}   # the finish those prices are for (card lists)
     for u, fins in need_uuids:
         paper = (pdata.get(u) or {}).get("paper", {})
         ckp = paper.get("cardkingdom") or {}
         tcgp = paper.get("tcgplayer") or {}
-        tcg_retail, _ = price_in_finish(tcgp.get("retail"), fins)
+        tcg_retail, tcg_fin = price_in_finish(tcgp.get("retail"), fins)
         ck_retail, ck_fin = price_in_finish(ckp.get("retail"), fins)
         # The buylist price of the same finish CK sells, so a card never
         # sells for more than it costs because the two sides read different
         # finishes; with no CK retail price, the first finish CK buys.
         ck_buylist, _ = price_in_finish(ckp.get("buylist"), (ck_fin,) if ck_fin else fins)
         price_by_uuid[(u, fins)] = (tcg_retail, ck_retail, ck_buylist)
+        finish_by_uuid[(u, fins)] = FINISH_NAMES[tcg_fin or ck_fin or fins[0]]
     # Keep the AllPrices cache (shared with the box-EV phase); don't free it.
 
     # 3. Sum per deck. Two sides:
@@ -1223,6 +1235,7 @@ def fetch_crack_values(decks: list, session: requests.Session,
     #               MTGJSON carries no TCGPlayer buylist. Clearly flagged.
     results: dict = {}
     card_index: dict = {}   # normalized card name -> {"name": display, "decks": [ids]}
+    deck_by_id = {d["id"]: d for d in decks}
     for did, cards in deck_cards.items():
         tcg_buy = ck_buy = 0.0
         tcg_sell_est = ck_sell = 0.0
@@ -1272,6 +1285,12 @@ def fetch_crack_values(decks: list, session: requests.Session,
                 "missing": missing,
                 "top_cards": top_cards,
             }
+            try:
+                card_docs[did] = deck_cards_doc(deck_by_id[did], deck_map[did], deck_rows[did],
+                                                cards, price_by_uuid, finish_by_uuid, results[did])
+            except Exception as e:
+                # The crack value stands; the deck keeps its previous card list.
+                print(f"  crack: [{did}] card list not built: {e}", flush=True)
     print(f"  crack: priced {len(results)} decks", flush=True)
     # Stash the reverse index on the function so main() can write it out.
     fetch_crack_values.card_index = card_index
@@ -1686,9 +1705,24 @@ def _pack_ev_from_booster(booster_cfg: dict, price_of_uuid, bulk_threshold: floa
     return ev, coverage
 
 
+def _set_code(set_name: str, setcode_map: dict) -> str | None:
+    """MTGJSON code of one of our sets (setcode_map: _build_setcode_map)."""
+    return setcode_map.get(norm(_clean_set_name(set_name))) or setcode_map.get(norm(set_name))
+
+
+def sheet_price(allp: dict, uuid, is_foil: bool = False) -> tuple:
+    """(TCGplayer retail price, MTGJSON finish) of a card on a booster sheet.
+    Foil sheets reference the same uuids; price the sheet's finish, falling
+    back to the others only when it has no price (etched sheets are marked
+    foil but MTGJSON prices them as 'etched'). (None, None) with no price."""
+    paper = (allp.get(uuid) or {}).get("paper", {})
+    tcg = (paper.get("tcgplayer") or {}).get("retail") or {}
+    return price_in_finish(tcg, finish_order(is_foil))
+
+
 def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
                    want_types: set, sku_names: dict | None = None,
-                   sku_ids: dict | None = None) -> dict:
+                   sku_ids: dict | None = None, cards_out: dict | None = None) -> dict:
     """Return {box_type: {ev, ev_coverage, packs}} for the given set, using
     MTGJSON's set file (booster model, sealed product contents) and
     AllPricesToday (TCGplayer retail per card and finish). An estimate, see
@@ -1696,10 +1730,20 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
     left out. sku_names and sku_ids give the priced SKU's name and TCGplayer
     product id per box type. Returns {} when the set, booster or price data
     isn't available, and leaves out a type with no booster model, no MTGJSON
-    pack count or too low a coverage."""
-    code = setcode_map.get(norm(_clean_set_name(set_name))) or setcode_map.get(norm(set_name))
+    pack count or too low a coverage.
+    `cards_out`, when given, receives what the set's card list needs (see
+    box_cards_doc): 'code', the set's MTGJSON code; 'types', {box_type: {cfg,
+    packs}} with the booster model picked here and the MTGJSON pack count
+    (None when unknown) for every type that has a model, also one whose EV is
+    withheld; 'failed', True when the set file or the prices could not be
+    read, so the previous card list is kept rather than dropped."""
+    cards_out = {} if cards_out is None else cards_out
+    code = _set_code(set_name, setcode_map)
     if not code:
+        cards_out["failed"] = not setcode_map   # SetList unread, not an unknown set
         return {}
+    cards_out["code"] = code
+    cards_out["failed"] = True   # until the set file and the prices are read
     if budget_left() <= 0:
         print(f"  ev: [{set_name}] run time budget spent, EV left out", flush=True)
         return {}
@@ -1707,11 +1751,14 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
         sdata = fetch_json(f"{MTGJSON_BASE}/{code}.json", session).get("data", {})
     except Exception as e:
         print(f"  ev: [{set_name}] set file {code}.json fetch failed: {e}", flush=True)
+        _SETS_READ[code] = False
         return {}
+    remember_set_cards(code, sdata)
     booster = sdata.get("booster") or {}
     if not booster:
         # Usual for a set before release: MTGJSON adds the model later.
         print(f"  ev: [{set_name}] MTGJSON {code} has no booster model yet, EV left out", flush=True)
+        cards_out["failed"] = False
         return {}
     # Shared AllPricesToday (one download per run, reused from the crack phase).
     try:
@@ -1722,13 +1769,10 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
         print(f"  ev: AllPrices download failed: {e}", flush=True)
         return {}
 
+    cards_out["failed"] = False
+
     def price_of(uuid, is_foil=False):
-        # Foil sheets reference the same uuids; price the sheet's finish,
-        # falling back to the others only when it has no price (etched
-        # sheets are marked foil but MTGJSON prices them as 'etched').
-        paper = (allp.get(uuid) or {}).get("paper", {})
-        tcg = (paper.get("tcgplayer") or {}).get("retail") or {}
-        return price_in_finish(tcg, finish_order(is_foil))[0]
+        return sheet_price(allp, uuid, is_foil)[0]
 
     rarities = {c.get("uuid"): c.get("rarity") for c in sdata.get("cards") or []
                 if isinstance(c, dict)}
@@ -1758,6 +1802,8 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
         # contents. A typical count is a guess (many boxes break the pattern),
         # so without a real one the EV is left out rather than guessed.
         packs, src = box_pack_count(sealed, (sku_ids or {}).get(t), kind, sku, t)
+        cards_out.setdefault("types", {})[t] = {"cfg": cfg,
+                                                "packs": packs if src == "mtgjson" else None}
         if src != "mtgjson":
             print(f"  ev: [{set_name}] {t}: no MTGJSON pack count for {sku!r}, "
                   f"EV left out", flush=True)
@@ -2110,6 +2156,10 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
     `group_cache` holds groups phase 1 already fetched ({groupId: {products,
     prices, error}}); a group found there without an error is not fetched
     again.
+    What each set's card list needs is left in fetch_box_prices.card_plans
+    ({set_name: {code, kinds}}, see box_card_plan), and the sets whose MTGJSON
+    data could not be read this run in fetch_box_prices.cards_failed (their
+    previous card files are kept, see update_card_files).
     """
     guard = guard or PhaseGuard("boxes")
     sets = box_sets(decks)
@@ -2119,6 +2169,14 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
     # from the previous run instead of dropping the set for the day.
     failed: list = []
     fetch_box_prices.failed_sets = failed
+    card_plans: dict = {}
+    fetch_box_prices.card_plans = card_plans
+    cards_failed: list = []
+    fetch_box_prices.cards_failed = cards_failed
+    # Card files (lowercase set codes) of the sets that failed either way:
+    # still tracked, so their files are not stale (see prune_card_files).
+    cards_keep: set = set()
+    fetch_box_prices.cards_keep = cards_keep
     for set_name in sets:
         g = find_main_set_group(groups, set_name)
         if not g:
@@ -2137,6 +2195,7 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
             except Exception as e:
                 print(f"  boxes: [{set_name}] fetch failed: {e}", flush=True)
                 failed.append(set_name)
+                cards_keep.add((_set_code(set_name, setcode_map) or "").lower())
                 guard.failure(g["groupId"])
                 time.sleep(0.3)  # stay polite even on the error path
                 continue
@@ -2193,14 +2252,16 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
             for r in rows:
                 r["set_release"] = release
             # Expected-value estimate per box type (best-effort).
+            cards_out: dict = {}
             try:
                 ev_map = compute_box_ev(set_name, setcode_map, session,
                                         {r["type"] for r in rows},
                                         {r["type"]: r.get("name") or "" for r in rows},
-                                        {r["type"]: r["_pid"] for r in rows})
+                                        {r["type"]: r["_pid"] for r in rows}, cards_out)
             except Exception as e:
                 print(f"  ev: [{set_name}] failed: {e}", flush=True)
                 ev_map = {}
+                cards_out = {"failed": True}
             for r in rows:
                 r.pop("_pid", None)
                 if r["type"] in ev_map:
@@ -2216,10 +2277,830 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
             order = {"play": 0, "collector": 1, "jumpstart": 2}
             rows.sort(key=lambda r: order.get(r["type"], 9))
             out[set_name] = rows
+            if cards_out.get("failed"):
+                cards_failed.append(set_name)
+                cards_keep.add((cards_out.get("code") or "").lower())
+            plan = box_card_plan(rows, cards_out)
+            if plan:
+                card_plans[set_name] = plan
         time.sleep(0.3 + random.uniform(0, 0.2))  # jittered politeness
     n_ev = sum(1 for rows in out.values() for r in rows if r.get("ev") is not None)
     print(f"  boxes: {len(out)} sets with sealed boxes ({n_ev} box EVs computed)", flush=True)
     return out
+
+
+# -------------------------------------------------------------------------
+# Card lists: every card of a deck (cards/decks/<deck-id>.json) and of a
+# set's booster boxes, with pull odds (cards/boxes/<set code>.json)
+# -------------------------------------------------------------------------
+# Both files are written on every healthy run, from the MTGJSON files and
+# price lookups the crack value and the box EV already use, so the lists add
+# up to those numbers. prices.json points at them: crack[deck].cards_file,
+# and cards_file plus cards_kind on a box row.
+#   deck file: {schema, deck_id, name, source, updated_at, totals, fetched,
+#               cards: [row], prices: [[tcg, ck]]}       (deck_cards_doc)
+#   box file:  {schema, set, code, updated_at, kinds, fetched,
+#               cards: [card with odds],
+#               prices: [[[tcg, ck] per finish]]}        (box_cards_doc)
+# `prices` runs parallel to `cards`: prices[i] belongs to cards[i]. The
+# prices are the only part that changes every day, so they sit in their own
+# block of short lines after the card details, which change rarely. Measured
+# on two consecutive days of real prices, that layout adds about a quarter of
+# what prices written inside each card line add to the git history.
+# `fetched` is {set code: date}: the day the details of that set's cards in
+# this file (in a deck file, the other faces) were read from MTGJSON, which
+# is how the next run knows how old the details it reuses are.
+
+CARDS_SCHEMA = 1
+CARD_FILE_RE = re.compile(r"^[a-z0-9-]+\.json$")
+# MTGJSON's price finish names -> the finish names the card files use.
+FINISH_NAMES = {"normal": "nonfoil", "foil": "foil", "etched": "etched"}
+FINISHES = ("nonfoil", "foil", "etched")
+# Layouts whose faces are separate images (the page offers to flip the card).
+BACK_IMAGE_LAYOUTS = {"transform", "modal_dfc", "reversible_card",
+                      "double_faced_token", "art_series"}
+_UUID_RE = re.compile(r"^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$")
+_SET_CODE_RE = re.compile(r"^[A-Z0-9]{2,8}$")
+# Card details kept from the previous card file (cards of other sets on a
+# booster sheet, the other face of a deck's split or adventure card) are read
+# from MTGJSON again once they are this many days old, so oracle text errata
+# arrive within 30 days even when a daily run or two fails. By set code the
+# limit comes a few days earlier (CARD_REFRESH_SPREAD different limits), so
+# the source sets do not all fall due on the same run.
+CARD_REFRESH_DAYS = 28
+CARD_REFRESH_SPREAD = 7
+# Key order of a deck row and of a box card (keys a card lacks are left out).
+DECK_ROW_KEYS = ("uuid", "name", "qty", "board", "type", "mana", "mv", "colors",
+                 "rarity", "set", "num", "finish", "img", "back", "text", "faces",
+                 "keywords", "tcg_id")
+BOX_DETAIL_KEYS = ("uuid", "name", "type", "mana", "mv", "colors", "rarity", "set",
+                   "num", "img", "back", "text", "faces", "keywords", "tcg_id", "finishes")
+BOX_CARD_KEYS = BOX_DETAIL_KEYS + ("odds",)
+
+# Card details read from MTGJSON set files this run. Each set file is read at
+# most once per run: the box phase reads the tracked sets for their EV, and
+# update_card_files downloads the other sets the card lists need.
+_CARD_DETAILS: dict = {}   # uuid -> card_details() of that printing
+_SETS_READ: dict = {}      # set code -> True (read) or False (could not be read)
+
+
+def reset_card_run() -> None:
+    """Forget what an earlier run in this process left for the card lists."""
+    _CARD_DETAILS.clear()
+    _SETS_READ.clear()
+    fetch_crack_values.card_docs = {}
+    fetch_crack_values.failed_ids = []
+    fetch_box_prices.card_plans = {}
+    fetch_box_prices.cards_failed = []
+    fetch_box_prices.cards_keep = set()
+
+
+def _cents(v) -> float | None:
+    return None if v is None else round(v, 2)
+
+
+def _sig6(v: float) -> float:
+    """v rounded to 6 significant digits."""
+    return float(f"{v:.6g}")
+
+
+def _strs(v) -> list:
+    """The strings of a JSON list (anything else reads as an empty list)."""
+    return [x for x in v if isinstance(x, str)] if isinstance(v, list) else []
+
+
+def _digits(v) -> str | None:
+    s = "" if v is None else str(v)
+    return s if re.fullmatch(r"[0-9]+", s) else None
+
+
+def card_details(card: dict, by_uuid: dict | None = None) -> dict:
+    """The fields the deck and box card files share, from one MTGJSON card
+    object: uuid, name, type (this face's type line), mana, mv, colors (color
+    identity in WUBRG order), rarity, set, num, img (Scryfall id), back (True
+    when the card has a second image face), text (this face's oracle text),
+    faces and keywords. Also `finishes`, the printing's finishes, and
+    `_tcg_ids`, its (regular, etched) TCGplayer product ids (card_tcg_id).
+    A multi face card gets `faces` ([{name, type, mana, text}], front first)
+    and the keywords of every face when `by_uuid` (the cards of its set by
+    uuid) holds its other faces. Otherwise `faces` is left out and `_faces`
+    is True: the other faces are still to be found."""
+    ids = card.get("identifiers") if isinstance(card.get("identifiers"), dict) else {}
+    img = str(ids.get("scryfallId") or "").lower()
+    mv = _finite(card.get("manaValue"))
+    if mv is None:
+        mv = _finite(card.get("convertedManaCost")) or 0.0
+    others = _strs(card.get("otherFaceIds"))
+    identity = _strs(card.get("colorIdentity"))
+    out = {
+        "uuid": card.get("uuid"),
+        "name": str(card.get("name") or ""),
+        "type": str(card.get("type") or ""),
+        "mana": str(card.get("manaCost") or ""),
+        "mv": int(mv) if mv == int(mv) else mv,
+        "colors": [c for c in "WUBRG" if c in identity],
+        "rarity": str(card.get("rarity") or ""),
+        "set": str(card.get("setCode") or "").upper(),
+        "num": str(card.get("number") or ""),
+        "img": img if _UUID_RE.match(img) else None,
+    }
+    if others and card.get("layout") in BACK_IMAGE_LAYOUTS:
+        out["back"] = True
+    out["text"] = str(card.get("text") or "")
+    keywords = set(_strs(card.get("keywords")))
+    if others:
+        faces = [card] + [(by_uuid or {}).get(o) for o in others]
+        if all(isinstance(f, dict) for f in faces):
+            # Face order: side a, b, ... (the sort is stable, so among equal
+            # sides this card stays first).
+            faces.sort(key=lambda f: str(f.get("side") or ""))
+            out["faces"] = [{"name": str(f.get("faceName") or f.get("name") or ""),
+                             "type": str(f.get("type") or ""),
+                             "mana": str(f.get("manaCost") or ""),
+                             "text": str(f.get("text") or "")} for f in faces]
+            for f in faces:
+                keywords.update(_strs(f.get("keywords")))
+        else:
+            out["_faces"] = True
+    out["keywords"] = sorted(keywords)
+    out["finishes"] = [f for f in FINISHES if f in _strs(card.get("finishes"))]
+    out["_tcg_ids"] = (_digits(ids.get("tcgplayerProductId")),
+                       _digits(ids.get("tcgplayerEtchedProductId")))
+    return out
+
+
+def card_tcg_id(details: dict, etched: bool) -> str | None:
+    """TCGplayer product id for a card's link: the etched product when the
+    entry is etched and MTGJSON has one, else the regular product; None when
+    unknown. Details reused from a card file carry the id chosen back then."""
+    if "_tcg_ids" not in details:
+        return details.get("tcg_id")
+    regular, etched_id = details["_tcg_ids"]
+    return etched_id if etched and etched_id else regular
+
+
+def remember_set_cards(code: str, sdata: dict, only: set | None = None) -> None:
+    """Keep the card details of one MTGJSON set file ('data') for the rest of
+    the run, all of its cards or only the uuids in `only`, and mark the set
+    as read. Never raises: a file in an unexpected shape reads as a failure."""
+    try:
+        cards = [c for c in sdata.get("cards") or []
+                 if isinstance(c, dict) and isinstance(c.get("uuid"), str)]
+        by_uuid = {c["uuid"]: c for c in cards}
+        for c in cards:
+            if only is None or c["uuid"] in only:
+                _CARD_DETAILS[c["uuid"]] = card_details(c, by_uuid)
+        _SETS_READ[code] = True
+    except Exception as e:
+        print(f"  cards: set file {code}.json not understood: {e}", flush=True)
+        _SETS_READ[code] = False
+
+
+def read_set_cards(code: str, session: requests.Session, only: set | None = None) -> bool:
+    """Download one MTGJSON set file into the run's card details, unless the
+    run already read it (or failed to: a failure is not retried this run).
+    True when the set's cards are known."""
+    if code not in _SETS_READ:
+        try:
+            if not _SET_CODE_RE.match(code):
+                raise ValueError("not a set code")
+            sdata = fetch_json(f"{MTGJSON_BASE}/{code}.json", session).get("data", {})
+        except Exception as e:
+            print(f"  cards: set file {code}.json fetch failed: {e}", flush=True)
+            _SETS_READ[code] = False
+        else:
+            remember_set_cards(code, sdata, only)
+    return _SETS_READ[code]
+
+
+def details_due(code: str, fetched, today: str) -> bool:
+    """Is it time to read a set's card details from MTGJSON again? `fetched`
+    is the date they were last read (None or unreadable: yes)."""
+    try:
+        age = (datetime.fromisoformat(today) - datetime.fromisoformat(str(fetched))).days
+    except (ValueError, TypeError):
+        return True
+    limit = CARD_REFRESH_DAYS - zlib.crc32(code.encode()) % CARD_REFRESH_SPREAD
+    return age < 0 or age >= limit
+
+
+# ---- Deck card lists ----
+
+def deck_card_row(card: dict, qty, board: str) -> dict:
+    """One row of a deck's card list: the card's details (card_details) with
+    `qty` and `board` ('commander', or 'main' for the main board). The finish
+    is added by deck_cards_doc, which also lists the prices."""
+    row = card_details(card)
+    row["qty"] = qty
+    row["board"] = "commander" if board == "commander" else "main"
+    return row
+
+
+def deck_cards_doc(deck: dict, source: str, rows: list, cards: list,
+                   price_by_uuid: dict, finish_by_uuid: dict, crack: dict) -> dict:
+    """The card list of one deck, cards/decks/<deck-id>.json, still without
+    updated_at and the other faces (update_card_files adds them). `rows`
+    (deck_card_row) and `cards` are the decklist rows fetch_crack_values
+    priced, in the same order (commander first, then the main board). Each
+    row gets the finish its price is for. `prices` runs parallel to `cards`:
+    prices[i] = [tcg, ck], the very TCGplayer and Card Kingdom retail prices
+    the crack value sums for one copy of cards[i], rounded to cents (None
+    when MTGJSON has none). `totals` repeats the deck's crack entry."""
+    out, prices = [], []
+    for row, (u, _cnt, _nm, _basic, fins) in zip(rows, cards):
+        tcg, ck, _ck_buy = price_by_uuid.get((u, fins), (None, None, None))
+        finish = finish_by_uuid.get((u, fins)) or FINISH_NAMES[fins[0]]
+        out.append(dict(row, finish=finish, tcg_id=card_tcg_id(row, finish == "etched")))
+        prices.append([_cents(tcg), _cents(ck)])
+    return {
+        "schema": CARDS_SCHEMA,
+        "deck_id": deck["id"],
+        "name": deck.get("name") or "",
+        "source": source,
+        "totals": {"cards": crack["card_count"], "tcg": crack["tcg"],
+                   "cardkingdom": crack["cardkingdom"], "missing": crack["missing"]},
+        "cards": out,
+        "prices": prices,
+    }
+
+
+def _note_fetched(fetched: dict, code: str, when) -> None:
+    """Record in `fetched` ({set code: date}) that a card of set `code` has
+    details read on `when`: a set keeps the oldest date of its cards, and
+    None (age unknown, so read again next run) once any card has none."""
+    if code not in fetched:
+        fetched[code] = when
+    elif fetched[code] is not None:
+        fetched[code] = None if when is None else min(fetched[code], when)
+
+
+def finish_deck_doc(doc: dict, prev: dict, today: str) -> tuple:
+    """Give the multi face rows of a deck's card list their other faces and
+    put every row in file order (the rows keep their order, so `prices`
+    still runs parallel to them). The faces come from the set files read this
+    run (_CARD_DETAILS), else from the previous deck file (`prev`, see
+    read_cards_file); a row with neither keeps its front face text alone and
+    is tried again next run. `fetched` records per set the date its faces
+    were read from MTGJSON. Returns (doc, multi face rows, unresolved rows,
+    rows reused from the previous file)."""
+    fetched: dict = {}
+    rows = []
+    multi = unresolved = reused = 0
+    for row in doc["cards"]:
+        if row.get("_faces"):
+            multi += 1
+            fresh = _CARD_DETAILS.get(row["uuid"]) or {}
+            old = prev["cards"].get(row["uuid"]) or {}
+            if fresh.get("faces"):
+                src, when = fresh, today
+            elif _faces_ok(old.get("faces")):
+                src, when = old, prev["fetched"].get(row["set"])
+                reused += 1
+            else:
+                src = None
+                unresolved += 1
+            if src:
+                row = dict(row, faces=src["faces"],
+                           keywords=sorted(set(row["keywords"]) | set(_strs(src.get("keywords")))))
+                _note_fetched(fetched, row["set"], when)
+        rows.append({k: row[k] for k in DECK_ROW_KEYS if k in row})
+    out = {k: v for k, v in doc.items() if k != "cards"}
+    out["fetched"] = {k: fetched[k] for k in sorted(fetched) if fetched[k]}
+    out["cards"] = rows
+    return out, multi, unresolved, reused
+
+
+def _faces_ok(faces) -> bool:
+    """Is `faces` a card file's faces list ([{name, type, mana, text}])?"""
+    return (isinstance(faces, list) and len(faces) > 1
+            and all(isinstance(f, dict) and all(isinstance(f.get(k), str)
+                                                for k in ("name", "type", "mana", "text"))
+                    for f in faces))
+
+
+# ---- Box card lists and pull odds ----
+
+def box_card_plan(rows: list, cards_out: dict) -> dict | None:
+    """What a set's box card list is built from: {code, kinds: {row kind:
+    {label, packs, ev, cfg}}} for the box rows whose type compute_box_ev
+    found a booster model for (its `cards_out`), each with the row's label
+    and published EV (None when withheld), the MTGJSON pack count (None when
+    unknown) and that booster model. None when no row has a model."""
+    types = cards_out.get("types") or {}
+    kinds: dict = {}
+    for r in rows:
+        t = types.get(r["type"])
+        if t and r["kind"] not in kinds:
+            kinds[r["kind"]] = {"label": r["label"], "packs": t["packs"],
+                                "ev": r.get("ev"), "cfg": t["cfg"]}
+    if not kinds or not cards_out.get("code"):
+        return None
+    return {"code": cards_out["code"], "kinds": kinds}
+
+
+def nominal_finish(finishes, is_foil: bool) -> str:
+    """The finish of a booster sheet entry that has no price: on a foil sheet
+    foil if the printing has it, else etched; on other sheets nonfoil if the
+    printing has it, else the finish it does have. The same order of
+    preference as finish_order. `finishes` is the printing's finishes (None
+    when unknown: the sheet's own finish)."""
+    order = ("foil", "etched", "nonfoil") if is_foil else ("nonfoil", "foil", "etched")
+    for f in order:
+        if f in (finishes or ()):
+            return f
+    return order[0]
+
+
+def booster_card_odds(cfg: dict, finish_of) -> tuple:
+    """Pull odds per (card, finish) for ONE pack of an MTGJSON booster model
+    (its shape is described in _pack_ev_from_booster; a sheet may also be
+    `fixed` or `allowDuplicates`). finish_of(uuid, sheet_is_foil) names the
+    finish of a sheet entry. Returns (odds, pack_size): odds[(uuid, finish)]
+    = [pack, copies], the probability that a pack holds at least one copy
+    and the expected copies per pack; pack_size is the expected number of
+    cards in a pack, which the copies add up to.
+    A slot that takes k cards from a sheet of total weight S gives a card of
+    weight w k*w/S copies. It holds the card with probability min(1, k*w/S)
+    on a fixed sheet, or one of equal weights drawn without duplicates (exact
+    for draws without replacement), else 1 - (1 - w/S)**k. Sheets of one pack
+    layout are independent, and layouts are weighted like the EV weights them.
+    """
+    sheets = cfg.get("sheets") or {}
+    boosters = cfg.get("boosters") or []
+    total_w = cfg.get("boostersTotalWeight") or sum(b.get("weight", 0) for b in boosters)
+    odds: dict = {}
+    size = 0.0
+    if not total_w:
+        return odds, size
+    # Per sheet: can a slot hold a card twice, and [(entry key, w/S)].
+    entries: dict = {}
+    for name, sh in sheets.items():
+        cards = sh.get("cards") or {}
+        sw = sh.get("totalWeight") or sum(cards.values())
+        if not sw:
+            continue
+        is_foil = bool(sh.get("foil"))
+        once = bool(sh.get("fixed")) or (len(set(cards.values())) == 1
+                                         and not sh.get("allowDuplicates"))
+        entries[name] = (once, [((u, finish_of(u, is_foil)), w / sw) for u, w in cards.items()])
+    for b in boosters:
+        bw = b.get("weight", 0)
+        if not bw:
+            continue
+        lw = bw / total_w
+        absent: dict = {}   # probability that this layout holds no copy
+        copies: dict = {}
+        for name, k in (b.get("contents") or {}).items():
+            if name not in entries:
+                continue    # a slot whose sheet the model does not describe
+            once, sheet = entries[name]
+            size += lw * k
+            for key, share in sheet:
+                c = k * share
+                p = min(1.0, c) if once else 1 - (1 - share) ** k
+                copies[key] = copies.get(key, 0.0) + c
+                absent[key] = absent.get(key, 1.0) * (1 - p)
+        for key, c in copies.items():
+            o = odds.setdefault(key, [0.0, 0.0])
+            o[0] += lw * (1 - absent[key])
+            o[1] += lw * c
+    return odds, size
+
+
+def finish_prices(allp: dict, uuid, finish: str) -> dict:
+    """{tcg, ck}: TCGplayer and Card Kingdom retail for one copy of a card in
+    one finish, rounded to cents, None where MTGJSON has no price."""
+    paper = (allp.get(uuid) or {}).get("paper", {})
+    key = "normal" if finish == "nonfoil" else finish
+
+    def retail(vendor):
+        return _cents(_latest_price(((paper.get(vendor) or {}).get("retail") or {}).get(key)))
+
+    return {"tcg": retail("tcgplayer"), "ck": retail("cardkingdom")}
+
+
+def _card_order(card: dict) -> tuple:
+    """Sort key of a box card: set, then collector number, then uuid."""
+    m = re.match(r"[0-9]+", card["num"])
+    return (card["set"], int(m.group()) if m else math.inf, card["num"], card["uuid"])
+
+
+def box_cards_doc(set_name: str, plan: dict, details_of, allp: dict) -> dict:
+    """The card list of one set's boxes, cards/boxes/<code>.json, still
+    without updated_at and fetched (update_card_files adds them). `plan` is
+    the set's box_card_plan and details_of(uuid) returns a card's details
+    (card_details) or None when they are not known this run.
+    `kinds` has one entry per box row with a booster model: its label, pack
+    count, pack_size, EV, the model's source sets, and `unresolved`, the
+    (card, finish) entries left out for want of details. Each card lists per
+    kind its pull odds for every finish it can be pulled in (`odds`, see
+    booster_card_odds), rounded to 6 significant digits. `prices` runs
+    parallel to `cards`: prices[i] holds one [tcg, ck] pair (the price of one
+    copy, see finish_prices) per finish of cards[i] that has odds in any
+    kind, in the order nonfoil, foil, etched. A sheet entry has the finish
+    whose TCGplayer price the EV reads (sheet_price), so prices times copies
+    times packs adds up to the EV; without a price it has its
+    nominal_finish."""
+    memo: dict = {}
+
+    def finish_of(uuid, is_foil):
+        key = (uuid, is_foil)
+        if key not in memo:
+            fin = sheet_price(allp, uuid, is_foil)[1]
+            memo[key] = FINISH_NAMES[fin] if fin else nominal_finish(
+                (details_of(uuid) or {}).get("finishes"), is_foil)
+        return memo[key]
+
+    kinds: dict = {}
+    cards: dict = {}
+    for kind, k in plan["kinds"].items():
+        odds, pack_size = booster_card_odds(k["cfg"], finish_of)
+        unresolved = 0
+        for (uuid, fin), (pack, copies) in odds.items():
+            card = cards.get(uuid)
+            if card is None:
+                det = details_of(uuid)
+                if det is None:
+                    unresolved += 1
+                    continue
+                card = cards[uuid] = dict(det, prices={}, odds={})
+            if fin not in card["prices"]:
+                card["prices"][fin] = finish_prices(allp, uuid, fin)
+            card["odds"].setdefault(kind, {})[fin] = {"pack": _sig6(pack), "copies": _sig6(copies)}
+        kinds[kind] = {"label": k["label"], "packs": k["packs"], "pack_size": _sig6(pack_size),
+                       "ev": k["ev"], "sources": _strs(k["cfg"].get("sourceSetCodes")),
+                       "unresolved": unresolved}
+    out, prices = [], []
+    for card in sorted(cards.values(), key=_card_order):
+        fins = [f for f in FINISHES if f in card["prices"]]
+        prices.append([[card["prices"][f]["tcg"], card["prices"][f]["ck"]] for f in fins])
+        card["odds"] = {kind: {f: o[f] for f in FINISHES if f in o}
+                        for kind, o in card["odds"].items()}
+        card["tcg_id"] = card_tcg_id(card, fins == ["etched"])
+        out.append({key: card[key] for key in BOX_CARD_KEYS if key in card})
+    return {"schema": CARDS_SCHEMA, "set": set_name, "code": plan["code"],
+            "kinds": kinds, "cards": out, "prices": prices}
+
+
+def plan_sources(plan: dict) -> dict:
+    """{uuid: set codes that may describe the card} for every card on the
+    sheets of a set's booster models: the sourceSetCodes of the models that
+    list it (MTGJSON does not say which of them a sheet's card is from)."""
+    out: dict = {}
+    for k in plan["kinds"].values():
+        codes = tuple(c for c in _strs(k["cfg"].get("sourceSetCodes")) if _SET_CODE_RE.match(c))
+        for sh in (k["cfg"].get("sheets") or {}).values():
+            for u in sh.get("cards") or {}:
+                have = out.get(u)
+                out[u] = codes if have is None or have == codes \
+                    else tuple(dict.fromkeys(have + codes))
+    return out
+
+
+# ---- Card files: previous run, details of other sets, writing, cleanup ----
+
+def dump_cards_file(doc: dict) -> str:
+    """Serialize a card file: the header keys, then `cards` with one card
+    per line, then `prices` with one short line per card (prices[i] belongs
+    to cards[i]). A daily diff then touches little more than the price lines
+    that changed. Non ASCII text is written as is (the file is UTF-8);
+    allow_nan=False refuses NaN and Infinity. Raises ValueError when the two
+    lists differ in length, so a file whose prices would sit against the
+    wrong cards is never written."""
+    def one(v):
+        return json.dumps(v, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+
+    if len(doc["cards"]) != len(doc["prices"]):
+        raise ValueError(f"{len(doc['cards'])} cards but {len(doc['prices'])} price lines")
+    head = [f"{one(k)}:{one(v)}" for k, v in doc.items() if k not in ("cards", "prices")]
+    cards = ",\n".join(one(c) for c in doc["cards"])
+    prices = ",\n".join(one(p) for p in doc["prices"])
+    return ("{" + ",\n".join(head) + ',\n"cards":[\n' + cards
+            + '\n],\n"prices":[\n' + prices + "\n]}\n")
+
+
+def write_cards_file(path: Path, doc: dict) -> None:
+    """Write one card file atomically; a failed write leaves no .tmp behind."""
+    try:
+        _write_atomic(path, dump_cards_file(doc))
+    except Exception:
+        (path.parent / (path.name + ".tmp")).unlink(missing_ok=True)
+        raise
+
+
+def read_cards_file(path: Path) -> dict:
+    """A card file an earlier run wrote, as {fetched: {set code: date},
+    cards: {uuid: card}}; both empty when the file is missing, unreadable or
+    of another schema. Only read to reuse card details."""
+    try:
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        if doc.get("schema") != CARDS_SCHEMA:
+            raise ValueError("another schema")
+        fetched = {k: v for k, v in (doc.get("fetched") or {}).items()
+                   if isinstance(k, str) and isinstance(v, str)}
+        cards = {c["uuid"]: c for c in doc["cards"]
+                 if isinstance(c, dict) and isinstance(c.get("uuid"), str)}
+    except (OSError, ValueError, AttributeError, TypeError, KeyError):
+        return {"fetched": {}, "cards": {}}
+    return {"fetched": fetched, "cards": cards}
+
+
+def reusable_details(card) -> dict | None:
+    """The card details of a previous box file's card (its odds left out),
+    or None when it is not in the shape box_cards_doc writes."""
+    need = ("uuid", "name", "type", "mana", "mv", "colors", "rarity", "set", "num",
+            "img", "text", "keywords", "tcg_id", "finishes")
+    if not isinstance(card, dict) or any(k not in card for k in need) \
+            or not _SET_CODE_RE.match(str(card["set"])) \
+            or ("faces" in card and not _faces_ok(card["faces"])):
+        return None
+    return {k: card[k] for k in BOX_DETAIL_KEYS if k in card}
+
+
+def want_details(wanted: dict, uuid: str, likely: tuple, unlikely: tuple = ()) -> None:
+    """Note in `wanted` that a card's details are needed from one of the set
+    files `likely`, or failing those from one of `unlikely` (sets whose cards
+    the previous card file already holds, so a card it lacks is probably not
+    theirs). wanted[uuid] = (likely codes, unlikely codes), merged over the
+    card files that want the card."""
+    a, b = wanted.get(uuid, ((), ()))
+    a = tuple(dict.fromkeys(a + tuple(likely)))
+    wanted[uuid] = (a, tuple(c for c in dict.fromkeys(b + tuple(unlikely)) if c not in a))
+
+
+def pick_source_set(wanted: dict) -> str | None:
+    """The set file to download next for the card lists: the one that may
+    describe the most cards still unknown (largest need first, ties by code).
+    `wanted` is filled by want_details. A card counts toward each of its
+    likely sets not tried yet this run (_SETS_READ), and toward its unlikely
+    ones only once the likely ones are used up; a card already in
+    _CARD_DETAILS counts toward none. None when no download can help."""
+    need: dict = {}
+    for u, (likely, unlikely) in wanted.items():
+        if u in _CARD_DETAILS:
+            continue
+        codes = [c for c in likely if c not in _SETS_READ] \
+            or [c for c in unlikely if c not in _SETS_READ]
+        for c in codes:
+            need[c] = need.get(c, 0) + 1
+    return min(need, key=lambda c: (-need[c], c)) if need else None
+
+
+def fetch_wanted_details(wanted: dict, interest: set, guard: PhaseGuard) -> tuple:
+    """Download the MTGJSON set files that describe the cards in `wanted`
+    (see want_details and pick_source_set), each at most once per run, until
+    none is left to try or `guard` stops (run budget spent, repeated
+    failures). Each file read adds the details of every card in `interest`
+    it holds to _CARD_DETAILS. Returns (files downloaded, files that failed)."""
+    done = failed = 0
+    session = None
+    while True:
+        code = pick_source_set(wanted)
+        if code is None or not guard.ok():
+            break
+        session = session or make_session(TCGCSV_UA)
+        if read_set_cards(code, session, interest):
+            done += 1
+            guard.success()
+        else:
+            failed += 1
+            guard.failure(code)
+        time.sleep(0.2)  # stay polite between set files
+    return done, failed
+
+
+def _pointer_ok(root: Path, pointer, sub: str) -> bool:
+    """Is `pointer` the path of an existing card file in cards/<sub>?"""
+    m = re.fullmatch(rf"cards/{sub}/([a-z0-9-]+\.json)", pointer) \
+        if isinstance(pointer, str) else None
+    return bool(m) and (root / "cards" / sub / m.group(1)).is_file()
+
+
+def point_at_card_files(root: Path, crack_results: dict, box_results: dict,
+                        previous: dict, written_boxes: dict, kept_sets: set) -> None:
+    """Set or clear the card file pointers of prices.json, in place, so that
+    every pointer names a file that exists.
+    crack[deck].cards_file: the deck's file, when there is one (written this
+    run, or kept from the previous run for a carried deck).
+    Box rows: cards_file and cards_kind for a row whose kind is in the file
+    written this run (`written_boxes`: {set_name: (code, kinds)}); a row of a
+    set in `kept_sets` (carried, or its MTGJSON data failed this run) keeps
+    the pointers the previous prices.json had for the same set and kind; any
+    other row has none."""
+    for did, entry in crack_results.items():
+        pointer = f"cards/decks/{did}.json"
+        if _pointer_ok(root, pointer, "decks"):
+            entry["cards_file"] = pointer
+        else:
+            entry.pop("cards_file", None)
+    prev_boxes = previous.get("boxes") if isinstance(previous.get("boxes"), dict) else {}
+    for set_name, rows in box_results.items():
+        code, kinds = written_boxes.get(set_name, (None, ()))
+        old = {r.get("kind"): r for r in prev_boxes.get(set_name) or [] if isinstance(r, dict)} \
+            if set_name in kept_sets else {}
+        for r in rows:
+            r.pop("cards_file", None)
+            r.pop("cards_kind", None)
+            if r.get("kind") in kinds:
+                r["cards_file"] = f"cards/boxes/{code.lower()}.json"
+                r["cards_kind"] = r["kind"]
+                continue
+            o = old.get(r.get("kind")) or {}
+            if _pointer_ok(root, o.get("cards_file"), "boxes") \
+                    and isinstance(o.get("cards_kind"), str):
+                r["cards_file"] = o["cards_file"]
+                r["cards_kind"] = o["cards_kind"]
+
+
+def update_card_files(root: Path, decks: list, crack_results: dict, box_results: dict,
+                      previous: dict, updated_at: str, healthy: bool,
+                      crack_cut: bool, box_cut: bool) -> dict | None:
+    """Write this run's card files (cards/decks/<deck-id>.json for every deck
+    priced this run, cards/boxes/<code>.json for every set with a booster
+    model) and point crack_results and box_results at them, in place.
+
+    Cards the run's own MTGJSON files do not describe (the cards of other
+    sets on a booster sheet, the other face of a deck's split or adventure
+    card) take their details from the previous card file while those are
+    fresh (details_due), else from their set's file, downloaded once per run
+    while the run budget lasts (fetch_wanted_details). What stays unknown is
+    left out this run (a box's `unresolved` count, a deck row without
+    `faces`) and tried again on the next.
+
+    A deck or set this run did not reach (decklist or set file failed, phase
+    cut short: `crack_cut`, `box_cut`) keeps its previous file and pointer.
+    A run that is not `healthy` writes nothing.
+    Returns the files to keep, {'decks': ids, 'boxes': lowercase set codes},
+    with None for a directory in which nothing may be deleted (see
+    prune_card_files); None when nothing was written."""
+    deck_docs = {did: doc for did, doc in getattr(fetch_crack_values, "card_docs", {}).items()
+                 if did in crack_results and not crack_results[did].get("carried_from")
+                 and CARD_FILE_RE.match(f"{did}.json")}
+    plans: dict = {}
+    codes_seen: set = set()
+    for set_name, plan in getattr(fetch_box_prices, "card_plans", {}).items():
+        rows = box_results.get(set_name) or []
+        if rows and not any(r.get("carried_from") for r in rows) \
+                and _SET_CODE_RE.match(plan["code"]) and plan["code"] not in codes_seen:
+            codes_seen.add(plan["code"])
+            plans[set_name] = plan
+    kept_sets = {s for s, rows in box_results.items() if s not in plans
+                 and (any(r.get("carried_from") for r in rows)
+                      or s in getattr(fetch_box_prices, "cards_failed", []))}
+    if not healthy:
+        point_at_card_files(root, crack_results, box_results, previous, {}, set(box_results))
+        return None
+    today = updated_at[:10]
+    decks_dir, boxes_dir = root / "cards" / "decks", root / "cards" / "boxes"
+
+    # 1. What the previous files know, and which cards need a set file.
+    wanted: dict = {}       # uuid -> set codes that may describe it (want_details)
+    interest: set = set()   # every uuid a set file read now should describe
+    prev_decks: dict = {}
+    for did, doc in deck_docs.items():
+        multi = [r for r in doc["cards"] if r.get("_faces")]
+        prev = prev_decks[did] = read_cards_file(decks_dir / f"{did}.json") if multi \
+            else {"fetched": {}, "cards": {}}
+        for r in multi:
+            interest.add(r["uuid"])
+            old = prev["cards"].get(r["uuid"]) or {}
+            if r["uuid"] not in _CARD_DETAILS and _SET_CODE_RE.match(r["set"]) and (
+                    not _faces_ok(old.get("faces"))
+                    or details_due(r["set"], prev["fetched"].get(r["set"]), today)):
+                want_details(wanted, r["uuid"], (r["set"],))
+    prev_boxes: dict = {}
+    for set_name, plan in plans.items():
+        prev = read_cards_file(boxes_dir / f"{plan['code'].lower()}.json")
+        prev["cards"] = {u: d for u, d in ((u, reusable_details(c))
+                                           for u, c in prev["cards"].items()) if d}
+        prev_boxes[set_name] = prev
+        # Sets whose cards the previous file holds and that are not due yet.
+        held = {c for c, when in prev["fetched"].items() if not details_due(c, when, today)}
+        for u, codes in plan_sources(plan).items():
+            interest.add(u)
+            if u in _CARD_DETAILS:
+                continue
+            old = prev["cards"].get(u)
+            if old is None:
+                want_details(wanted, u, tuple(c for c in codes if c not in held),
+                             tuple(c for c in codes if c in held))
+            elif details_due(old["set"], prev["fetched"].get(old["set"]), today):
+                want_details(wanted, u, (old["set"],))
+
+    # 2. Download the set files those cards need, largest need first.
+    guard = PhaseGuard("cards")
+    downloads, failed = fetch_wanted_details(wanted, interest, guard)
+    reused = 0
+
+    # 3. Deck files.
+    decks_dir.mkdir(parents=True, exist_ok=True)
+    boxes_dir.mkdir(parents=True, exist_ok=True)
+    n_rows = n_multi = n_unresolved = 0
+    written_decks: set = set()
+    for did, doc in deck_docs.items():
+        try:
+            out, multi, unresolved, from_prev = finish_deck_doc(doc, prev_decks[did], today)
+            out = {k: out[k] for k in ("schema", "deck_id", "name", "source")} \
+                | {"updated_at": updated_at} \
+                | {k: out[k] for k in ("totals", "fetched", "cards", "prices")}
+            write_cards_file(decks_dir / f"{did}.json", out)
+        except Exception as e:
+            # The deck keeps its previous file, if it has one.
+            print(f"  cards: [{did}] card file not written: {e}", flush=True)
+            continue
+        written_decks.add(did)
+        n_rows += len(out["cards"])
+        n_multi += multi
+        n_unresolved += unresolved
+        reused += from_prev
+
+    # 4. Box files.
+    allp = getattr(_get_allprices, "_data", None) or {}
+    written_boxes: dict = {}   # set_name -> (code, kinds written)
+    n_kinds = n_cards = n_entries = n_left_out = 0
+    for set_name, plan in plans.items():
+        prev = prev_boxes[set_name]
+        from_prev: set = set()
+
+        def details_of(uuid, prev=prev, from_prev=from_prev):
+            det = _CARD_DETAILS.get(uuid)
+            if det is None:
+                det = prev["cards"].get(uuid)
+                if det is not None:
+                    from_prev.add(uuid)
+            return det
+
+        try:
+            out = box_cards_doc(set_name, plan, details_of, allp)
+            fetched: dict = {}
+            for c in out["cards"]:
+                _note_fetched(fetched, c["set"],
+                              prev["fetched"].get(c["set"]) if c["uuid"] in from_prev else today)
+            out = {k: out[k] for k in ("schema", "set", "code")} | {"updated_at": updated_at} \
+                | {"kinds": out["kinds"],
+                   "fetched": {k: fetched[k] for k in sorted(fetched) if fetched[k]},
+                   "cards": out["cards"], "prices": out["prices"]}
+            write_cards_file(boxes_dir / f"{plan['code'].lower()}.json", out)
+        except Exception as e:
+            # The set keeps its previous file and pointers, if it has them.
+            print(f"  cards: [{set_name}] card file not written: {e}", flush=True)
+            kept_sets.add(set_name)
+            continue
+        written_boxes[set_name] = (plan["code"], set(out["kinds"]))
+        n_kinds += len(out["kinds"])
+        n_cards += len(out["cards"])
+        n_entries += sum(len(o) for c in out["cards"] for o in c["odds"].values())
+        n_left_out += sum(k["unresolved"] for k in out["kinds"].values())
+        reused += sum(1 for c in out["cards"] if c["uuid"] in from_prev)
+
+    # 5. Pointers, and the files that stay.
+    point_at_card_files(root, crack_results, box_results, previous, written_boxes, kept_sets)
+    failed_ids = set(getattr(fetch_crack_values, "failed_ids", []))
+    # A deck with a crack entry (priced or carried) or a failed decklist keeps
+    # its file; a phase cut short only drops the decks gone from decks.json.
+    keep_decks = {d["id"] for d in decks} if crack_cut else set(crack_results) | failed_ids
+    kept_boxes = {Path(r["cards_file"]).stem for s in kept_sets for r in box_results[s]
+                  if r.get("cards_file")} | set(getattr(fetch_box_prices, "cards_keep", ()))
+    keep_boxes = None if box_cut else {c.lower() for c, _ in written_boxes.values()} | kept_boxes
+    n_kept_decks = sum(1 for did, e in crack_results.items()
+                       if did not in written_decks and e.get("cards_file"))
+    n_kept_boxes = len({r["cards_file"] for s in kept_sets for r in box_results[s]
+                        if r.get("cards_file")})
+    print(f"Card lists: details: {downloads} set files downloaded ({failed} failed), "
+          f"{reused} cards reused from the previous files"
+          + (f"; stopped early ({guard.cut_short})" if guard.cut_short else ""), flush=True)
+    print(f"Card lists: decks: {len(written_decks)} files written ({n_rows} rows, "
+          f"{n_multi} with other faces, {n_unresolved} unresolved), "
+          f"{n_kept_decks} kept from the previous run", flush=True)
+    print(f"Card lists: boxes: {len(written_boxes)} files written ({n_kinds} kinds, "
+          f"{n_cards} cards, {n_entries} entries, {n_left_out} unresolved), "
+          f"{n_kept_boxes} kept from the previous run", flush=True)
+    return {"decks": keep_decks, "boxes": keep_boxes}
+
+
+def prune_card_files(root: Path, keep: dict) -> list:
+    """Delete the stale card files: in cards/decks and cards/boxes, every
+    file named like a card file whose stem is not in keep[<directory>] (a
+    deck no longer in decks.json or without a decklist, a set no longer
+    tracked). A directory whose keep is None is left alone. Nothing else is
+    ever deleted. Returns the paths removed."""
+    removed = []
+    for sub, stems in keep.items():
+        folder = root / "cards" / sub
+        if stems is None or sub not in ("decks", "boxes") or not folder.is_dir():
+            continue
+        for f in sorted(folder.iterdir()):
+            if CARD_FILE_RE.match(f.name) and f.stem not in stems \
+                    and f.is_file() and not f.is_symlink():
+                try:
+                    f.unlink()
+                except OSError as e:
+                    print(f"  cards: could not delete {f}: {e}", flush=True)
+                    continue
+                removed.append(f"cards/{sub}/{f.name}")
+    if removed:
+        print(f"Card lists: deleted {len(removed)} stale files: {', '.join(removed)}", flush=True)
+    return removed
 
 
 # -------------------------------------------------------------------------
@@ -2229,7 +3110,7 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
 def _write_atomic(path: Path, text: str) -> None:
     """Write via a .tmp file and rename, so a crash never leaves half a file."""
     tmp = path.parent / (path.name + ".tmp")
-    tmp.write_text(text)
+    tmp.write_text(text, encoding="utf-8")
     tmp.replace(path)
 
 
@@ -2357,6 +3238,7 @@ def fetch_ck_phase(decks: list) -> tuple[dict, dict]:
 
 def main() -> None:
     start_run_clock()
+    reset_card_run()
     decks_path = Path(__file__).parent / "decks.json"
     out_path = Path(__file__).parent / "prices.json"
     history_path = Path(__file__).parent / "prices_history.json"
@@ -2461,8 +3343,24 @@ def main() -> None:
             f"Refusing to overwrite prices.json: only {tcg_hits} TCG hits "
             f"(min {min_hits} of {len(decks)} decks), likely a degraded scrape.")
 
+    # Card lists (cards/decks, cards/boxes), written before prices.json so
+    # its pointers never name a file that is not there yet. Their updated_at
+    # is the one of prices.json.
+    updated_at = datetime.now(timezone.utc).isoformat()
+    keep_cards = None
+    try:
+        keep_cards = update_card_files(out_path.parent, decks, crack_results, box_results,
+                                       previous, updated_at, healthy,
+                                       bool(crack_guard.cut_short), bool(box_guard.cut_short))
+    except Exception as e:
+        print(f"Card lists failed (not fatal): {e}", flush=True)
+        traceback.print_exc()
+        # Keep only the pointers to files an earlier run wrote.
+        point_at_card_files(out_path.parent, crack_results, box_results, previous,
+                            {}, set(box_results))
+
     output = {
-        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": updated_at,
         "deck_count": len(decks),
         "vendors": {
             "cardkingdom": ck_results,
@@ -2490,6 +3388,9 @@ def main() -> None:
     # allow_nan=False: a browser cannot parse NaN or Infinity, so a value
     # that slipped past the upstream checks fails the run instead.
     _write_atomic(out_path, json.dumps(output, indent=2, allow_nan=False))
+    # Stale card files go only now that prices.json no longer points at them.
+    if keep_cards:
+        prune_card_files(out_path.parent, keep_cards)
 
     # Reverse card->decks index (F2: "cheapest precon containing card X").
     # Kept in its own file so prices.json stays lean. Only emitted on a healthy
