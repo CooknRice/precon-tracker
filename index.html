@@ -4,12 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Content Security Policy. GitHub Pages cannot send headers, so it lives
-     here. Only same origin data, Google Fonts and this page's own inline
-     script may load. The script hash MUST be recomputed whenever the inline
-     script changes (base64 sha256 of the exact text between its opening and
-     closing tags), or the browser refuses to run the app. A remote
-     prices URL (LIVE_PRICES_REMOTE_URL) would also need adding to connect-src. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Uda6WzwXi7o9UPrunkHbwDb/jmB1swe/DzuGOUkJbj4='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+     here. Only same origin data, Google Fonts, card images from Scryfall's
+     image server (cards.scryfall.io, loaded when a card list is opened) and
+     this page's own inline script may load. The script hash MUST be
+     recomputed whenever the inline script changes (base64 sha256 of the
+     exact text between its opening and closing tags), or the browser refuses
+     to run the app. A remote prices URL (LIVE_PRICES_REMOTE_URL) would also
+     need adding to connect-src. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-jQDCC/2Y1oPQX/q0WXZkpNdwHxASi11opMtInHiACSQ='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://cards.scryfall.io; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>MTG Tracker · Commander Precon, Sealed Box & Bundle Prices</title>
 <meta name="description" content="Daily prices for Magic: The Gathering Commander precons since 2021, preorders included, their set bundles, and sealed booster boxes from those sets and a few more, checked at TCGplayer and Card Kingdom, with price history and buy signals.">
@@ -56,6 +58,7 @@
   --gold: #c69a3e;           /* warm antique gold */
   --gold-bright: #e4b954;
   --gold-fill: #e4b954;      /* gold FILL behind dark text (buttons, active chips) */
+  --gold-ink: #1a1308;       /* the dark text on a gold fill, same in both themes */
   --sage: #6e8a55;           /* owned/sage accent (fills, borders, lines) */
   --sage-text: #86a36b;      /* sage as small text, AA on every surface */
   --success: #5ad487;        /* positive green text (savings, gains, good EV) */
@@ -535,7 +538,9 @@ h1.title em { font-style: normal; color: var(--burgundy); font-weight: 600; }
 
 .vendor-row {
   display: grid;
-  grid-template-columns: 1fr;
+  /* The vendor button and the card list button sit side by side when the
+     card is wide enough for both, else stacked. */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 6px;
   margin-top: 2px;
 }
@@ -1036,6 +1041,7 @@ h2.box-heading { font: inherit; }
   --gold: #7d5a0f;
   --gold-bright: #80600f;    /* darker than the fill: used as text and outlines */
   --gold-fill: #b3852a;
+  --gold-ink: #1a1308;
   --sage: #4d6a35;
   --sage-text: #4d6a35;
   --success: #276b35;
@@ -1441,6 +1447,350 @@ a.best-deal { text-decoration: none; color: inherit; }
 }
 .deal-of-day.pending::after { content: "Loading the deal of the day…"; }
 .best-deals.pending::after { content: "Loading best buys…"; }
+
+/* ---------- Card lists (deck cards, box cards and pull odds) ---------- */
+/* Entry points. A deck card that has a card list opens it from its button
+   or from a click anywhere on the card that is not a control; a box row
+   opens it from its button only (a click on the row opens the chart). */
+.card.has-cards { cursor: pointer; }
+.view-cards, .box-cards, .cv-btn {
+  background: transparent;
+  border: 1px solid var(--ink-faded);
+  border-radius: var(--radius-sm);
+  color: var(--ink-soft);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s;
+}
+.view-cards { padding: 9px 10px; font-size: 12px; line-height: 1.55; }
+.box-cards { margin-top: 6px; padding: 6px 8px; font-size: 11.5px; line-height: 1.4; }
+.cv-btn { padding: 8px 16px; font-size: 12px; line-height: 1.55; }
+.view-cards:hover, .box-cards:hover, .cv-btn:hover { border-color: var(--gold-bright); color: var(--gold-bright); }
+
+/* The dialog scrolls as a whole. Its title bar stays in view, so Close is
+   within reach anywhere in a long list; scroll-padding keeps a control
+   that takes focus from hiding under that bar. A sticky box stops at the
+   scroller's padding edge, so the gap above the panel is the panel's margin
+   here, not the scroller's padding: the bar then sticks to the very top
+   and no card shows above it. */
+.cards-modal { overscroll-behavior: contain; padding-top: 0; scroll-padding-top: 96px; }
+.cards-modal-inner { margin-top: 40px; padding-top: 12px; }
+.cv-bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 0 -32px;
+  padding: 16px 32px 12px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--hairline);
+}
+.cv-bar .chart-title { min-width: 0; overflow-wrap: anywhere; }
+.cv-bar .compare-modal-close { float: none; flex: none; }
+
+/* Header: who leads the deck, then a row of small labelled figures. */
+.cv-head { margin-top: 14px; }
+.cv-head .card-commander { margin-bottom: 12px; overflow-wrap: anywhere; }
+.cv-stats { display: flex; flex-wrap: wrap; gap: 10px 28px; }
+.cv-stats dt {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faded);
+  margin-bottom: 3px;
+}
+.cv-stats dd {
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.cv-stats dd.money { color: var(--burgundy); }
+.cv-stats dd.quiet { font-weight: 500; color: var(--ink-muted); }
+.cv-note {
+  margin-top: 10px;
+  max-width: 880px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--ink-muted);
+}
+
+/* Box type tabs and the grid or list switch share one segmented look. */
+.cv-tabs, .cv-seg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  width: fit-content;
+  max-width: 100%;
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+}
+.cv-tabs { margin-top: 16px; }
+.cv-tab, .cv-seg-btn {
+  background: transparent;
+  border: none;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: color 0.12s, background 0.12s;
+}
+.cv-tab:hover, .cv-seg-btn:hover { color: var(--ink); }
+.cv-tab[aria-selected="true"], .cv-seg-btn[aria-pressed="true"] { background: var(--gold-fill); color: var(--gold-ink); }
+
+/* Controls wrap; each group may shrink, so nothing pushes a 320px screen
+   sideways. */
+.cv-controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 12px; margin-top: 16px; }
+.cv-controls .filter-group { flex: 1 1 150px; min-width: 0; }
+.cv-controls .cv-f-text { flex: 2 1 260px; }
+.cv-controls .cv-f-view { flex: 0 0 auto; }
+.cv-controls .filter-select, .cv-controls .search-input { width: 100%; min-width: 0; max-width: 100%; }
+.cv-seg { min-height: 38px; padding: 3px; }
+
+.cv-count {
+  margin-top: 16px;
+  min-height: 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+.cv-body { margin-top: 10px; min-height: 140px; }
+.cv-group + .cv-group { margin-top: 24px; }
+.cv-group-head {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ink-soft);
+  text-align: left;
+}
+h3.cv-group-head { padding-bottom: 7px; margin-bottom: 12px; border-bottom: 1px solid var(--hairline); }
+.cv-num { font-family: var(--font-mono); font-weight: 400; color: var(--ink-muted); }
+
+/* Grid view. The card image is never cropped, covered or recolored: it
+   sits alone in a box of the card's own proportions (so nothing moves while
+   it loads), rounded like the card itself, and every badge, price and chip
+   lives in the caption under it. */
+.cv-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--cv-tile, 168px), 100%), 1fr));
+  gap: 18px 14px;
+}
+.cv-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; min-width: 0; overflow-wrap: anywhere; }
+.cv-open {
+  appearance: none;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.cv-img {
+  display: block;
+  aspect-ratio: 488 / 680;
+  border-radius: 4.75% / 3.5%;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.cv-img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  color: var(--ink-muted);
+  font-size: 11px;
+}
+.cv-name {
+  display: block;
+  margin-top: 7px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink-strong);
+}
+.cv-open:hover .cv-name { color: var(--gold-bright); }
+/* The stand in for a card with no image, or whose image failed to load. */
+.cv-fallback {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+  height: 100%;
+  padding: 10% 9%;
+  border: 1px solid var(--paper-line);
+  border-radius: inherit;
+  overflow: hidden;
+}
+.cv-fb-name { font-family: var(--font-ui); font-size: 12.5px; font-weight: 600; line-height: 1.25; color: var(--ink-strong); }
+.cv-fb-type { margin-top: auto; font-family: var(--font-mono); font-size: 10px; line-height: 1.4; color: var(--ink-muted); }
+.cv-mana { display: inline-flex; flex-wrap: wrap; gap: 2px; vertical-align: middle; }
+.mana-pip.cv-pip {
+  display: inline-flex;
+  width: auto;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border-radius: var(--radius-pill);
+  font-size: 8.5px;
+  line-height: 1;
+}
+.cv-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+.cv-badge {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-soft);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  padding: 1px 7px;
+}
+.cv-badge.cv-qty { text-transform: none; }
+.cv-prices { display: flex; flex-wrap: wrap; gap: 2px 12px; font-family: var(--font-mono); font-size: 11px; }
+.cv-price { color: var(--ink-soft); text-decoration: none; white-space: nowrap; }
+.cv-price.cv-tcg { color: var(--burgundy); font-weight: 500; }
+.cv-price.none { color: var(--ink-faded); font-weight: 400; }
+a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
+.cv-vendor { color: var(--ink-faded); font-weight: 400; }
+/* Pull odds chip: the box figure, then the per pack figure. */
+.cv-odds {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 6px;
+  max-width: 100%;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  cursor: help;
+}
+.cv-odds strong { font-weight: 500; color: var(--ink); }
+.cv-odds-sub { color: var(--ink-faded); }
+
+/* Loading, empty and error messages, and the step button under a box list. */
+.cv-state {
+  padding: 36px 12px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--ink-muted);
+}
+.cv-state .cv-btn { display: block; margin: 14px auto 0; font-style: normal; }
+.cv-more { margin-top: 20px; text-align: center; }
+
+/* List view: a real table, drawn with a grid per row so that on a narrow
+   screen a row can fold into two lines instead of scrolling sideways. The
+   table parts carry explicit roles because a changed display value can
+   cost a table its meaning for screen readers. */
+.cv-table { display: block; width: 100%; font-size: 12.5px; }
+.cv-table thead, .cv-table tbody { display: block; }
+.cv-table tr {
+  display: grid;
+  grid-template-columns: var(--cv-cols);
+  column-gap: 14px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.cv-table th, .cv-table td { display: block; min-width: 0; text-align: left; font-weight: 400; overflow-wrap: anywhere; }
+.cv-table.is-deck { --cv-cols: 30px minmax(0, 2.2fr) minmax(0, 2fr) 112px 72px 92px; }
+.cv-table.is-box { --cv-cols: minmax(0, 2.2fr) minmax(0, 1.8fr) 112px 72px 92px minmax(0, 1.7fr); }
+.cv-table thead th {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  color: var(--ink-muted);
+}
+.cv-table .c-qty, .cv-table .c-tcg, .cv-table .c-ck { font-family: var(--font-mono); text-align: right; }
+.cv-table td.c-qty { color: var(--ink-muted); }
+.cv-table td.c-type { font-size: 12px; color: var(--ink-muted); }
+.cv-table td.c-name { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 8px; }
+.cv-table .cv-open { width: auto; max-width: 100%; }
+.cv-table .cv-name { margin-top: 0; font-size: 13px; }
+.cv-table td .cv-vendor { display: none; }   /* the column heading names the vendor */
+.cv-table .cv-price { font-size: 12px; }
+.cv-table tr.cv-group-row { grid-template-columns: minmax(0, 1fr); padding: 18px 0 7px; border-bottom-color: var(--paper-line); }
+.cv-table th.cv-group-head { font-weight: 600; }
+.cv-short { display: none; text-decoration: none; }
+
+.view-cards:focus-visible, .box-cards:focus-visible, .cv-btn:focus-visible, .cv-open:focus-visible,
+.cv-price:focus-visible, .cv-tab:focus-visible, .cv-seg-btn:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 2px;
+}
+@media (pointer: coarse) {
+  .view-cards, .box-cards, .cv-btn, .cv-tab, .cv-seg-btn { min-height: 40px; }
+}
+@media (max-width: 720px) {
+  .cards-modal { padding: 0 8px 10px; scroll-padding-top: 120px; }
+  .cards-modal-inner { margin-top: 10px; padding: 4px 12px 20px; }
+  .cv-bar { margin: 0 -12px; padding: 12px 12px 10px; gap: 10px; }
+  .cv-bar .chart-title { font-size: 22px; }
+  .cv-grid { --cv-tile: 132px; gap: 16px 10px; }
+}
+/* Narrow list (the six columns need about 860px to breathe): type and
+   mana cost fold under the name and the prices, and a box entry's pull
+   odds take a third line. Their column headings stay for screen readers
+   only. */
+@media (max-width: 860px) {
+  .cv-table tr { column-gap: 8px; row-gap: 3px; }
+  .cv-table tr.cv-row { align-items: start; }
+  .cv-table.is-deck { --cv-cols: 20px minmax(0, 1fr) 58px 58px; }
+  .cv-table.is-deck thead tr { grid-template-areas: "qty name tcg ck"; }
+  .cv-table.is-deck tr.cv-row { grid-template-areas: "qty name tcg ck" "qty type mana mana"; }
+  .cv-table.is-box { --cv-cols: minmax(0, 1fr) 58px 58px; }
+  .cv-table.is-box thead tr { grid-template-areas: "name tcg ck"; }
+  .cv-table.is-box tr.cv-row { grid-template-areas: "name tcg ck" "type mana mana" "odds odds odds"; }
+  .cv-table .c-qty { grid-area: qty; }
+  .cv-table .c-name { grid-area: name; }
+  .cv-table .c-type { grid-area: type; }
+  .cv-table .c-mana { grid-area: mana; justify-self: end; }
+  .cv-table .c-tcg { grid-area: tcg; }
+  .cv-table .c-ck { grid-area: ck; }
+  .cv-table .c-odds { grid-area: odds; }
+  .cv-table thead .c-qty, .cv-table thead .c-type, .cv-table thead .c-mana, .cv-table thead .c-odds {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden; clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .cv-full { display: none; }
+  .cv-short { display: inline; }
+}
 </style>
 </head>
 <body>
@@ -1632,7 +1982,7 @@ a.best-deal { text-decoration: none; color: inherit; }
     <div>Each card headlines the cheapest place to buy right now, refreshed daily by a GitHub Action scraper: <em style="color:var(--live);">TCGPlayer</em> (Market price, or the lowest current listing when Market sits below it) or <em style="color:var(--live);">Card Kingdom</em> (in stock only). Decks with no live price show their <em style="color:var(--ink-muted);">MSRP</em> for reference only. Singles values come from MTGJSON; "profit to crack" uses the real Card Kingdom buylist and is shown before tax, shipping and fees.</div>
     <div style="margin-top:6px;">Power scores and brackets from <a href="https://scrycheck.com/precons" target="_blank" rel="noopener" style="color:var(--gold);">ScryCheck</a> are automated estimates; see <a href="https://scrycheck.com/about" target="_blank" rel="noopener" style="color:var(--gold);">ScryCheck's accuracy notes</a>. <span id="powerCoverage">Scores shown inline where published.</span> Brackets follow Wizards' official system (<em>B1 casual → B5 cEDH</em>).</div>
     <div class="footer-note">Data sources: TCGplayer prices via <a href="https://tcgcsv.com/" target="_blank" rel="noopener noreferrer">TCGCSV</a>; Card Kingdom prices and stock from Card Kingdom's public pricelist; decklists and card prices from <a href="https://mtgjson.com/" target="_blank" rel="noopener noreferrer">MTGJSON</a> (<a href="https://mtgjson.com/license/" target="_blank" rel="noopener noreferrer">MIT License</a>); power scores from ScryCheck. Prices are refreshed once a day and can lag the vendors' sites.</div>
-    <div class="footer-note">Privacy: no accounts, cookies, analytics or tracking. Your watchlist, owned decks and price targets are saved only in this browser's storage and never leave your device. Fonts load from Google Fonts, which sees your IP address as part of that request.</div>
+    <div class="footer-note">Privacy: no accounts, cookies, analytics or tracking. Your watchlist, owned decks and price targets are saved only in this browser's storage and never leave your device. Fonts load from Google Fonts, which sees your IP address as part of that request. Card images are loaded from <a href="https://scryfall.com/" target="_blank" rel="noopener noreferrer">Scryfall</a>'s image server when you open a card list, and Scryfall sees your IP address as part of those requests.</div>
     <div class="footer-note">MTG Tracker is unofficial Fan Content permitted under the <a href="https://company.wizards.com/en/legal/fancontentpolicy" target="_blank" rel="noopener noreferrer">Fan Content Policy</a>. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
   </div>
   <div>Built for Isaac · <a id="reportLink" href="https://github.com/CooknRice/precon-tracker/issues/new" target="_blank" rel="noopener noreferrer">Report an error</a></div>
@@ -1682,6 +2032,63 @@ a.best-deal { text-decoration: none; color: inherit; }
     </div>
     <div class="chart-empty" id="chartEmpty"></div>
     <p class="chart-note" id="chartNote" hidden></p>
+  </div>
+</div>
+
+<!-- Card list dialog: every card of a deck, or every card a box can hold
+     with its pull odds. Filled by the "Card lists" part of the script. The
+     box type tabs show only when a box file holds several types; controls
+     marked data-cv-for belong to one kind of list. -->
+<div id="cardsModal" class="compare-modal cards-modal" role="dialog" aria-modal="true" aria-labelledby="cardsModalTitle">
+  <div class="compare-modal-inner cards-modal-inner">
+    <div class="cv-bar">
+      <h2 id="cardsModalTitle" class="chart-title">Card list</h2>
+      <button type="button" class="compare-modal-close" id="cardsModalClose">Close ×</button>
+    </div>
+    <div id="cvTabs" class="cv-tabs" role="tablist" aria-label="Box type" hidden></div>
+    <div id="cvPanel">
+      <div id="cvHead" class="cv-head"></div>
+      <div id="cvControls" class="cv-controls" hidden>
+        <div class="filter-group cv-f-text">
+          <label class="filter-label" for="cvFilter">Filter · name, type, rules text</label>
+          <input type="text" id="cvFilter" class="search-input" placeholder="Try: flying, Elf, draw a card…" autocomplete="off">
+        </div>
+        <div class="filter-group" data-cv-for="deck">
+          <label class="filter-label" for="cvGroup">Group</label>
+          <select id="cvGroup" class="filter-select">
+            <option value="type">By card type</option>
+            <option value="none">No groups</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="cvSort">Sort by</label>
+          <!-- Options depend on the kind of list, see resetCardControls(). -->
+          <select id="cvSort" class="filter-select"></select>
+        </div>
+        <div class="filter-group" data-cv-for="box">
+          <label class="filter-label" for="cvFinish">Finish</label>
+          <select id="cvFinish" class="filter-select"></select>
+        </div>
+        <div class="filter-group" data-cv-for="box">
+          <label class="filter-label" for="cvRarity">Rarity</label>
+          <select id="cvRarity" class="filter-select"></select>
+        </div>
+        <div class="filter-group" data-cv-for="box">
+          <label class="filter-label" for="cvMinPrice">Minimum price, $</label>
+          <input type="number" id="cvMinPrice" class="search-input" min="0" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off">
+        </div>
+        <div class="filter-group cv-f-view">
+          <span class="filter-label" id="cvViewLabel">View</span>
+          <div class="cv-seg" role="group" aria-labelledby="cvViewLabel">
+            <button type="button" class="cv-seg-btn" data-cv-view="grid" aria-pressed="true">Grid</button>
+            <button type="button" class="cv-seg-btn" data-cv-view="list" aria-pressed="false">List</button>
+          </div>
+        </div>
+      </div>
+      <p id="cvCount" class="cv-count" role="status"></p>
+      <div id="cvBody" class="cv-body"></div>
+      <div id="cvMoreWrap" class="cv-more" hidden><button type="button" class="cv-btn" id="cvMore">Show 60 more</button></div>
+    </div>
   </div>
 </div>
 
@@ -1760,7 +2167,9 @@ a.best-deal { text-decoration: none; color: inherit; }
     const card = focusedCardControl();
     if (card) return { card };
     const box = el.closest(".box-item");
-    if (box) return { sel: `.box-item[data-box-set="${CSS.escape(box.dataset.boxSet || "")}"][data-box-type="${CSS.escape(box.dataset.boxType || "")}"] [data-chart-trigger]` };
+    // A box row holds two openers: its sparkline (the chart) and its card
+    // list button. Go back to the one that was used.
+    if (box) return { sel: `.box-item[data-box-set="${CSS.escape(box.dataset.boxSet || "")}"][data-box-type="${CSS.escape(box.dataset.boxType || "")}"] ${el.closest(".box-cards") ? ".box-cards" : "[data-chart-trigger]"}` };
     if (el.matches(".uf-item[data-uf-id]")) return { sel: `.uf-item[data-uf-id="${CSS.escape(el.dataset.ufId)}"]`, fallback: "#unifiedFeedGrid .uf-item" };
     if (el.closest("#dealOfDay")) return { sel: "#dealOfDay .dod-open" };
     return null;
@@ -1802,9 +2211,11 @@ a.best-deal { text-decoration: none; color: inherit; }
   }
   function closeModal() {
     if (!openModalEl) return;
+    const closed = openModalEl;
     openModalEl.classList.remove("visible");
     openModalEl = null;
     setBackgroundInert(false);
+    if (closed.id === "cardsModal") cardListClosed();
     restoreFocus();
   }
   function trapTab(e) {
@@ -2974,6 +3385,13 @@ a.best-deal { text-decoration: none; color: inherit; }
   function findBox(setName, type) {
     return (getBoxes()?.[setName] || []).find(b => b && b.type === type) || null;
   }
+  // The heading for one set's boxes: their own set name when they all share
+  // one ("Universes Beyond: Fallout", not the deck catalog's "Fallout
+  // Commander"), else the catalog's set name.
+  function boxSetHeading(setName, rows) {
+    const ownSets = [...new Set(rows.map(b => boxNameParts(b).set))];
+    return (ownSets.length === 1 && ownSets[0]) ? ownSets[0] : setName;
+  }
 
   // Open the chart for a sealed box, keyed "<set>::<type>" in BOX_HISTORY.
   function openBoxChart(setName, type, range = "all") {
@@ -3012,6 +3430,10 @@ a.best-deal { text-decoration: none; color: inherit; }
     else if (isDeal) classes.push("deal");
     if (isWatching) classes.push("watching");
     if (belowTarget) classes.push("target-hit");
+    // A deck with a card list opens it from the button in its action row,
+    // or from a click on the card itself (see the grid click handler).
+    const cardsRef = deckCardsRef(d);
+    if (cardsRef) classes.push("has-cards");
 
     // The face commander, "& partner" only for a true second commander in
     // the command zone, then any alternate commanders on a quieter line.
@@ -3188,6 +3610,9 @@ a.best-deal { text-decoration: none; color: inherit; }
       const href = (v.key === "tcg" && live?.url) ? live.url : v.url(d);
       return `<a class="vendor-btn" href="${safeUrl(href)}" target="_blank" rel="noopener noreferrer" title="${v.label}">${v.label}${forDeck}</a>`;
     }).join("");
+    const cardsBtn = cardsRef
+      ? `<button type="button" class="view-cards">${cardsRef.count ? `View all ${cardsRef.count} cards` : "View all cards"}<span class="sr-only"> in ${nm}</span></button>`
+      : "";
 
     // Set bundle note: if this deck is part of a known TCGPlayer bundle
     // (Commander Deck Case, Set of N), name the product the link opens and
@@ -3268,7 +3693,7 @@ a.best-deal { text-decoration: none; color: inherit; }
         ${powerLine}
         ${priceBlock}
         ${bundleNote}
-        <div class="vendor-row">${vendorBtns}</div>
+        <div class="vendor-row">${vendorBtns}${cardsBtn}</div>
         ${targetLine}
         <label class="compare-toggle">
           <input type="checkbox" data-compare="${d.id}" ${isComparing ? 'checked' : ''}>
@@ -3375,7 +3800,7 @@ a.best-deal { text-decoration: none; color: inherit; }
   // Controls are found by role, not position, since a card's controls change
   // (watching adds the target input).
   const CARD_CONTROLS = [".watch-toggle", ".own-toggle", "input[data-target]", "input[data-compare]",
-    "[data-chart-trigger]", ".power-scan", ".vendor-btn", ".price-label a"];
+    "[data-chart-trigger]", ".power-scan", ".vendor-btn", ".view-cards", ".price-label a"];
   function focusedCardControl() {
     const el = document.activeElement;
     const card = el && el !== document.body && grid.contains(el) ? el.closest("article[data-id]") : null;
@@ -3645,10 +4070,7 @@ a.best-deal { text-decoration: none; color: inherit; }
     body.innerHTML = setNames.map(sn => {
       const rows = (Array.isArray(boxes[sn]) ? boxes[sn] : []).filter(b => b && posNum(b.price));
       if (!rows.length) return "";
-      // Head the group with the boxes' own set name when they all share one
-      // ("Universes Beyond: Fallout", not the deck catalog's "Fallout Commander").
-      const ownSets = [...new Set(rows.map(b => boxNameParts(b).set))];
-      const heading = (ownSets.length === 1 && ownSets[0]) ? ownSets[0] : sn;
+      const heading = boxSetHeading(sn, rows);
       // Under it: a preorder's ship date, or the release month, and whether
       // the set has precons on this page at all.
       const rel = setDate[sn];
@@ -3698,6 +4120,12 @@ a.best-deal { text-decoration: none; color: inherit; }
         const ckLink = b.ck_url
           ? `<a class="box-item-link" href="${safeUrl(b.ck_url)}" target="_blank" rel="noopener noreferrer">view on Card Kingdom<span class="sr-only">: ${escapeHtml(boxNameParts(b).name || sn)}</span> →</a>`
           : "";
+        // Every card this box can hold, with pull odds, when the scraper
+        // wrote a card file for its set. Its own title, so the row's "click
+        // for price history" does not show over this button.
+        const cardsBtn = boxCardsRef(b)
+          ? `<button type="button" class="box-cards" title="Every card this box can hold, with the odds of pulling it">Cards and pull odds<span class="sr-only">: ${escapeHtml(parts.name || sn)}</span></button>`
+          : "";
         return `
         <div class="box-item" data-box-set="${escapeHtml(sn)}" data-box-type="${escapeHtml(b.type)}" title="${escapeHtml(parts.name || b.label)} · click for price history">
           <span class="box-item-type">${escapeHtml(parts.kind)}</span>
@@ -3708,6 +4136,7 @@ a.best-deal { text-decoration: none; color: inherit; }
           ${carriedLine}
           <a class="box-item-link" href="${safeUrl(b.url)}" target="_blank" rel="noopener noreferrer">view on TCGPlayer<span class="sr-only">: ${escapeHtml(parts.name || sn)}</span> →</a>
           ${ckLink}
+          ${cardsBtn}
         </div>`;
       }).join("");
       return `<div class="box-set"><div class="box-set-name">${escapeHtml(heading)}${sub}</div><div class="box-grid">${items}</div></div>`;
@@ -3742,6 +4171,746 @@ a.best-deal { text-decoration: none; color: inherit; }
     }
     const tail = "Any one box varies widely, and fees, shipping and your time are not taken off, so treat it as a ballpark, not a guarantee.";
     return [head, ...rules, tail].join(" ");
+  }
+
+  // ---------- Card lists (decks and boxes) ----------
+  // The scraper writes one card file per deck (cards/decks/<id>.json) and
+  // one per box set (cards/boxes/<code>.json); prices.json points at them. A
+  // file is fetched the first time its dialog opens and kept for the
+  // session. In a file prices[i] belongs to cards[i]; the two are zipped
+  // here into entries, the objects every renderer below works with:
+  //   every entry  idx (its place in CARD_VIEW.entries), uuid, name, type,
+  //                mana, mv, colors, rarity, set, num, img (Scryfall id or
+  //                null), back (true when it has a second image face), text,
+  //                faces (null, or [{name, type, mana, text}, ...]),
+  //                keywords, tcg_id (digits or null), finish, tcg and ck
+  //                (price of one copy, or null), hay (what the filter reads)
+  //   deck entry   qty, board ("commander" or "main")
+  //   box entry    kind, pack (chance that one pack holds it), copies
+  //                (expected copies per pack), packs (packs in that kind's
+  //                box, or null when unknown)
+  const CARD_FILE_RE = {
+    deck: /^cards\/decks\/[a-z0-9-]+\.json$/,
+    box: /^cards\/boxes\/[a-z0-9-]+\.json$/,
+  };
+  const CARD_LOAD_TIMEOUT_MS = 30000;
+  const CARD_PAGE = 60;   // box entries drawn per step
+  // Finishes, in the order a box file lists a card's prices.
+  const FINISHES = ["nonfoil", "foil", "etched"];
+  const FINISH_LABEL = { nonfoil: "Nonfoil", foil: "Foil", etched: "Etched" };
+  const RARITY_ORDER = ["mythic", "rare", "uncommon", "common", "special", "bonus"];
+  const SCRYFALL_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+  const TCG_ID_RE = /^\d{1,12}$/;
+  const CARD_FILES = new Map();      // file path -> parsed file, kept for the session
+  const cardFileLoads = new Map();   // file path -> its load in flight
+
+  // The card list dialog shows one list at a time, and this is its state.
+  // Each .cv-open button in the list carries data-cv-entry, the index of its
+  // entry in CARD_VIEW.entries; cardEntryOf() maps any element of a tile or
+  // row back to that entry.
+  const CARD_VIEW = {
+    mode: null,      // "deck" or "box" while the dialog is open, else null
+    file: null,      // path of the card file on show
+    data: null,      // that file once loaded (see parseDeckFile, parseBoxFile)
+    deck: null,      // deck mode: the deck's catalog entry
+    kind: null,      // box mode: key of the kind on show ("play", "collector", ...)
+    packs: null,     // box mode: packs in that kind's box, or null when unknown
+    entries: [],     // every entry of the list on show: a deck's rows, or the
+                     // (card, finish) pairs of the kind on show
+    shown: [],       // the entries that pass the filters, in display order
+    drawn: 0,        // how many of `shown` are in the page
+    view: "grid",    // "grid" or "list", saved as precon-cardview
+    token: 0,        // bumped per load, so a late answer never draws into a newer list
+    badImages: new Set(),   // Scryfall ids whose image failed while this list was open
+  };
+
+  const ownProp = (o, k) => (o && typeof o === "object" && Object.prototype.hasOwnProperty.call(o, k) ? o[k] : undefined);
+
+  // Where a deck's card list lives, from prices.json: { file, count }, or
+  // null when it has none. Only a path of the expected shape is ever used.
+  function deckCardsRef(d) {
+    const c = deckEntry(LIVE_PRICES?.crack, d);
+    if (!c || typeof c.cards_file !== "string" || !CARD_FILE_RE.deck.test(c.cards_file)) return null;
+    return { file: c.cards_file, count: Number.isInteger(c.card_count) && c.card_count > 0 ? c.card_count : null };
+  }
+  // The same for a box row: { file, kind }, or null.
+  function boxCardsRef(b) {
+    if (!b || typeof b.cards_file !== "string" || !CARD_FILE_RE.box.test(b.cards_file)) return null;
+    if (typeof b.cards_kind !== "string" || !b.cards_kind) return null;
+    return { file: b.cards_file, kind: b.cards_kind };
+  }
+
+  // One card's details with every field typed, so the renderers can trust
+  // them. Null for a row without a name.
+  function cardDetails(c) {
+    if (!c || typeof c !== "object" || typeof c.name !== "string" || !c.name.trim()) return null;
+    const text = v => (typeof v === "string" ? v : "");
+    const faces = (Array.isArray(c.faces) ? c.faces : []).filter(f => f && typeof f === "object")
+      .map(f => ({ name: text(f.name), type: text(f.type), mana: text(f.mana), text: text(f.text) }));
+    const tcgId = typeof c.tcg_id === "string" || typeof c.tcg_id === "number" ? String(c.tcg_id) : "";
+    const card = {
+      uuid: text(c.uuid),
+      name: c.name,
+      type: text(c.type),
+      mana: text(c.mana),
+      mv: typeof c.mv === "number" && Number.isFinite(c.mv) ? c.mv : 0,
+      colors: Array.isArray(c.colors) ? c.colors.filter(x => typeof x === "string" && /^[WUBRG]$/.test(x)) : [],
+      rarity: text(c.rarity).toLowerCase(),
+      set: text(c.set),
+      num: text(c.num),
+      img: typeof c.img === "string" && SCRYFALL_ID_RE.test(c.img) ? c.img : null,
+      back: c.back === true,
+      text: text(c.text),
+      faces: faces.length > 1 ? faces : null,
+      keywords: Array.isArray(c.keywords) ? c.keywords.filter(k => typeof k === "string") : [],
+      tcg_id: TCG_ID_RE.test(tcgId) ? tcgId : null,
+    };
+    // The filter reads name, type and rules text, of every face.
+    card.hay = [card.name, card.type, card.text, ...faces.flatMap(f => [f.name, f.type, f.text])].join(" ").toLowerCase();
+    return card;
+  }
+
+  // A deck file as { updatedAt, totals: {cards, tcg, ck}, entries }.
+  function parseDeckFile(data) {
+    const entries = [];
+    data.cards.forEach((c, i) => {
+      const card = cardDetails(c);
+      if (!card) return;
+      const p = Array.isArray(data.prices[i]) ? data.prices[i] : [];
+      entries.push({
+        ...card,
+        idx: entries.length,
+        qty: Number.isInteger(c.qty) && c.qty > 0 ? c.qty : 1,
+        board: c.board === "commander" ? "commander" : "main",
+        finish: FINISHES.includes(c.finish) ? c.finish : "nonfoil",
+        tcg: posNum(p[0]),
+        ck: posNum(p[1]),
+      });
+    });
+    const t = data.totals && typeof data.totals === "object" ? data.totals : {};
+    return {
+      updatedAt: typeof data.updated_at === "string" ? data.updated_at : "",
+      totals: { cards: Number.isInteger(t.cards) && t.cards > 0 ? t.cards : null, tcg: posNum(t.tcg), ck: posNum(t.cardkingdom) },
+      entries,
+    };
+  }
+
+  // A box file as { updatedAt, kinds, cards }. kinds is a Map in file order,
+  // key -> { key, label, packs, ev, unresolved, entries }; cards keeps each
+  // card's details, raw odds and prices per finish until a kind is shown
+  // (boxKindEntries).
+  function parseBoxFile(data) {
+    const kinds = new Map();
+    for (const key of Object.keys(data.kinds && typeof data.kinds === "object" ? data.kinds : {})) {
+      const k = data.kinds[key];
+      if (!k || typeof k !== "object") continue;
+      kinds.set(key, {
+        key,
+        label: typeof k.label === "string" && k.label.trim() ? k.label.trim() : "Box",
+        packs: Number.isInteger(k.packs) && k.packs > 0 ? k.packs : null,
+        ev: posNum(k.ev),
+        unresolved: Number.isInteger(k.unresolved) && k.unresolved > 0 ? k.unresolved : 0,
+        entries: null,
+      });
+    }
+    const cards = [];
+    data.cards.forEach((c, i) => {
+      const card = cardDetails(c);
+      const odds = card && c.odds && typeof c.odds === "object" ? c.odds : null;
+      if (!odds) return;
+      // prices[i] holds one [tcg, ck] pair per finish that has odds in any
+      // kind, in FINISHES order. A list of another length cannot be matched
+      // to finishes, so that card shows no price rather than a wrong one.
+      const fins = FINISHES.filter(f => Object.keys(odds).some(k => ownProp(odds[k], f)));
+      const row = Array.isArray(data.prices[i]) && data.prices[i].length === fins.length ? data.prices[i] : null;
+      const prices = {};
+      fins.forEach((f, j) => {
+        const p = row && Array.isArray(row[j]) ? row[j] : [];
+        prices[f] = { tcg: posNum(p[0]), ck: posNum(p[1]) };
+      });
+      cards.push({ card, odds, prices });
+    });
+    return { updatedAt: typeof data.updated_at === "string" ? data.updated_at : "", kinds, cards };
+  }
+
+  // The entries of one kind in a box file: one per (card, finish) that has
+  // odds in that kind, in file order. Built on first use and kept.
+  function boxKindEntries(file, key) {
+    const kind = file.kinds.get(key);
+    if (!kind) return [];
+    if (!kind.entries) {
+      const out = [];
+      for (const { card, odds, prices } of file.cards) {
+        const o = ownProp(odds, key);
+        for (const f of FINISHES) {
+          const v = ownProp(o, f);
+          const pack = v && typeof v.pack === "number" && v.pack > 0 && v.pack <= 1 ? v.pack : null;
+          if (pack == null) continue;
+          out.push({
+            ...card,
+            idx: out.length,
+            finish: f,
+            tcg: prices[f].tcg,
+            ck: prices[f].ck,
+            kind: key,
+            pack,
+            copies: typeof v.copies === "number" && v.copies > 0 ? v.copies : pack,
+            packs: kind.packs,
+          });
+        }
+      }
+      kind.entries = out;
+    }
+    return kind.entries;
+  }
+
+  // Fetch, check and parse one card file. The path must have the shape of
+  // its kind of list before anything is fetched, so data can never point the
+  // page at another URL. A file whose schema is not 1, or whose cards and
+  // prices differ in length, is refused. A parsed file is kept for the
+  // session; a failed load is not, so it can be tried again.
+  function loadCardFile(mode, file) {
+    if (typeof file !== "string" || !CARD_FILE_RE[mode] || !CARD_FILE_RE[mode].test(file)) {
+      return Promise.reject(new Error("not a card file path"));
+    }
+    if (CARD_FILES.has(file)) return Promise.resolve(CARD_FILES.get(file));
+    if (cardFileLoads.has(file)) return cardFileLoads.get(file);
+    const load = (async () => {
+      // A connection that stalls is given up on, so the dialog can offer
+      // another try instead of loading without end.
+      const ctl = typeof AbortController === "function" ? new AbortController() : null;
+      const timer = ctl ? setTimeout(() => ctl.abort(), CARD_LOAD_TIMEOUT_MS) : null;
+      try {
+        const res = await fetch(`./${file}`, { cache: "no-cache", signal: ctl ? ctl.signal : undefined });
+        if (!res.ok) throw new Error(`${file} HTTP ${res.status}`);
+        const data = await res.json();
+        if (!data || typeof data !== "object" || data.schema !== 1) throw new Error(`${file}: not schema 1`);
+        if (!Array.isArray(data.cards) || !Array.isArray(data.prices) || data.cards.length !== data.prices.length) {
+          throw new Error(`${file}: cards and prices differ in length`);
+        }
+        const parsed = mode === "deck" ? parseDeckFile(data) : parseBoxFile(data);
+        CARD_FILES.set(file, parsed);
+        return parsed;
+      } finally {
+        clearTimeout(timer);
+        cardFileLoads.delete(file);
+      }
+    })();
+    cardFileLoads.set(file, load);
+    return load;
+  }
+
+  // The entry behind any element inside a tile or a list row, or null.
+  function cardEntryOf(el) {
+    const host = el && el.closest ? el.closest(".cv-tile, .cv-row") : null;
+    const btn = host ? host.querySelector(".cv-open") : null;
+    return (btn && CARD_VIEW.entries[Number(btn.dataset.cvEntry)]) || null;
+  }
+
+  // A card image on Scryfall's image server, or null when the id is not a
+  // Scryfall id. size is "grid" (488 by 680, the tiles) or "display" (672 by
+  // 936); face is "front" or "back". Nothing but a checked id and these
+  // fixed words ever reaches the URL.
+  function cardImageUrl(id, size = "grid", face = "front") {
+    if (typeof id !== "string" || !SCRYFALL_ID_RE.test(id)) return null;
+    return `https://cards.scryfall.io/${size === "display" ? "display" : "grid"}/${face === "back" ? "back" : "front"}/${id[0]}/${id[1]}/${id}.webp`;
+  }
+
+  // A mana cost such as "{2}{W/U}{G}" as small pips. A single color takes
+  // its color; numbers, X, hybrid and Phyrexian symbols are neutral.
+  function manaCostHtml(mana) {
+    const symbols = String(mana || "").match(/\{[^{}]+\}/g);
+    if (!symbols) return "";
+    return `<span class="cv-mana">${symbols.map(s => {
+      const t = s.slice(1, -1).toUpperCase();
+      return `<span class="mana-pip cv-pip pip-${/^[WUBRG]$/.test(t) ? t.toLowerCase() : "c"}">${escapeHtml(t)}</span>`;
+    }).join("")}</span>`;
+  }
+
+  // What fills the image box of a tile: the card image, or a text stand in
+  // (name, mana cost, type) when the card has no image or it failed to load.
+  function cardStandInHtml(e) {
+    return `<span class="cv-fallback"><span class="cv-fb-name">${escapeHtml(e.name)}</span>${manaCostHtml(e.mana)}<span class="cv-fb-type">${escapeHtml(e.type)}</span></span>`;
+  }
+  function cardFaceHtml(e) {
+    const url = CARD_VIEW.badImages.has(e.img) ? null : cardImageUrl(e.img);
+    return url
+      ? `<img src="${url}" width="488" height="680" loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="${escapeHtml(e.name)}">`
+      : cardStandInHtml(e);
+  }
+  // Image error events do not bubble, so the dialog listens for them in the
+  // capture phase and swaps the failed image for the stand in. The id is
+  // remembered while this list is open, so a redraw does not try it again.
+  function onCardImageError(ev) {
+    const img = ev.target;
+    if (!(img instanceof HTMLImageElement) || !img.closest(".cv-img")) return;
+    const e = cardEntryOf(img);
+    if (!e) { img.remove(); return; }
+    if (e.img) CARD_VIEW.badImages.add(e.img);
+    img.outerHTML = cardStandInHtml(e);
+  }
+
+  const cardLabel = e => (e.finish === "nonfoil" ? e.name : `${e.name}, ${FINISH_LABEL[e.finish].toLowerCase()}`);
+  // The price a list sorts and filters by: TCGPlayer, or Card Kingdom when
+  // TCGPlayer has none.
+  const cardPrice = e => e.tcg ?? e.ck;
+
+  function cardBadgesHtml(e, withQty) {
+    const qty = withQty && e.qty > 1
+      ? `<span class="cv-badge cv-qty"><span aria-hidden="true">x${e.qty}</span><span class="sr-only">${e.qty} copies</span></span>` : "";
+    const finish = e.finish !== "nonfoil" ? `<span class="cv-badge">${FINISH_LABEL[e.finish]}</span>` : "";
+    return qty + finish;
+  }
+
+  // One vendor's price for one copy: a link to that vendor when a safe one
+  // can be built, else plain text. A missing price reads "n/a". TCGPlayer
+  // links go to the product page (a tcg_id is digits only, checked on
+  // load); Card Kingdom links search for the name, by the front face name
+  // because that is how it lists a card with several faces.
+  function cardPriceHtml(e, vendor) {
+    const tcg = vendor === "tcg";
+    const price = tcg ? e.tcg : e.ck;
+    const href = tcg
+      ? (e.tcg_id ? safeUrl(`https://www.tcgplayer.com/product/${e.tcg_id}`) : "#")
+      : safeUrl(`https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=${encodeURIComponent(e.name.split(" // ")[0])}`);
+    const amount = price != null ? `$${price.toFixed(2)}` : `<span aria-hidden="true">n/a</span><span class="sr-only">no price</span>`;
+    const inner = `<span class="cv-vendor" aria-hidden="true">${tcg ? "TCG" : "CK"} </span>${amount}<span class="sr-only"> at ${tcg ? "TCGPlayer" : "Card Kingdom"} for ${escapeHtml(cardLabel(e))}</span>`;
+    const cls = `cv-price${tcg ? " cv-tcg" : ""}${price == null ? " none" : ""}`;
+    return href !== "#"
+      ? `<a class="${cls}" href="${href}" target="_blank" rel="noopener noreferrer">${inner}</a>`
+      : `<span class="${cls}">${inner}</span>`;
+  }
+
+  // A chance as text. Short form: one decimal under 10%, whole percent from
+  // 10% up. `fine` keeps one decimal throughout. A real chance never reads
+  // as 0% or 100%.
+  function pctText(p, fine = false) {
+    const pct = p * 100;
+    if (pct < 0.1) return "under 0.1%";
+    if (pct > 99.9) return "over 99.9%";
+    if (fine || pct < 9.95) return `${pct.toFixed(1)}%`;
+    return pct >= 99.5 ? "over 99%" : `${Math.round(pct)}%`;
+  }
+
+  // The pull odds of a box entry as { main, sub, title }. With a known pack
+  // count: about N.N copies per box when a box holds one or more on average,
+  // else the chance of at least one in the box (1 - (1 - pack) ** packs)
+  // with "1 in N packs" beside it. Without a pack count: "1 in N packs"
+  // only. The title spells the figures out.
+  function oddsText(e) {
+    const n = Math.round(1 / e.pack);
+    const perPack = n <= 1 ? "in about every pack" : `1 in ${n.toLocaleString("en-US")} packs`;
+    const lead = n <= 1 ? "In about every pack." : `About ${perPack}.`;
+    if (e.packs == null) {
+      return { main: perPack, sub: "", title: `${lead} The pack count of this box is not known, so there is no figure for a whole box.` };
+    }
+    const chance = 1 - Math.pow(1 - e.pack, e.packs);
+    const expected = e.copies * e.packs;
+    const title = `${lead} Chance of at least one in a ${e.packs} pack box: ${pctText(chance, true)}, assuming packs are independent.`;
+    if (expected >= 1) {
+      return { main: `about ${expected.toFixed(1)} per box`, sub: "", title: `${title} About ${expected.toFixed(1)} copies per box on average.` };
+    }
+    return { main: pctText(chance), sub: perPack, title };
+  }
+  function cardOddsHtml(e) {
+    const o = oddsText(e);
+    return `<span class="cv-odds" title="${escapeHtml(o.title)}"><span class="sr-only">Pull odds: </span><strong>${o.main}</strong>${o.sub ? ` <span class="cv-odds-sub">${o.sub}</span>` : ""}</span>`;
+  }
+
+  // Grid tile. The .cv-open button wraps the image (or its stand in) and
+  // the name; the card preview opens from it. The caption name repeats the
+  // image's alt text, so it is hidden from screen readers.
+  function cardTileHtml(e) {
+    const badges = cardBadgesHtml(e, true);
+    return `<li class="cv-tile">`
+      + `<button type="button" class="cv-open" data-cv-entry="${e.idx}"><span class="cv-img">${cardFaceHtml(e)}</span><span class="cv-name" aria-hidden="true">${escapeHtml(e.name)}</span></button>`
+      + (badges ? `<span class="cv-badges">${badges}</span>` : "")
+      + `<span class="cv-prices">${cardPriceHtml(e, "tcg")}${cardPriceHtml(e, "ck")}</span>`
+      + (e.pack != null ? cardOddsHtml(e) : "")
+      + `</li>`;
+  }
+
+  // List row. A deck row leads with its quantity; a box row ends with its
+  // pull odds. No image here: the .cv-open button wraps the name alone.
+  function cardRowHtml(e) {
+    const deck = e.pack == null;
+    return `<tr class="cv-row" role="row">`
+      + (deck ? `<td class="c-qty" role="cell">${e.qty}</td>` : "")
+      + `<td class="c-name" role="cell"><button type="button" class="cv-open" data-cv-entry="${e.idx}"><span class="cv-name">${escapeHtml(e.name)}</span></button>${cardBadgesHtml(e, false)}</td>`
+      + `<td class="c-type" role="cell">${escapeHtml(e.type)}</td>`
+      + `<td class="c-mana" role="cell">${manaCostHtml(e.mana)}</td>`
+      + `<td class="c-tcg" role="cell">${cardPriceHtml(e, "tcg")}</td>`
+      + `<td class="c-ck" role="cell">${cardPriceHtml(e, "ck")}</td>`
+      + (deck ? "" : `<td class="c-odds" role="cell">${cardOddsHtml(e)}</td>`)
+      + `</tr>`;
+  }
+
+  // Both views take groups, [{ head, entries }]: head is the heading's HTML,
+  // or "" for a list with no groups.
+  function cardGridHtml(groups) {
+    return groups.map(g => `<section class="cv-group">`
+      + (g.head ? `<h3 class="cv-group-head">${g.head}</h3>` : "")
+      + `<ul class="cv-grid" role="list">${g.entries.map(cardTileHtml).join("")}</ul></section>`).join("");
+  }
+  function cardTableHtml(groups, title) {
+    const deck = CARD_VIEW.mode === "deck";
+    const th = (cls, full, short) => `<th class="${cls}" role="columnheader" scope="col">`
+      + (short ? `<span class="cv-full">${full}</span><abbr class="cv-short" title="${full}">${short}</abbr>` : full) + `</th>`;
+    const head = `<thead role="rowgroup"><tr role="row">`
+      + (deck ? th("c-qty", "Qty") : "")
+      + th("c-name", "Card") + th("c-type", "Type") + th("c-mana", "Mana cost")
+      + th("c-tcg", "TCGPlayer", "TCG") + th("c-ck", "Card Kingdom", "CK")
+      + (deck ? "" : th("c-odds", "Pull odds"))
+      + `</tr></thead>`;
+    const bodies = groups.map(g => `<tbody role="rowgroup">`
+      + (g.head ? `<tr class="cv-group-row" role="row"><th class="cv-group-head" role="rowheader" scope="rowgroup" colspan="6" aria-colspan="6">${g.head}</th></tr>` : "")
+      + g.entries.map(cardRowHtml).join("") + `</tbody>`).join("");
+    return `<table class="cv-table ${deck ? "is-deck" : "is-box"}" role="table" aria-label="${escapeHtml(title)}">${head}${bodies}</table>`;
+  }
+
+  // Deck groups. Commander board rows come first; every other row goes by
+  // the part of its type line before the long dash (U+2014), tested in
+  // CARD_TYPE_ORDER (an Artifact Creature is a creature, an Artifact Land a
+  // land). CARD_GROUPS is the order the groups are shown in, lands last.
+  const CARD_TYPE_ORDER = ["Creature", "Land", "Planeswalker", "Battle", "Instant", "Sorcery", "Artifact", "Enchantment"];
+  const CARD_GROUPS = [
+    ["Commander", "Commanders"], ["Creature", "Creatures"], ["Planeswalker", "Planeswalkers"],
+    ["Battle", "Battles"], ["Instant", "Instants"], ["Sorcery", "Sorceries"], ["Artifact", "Artifacts"],
+    ["Enchantment", "Enchantments"], ["Land", "Lands"], ["Other", "Other"],
+  ];
+  function cardGroupOf(e) {
+    if (e.board === "commander") return "Commander";
+    const words = e.type.split("—")[0].split(/\s+/);
+    return CARD_TYPE_ORDER.find(t => words.includes(t)) || "Other";
+  }
+  // "Creatures (28) · $45.10 TCG": the copies in the group and their
+  // TCGPlayer subtotal (left out when no card in the group has that price).
+  function cardGroupHead(key, plural, entries) {
+    const count = entries.reduce((s, e) => s + e.qty, 0);
+    const priced = entries.filter(e => e.tcg != null);
+    const sum = priced.reduce((s, e) => s + e.tcg * e.qty, 0);
+    const label = key === "Commander" && count === 1 ? key : plural;
+    return `${label} <span class="cv-num">(${count})</span>`
+      + (priced.length ? ` · <span class="cv-num" title="TCGPlayer retail subtotal">$${sum.toFixed(2)} <span class="cv-vendor" aria-hidden="true">TCG</span><span class="sr-only">at TCGPlayer</span></span>` : "");
+  }
+  function deckGroups(list) {
+    if ($("cvGroup").value !== "type") return [{ head: "", entries: list }];
+    const by = new Map(CARD_GROUPS.map(([key]) => [key, []]));
+    for (const e of list) by.get(cardGroupOf(e)).push(e);
+    return CARD_GROUPS.filter(([key]) => by.get(key).length)
+      .map(([key, plural]) => ({ head: cardGroupHead(key, plural, by.get(key)), entries: by.get(key) }));
+  }
+
+  // Sort orders. Ties fall back to the name, then the finish, then file
+  // order, so a list never reshuffles between draws.
+  const cardByName = (a, b) => a.name.localeCompare(b.name) || FINISHES.indexOf(a.finish) - FINISHES.indexOf(b.finish) || a.idx - b.idx;
+  const CARD_SORTS = {
+    price: (a, b) => (cardPrice(b) ?? -1) - (cardPrice(a) ?? -1) || cardByName(a, b),
+    name: cardByName,
+    mv: (a, b) => a.mv - b.mv || cardByName(a, b),
+    // Most likely to be pulled first.
+    odds: (a, b) => b.pack - a.pack || b.copies - a.copies || cardByName(a, b),
+    // Share of the box's value: price times expected copies.
+    share: (a, b) => (cardPrice(b) ?? 0) * b.copies - (cardPrice(a) ?? 0) * a.copies || cardByName(a, b),
+  };
+
+  // ----- The dialog -----
+  function openDeckCards(deckId) {
+    const d = PRECONS.find(x => x.id === deckId);
+    const ref = d ? deckCardsRef(d) : null;
+    if (ref) openCardList({ mode: "deck", file: ref.file, title: d.name, deck: d });
+  }
+  function openBoxCards(setName, type) {
+    const b = findBox(setName, type);
+    const ref = boxCardsRef(b);
+    if (!ref) return;
+    const rows = (getBoxes()?.[setName] || []).filter(r => r && posNum(r.price));
+    openCardList({ mode: "box", file: ref.file, kind: ref.kind, title: boxSetHeading(setName, rows) });
+  }
+
+  // Open the dialog on one list. The title is known before the file is, so
+  // it is set at once; the rest waits for the file (loadIntoCardList).
+  function openCardList({ mode, file, title, kind = null, deck = null }) {
+    const modal = $("cardsModal"), v = CARD_VIEW;
+    Object.assign(v, { mode, file, kind, deck, data: null, packs: null, entries: [], shown: [], drawn: 0 });
+    v.badImages.clear();
+    $("cardsModalTitle").textContent = title;
+    openModal(modal, $("cardsModalClose"));
+    modal.scrollTop = 0;
+    loadIntoCardList();
+  }
+  // Everything under the title bar, back to nothing.
+  function emptyCardList() {
+    $("cvTabs").hidden = true;
+    $("cvTabs").innerHTML = "";
+    $("cvPanel").removeAttribute("role");
+    $("cvPanel").removeAttribute("aria-labelledby");
+    $("cvHead").innerHTML = "";
+    $("cvControls").hidden = true;
+    $("cvCount").textContent = "";
+    $("cvBody").innerHTML = "";
+    $("cvBody").removeAttribute("aria-busy");
+    $("cvMoreWrap").hidden = true;
+  }
+  // Called by closeModal(). A load still in flight finishes into the cache
+  // only, and the cards leave the page.
+  function cardListClosed() {
+    const v = CARD_VIEW;
+    v.token++;
+    Object.assign(v, { mode: null, file: null, kind: null, deck: null, data: null, packs: null, entries: [], shown: [], drawn: 0 });
+    emptyCardList();
+  }
+
+  // Load the open list's file and show it; also the "Try again" action. A
+  // file already in the cache is drawn without a loading line.
+  async function loadIntoCardList() {
+    const v = CARD_VIEW, token = ++v.token;
+    emptyCardList();
+    try {
+      if (!CARD_FILES.has(v.file)) {
+        $("cvBody").setAttribute("aria-busy", "true");
+        $("cvCount").textContent = "Loading the card list…";
+      }
+      const data = await loadCardFile(v.mode, v.file);
+      if (token !== v.token) return;
+      v.data = data;
+      showCardList();
+    } catch (err) {
+      if (token !== v.token) return;
+      console.warn(`Card list ${v.file} could not be shown:`, err);
+      emptyCardList();
+      $("cvBody").innerHTML = `<div class="cv-state" role="alert"><p>Card list not available yet.</p><button type="button" class="cv-btn" data-cv-retry>Try again</button></div>`;
+    }
+  }
+
+  // The file is in: fill the header, the controls and the list.
+  function showCardList() {
+    const v = CARD_VIEW, data = v.data;
+    if (v.mode === "box") {
+      // Start on the row's own kind; a file that lacks it shows its first.
+      if (!data.kinds.has(v.kind)) v.kind = data.kinds.size ? data.kinds.keys().next().value : null;
+      if (v.kind == null) throw new Error("the box file lists no box type");
+    } else if (!data.entries.length) {
+      throw new Error("the deck file lists no cards");
+    }
+    resetCardControls();
+    $("cvControls").hidden = false;
+    if (v.mode === "box") {
+      fillCardTabs();
+      showBoxKind(v.kind);
+    } else {
+      v.entries = data.entries;
+      fillCardHead();
+      applyCardFilters();
+    }
+  }
+
+  // Tabs, one per box type in the file, when it holds more than one.
+  function fillCardTabs() {
+    const tabs = $("cvTabs"), kinds = [...CARD_VIEW.data.kinds.values()];
+    tabs.hidden = kinds.length < 2;
+    tabs.innerHTML = kinds.length < 2 ? "" : kinds.map((k, i) =>
+      `<button type="button" class="cv-tab" role="tab" id="cvTab${i}" data-cv-kind="${escapeHtml(k.key)}" aria-controls="cvPanel" aria-selected="false" tabindex="-1">${escapeHtml(k.label)}</button>`).join("");
+    if (kinds.length < 2) $("cvPanel").removeAttribute("role"); else $("cvPanel").setAttribute("role", "tabpanel");
+  }
+  function showBoxKind(key) {
+    const v = CARD_VIEW, kind = v.data && v.data.kinds.get(key);
+    if (!kind) return;
+    v.kind = key;
+    v.packs = kind.packs;
+    v.entries = boxKindEntries(v.data, key);
+    for (const tab of $("cvTabs").querySelectorAll(".cv-tab")) {
+      const on = tab.dataset.cvKind === key;
+      tab.setAttribute("aria-selected", on ? "true" : "false");
+      tab.tabIndex = on ? 0 : -1;
+      if (on) $("cvPanel").setAttribute("aria-labelledby", tab.id);
+    }
+    fillCardHead();
+    fillBoxFilters();
+    applyCardFilters();
+  }
+
+  // Header under the title: a deck's commanders and totals, or a box type's
+  // pack count and published estimate, then the notes that keep the figures
+  // honest.
+  function fillCardHead() {
+    const v = CARD_VIEW, data = v.data;
+    const stat = (label, value, cls) => `<div><dt>${label}</dt><dd${cls ? ` class="${cls}"` : ""}>${value}</dd></div>`;
+    const stats = [], notes = [];
+    let lead = "";
+    if (v.mode === "deck") {
+      let names = data.entries.filter(e => e.board === "commander").map(e => e.name);
+      if (!names.length && v.deck && v.deck.commander) names = [v.deck.commander, v.deck.partner].filter(Boolean);
+      if (names.length) lead = `<div class="card-commander">${names.map(escapeHtml).join(" &amp; ")}</div>`;
+      const { cards, tcg, ck } = data.totals;
+      stats.push(stat("Cards", cards ?? data.entries.reduce((s, e) => s + e.qty, 0)));
+      stats.push(stat("TCGPlayer retail", tcg != null ? `$${tcg.toFixed(2)}` : "n/a", tcg != null ? "money" : "quiet"));
+      stats.push(stat("Card Kingdom retail", ck != null ? `$${ck.toFixed(2)}` : "n/a", ck != null ? "money" : "quiet"));
+      // Copies with no price at a vendor are not in that vendor's total.
+      const lacking = pick => data.entries.reduce((s, e) => s + (pick(e) == null ? e.qty : 0), 0);
+      const noTcg = lacking(e => e.tcg), noCk = lacking(e => e.ck);
+      const gaps = [noTcg ? `${noTcg} at TCGPlayer` : "", noCk ? `${noCk} at Card Kingdom` : ""].filter(Boolean);
+      if (gaps.length) notes.push(`The totals leave out cards with no price: ${gaps.join(", ")}.`);
+    } else {
+      const kind = data.kinds.get(v.kind);
+      // With several box types the selected tab already names the box.
+      if (data.kinds.size < 2) stats.push(stat("Box", escapeHtml(kind.label)));
+      stats.push(stat("Packs", kind.packs ?? "not known", kind.packs ? "" : "quiet"));
+      if (kind.ev != null) {
+        // The estimate's own rule, as the scraper recorded it.
+        const floor = posNum(LIVE_PRICES?.box_ev_basis?.bulk_threshold) ?? 1;
+        stats.push(stat(`Est. singles, cards worth $${Number.isInteger(floor) ? floor : floor.toFixed(2)} or more`, `≈ $${kind.ev.toFixed(2)}`, "money"));
+      } else {
+        stats.push(stat("Est. singles", "not published", "quiet"));
+        notes.push(`No estimated singles value is published for this box type: ${kind.packs == null ? "its pack count is not known" : "too few of its cards have a price today"}.`);
+      }
+      notes.push((kind.packs != null
+        ? "Pull odds: the chance of at least one copy in a whole box (or the average copies per box when that is 1 or more), then how often the card turns up per pack."
+        : "Pull odds: how often the card turns up per pack. Without a pack count there is no figure for a whole box.")
+        + " Estimated from the pack contents MTGJSON publishes, with packs treated as independent.");
+      if (kind.unresolved) {
+        notes.push(`${kind.unresolved} ${kind.unresolved === 1 ? "entry is" : "entries are"} missing from this list today: the card details could not be read.`);
+      }
+    }
+    const day = fmtUtcDay(data.updatedAt, { month: "short", day: "numeric", year: "numeric" });
+    if (day) stats.push(stat("Prices from", day));
+    $("cvHead").innerHTML = `${lead}<dl class="cv-stats">${stats.join("")}</dl>${notes.map(n => `<p class="cv-note">${n}</p>`).join("")}`;
+  }
+
+  // Controls back to their defaults for a newly opened list: no filters,
+  // grouped by type, dearest first. Only the view is remembered.
+  function resetCardControls() {
+    const deck = CARD_VIEW.mode === "deck";
+    for (const el of $("cvControls").querySelectorAll("[data-cv-for]")) el.hidden = el.dataset.cvFor !== CARD_VIEW.mode;
+    $("cvFilter").value = "";
+    $("cvMinPrice").value = "";
+    $("cvGroup").value = "type";
+    $("cvFinish").innerHTML = $("cvRarity").innerHTML = "";
+    const sorts = deck
+      ? [["price", "Price, high → low"], ["name", "Name, A → Z"], ["mv", "Mana value, low → high"]]
+      : [["price", "Price, high → low"], ["odds", "Most likely first"], ["share", "Value share, high → low"], ["name", "Name, A → Z"]];
+    $("cvSort").innerHTML = sorts.map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
+    $("cvSort").title = "Price is the TCGPlayer price, or Card Kingdom's when TCGPlayer has none."
+      + (deck ? "" : " Value share is that price times the expected copies per box.");
+    syncCardViewButtons();
+  }
+  // Finish and rarity choices for the box type on show. A choice survives a
+  // change of tab when the new tab has it too.
+  function fillBoxFilters() {
+    const present = (field, order) => {
+      const have = new Set(CARD_VIEW.entries.map(e => e[field]).filter(Boolean));
+      return [...order.filter(x => have.has(x)), ...[...have].filter(x => !order.includes(x)).sort()];
+    };
+    const fill = (sel, all, values, label) => {
+      const keep = sel.value;
+      sel.innerHTML = `<option value="all">${all}</option>` + values.map(x => `<option value="${escapeHtml(x)}">${escapeHtml(label(x))}</option>`).join("");
+      if (values.includes(keep)) sel.value = keep;
+    };
+    fill($("cvFinish"), "All finishes", present("finish", FINISHES), f => FINISH_LABEL[f]);
+    fill($("cvRarity"), "All rarities", present("rarity", RARITY_ORDER), r => r[0].toUpperCase() + r.slice(1));
+  }
+  function clearCardFilters() {
+    $("cvFilter").value = "";
+    $("cvMinPrice").value = "";
+    $("cvFinish").value = $("cvRarity").value = "all";
+    applyCardFilters();
+    $("cvFilter").focus();
+  }
+
+  // Filter and sort the entries, then draw them. The text filter needs
+  // every word to appear somewhere in the name, type or rules text.
+  function applyCardFilters() {
+    const v = CARD_VIEW;
+    if (!v.data) return;
+    const words = $("cvFilter").value.toLowerCase().split(/\s+/).filter(Boolean);
+    let list = v.entries.filter(e => words.every(w => e.hay.includes(w)));
+    if (v.mode === "box") {
+      const finish = $("cvFinish").value, rarity = $("cvRarity").value;
+      const min = parseFloat($("cvMinPrice").value);
+      if (finish && finish !== "all") list = list.filter(e => e.finish === finish);
+      if (rarity && rarity !== "all") list = list.filter(e => e.rarity === rarity);
+      if (min > 0) list = list.filter(e => (cardPrice(e) ?? -1) >= min);
+    }
+    list.sort(CARD_SORTS[$("cvSort").value] || CARD_SORTS.price);
+    v.shown = list;
+    drawCardList();
+  }
+
+  // Draw the list. A deck is drawn whole, in groups; a box list can run to
+  // thousands of entries, so it is drawn CARD_PAGE at a time (drawMoreCards
+  // adds the next step). keepDrawn redraws as many as were already there.
+  function drawCardList(keepDrawn = false) {
+    const v = CARD_VIEW, body = $("cvBody");
+    body.removeAttribute("aria-busy");
+    if (!v.shown.length) {
+      v.drawn = 0;
+      body.innerHTML = v.entries.length
+        ? `<div class="cv-state"><p>No cards match these filters.</p><button type="button" class="cv-btn" data-cv-clear>Clear filters</button></div>`
+        : `<div class="cv-state"><p>No cards are listed here today.</p></div>`;
+    } else {
+      const deck = v.mode === "deck";
+      v.drawn = deck ? v.shown.length : Math.min(v.shown.length, Math.max(CARD_PAGE, keepDrawn ? v.drawn : 0));
+      const groups = deck ? deckGroups(v.shown) : [{ head: "", entries: v.shown.slice(0, v.drawn) }];
+      body.innerHTML = v.view === "list" ? cardTableHtml(groups, `${$("cardsModalTitle").textContent} card list`) : cardGridHtml(groups);
+    }
+    updateCardCount();
+  }
+  function drawMoreCards(fromKeyboard) {
+    const v = CARD_VIEW, list = v.view === "list";
+    const next = v.shown.slice(v.drawn, v.drawn + CARD_PAGE);
+    const hosts = $("cvBody").querySelectorAll(list ? ".cv-table tbody" : ".cv-grid");
+    const host = hosts[hosts.length - 1];
+    if (!next.length || !host) return;
+    const firstNew = host.children.length;
+    host.insertAdjacentHTML("beforeend", next.map(list ? cardRowHtml : cardTileHtml).join(""));
+    v.drawn += next.length;
+    const hadFocus = document.activeElement === $("cvMore");
+    updateCardCount();
+    // From the keyboard, carry on at the first new card: the button sits
+    // below all sixty of them. And never leave focus on a button that has
+    // just gone because the list is complete.
+    if (fromKeyboard || (hadFocus && $("cvMoreWrap").hidden)) {
+      const open = host.children[firstNew] && host.children[firstNew].querySelector(".cv-open");
+      if (open) open.focus();
+    }
+  }
+  // "Showing all 100 cards" for a deck (copies, as in its header), "Showing
+  // 60 of 799" for a box, plus what the button under the list would add.
+  function updateCardCount() {
+    const v = CARD_VIEW, n = x => x.toLocaleString("en-US");
+    const left = v.shown.length - v.drawn;
+    let text;
+    if (v.mode === "deck") {
+      const copies = list => list.reduce((s, e) => s + e.qty, 0);
+      const all = copies(v.entries), now = copies(v.shown);
+      text = now === all ? `Showing all ${n(all)} cards` : `Showing ${n(now)} of ${n(all)} cards`;
+    } else if (!v.shown.length) {
+      text = `Showing 0 of ${n(v.entries.length)}`;
+    } else {
+      text = `Showing ${n(v.drawn)} of ${n(v.shown.length)}`
+        + (v.shown.length < v.entries.length ? ` · filtered from ${n(v.entries.length)}` : "");
+    }
+    $("cvCount").textContent = text;
+    $("cvMoreWrap").hidden = left <= 0;
+    if (left > 0) $("cvMore").textContent = `Show ${Math.min(CARD_PAGE, left)} more`;
+  }
+
+  // Grid or list. The choice is saved like the theme and read back on load.
+  function setCardView(view) {
+    if ((view !== "grid" && view !== "list") || view === CARD_VIEW.view) return;
+    CARD_VIEW.view = view;
+    syncCardViewButtons();
+    saveKey("cardview", view);
+    if (CARD_VIEW.data) drawCardList(true);
+  }
+  function syncCardViewButtons() {
+    for (const b of document.querySelectorAll("#cardsModal [data-cv-view]")) {
+      b.setAttribute("aria-pressed", b.dataset.cvView === CARD_VIEW.view ? "true" : "false");
+    }
+  }
+  async function loadCardView() {
+    const saved = await loadKey("cardview");
+    if (saved === "grid" || saved === "list") CARD_VIEW.view = saved;
   }
 
   // ---------- Compare view ----------
@@ -4105,7 +5274,26 @@ a.best-deal { text-decoration: none; color: inherit; }
       if (sparkBtn) {
         const card = sparkBtn.closest("article[data-id]");
         if (card) openChart(card.dataset.id);
+        return;
       }
+      // The card list opens from its button, and from a plain click anywhere
+      // else on the card: not on a control (or inside one), and not the
+      // click that ends a text selection.
+      const card = e.target.closest("article.has-cards");
+      if (!card) return;
+      const viewBtn = card.querySelector(".view-cards");
+      if (!viewBtn || !viewBtn.contains(e.target)) {
+        const control = e.target.closest('a, button, input, select, label, summary, textarea, [role="button"], [tabindex]');
+        if (control && card.contains(control)) return;
+        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        const picked = window.getSelection();
+        if (picked && !picked.isCollapsed && picked.toString().trim()) return;
+      }
+      // Focus goes to the card's own button first (a click on the card body
+      // focuses nothing, and some browsers do not focus a clicked button), so
+      // closing the dialog comes back to this card, not the top of the page.
+      if (viewBtn) viewBtn.focus({ preventScroll: true });
+      openDeckCards(card.dataset.id);
     });
 
     // Keyboard accessibility for the sparkline (it's a focusable role=button)
@@ -4194,6 +5382,46 @@ a.best-deal { text-decoration: none; color: inherit; }
       });
     });
 
+    // Card list dialog. Its clicks are delegated here; the .cv-open buttons
+    // (a card's image and name) get no handler in this block.
+    const cardsModal = $("cardsModal");
+    $("cardsModalClose").addEventListener("click", closeModal);
+    // Only a click that starts and ends on the dim backdrop closes the
+    // dialog: a text selection dragged out of the filter box must not.
+    let backdropDown = false;
+    cardsModal.addEventListener("pointerdown", e => { backdropDown = e.target === cardsModal; });
+    cardsModal.addEventListener("click", e => {
+      if (e.target === cardsModal) { if (backdropDown) closeModal(); return; }
+      const tab = e.target.closest(".cv-tab");
+      if (tab) { showBoxKind(tab.dataset.cvKind); return; }
+      const view = e.target.closest("[data-cv-view]");
+      if (view) { setCardView(view.dataset.cvView); return; }
+      // A click made with Enter or Space carries detail 0.
+      if (e.target.closest("#cvMore")) { drawMoreCards(e.detail === 0); return; }
+      if (e.target.closest("[data-cv-clear]")) { clearCardFilters(); return; }
+      // The button is about to go, so focus moves to Close first.
+      if (e.target.closest("[data-cv-retry]")) { $("cardsModalClose").focus(); loadIntoCardList(); }
+    });
+    // Arrow keys, Home and End move between the box type tabs.
+    $("cvTabs").addEventListener("keydown", e => {
+      const tabs = [...$("cvTabs").querySelectorAll(".cv-tab")];
+      const at = tabs.indexOf(e.target.closest(".cv-tab"));
+      const to = e.key === "ArrowRight" ? at + 1 : e.key === "ArrowLeft" ? at - 1
+        : e.key === "Home" ? 0 : e.key === "End" ? tabs.length - 1 : null;
+      if (at < 0 || to == null) return;
+      e.preventDefault();
+      const next = tabs[(to + tabs.length) % tabs.length];
+      showBoxKind(next.dataset.cvKind);
+      next.focus();
+    });
+    // Typing waits for a pause, like the deck search.
+    let cardFilterTimer = null;
+    const filterCardsSoon = () => { clearTimeout(cardFilterTimer); cardFilterTimer = setTimeout(applyCardFilters, 120); };
+    $("cvFilter").addEventListener("input", filterCardsSoon);
+    $("cvMinPrice").addEventListener("input", filterCardsSoon);
+    for (const id of ["cvGroup", "cvSort", "cvFinish", "cvRarity"]) $(id).addEventListener("change", applyCardFilters);
+    cardsModal.addEventListener("error", onCardImageError, true);
+
     document.addEventListener("keydown", e => {
       if (e.key === "Escape" && openModalEl) { e.preventDefault(); closeModal(); return; }
       trapTab(e);
@@ -4255,10 +5483,20 @@ a.best-deal { text-decoration: none; color: inherit; }
       $("boxToggle").setAttribute("aria-expanded", open ? "true" : "false");
     });
     // Box item → open its price-history chart (but let the TCGPlayer link work).
+    // Its "Cards and pull odds" button opens the card list instead.
     $("boxBody").addEventListener("click", e => {
       if (e.target.closest(".box-item-link")) return;  // let the real link navigate
       const item = e.target.closest(".box-item");
-      if (item) openBoxChart(item.dataset.boxSet, item.dataset.boxType);
+      if (!item) return;
+      const cardsBtn = e.target.closest(".box-cards");
+      if (cardsBtn) {
+        // Some browsers do not focus a clicked button; the dialog returns
+        // focus to whatever had it.
+        cardsBtn.focus({ preventScroll: true });
+        openBoxCards(item.dataset.boxSet, item.dataset.boxType);
+      } else {
+        openBoxChart(item.dataset.boxSet, item.dataset.boxType);
+      }
     });
     // From the keyboard, a box's chart opens from its sparkline button.
     $("boxBody").addEventListener("keydown", e => {
@@ -4330,7 +5568,7 @@ a.best-deal { text-decoration: none; color: inherit; }
     }
     // Saved state is read after decks.json, so renamed ids (formerIds) can be
     // mapped and ids that no longer exist dropped.
-    await Promise.all([loadOwned(), loadWatched(), loadTargets()]);
+    await Promise.all([loadOwned(), loadWatched(), loadTargets(), loadCardView()]);
     await migrateSavedIds();
     safely("years", fillYearFilter);
     safely("url", readUrlState);
