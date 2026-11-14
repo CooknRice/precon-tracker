@@ -311,6 +311,21 @@ logic is in the inline `<script>`.
   - A gap in history (no tracked buyable price) ends the line instead of
     bridging it.
 
+- Card lists: `#cardsModal` (`.compare-modal.cards-modal`), opened by the
+  deck card's `.view-cards` button (or a click on the deck card outside its
+  controls) and a box row's `.box-cards` button. Tiles `.cv-tile` and list
+  rows `.cv-row` each hold one `.cv-open` button (image and name); box tiles
+  add an odds chip. Card images keep Scryfall's whole 488:680 frame: badges
+  and prices sit in the caption, never on the artwork.
+  - Card preview `#cvPreview` (role dialog, inside `#cardsModal`): opens on
+    mouse hover after 250 ms or on keyboard focus, pins on click, tap or
+    Enter, and becomes a bottom sheet under 640 px (no hover there).
+  - Keyword tooltip `#cvKwTip` (role tooltip) on each `.cv-kw` term in the
+    preview's rules text; terms come from `keywords.json`, loaded on the
+    first preview.
+  - Escape closes the innermost layer: tooltip, then preview, then dialog.
+    After Escape closes a preview, hover opens nothing until the mouse moves.
+
 ### Misc
 - `.sr-only` (visually hidden text for screen readers), `.footer-note`
   (sources, privacy, Fan Content notice), `.empty`.

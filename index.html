@@ -11,7 +11,7 @@
      exact text between its opening and closing tags), or the browser refuses
      to run the app. A remote prices URL (LIVE_PRICES_REMOTE_URL) would also
      need adding to connect-src. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-jQDCC/2Y1oPQX/q0WXZkpNdwHxASi11opMtInHiACSQ='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://cards.scryfall.io; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XTfh4/7APazgPhNMp/gUIVktwpYfaEuPG55qU/72ooU='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://cards.scryfall.io; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>MTG Tracker · Commander Precon, Sealed Box & Bundle Prices</title>
 <meta name="description" content="Daily prices for Magic: The Gathering Commander precons since 2021, preorders included, their set bundles, and sealed booster boxes from those sets and a few more, checked at TCGplayer and Card Kingdom, with price history and buy signals.">
@@ -82,6 +82,7 @@
   --radius: 14px;            /* cards */
   --radius-sm: 9px;          /* inner blocks, buttons */
   --radius-pill: 999px;      /* chips */
+  --pop-shadow: 0 10px 30px rgba(0,0,0,0.5);   /* lifts a floating panel (card preview, tooltip) off the list */
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -1055,6 +1056,7 @@ h2.box-heading { font: inherit; }
   --surface: #fbf6e7;
   --surface-2: #f1e7cd;
   --hairline: rgba(44,36,22,0.12);
+  --pop-shadow: 0 10px 30px rgba(44,36,22,0.2);
 }
 /* Light-mode contrast overrides for elements with tinted/colored backgrounds
    (names now flip automatically via --ink-strong). */
@@ -1791,6 +1793,163 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
   .cv-full { display: none; }
   .cv-short { display: inline; }
 }
+
+/* ---------- Card preview and keyword tooltips ---------- */
+/* The preview floats beside its tile (placed by placeCardPreview) and never
+   moves the list under it. Its image box has the card's own proportions and
+   holds the image alone: never cropped, covered or recolored. */
+.cv-preview {
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: min(600px, calc(100vw - 16px));
+  max-height: calc(100vh - 16px);
+  max-height: calc(100dvh - 16px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  box-shadow: var(--pop-shadow);
+  color: var(--ink);
+  animation: cv-fade-in 0.12s ease-out;
+}
+.cv-preview[hidden], .cv-kwtip[hidden] { display: none; }
+.cv-preview:focus { outline: none; }
+@keyframes cv-fade-in { from { opacity: 0; } }
+.cv-pv-body {
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "media top" "media info";
+  gap: 6px 16px;
+}
+.cv-pv-media { grid-area: media; align-self: start; position: sticky; top: 0; display: flex; flex-direction: column; gap: 10px; }
+.cv-pv-art {
+  display: block;
+  aspect-ratio: 672 / 936;
+  border-radius: 4.75% / 3.5%;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.cv-pv-art img { display: block; width: 100%; height: 100%; object-fit: contain; color: var(--ink-muted); font-size: 11px; }
+.cv-pv-art .cv-fb-name { font-size: 15px; }
+.cv-pv-flip { align-self: stretch; }
+.cv-pv-top { grid-area: top; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; min-width: 0; }
+.cv-pv-name {
+  min-width: 0;
+  font-family: var(--font-ui);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--ink-strong);
+  overflow-wrap: anywhere;
+}
+.cv-pv-close { flex: none; }
+.cv-preview:not(.is-pinned) .cv-pv-close { visibility: hidden; }
+.cv-pv-info { grid-area: info; min-width: 0; overflow-wrap: anywhere; }
+.cv-pv-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+.cv-pv-face { margin-top: 12px; }
+.cv-pv-face + .cv-pv-face { padding-top: 12px; border-top: 1px solid var(--hairline); }
+.cv-pv-fhead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 10px; margin-bottom: 4px; }
+.cv-pv-fname { font-size: 13.5px; font-weight: 600; color: var(--ink-strong); }
+.cv-pv-type { font-size: 12.5px; font-weight: 600; color: var(--ink-soft); }
+.cv-pv-text { margin-top: 6px; font-size: 13px; line-height: 1.55; color: var(--ink); white-space: pre-line; }
+.cv-pv-odds, .cv-pv-prices { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--hairline); }
+.cv-pv-label, .cv-pv-prices dt {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faded);
+  margin-bottom: 3px;
+}
+.cv-pv-oddsline { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); }
+.cv-pv-oddsline strong { font-weight: 500; color: var(--ink); }
+.cv-pv-note { margin-top: 6px; font-family: var(--font-mono); font-size: 10.5px; line-height: 1.55; color: var(--ink-muted); }
+.cv-pv-prices { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+.cv-pv-prices dd { font-family: var(--font-mono); font-size: 14px; }
+.cv-pv-prices .cv-price { font-size: 14px; }
+.cv-pv-arrow { color: var(--ink-faded); }
+
+/* A glossary term in rules text, and its tooltip. */
+.cv-kw {
+  text-decoration: underline dotted var(--ink-faded);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  border-radius: 2px;
+  cursor: help;
+}
+.cv-kw:hover, .cv-kw[aria-describedby] { color: var(--gold-bright); text-decoration-color: var(--gold-bright); }
+.cv-kw:focus-visible, .cv-pv-close:focus-visible, .cv-pv-flip:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+.cv-kwtip {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: max-content;
+  max-width: min(300px, calc(100vw - 16px));
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--pop-shadow);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+  animation: cv-fade-in 0.1s ease-out;
+}
+.cv-kwtip-head strong { font-weight: 700; color: var(--ink-strong); }
+.cv-kwtip-kind, .cv-kwtip-rule {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+.cv-kwtip-kind { margin-left: 4px; }
+.cv-kwtip-text { margin-top: 4px; }
+.cv-kwtip-rule { margin-top: 6px; }
+@media (pointer: coarse) {
+  .cv-pv-close, .cv-pv-flip { min-height: 40px; }
+}
+/* Narrow screens: a pinned preview is a bottom sheet, its title bar kept
+   in view while the sheet scrolls. */
+.cv-preview.is-sheet {
+  left: 0;
+  right: 0;
+  top: auto;
+  bottom: 0;
+  width: auto;
+  max-height: 88vh;
+  max-height: 88dvh;
+  padding: 0 16px calc(18px + env(safe-area-inset-bottom, 0px));
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.is-sheet .cv-pv-body { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "top" "media" "info"; }
+.is-sheet .cv-pv-top {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  align-items: center;
+  margin: 0 -16px;
+  padding: 12px 16px 10px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--hairline);
+}
+.is-sheet .cv-pv-media { position: static; width: min(236px, 72vw); justify-self: center; margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -2089,6 +2248,14 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
       <div id="cvBody" class="cv-body"></div>
       <div id="cvMoreWrap" class="cv-more" hidden><button type="button" class="cv-btn" id="cvMore">Show 60 more</button></div>
     </div>
+  </div>
+  <!-- Card preview: the details of one card, beside its tile, or a bottom
+       sheet on a narrow screen. Filled by buildCardPreview(); the keyword
+       tooltip lives inside it, so hovering the tooltip counts as hovering
+       the preview. -->
+  <div id="cvPreview" class="cv-preview" role="dialog" aria-modal="false" aria-labelledby="cvPvName" tabindex="-1" hidden>
+    <div id="cvPvBody" class="cv-pv-body"></div>
+    <div id="cvKwTip" class="cv-kwtip" role="tooltip" hidden></div>
   </div>
 </div>
 
@@ -4418,13 +4585,34 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
 
   // A mana cost such as "{2}{W/U}{G}" as small pips. A single color takes
   // its color; numbers, X, hybrid and Phyrexian symbols are neutral.
-  function manaCostHtml(mana) {
-    const symbols = String(mana || "").match(/\{[^{}]+\}/g);
-    if (!symbols) return "";
-    return `<span class="cv-mana">${symbols.map(s => {
+  // manaSymbols() reads the cost once for both renderers: manaCostHtml()
+  // for the list, manaCostNode() for the card preview, which builds DOM.
+  function manaSymbols(mana) {
+    return (String(mana || "").match(/\{[^{}]+\}/g) || []).map(s => {
       const t = s.slice(1, -1).toUpperCase();
-      return `<span class="mana-pip cv-pip pip-${/^[WUBRG]$/.test(t) ? t.toLowerCase() : "c"}">${escapeHtml(t)}</span>`;
-    }).join("")}</span>`;
+      return { t, cls: `mana-pip cv-pip pip-${/^[WUBRG]$/.test(t) ? t.toLowerCase() : "c"}` };
+    });
+  }
+  function manaCostHtml(mana) {
+    const symbols = manaSymbols(mana);
+    if (!symbols.length) return "";
+    return `<span class="cv-mana">${symbols.map(s => `<span class="${s.cls}">${escapeHtml(s.t)}</span>`).join("")}</span>`;
+  }
+  function manaCostNode(mana) {
+    const symbols = manaSymbols(mana);
+    if (!symbols.length) return null;
+    const box = cvEl("span", "cv-mana");
+    box.append(cvEl("span", "sr-only", "Mana cost "));
+    for (const sym of symbols) box.append(cvEl("span", sym.cls, sym.t));
+    return box;
+  }
+  // A new element with a class and text. Text goes in as a text node, never
+  // as markup, so card and glossary text can never become HTML.
+  function cvEl(tag, cls, text) {
+    const el = document.createElement(tag);
+    if (cls) el.className = cls;
+    if (text != null) el.textContent = text;
+    return el;
   }
 
   // What fills the image box of a tile: the card image, or a text stand in
@@ -4467,12 +4655,15 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
   // links go to the product page (a tcg_id is digits only, checked on
   // load); Card Kingdom links search for the name, by the front face name
   // because that is how it lists a card with several faces.
+  function cardPriceHref(e, vendor) {
+    return vendor === "tcg"
+      ? (e.tcg_id ? safeUrl(`https://www.tcgplayer.com/product/${e.tcg_id}`) : "#")
+      : safeUrl(`https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=${encodeURIComponent(e.name.split(" // ")[0])}`);
+  }
   function cardPriceHtml(e, vendor) {
     const tcg = vendor === "tcg";
     const price = tcg ? e.tcg : e.ck;
-    const href = tcg
-      ? (e.tcg_id ? safeUrl(`https://www.tcgplayer.com/product/${e.tcg_id}`) : "#")
-      : safeUrl(`https://www.cardkingdom.com/catalog/search?filter%5Bname%5D=${encodeURIComponent(e.name.split(" // ")[0])}`);
+    const href = cardPriceHref(e, vendor);
     const amount = price != null ? `$${price.toFixed(2)}` : `<span aria-hidden="true">n/a</span><span class="sr-only">no price</span>`;
     const inner = `<span class="cv-vendor" aria-hidden="true">${tcg ? "TCG" : "CK"} </span>${amount}<span class="sr-only"> at ${tcg ? "TCGPlayer" : "Card Kingdom"} for ${escapeHtml(cardLabel(e))}</span>`;
     const cls = `cv-price${tcg ? " cv-tcg" : ""}${price == null ? " none" : ""}`;
@@ -4496,7 +4687,10 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
   // count: about N.N copies per box when a box holds one or more on average,
   // else the chance of at least one in the box (1 - (1 - pack) ** packs)
   // with "1 in N packs" beside it. Without a pack count: "1 in N packs"
-  // only. The title spells the figures out.
+  // only. The title spells the figures out. The file rounds odds to 6
+  // digits, so a card that a box holds once on average can come out at
+  // 0.99999x: ODDS_PER_BOX_MIN allows for that.
+  const ODDS_PER_BOX_MIN = 0.99995;
   function oddsText(e) {
     const n = Math.round(1 / e.pack);
     const perPack = n <= 1 ? "in about every pack" : `1 in ${n.toLocaleString("en-US")} packs`;
@@ -4507,7 +4701,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     const chance = 1 - Math.pow(1 - e.pack, e.packs);
     const expected = e.copies * e.packs;
     const title = `${lead} Chance of at least one in a ${e.packs} pack box: ${pctText(chance, true)}, assuming packs are independent.`;
-    if (expected >= 1) {
+    if (expected >= ODDS_PER_BOX_MIN) {
       return { main: `about ${expected.toFixed(1)} per box`, sub: "", title: `${title} About ${expected.toFixed(1)} copies per box on average.` };
     }
     return { main: pctText(chance), sub: perPack, title };
@@ -4523,7 +4717,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
   function cardTileHtml(e) {
     const badges = cardBadgesHtml(e, true);
     return `<li class="cv-tile">`
-      + `<button type="button" class="cv-open" data-cv-entry="${e.idx}"><span class="cv-img">${cardFaceHtml(e)}</span><span class="cv-name" aria-hidden="true">${escapeHtml(e.name)}</span></button>`
+      + `<button type="button" class="cv-open" data-cv-entry="${e.idx}" aria-haspopup="dialog" aria-expanded="false"><span class="cv-img">${cardFaceHtml(e)}</span><span class="cv-name" aria-hidden="true">${escapeHtml(e.name)}</span></button>`
       + (badges ? `<span class="cv-badges">${badges}</span>` : "")
       + `<span class="cv-prices">${cardPriceHtml(e, "tcg")}${cardPriceHtml(e, "ck")}</span>`
       + (e.pack != null ? cardOddsHtml(e) : "")
@@ -4536,7 +4730,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     const deck = e.pack == null;
     return `<tr class="cv-row" role="row">`
       + (deck ? `<td class="c-qty" role="cell">${e.qty}</td>` : "")
-      + `<td class="c-name" role="cell"><button type="button" class="cv-open" data-cv-entry="${e.idx}"><span class="cv-name">${escapeHtml(e.name)}</span></button>${cardBadgesHtml(e, false)}</td>`
+      + `<td class="c-name" role="cell"><button type="button" class="cv-open" data-cv-entry="${e.idx}" aria-haspopup="dialog" aria-expanded="false"><span class="cv-name">${escapeHtml(e.name)}</span></button>${cardBadgesHtml(e, false)}</td>`
       + `<td class="c-type" role="cell">${escapeHtml(e.type)}</td>`
       + `<td class="c-mana" role="cell">${manaCostHtml(e.mana)}</td>`
       + `<td class="c-tcg" role="cell">${cardPriceHtml(e, "tcg")}</td>`
@@ -4641,6 +4835,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
   }
   // Everything under the title bar, back to nothing.
   function emptyCardList() {
+    closeCardPreview("none");
     $("cvTabs").hidden = true;
     $("cvTabs").innerHTML = "";
     $("cvPanel").removeAttribute("role");
@@ -4841,6 +5036,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
   // adds the next step). keepDrawn redraws as many as were already there.
   function drawCardList(keepDrawn = false) {
     const v = CARD_VIEW, body = $("cvBody");
+    closeCardPreview("auto");   // its button is about to go
     body.removeAttribute("aria-busy");
     if (!v.shown.length) {
       v.drawn = 0;
@@ -4911,6 +5107,558 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
   async function loadCardView() {
     const saved = await loadKey("cardview");
     if (saved === "grid" || saved === "list") CARD_VIEW.view = saved;
+  }
+
+  // ----- Card preview -----
+  // One panel, #cvPreview, shows the details of one entry beside its .cv-open
+  // button. A mouse that rests on the button (PV_OPEN_MS) or keyboard focus
+  // shows it; a click, tap or Enter pins it, which moves focus into it, keeps
+  // Tab inside it and shows its Close button. Unpinned it closes PV_CLOSE_MS
+  // after the pointer and focus have left both the button and the panel, so
+  // the pointer can travel from the tile into the panel. Under 640px only a
+  // pinned preview shows, as a bottom sheet. The panel is built for the one
+  // entry on show, with DOM methods only (no markup from card text).
+  const PV_OPEN_MS = 250;
+  const PV_SWITCH_MS = 150;    // the pause when another preview is already open
+  const PV_CLOSE_MS = 200;
+  const PV_GAP = 12;           // between the button and the panel
+  const PV_EDGE = 8;           // kept clear at the viewport edges
+  const PV_NARROW = window.matchMedia("(max-width: 639.98px)");
+  const PV = {
+    entry: null,       // the entry on show, or null when closed
+    opener: null,      // its .cv-open button
+    pinned: false,
+    back: false,       // showing the back face image
+    openTimer: 0,
+    closeTimer: 0,
+    quiet: null,       // a button given focus back by script: that focus opens nothing
+    holdHover: false,  // set when Escape closes a preview: hover opens nothing until the mouse moves
+    frame: 0,          // a queued reposition
+  };
+  let lastPointerType = "mouse";
+
+  const cvBack = e => (e.faces && e.faces[1]) || null;
+  function setOpenerExpanded(btn, on) {
+    if (!btn) return;
+    btn.setAttribute("aria-expanded", on ? "true" : "false");
+    if (on) btn.setAttribute("aria-controls", "cvPreview"); else btn.removeAttribute("aria-controls");
+  }
+
+  // The image box: the display image of the face on show, or a text stand in
+  // when there is none or it fails (see onPreviewImageError).
+  function previewArtFill(e) {
+    const art = $("cvPvArt");
+    if (!art) return;
+    art.textContent = "";
+    const back = PV.back ? cvBack(e) : null;
+    const url = cardImageUrl(e.img, "display", PV.back ? "back" : "front");
+    if (!url) { art.append(previewStandIn(e)); return; }
+    const img = document.createElement("img");
+    img.referrerPolicy = "no-referrer";
+    img.alt = PV.back ? (back && back.name ? back.name : `${e.name}, back face`) : e.name;
+    img.width = 672;
+    img.height = 936;
+    img.decoding = "async";
+    img.src = url;
+    art.append(img);
+  }
+  function previewStandIn(e) {
+    const face = PV.back ? cvBack(e) : null;
+    const box = cvEl("span", "cv-fallback");
+    box.append(cvEl("span", "cv-fb-name", face ? face.name : e.name));
+    const mana = manaCostNode(face ? face.mana : e.mana);
+    if (mana) box.append(mana);
+    box.append(cvEl("span", "cv-fb-type", face ? face.type : e.type));
+    return box;
+  }
+  // Image error events do not bubble, so the panel listens in the capture
+  // phase.
+  function onPreviewImageError(ev) {
+    const img = ev.target;
+    if (!(img instanceof HTMLImageElement) || !img.closest("#cvPvArt") || !PV.entry) return;
+    img.replaceWith(previewStandIn(PV.entry));
+  }
+
+  // One price as the tile shows it: a link to the vendor when a safe one can
+  // be built, else plain text; "n/a" when missing.
+  function previewPriceNode(e, vendor) {
+    const tcg = vendor === "tcg";
+    const price = tcg ? e.tcg : e.ck;
+    const href = cardPriceHref(e, vendor);
+    const node = href !== "#" ? cvEl("a") : cvEl("span");
+    node.className = `cv-price${tcg ? " cv-tcg" : ""}${price == null ? " none" : ""}`;
+    if (href !== "#") {
+      node.href = href;
+      node.target = "_blank";
+      node.rel = "noopener noreferrer";
+    }
+    if (price != null) node.append(`$${price.toFixed(2)}`);
+    else {
+      const na = cvEl("span", null, "n/a");
+      na.setAttribute("aria-hidden", "true");
+      node.append(na, cvEl("span", "sr-only", "no price"));
+    }
+    node.append(cvEl("span", "sr-only", ` at ${tcg ? "TCGPlayer" : "Card Kingdom"} for ${cardLabel(e)}`));
+    if (href !== "#") {
+      const arrow = cvEl("span", "cv-pv-arrow", " →");
+      arrow.setAttribute("aria-hidden", "true");
+      node.append(arrow);
+    }
+    return node;
+  }
+
+  // One face: name and mana cost, type line, rules text.
+  function previewFaceNode(face, withName) {
+    const box = cvEl("div", "cv-pv-face");
+    const head = cvEl("p", "cv-pv-fhead");
+    if (withName) head.append(cvEl("span", "cv-pv-fname", face.name));
+    const mana = manaCostNode(face.mana);
+    if (mana) head.append(mana);
+    if (head.childNodes.length) box.append(head);
+    if (face.type) box.append(cvEl("p", "cv-pv-type", face.type));
+    if (face.text) box.append(rulesTextNode(face.text));
+    return box;
+  }
+
+  function buildCardPreview(e) {
+    const body = $("cvPvBody"), v = CARD_VIEW;
+    hideKwTip();
+    PV.back = false;
+    body.textContent = "";
+
+    const media = cvEl("div", "cv-pv-media");
+    const art = cvEl("div", "cv-pv-art");
+    art.id = "cvPvArt";
+    media.append(art);
+    if (e.back && e.img) {
+      const flip = cvEl("button", "cv-btn cv-pv-flip", "Show back face");
+      flip.type = "button";
+      flip.dataset.cvFlip = "";
+      media.append(flip);
+    }
+
+    const top = cvEl("div", "cv-pv-top");
+    const name = cvEl("h3", "cv-pv-name", e.name);
+    name.id = "cvPvName";
+    const close = cvEl("button", "compare-modal-close cv-pv-close", "Close ×");
+    close.type = "button";
+    close.dataset.cvPvClose = "";
+    close.setAttribute("aria-label", "Close card details");
+    top.append(name, close);
+
+    const info = cvEl("div", "cv-pv-info");
+    const meta = [e.set && e.num ? `${e.set} ${e.num}` : e.set, e.rarity ? e.rarity[0].toUpperCase() + e.rarity.slice(1) : ""];
+    if (e.finish !== "nonfoil") meta.push(FINISH_LABEL[e.finish]);
+    if (e.board === "commander") meta.push("Commander");
+    if (e.qty > 1) meta.push(`${e.qty} copies`);
+    const metaText = meta.filter(Boolean).join(" · ");
+    if (metaText) info.append(cvEl("p", "cv-pv-meta", metaText));
+    if (e.faces) e.faces.forEach(f => info.append(previewFaceNode(f, true)));
+    else info.append(previewFaceNode({ name: e.name, type: e.type, mana: e.mana, text: e.text }, false));
+
+    if (e.pack != null) {
+      const o = oddsText(e);
+      const kind = v.data && v.data.kinds ? v.data.kinds.get(e.kind) : null;
+      const odds = cvEl("div", "cv-pv-odds");
+      odds.append(cvEl("p", "cv-pv-label", kind ? `Pull odds · ${kind.label}` : "Pull odds"));
+      const line = cvEl("p", "cv-pv-oddsline");
+      line.append(cvEl("strong", null, o.main));
+      if (o.sub) line.append(" ", cvEl("span", "cv-odds-sub", o.sub));
+      odds.append(line, cvEl("p", "cv-pv-note", o.title));
+      info.append(odds);
+    }
+
+    const prices = cvEl("dl", "cv-pv-prices");
+    for (const [vendor, label] of [["tcg", "TCGPlayer retail"], ["ck", "Card Kingdom retail"]]) {
+      const row = cvEl("div");
+      const dd = cvEl("dd");
+      dd.append(previewPriceNode(e, vendor));
+      row.append(cvEl("dt", null, label), dd);
+      prices.append(row);
+    }
+    info.append(prices);
+    if (e.qty > 1) info.append(cvEl("p", "cv-pv-note", "Prices are for one copy."));
+
+    body.append(top, media, info);
+    previewArtFill(e);
+  }
+
+  // Show the preview of one button's entry. pin is true for a click, tap or
+  // Enter; hover and focus open it unpinned, and never on a narrow screen.
+  function openCardPreview(opener, pin) {
+    const e = cardEntryOf(opener), panel = $("cvPreview");
+    clearTimeout(PV.openTimer);
+    clearTimeout(PV.closeTimer);
+    if (!e || (!pin && PV_NARROW.matches)) return;
+    if (PV.opener !== opener) setOpenerExpanded(PV.opener, false);
+    if (PV.entry !== e || panel.hidden) buildCardPreview(e);
+    PV.entry = e;
+    PV.opener = opener;
+    setOpenerExpanded(opener, true);
+    setPreviewPinned(pin);
+    panel.hidden = false;
+    placeCardPreview();
+    loadKeywords();
+  }
+  function setPreviewPinned(on) {
+    PV.pinned = on;
+    $("cvPreview").classList.toggle("is-pinned", on);
+  }
+  // refocus: "opener" puts focus back on the button; "auto" does so only
+  // when focus was in the panel (which is about to go), "none" never.
+  function closeCardPreview(refocus = "auto") {
+    clearTimeout(PV.openTimer);
+    clearTimeout(PV.closeTimer);
+    cancelAnimationFrame(PV.frame);
+    const panel = $("cvPreview");
+    if (panel.hidden) return false;
+    hideKwTip();
+    const opener = PV.opener;
+    const hadFocus = panel.contains(document.activeElement);
+    panel.hidden = true;
+    panel.classList.remove("is-sheet");
+    setPreviewPinned(false);
+    setOpenerExpanded(opener, false);
+    PV.entry = PV.opener = null;
+    if (refocus === "opener" || (refocus === "auto" && hadFocus)) {
+      if (opener && opener.isConnected) { PV.quiet = opener; opener.focus({ preventScroll: true }); }
+      else if (hadFocus) $("cardsModalClose").focus();
+    }
+    return true;
+  }
+  // A click, tap or Enter on a card: pin its preview and move focus into it,
+  // or close the preview when it is already pinned to this card.
+  function toggleCardPreview(opener) {
+    if (PV.pinned && PV.opener === opener) { closeCardPreview("opener"); return; }
+    openCardPreview(opener, true);
+    $("cvPreview").focus({ preventScroll: true });
+  }
+  // Close an unpinned preview soon, unless the pointer or focus is still on
+  // its button or in the panel by then.
+  function schedulePreviewCheck() {
+    clearTimeout(PV.closeTimer);
+    PV.closeTimer = setTimeout(() => {
+      const panel = $("cvPreview"), o = PV.opener;
+      if (panel.hidden || PV.pinned) return;
+      const hot = panel.matches(":hover") || panel.contains(document.activeElement)
+        || (o && (o.matches(":hover") || o.matches(":focus-visible")));
+      if (!hot) closeCardPreview("none");
+    }, PV_CLOSE_MS);
+  }
+
+  // Beside the button: to its right, else its left, else below or above it,
+  // always inside the viewport (the dialog's scrollbar left out). A narrow
+  // screen gets the bottom sheet, placed by CSS.
+  function placeCardPreview() {
+    const panel = $("cvPreview"), o = PV.opener;
+    if (panel.hidden || !o) return;
+    const sheet = PV_NARROW.matches;
+    panel.classList.toggle("is-sheet", sheet);
+    if (sheet) { panel.style.left = panel.style.top = ""; placeKwTip(); return; }
+    const vw = $("cardsModal").clientWidth || document.documentElement.clientWidth, vh = window.innerHeight;
+    const r = o.getBoundingClientRect(), w = panel.offsetWidth, h = panel.offsetHeight;
+    let left = null, top;
+    if (r.right + PV_GAP + w <= vw - PV_EDGE) left = r.right + PV_GAP;
+    else if (r.left - PV_GAP - w >= PV_EDGE) left = r.left - PV_GAP - w;
+    if (left != null) top = r.top;
+    else {
+      left = r.left + r.width / 2 - w / 2;
+      top = r.bottom + PV_GAP + h <= vh - PV_EDGE ? r.bottom + PV_GAP : r.top - PV_GAP - h;
+    }
+    panel.style.left = `${Math.round(Math.max(PV_EDGE, Math.min(left, vw - PV_EDGE - w)))}px`;
+    panel.style.top = `${Math.round(Math.max(PV_EDGE, Math.min(top, vh - PV_EDGE - h)))}px`;
+    placeKwTip();
+  }
+  // Scrolling (the dialog or the panel) and resizing move things under the
+  // layers: follow on the next frame. An unpinned preview whose button has
+  // left the viewport closes, and so does one on a screen that became narrow.
+  function onCardLayersMoved() {
+    cancelAnimationFrame(PV.frame);
+    PV.frame = requestAnimationFrame(() => {
+      const panel = $("cvPreview");
+      if (!panel.hidden && !PV.pinned) {
+        const r = PV.opener ? PV.opener.getBoundingClientRect() : null;
+        if (!r || PV_NARROW.matches || r.bottom < 0 || r.top > window.innerHeight) { closeCardPreview("none"); return; }
+      }
+      if (!panel.hidden) placeCardPreview();
+    });
+  }
+
+  // Pointer and focus on the list's .cv-open buttons.
+  function onCardPointerOver(ev) {
+    const o = ev.target.closest(".cv-open");
+    if (!o || ev.pointerType !== "mouse" || PV.pinned || PV_NARROW.matches || PV.holdHover) return;
+    if (PV.opener === o && !$("cvPreview").hidden) { clearTimeout(PV.closeTimer); return; }
+    clearTimeout(PV.openTimer);
+    PV.openTimer = setTimeout(() => { if (o.isConnected && o.matches(":hover")) openCardPreview(o, false); },
+      $("cvPreview").hidden ? PV_OPEN_MS : PV_SWITCH_MS);
+  }
+  function onCardPointerOut(ev) {
+    const o = ev.target.closest(".cv-open");
+    if (!o || o.contains(ev.relatedTarget)) return;
+    clearTimeout(PV.openTimer);
+    if (PV.opener === o) schedulePreviewCheck();
+  }
+  function onCardFocusIn(ev) {
+    const o = ev.target.closest(".cv-open");
+    if (!o) return;
+    if (PV.quiet === o) { PV.quiet = null; return; }
+    // Keyboard focus only: a mouse or touch press focuses the button too,
+    // and its click decides what happens.
+    if (PV.pinned || PV_NARROW.matches || !o.matches(":focus-visible")) return;
+    openCardPreview(o, false);
+  }
+  function onCardFocusOut(ev) {
+    if (PV.quiet === ev.target) PV.quiet = null;
+    if (PV.opener && ev.target === PV.opener) schedulePreviewCheck();
+  }
+  // A click outside a pinned preview closes it. A click on the dim backdrop
+  // then closes only the preview, not the dialog: the innermost layer first.
+  function onCardDialogClickCapture(ev) {
+    const panel = $("cvPreview");
+    if (panel.hidden || !PV.pinned || panel.contains(ev.target) || ev.target.closest(".cv-open")) return;
+    const lost = document.activeElement === document.body || panel.contains(document.activeElement);
+    closeCardPreview(lost ? "opener" : "none");
+    if (ev.target === $("cardsModal")) ev.stopImmediatePropagation();
+  }
+  // Tab stays inside a pinned preview, as in any dialog.
+  function trapPreviewTab(ev) {
+    const panel = $("cvPreview");
+    if (ev.key !== "Tab" || panel.hidden || !PV.pinned || !panel.contains(document.activeElement)) return false;
+    const items = [...panel.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]')]
+      .filter(x => x.getClientRects().length && getComputedStyle(x).visibility !== "hidden");
+    ev.preventDefault();
+    if (!items.length) return true;
+    const at = items.indexOf(document.activeElement);
+    const next = ev.shiftKey ? (at <= 0 ? items.length - 1 : at - 1) : (at < 0 || at === items.length - 1 ? 0 : at + 1);
+    items[next].focus();
+    return true;
+  }
+  // Escape closes the innermost layer: a keyword tooltip, then the preview.
+  // True when it closed one, so the dialog stays open for this key press.
+  function closeCardLayer() {
+    if (!$("cvKwTip").hidden) { hideKwTip(); return true; }
+    const panel = $("cvPreview");
+    if (panel.hidden) return false;
+    const focused = PV.pinned || panel.contains(document.activeElement) || (PV.opener && PV.opener === document.activeElement);
+    // The panel going away puts the resting mouse over some tile, whose
+    // pointerover would open a preview again at once.
+    PV.holdHover = true;
+    closeCardPreview(focused ? "opener" : "none");
+    return true;
+  }
+  function onPreviewClick(ev) {
+    if (ev.target.closest("[data-cv-pv-close]")) { closeCardPreview("opener"); return; }
+    if (ev.target.closest("[data-cv-flip]")) { flipCardPreview(ev.target.closest("[data-cv-flip]")); return; }
+    const kw = ev.target.closest(".cv-kw");
+    if (kw) toggleKwTip(kw, ev.detail === 0 ? "keyboard" : lastPointerType);
+  }
+  function flipCardPreview(btn) {
+    if (!PV.entry) return;
+    PV.back = !PV.back;
+    btn.textContent = PV.back ? "Show front face" : "Show back face";
+    previewArtFill(PV.entry);
+  }
+
+  // ----- Keyword tooltips -----
+  // keywords.json (the glossary) is fetched once, on the first preview, and
+  // compiled once. Until it arrives, or if it fails, rules text shows plain.
+  // When it arrives, the rules text of an open preview is drawn again.
+  const KW = { terms: null, compiled: null, load: null };
+  const KW_KIND = { ability: "Keyword ability", action: "Keyword action", "ability word": "Ability word", token: "Predefined token" };
+  const KW_TEXTS = new WeakMap();   // rules text element -> the text it shows
+  const KWT = { for: null, how: null, hideTimer: 0 };   // the tooltip on show: its control, and "hover", "focus" or "toggle"
+
+  function loadKeywords() {
+    if (KW.load) return KW.load;
+    KW.load = (async () => {
+      try {
+        const res = await fetch("./keywords.json", { cache: "no-cache" });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data || data.schema !== 1 || !data.terms || typeof data.terms !== "object") return;
+        KW.terms = data.terms;
+        KW.compiled = kwCompile(data.terms);
+        hideKwTip();
+        for (const p of $("cvPvBody").querySelectorAll(".cv-pv-text")) fillRulesText(p);
+        if (!$("cvPreview").hidden) placeCardPreview();
+      } catch (e) {
+        // Optional: rules text simply shows without tooltips.
+      }
+    })();
+    return KW.load;
+  }
+
+  // Keyword glossary matcher: the JavaScript twin of the reference rules.
+  // kwCompile(terms) takes the "terms" object of keywords.json; kwFind returns
+  // [{start, end, key}] for one rules text, in text order, never overlapping.
+  function kwEscape(lit) {
+    return lit.replace(/[.*+?^${}()|[\]\\\/-]/g, "\\$&");
+  }
+  function kwCompile(terms) {
+    const out = [];
+    for (const key of Object.keys(terms)) {
+      const t = terms[key];
+      if (!t || t.basic || typeof t.name !== "string") continue;
+      const lits = [t.name].concat(Array.isArray(t.forms) ? t.forms : [])
+        .filter((x) => typeof x === "string" && x)
+        .map((x, i) => [x, i]);
+      lits.sort((a, b) => b[0].length - a[0].length || a[1] - b[1]);
+      const alts = (t.pattern ? ["(?:" + t.pattern + ")"] : []).concat(lits.map((x) => kwEscape(x[0])));
+      let src = "(?:" + alts.join("|") + ")(?![A-Za-z])";
+      if (t.kind === "ability word") src += "(?=(?: [0-9]+)? *—)";
+      try {
+        out.push({ key: key, re: new RegExp(src, "gi") });
+      } catch (e) { /* a pattern this browser cannot read: skip the term */ }
+    }
+    return out;
+  }
+  function kwFind(compiled, text) {
+    const clean = String(text).replace(/\{[^}]*\}/g, (m) => " ".repeat(m.length));
+    const found = [];
+    for (let i = 0; i < compiled.length; i++) {
+      const re = compiled[i].re;
+      re.lastIndex = 0;
+      let m;
+      while ((m = re.exec(clean)) !== null) {
+        const s = m.index, e = s + m[0].length;
+        if (e === s || (s > 0 && /[A-Za-z]/.test(clean.charAt(s - 1)))) {
+          re.lastIndex = s + 1;   // no word boundary before it: look further on
+          continue;
+        }
+        found.push([s, e, i]);
+      }
+    }
+    found.sort((a, b) => a[0] - b[0] || (b[1] - b[0]) - (a[1] - a[0]) || a[2] - b[2]);
+    const out = [];
+    let last = -1;
+    for (const f of found) {
+      if (f[0] >= last) {
+        out.push({ start: f[0], end: f[1], key: compiled[f[2]].key });
+        last = f[1];
+      }
+    }
+    return out;
+  }
+
+  // Rules text, line breaks kept (CSS white-space: pre-line): text nodes for
+  // plain text and, once the glossary is in, a focusable control for each
+  // glossary term found.
+  function rulesTextNode(text) {
+    const p = cvEl("p", "cv-pv-text");
+    KW_TEXTS.set(p, text);
+    fillRulesText(p);
+    return p;
+  }
+  function fillRulesText(p) {
+    const text = KW_TEXTS.get(p) || "";
+    p.textContent = "";
+    let at = 0;
+    for (const hit of KW.compiled ? kwFind(KW.compiled, text) : []) {
+      if (!ownProp(KW.terms, hit.key)) continue;
+      if (hit.start > at) p.append(text.slice(at, hit.start));
+      const k = cvEl("span", "cv-kw", text.slice(hit.start, hit.end));
+      k.tabIndex = 0;
+      k.setAttribute("role", "button");
+      k.dataset.kw = hit.key;
+      p.append(k);
+      at = hit.end;
+    }
+    if (at < text.length) p.append(text.slice(at));
+  }
+
+  function showKwTip(ctl, how) {
+    const t = KW.terms ? ownProp(KW.terms, ctl.dataset.kw) : null;
+    if (!t || typeof t !== "object") return;
+    const tip = $("cvKwTip");
+    clearTimeout(KWT.hideTimer);
+    if (KWT.for !== ctl) {
+      if (KWT.for) KWT.for.removeAttribute("aria-describedby");
+      tip.textContent = "";
+      const head = cvEl("p", "cv-kwtip-head");
+      head.append(cvEl("strong", null, typeof t.name === "string" ? t.name : ctl.textContent));
+      if (KW_KIND[t.kind]) head.append(" ", cvEl("span", "cv-kwtip-kind", KW_KIND[t.kind]));
+      tip.append(head);
+      if (typeof t.text === "string" && t.text) tip.append(cvEl("p", "cv-kwtip-text", t.text));
+      if (typeof t.rule === "string" && t.rule) tip.append(cvEl("p", "cv-kwtip-rule", `Rule ${t.rule}`));
+      KWT.how = how;
+    } else if (how !== "hover") {
+      KWT.how = how;   // a hover tip that was clicked or focused stays
+    }
+    KWT.for = ctl;
+    ctl.setAttribute("aria-describedby", "cvKwTip");
+    tip.hidden = false;
+    placeKwTip();
+  }
+  function hideKwTip() {
+    clearTimeout(KWT.hideTimer);
+    const tip = $("cvKwTip");
+    if (KWT.for) KWT.for.removeAttribute("aria-describedby");
+    KWT.for = KWT.how = null;
+    if (tip) tip.hidden = true;
+  }
+  // Above the term, else below it, always inside the viewport, and never
+  // over the card image: beside the image it keeps to the right of it, and
+  // where the image is above the text (the sheet) it goes below the term
+  // when above would cover the image. A term that wraps onto two lines is
+  // measured by its first line.
+  function placeKwTip() {
+    const tip = $("cvKwTip"), ctl = KWT.for;
+    if (tip.hidden || !ctl) return;
+    const box = $("cvPreview").getBoundingClientRect();
+    const r = ctl.getClientRects()[0] || ctl.getBoundingClientRect();
+    if (!ctl.isConnected || r.bottom < box.top || r.top > box.bottom) { hideKwTip(); return; }
+    const vw = $("cardsModal").clientWidth || document.documentElement.clientWidth, vh = window.innerHeight;
+    const w = tip.offsetWidth, h = tip.offsetHeight;
+    const artEl = $("cvPvArt"), art = artEl ? artEl.getBoundingClientRect() : null;
+    const maxLeft = vw - PV_EDGE - w;
+    const minLeft = art && art.right < r.left ? Math.min(art.right + 8, maxLeft) : PV_EDGE;
+    const left = Math.max(PV_EDGE, Math.min(Math.max(r.left + r.width / 2 - w / 2, minLeft), maxLeft));
+    const covers = t => art && left < art.right && left + w > art.left && t < art.bottom && t + h > art.top;
+    let top = r.top - 8 - h;
+    if (top < PV_EDGE || covers(top)) top = r.bottom + 8;
+    tip.style.left = `${Math.round(left)}px`;
+    tip.style.top = `${Math.round(Math.max(PV_EDGE, Math.min(top, vh - PV_EDGE - h)))}px`;
+  }
+  // A click, tap, Enter or Space. With a mouse it keeps the hover tip open
+  // after the pointer leaves; otherwise it shows or hides the tip.
+  function toggleKwTip(ctl, how) {
+    if (KWT.for === ctl && KWT.how !== "hover" && how !== "mouse") { hideKwTip(); return; }
+    if (KWT.for === ctl && KWT.how === "toggle") { hideKwTip(); return; }
+    showKwTip(ctl, "toggle");
+  }
+  // A hover tip closes soon after the pointer leaves the term and the tip.
+  function scheduleKwCheck() {
+    clearTimeout(KWT.hideTimer);
+    KWT.hideTimer = setTimeout(() => {
+      if (!KWT.for || KWT.how !== "hover") return;
+      if (!KWT.for.matches(":hover") && !$("cvKwTip").matches(":hover")) hideKwTip();
+    }, 150);
+  }
+  function onKwPointerOver(ev) {
+    if (ev.pointerType !== "mouse") return;
+    if (ev.target.closest("#cvKwTip")) { clearTimeout(KWT.hideTimer); return; }
+    const k = ev.target.closest(".cv-kw");
+    if (k) showKwTip(k, "hover");
+  }
+  function onKwPointerOut(ev) {
+    if (ev.pointerType !== "mouse" || !KWT.for) return;
+    const from = ev.target.closest(".cv-kw, #cvKwTip");
+    if (from && !from.contains(ev.relatedTarget)) scheduleKwCheck();
+  }
+  function onKwFocusIn(ev) {
+    const k = ev.target.closest(".cv-kw");
+    if (k && k.matches(":focus-visible")) showKwTip(k, "focus");
+  }
+  function onKwFocusOut(ev) {
+    const k = ev.target.closest(".cv-kw");
+    if (k && KWT.for === k && KWT.how !== "hover") hideKwTip();
+  }
+  function onKwKeyDown(ev) {
+    const k = ev.target.closest(".cv-kw");
+    if (!k || (ev.key !== "Enter" && ev.key !== " ")) return;
+    ev.preventDefault();
+    toggleKwTip(k, "keyboard");
   }
 
   // ---------- Compare view ----------
@@ -5382,8 +6130,8 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
       });
     });
 
-    // Card list dialog. Its clicks are delegated here; the .cv-open buttons
-    // (a card's image and name) get no handler in this block.
+    // Card list dialog. Its clicks are delegated here; a click on a .cv-open
+    // button (a card's image and name) pins that card's preview.
     const cardsModal = $("cardsModal");
     $("cardsModalClose").addEventListener("click", closeModal);
     // Only a click that starts and ends on the dim backdrop closes the
@@ -5392,6 +6140,8 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     cardsModal.addEventListener("pointerdown", e => { backdropDown = e.target === cardsModal; });
     cardsModal.addEventListener("click", e => {
       if (e.target === cardsModal) { if (backdropDown) closeModal(); return; }
+      const card = e.target.closest(".cv-open");
+      if (card) { toggleCardPreview(card); return; }
       const tab = e.target.closest(".cv-tab");
       if (tab) { showBoxKind(tab.dataset.cvKind); return; }
       const view = e.target.closest("[data-cv-view]");
@@ -5422,8 +6172,43 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     for (const id of ["cvGroup", "cvSort", "cvFinish", "cvRarity"]) $(id).addEventListener("change", applyCardFilters);
     cardsModal.addEventListener("error", onCardImageError, true);
 
+    // Card preview and keyword tooltips (see "Card preview" above).
+    const cvBody = $("cvBody"), cvPreview = $("cvPreview");
+    cvBody.addEventListener("pointerover", onCardPointerOver);
+    cvBody.addEventListener("pointermove", e => {
+      if (PV.holdHover && e.pointerType === "mouse") { PV.holdHover = false; onCardPointerOver(e); }
+    });
+    cvBody.addEventListener("pointerout", onCardPointerOut);
+    cvBody.addEventListener("focusin", onCardFocusIn);
+    cvBody.addEventListener("focusout", onCardFocusOut);
+    cvPreview.addEventListener("pointerenter", () => clearTimeout(PV.closeTimer));
+    cvPreview.addEventListener("pointerleave", schedulePreviewCheck);
+    // Focus that moves into an unpinned preview pins it.
+    cvPreview.addEventListener("focusin", e => {
+      if (!PV.pinned && !cvPreview.hidden) setPreviewPinned(true);
+      onKwFocusIn(e);
+    });
+    cvPreview.addEventListener("focusout", e => { onKwFocusOut(e); schedulePreviewCheck(); });
+    cvPreview.addEventListener("click", onPreviewClick);
+    cvPreview.addEventListener("keydown", onKwKeyDown);
+    cvPreview.addEventListener("pointerover", onKwPointerOver);
+    cvPreview.addEventListener("pointerout", onKwPointerOut);
+    cvPreview.addEventListener("error", onPreviewImageError, true);
+    cardsModal.addEventListener("click", onCardDialogClickCapture, true);
+    cardsModal.addEventListener("scroll", onCardLayersMoved, { capture: true, passive: true });
+    window.addEventListener("resize", onCardLayersMoved);
+    document.addEventListener("pointerdown", e => { lastPointerType = e.pointerType || "mouse"; }, true);
+
     document.addEventListener("keydown", e => {
-      if (e.key === "Escape" && openModalEl) { e.preventDefault(); closeModal(); return; }
+      // Escape closes the innermost layer only: a keyword tooltip or card
+      // preview before the dialog under it.
+      if (e.key === "Escape" && openModalEl) {
+        e.preventDefault();
+        if (openModalEl.id === "cardsModal" && closeCardLayer()) return;
+        closeModal();
+        return;
+      }
+      if (trapPreviewTab(e)) return;
       trapTab(e);
     });
 
