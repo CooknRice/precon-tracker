@@ -948,6 +948,182 @@ def test_cards_index():
         f"{len(wrong)} of {len(chase)} chase cards are not indexed under their deck, e.g. {wrong[:3]}"
 
 
+CARD_NAME_RE = re.compile(r"^[a-z0-9-]+\.json$")
+CARD_UUID_RE = re.compile(r"^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$")
+CARD_FINISHES = ("nonfoil", "foil", "etched")
+CARD_KINDS = {"play", "draft", "set", "collector", "jumpstart", "booster"}
+DECK_FILE_KEYS = ["schema", "deck_id", "name", "source", "updated_at", "totals", "fetched", "cards", "prices"]
+BOX_FILE_KEYS = ["schema", "set", "code", "updated_at", "kinds", "fetched", "cards", "prices"]
+
+
+def _card_file(rel: str) -> dict:
+    """One card file (cards/decks or cards/boxes), strict JSON, with its two
+    parallel lists checked to line up: prices[i] belongs to cards[i]."""
+    f = ROOT / rel
+    assert f.is_file() and not f.is_symlink(), f"{rel} is missing"
+    doc = _load(f)
+    assert isinstance(doc, dict) and doc.get("schema") == 1, f"{rel}: not a schema 1 card file"
+    assert isinstance(doc.get("cards"), list) and isinstance(doc.get("prices"), list) \
+        and len(doc["cards"]) == len(doc["prices"]), f"{rel}: cards and prices differ in length"
+    return doc
+
+
+def _card_shared(c, where: str):
+    assert isinstance(c, dict), f"{where}: not an object"
+    assert isinstance(c.get("uuid"), str) and CARD_UUID_RE.match(c["uuid"]), f"{where}: uuid"
+    for k in ("name", "type", "mana", "text", "rarity", "set", "num"):
+        assert isinstance(c.get(k), str), f"{where}: {k}"
+    assert c["name"], f"{where}: empty name"
+    assert c.get("img") is None or (isinstance(c["img"], str) and CARD_UUID_RE.match(c["img"])), \
+        f"{where}: img is not a Scryfall id"
+    assert c.get("tcg_id") is None or (isinstance(c["tcg_id"], str) and c["tcg_id"].isdigit()), \
+        f"{where}: tcg_id is not digits"
+    assert c.get("colors") == [x for x in "WUBRG" if x in (c.get("colors") or [])], f"{where}: colors"
+    assert num(c.get("mv")), f"{where}: mv"
+    assert c.get("back", True) is True, f"{where}: back"
+    faces = c.get("faces")
+    assert faces is None or (isinstance(faces, list) and len(faces) >= 2 and all(
+        isinstance(x, dict) and all(isinstance(x.get(k), str) for k in ("name", "type", "mana", "text"))
+        for x in faces)), f"{where}: faces"
+    assert isinstance(c.get("keywords"), list), f"{where}: keywords"
+
+
+def _price_pair(p, where: str):
+    assert isinstance(p, list) and len(p) == 2, f"{where}: price line {p!r}"
+    for v in p:
+        assert v is None or (num(v) and 0 < v < 100000 and round(v, 2) == v), f"{where}: price {v!r}"
+
+
+def test_card_files_decks():
+    """Deck card lists (cards/decks/<deck id>.json): every crack entry points
+    at its file, the file lines up (one price line per card) and adds up to
+    the crack value: card count, both vendor totals, missing cards."""
+    prices = load("prices.json")
+    crack = prices.get("crack", {})
+    folder = ROOT / "cards" / "decks"
+    on_disk = {f.name for f in folder.iterdir()} if folder.is_dir() else set()
+    pointed = set()
+    for did, cr in crack.items():
+        rel = cr.get("cards_file")
+        if rel is None:
+            continue
+        assert rel == f"cards/decks/{did}.json", f"crack {did}: cards_file {rel!r}"
+        pointed.add(rel.rsplit("/", 1)[1])
+        doc = _card_file(rel)
+        assert list(doc) == DECK_FILE_KEYS, f"{rel}: keys {list(doc)}"
+        assert doc["deck_id"] == did, f"{rel}: deck_id {doc['deck_id']!r}"
+        if not cr.get("carried_from"):
+            assert doc["updated_at"] == prices["updated_at"], f"{rel}: written by another run"
+        boards = [r.get("board") for r in doc["cards"]]
+        assert set(boards) <= {"commander", "main"} and boards == sorted(boards, key=lambda b: b != "commander"), \
+            f"{rel}: boards out of order"
+        qty = tcg = ck = 0
+        missing = 0
+        for i, (r, p) in enumerate(zip(doc["cards"], doc["prices"])):
+            where = f"{rel} row {i}"
+            _card_shared(r, where)
+            _price_pair(p, where)
+            assert r.get("finish") in CARD_FINISHES, f"{where}: finish"
+            assert isinstance(r.get("qty"), int) and r["qty"] > 0, f"{where}: qty"
+            qty += r["qty"]
+            tcg += r["qty"] * (p[0] or 0)
+            ck += r["qty"] * (p[1] or 0)
+            missing += r["qty"] if p[0] is None and p[1] is None else 0
+        t = doc["totals"]
+        assert qty == t["cards"] == cr["card_count"], f"{rel}: {qty} cards, totals {t['cards']}, crack {cr['card_count']}"
+        assert missing == t["missing"] == cr["missing"], f"{rel}: missing {missing}, crack {cr['missing']}"
+        for key, total in (("tcg", tcg), ("cardkingdom", ck)):
+            if cr.get(key) is not None:
+                assert abs(total - cr[key]) < 0.01 and t[key] == cr[key], \
+                    f"{rel}: {key} rows add up to {total:.2f}, crack says {cr[key]}"
+    stray = sorted(n for n in on_disk - pointed if not PENDING)
+    assert not stray, f"deck card files nothing points at: {stray}"
+    assert all(CARD_NAME_RE.match(n) for n in on_disk), f"odd names in cards/decks: {sorted(on_disk)}"
+
+
+def test_card_files_boxes():
+    """Box card lists (cards/boxes/<set code>.json): every pointer names a
+    file and a kind in it; the price lines line up with the finishes that
+    have odds; odds are probabilities; per kind the expected copies add up to
+    the pack size, and the cards worth $1 or more rebuild the published EV."""
+    prices = load("prices.json")
+    folder = ROOT / "cards" / "boxes"
+    on_disk = {f.name for f in folder.iterdir()} if folder.is_dir() else set()
+    bulk = (prices.get("box_ev_basis") or {}).get("bulk_threshold", 1.0)
+    pointed = {}
+    for set_name, rows in prices.get("boxes", {}).items():
+        for r in rows:
+            if "cards_file" not in r and "cards_kind" not in r:
+                continue
+            rel, kind = r.get("cards_file"), r.get("cards_kind")
+            assert isinstance(rel, str) and re.fullmatch(r"cards/boxes/[a-z0-9-]+\.json", rel), \
+                f"box {set_name}/{r.get('type')}: cards_file {rel!r}"
+            assert kind in CARD_KINDS, f"box {set_name}/{r.get('type')}: cards_kind {kind!r}"
+            pointed.setdefault(rel, []).append((set_name, kind, r))
+    for rel, users in pointed.items():
+        doc = _card_file(rel)
+        assert list(doc) == BOX_FILE_KEYS, f"{rel}: keys {list(doc)}"
+        assert {u[0] for u in users} == {doc["set"]}, f"{rel}: set {doc['set']!r} vs rows of {sorted({u[0] for u in users})}"
+        kinds = doc["kinds"]
+        uuids = set()
+        price = {}
+        for i, (c, p) in enumerate(zip(doc["cards"], doc["prices"])):
+            where = f"{rel} card {i}"
+            _card_shared(c, where)
+            assert c["uuid"] not in uuids, f"{where}: uuid twice"
+            uuids.add(c["uuid"])
+            odds = c.get("odds")
+            assert isinstance(odds, dict) and odds and set(odds) <= set(kinds), f"{where}: odds kinds"
+            fins = [f for f in CARD_FINISHES if any(f in o for o in odds.values())]
+            assert isinstance(p, list) and len(p) == len(fins), f"{where}: {len(p)} price pairs for finishes {fins}"
+            for f, pair in zip(fins, p):
+                _price_pair(pair, where)
+                price[(c["uuid"], f)] = pair[0]
+            for o in odds.values():
+                for f, v in o.items():
+                    assert f in CARD_FINISHES and num(v.get("pack")) and num(v.get("copies")), f"{where}: odds {o}"
+                    assert 0 < v["pack"] <= 1 and v["pack"] <= v["copies"] * (1 + 1e-5), f"{where}: odds {v}"
+        for set_name, kind, r in users:
+            k = kinds.get(kind)
+            where = f"{rel} kind {kind}"
+            assert isinstance(k, dict), f"{where}: not in the file"
+            entries = [(c["uuid"], f, v) for c in doc["cards"] for f, v in (c["odds"].get(kind) or {}).items()]
+            if k.get("unresolved") == 0:
+                total = sum(v["copies"] for _, _, v in entries)
+                assert abs(total - k["pack_size"]) <= 1e-5 * k["pack_size"], \
+                    f"{where}: copies add up to {total}, pack size {k['pack_size']}"
+            if not r.get("carried_from") and r.get("ev") is not None and k.get("packs"):
+                assert k["ev"] == r["ev"], f"{where}: ev {k['ev']} vs prices.json {r['ev']}"
+                ev = k["packs"] * sum(v["copies"] * price[(u, f)] for u, f, v in entries
+                                      if price[(u, f)] is not None and price[(u, f)] >= bulk)
+                assert abs(ev - r["ev"]) <= 0.005 * r["ev"], f"{where}: cards rebuild an EV of {ev:.2f}, published {r['ev']}"
+    names = {rel.rsplit("/", 1)[1] for rel in pointed}
+    assert PENDING or on_disk == names, f"box card files nothing points at: {sorted(on_disk - names)}"
+    assert all(CARD_NAME_RE.match(n) for n in on_disk), f"odd names in cards/boxes: {sorted(on_disk)}"
+
+
+def test_keywords_file():
+    """keywords.json, the glossary behind the keyword tooltips: every term
+    has a known kind, a short definition and a pattern Python can compile
+    (the page skips a term its browser cannot read)."""
+    kw = load("keywords.json")
+    assert kw.get("schema") == 1 and re.fullmatch(r"\d{4}-\d{2}-\d{2}", kw.get("rules_date") or ""), "keywords.json header"
+    terms = kw.get("terms")
+    assert isinstance(terms, dict) and len(terms) >= 300, "keywords.json terms"
+    for key, t in terms.items():
+        where = f"keywords.json {key!r}"
+        assert key == t.get("name", "").lower(), f"{where}: key is not the lowercase name"
+        assert t.get("kind") in ("ability", "action", "ability word", "token"), f"{where}: kind"
+        assert t.get("rule") is None or re.fullmatch(r"\d{3}\.\d+[a-z]?", t["rule"]), f"{where}: rule"
+        assert isinstance(t.get("text"), str) and 0 < len(t["text"]) <= 240, f"{where}: text"
+        assert not re.search("[\u2013\u2014]", t["text"]), f"{where}: dash in the definition"
+        assert isinstance(t.get("forms"), list) and all(isinstance(x, str) and x for x in t["forms"]), f"{where}: forms"
+        assert isinstance(t.get("basic"), bool), f"{where}: basic"
+        if t.get("pattern") is not None:
+            assert "(?<" not in t["pattern"], f"{where}: lookbehind"
+            re.compile(t["pattern"])
+
+
 def test_vendors_cardkingdom():
     """CK vendor map (re-enabled via CK's public pricelist API): keys are real
     deck ids; price positive-or-null; url present; status from a known set."""

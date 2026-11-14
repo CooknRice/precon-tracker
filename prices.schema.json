@@ -120,6 +120,11 @@
             ],
             "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}",
             "description": "Set only when this run's phase was cut short or failed: the value is the previous run's, fetched at this time (at most 3 days before updated_at)."
+          },
+          "cards_file": {
+            "type": "string",
+            "pattern": "^cards/decks/[a-z0-9-]+\\.json$",
+            "description": "The deck's card list (every card with its prices), written by the same run; absent when there is none."
           }
         }
       },
@@ -247,6 +252,23 @@
               ],
               "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}",
               "description": "Set only when this run's phase was cut short or failed: the value is the previous run's, fetched at this time (at most 3 days before updated_at)."
+            },
+            "cards_file": {
+              "type": "string",
+              "pattern": "^cards/boxes/[a-z0-9-]+\\.json$",
+              "description": "The set's box card list (every card a pack can hold, with pull odds); absent when the box type has no MTGJSON booster model."
+            },
+            "cards_kind": {
+              "type": "string",
+              "enum": [
+                "play",
+                "draft",
+                "set",
+                "collector",
+                "jumpstart",
+                "booster"
+              ],
+              "description": "The key of this row's box type inside the card list's kinds."
             }
           }
         }

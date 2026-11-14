@@ -25,7 +25,8 @@ concurrency:
 
 jobs:
   # Runs every third party package (pip installs, the scraper, vendor data)
-  # with a read only token, and hands the three data files to the commit job.
+  # with a read only token, and hands the data files (the three top level
+  # files and the card lists in cards/) to the commit job.
   scrape:
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -76,6 +77,8 @@ jobs:
             prices.json
             prices_history.json
             cards_index.json
+            cards/decks/*.json
+            cards/boxes/*.json
           if-no-files-found: error
           retention-days: 5
 
@@ -98,14 +101,23 @@ jobs:
           path: ${{ runner.temp }}/scraped
 
       - name: Check and place the data files
-        # Only the three expected files, each strict JSON (no NaN or Infinity).
+        # Only the expected files: the three top level files, and card lists
+        # named cards/decks/<id>.json or cards/boxes/<code>.json. Each must
+        # be strict JSON (no NaN or Infinity) and under the size cap. The
+        # card folders are then made to match the artifact exactly, so a
+        # list the scraper dropped is deleted; nothing else is ever deleted.
         run: |
           /usr/bin/python3 - "$RUNNER_TEMP/scraped" <<'PY'
-          import json, math, pathlib, shutil, sys
+          import json, math, pathlib, re, shutil, sys
           src = pathlib.Path(sys.argv[1])
-          want = {"prices.json", "prices_history.json", "cards_index.json"}
+          top = {"prices.json", "prices_history.json", "cards_index.json"}
+          card_re = re.compile(r"cards/(decks|boxes)/[a-z0-9-]+\.json")
           got = {p.relative_to(src).as_posix() for p in src.rglob("*") if p.is_file()}
-          assert got == want, f"unexpected artifact contents: {sorted(got)}"
+          assert top <= got, f"artifact lacks {sorted(top - got)}"
+          odd = sorted(n for n in got - top if not card_re.fullmatch(n))
+          assert not odd, f"unexpected artifact contents: {odd}"
+          cards = sorted(got - top)
+          assert len(cards) <= 1000, f"{len(cards)} card files is far more than expected"
           def bad(x):
               raise ValueError(f"non standard JSON number {x}")
           def finite(x):
@@ -113,11 +125,25 @@ jobs:
               if not math.isfinite(v):
                   raise ValueError(f"number out of range: {x}")
               return v
-          for name in sorted(want):
-              json.loads((src / name).read_text(), parse_constant=bad, parse_float=finite)
-          for name in sorted(want):
+          for name in sorted(got):
+              f = src / name
+              assert f.stat().st_size <= 8_000_000, f"{name} is over 8 MB"
+              json.loads(f.read_text(encoding="utf-8"), parse_constant=bad, parse_float=finite)
+          for name in sorted(top):
               shutil.copyfile(src / name, name)
-          print("artifact OK")
+          if cards:
+              # A run without card lists keeps the committed ones as they are.
+              keep = set(cards)
+              for sub in ("decks", "boxes"):
+                  folder = pathlib.Path("cards") / sub
+                  folder.mkdir(parents=True, exist_ok=True)
+                  for f in folder.iterdir():
+                      rel = f"cards/{sub}/{f.name}"
+                      if card_re.fullmatch(rel) and rel not in keep and f.is_file():
+                          f.unlink()
+              for name in cards:
+                  shutil.copyfile(src / name, name)
+          print(f"artifact OK: 3 data files, {len(cards)} card files")
           PY
 
       - name: Commit updated prices.json
@@ -125,6 +151,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add prices.json prices_history.json cards_index.json
+          git add --all -- cards/decks cards/boxes
           if git diff --staged --quiet; then
             echo "No price changes today."
             exit 0

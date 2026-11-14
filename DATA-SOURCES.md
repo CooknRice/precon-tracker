@@ -17,14 +17,16 @@ preorders, see `IMPROVEMENTS-LOG.md` row 6)
 | **Card Kingdom** | Deck and box retail price, stock count and buylist price | Free official [sealed pricelist API](https://api.cardkingdom.com/api/sealed_pricelist), no auth |
 | **[MTGJSON](https://mtgjson.com/)** | Decklists, per card prices (crack value), sealed product contents (bundles, pack counts), booster models (box EV) | Free, MIT License (see [Attribution and licences](#attribution-and-licences)) |
 | **[ScryCheck](https://scrycheck.com/precons)** | Power score and bracket per deck | Hand entered in `decks.json`; the scraper never calls it |
-| **Wizards of the Coast** | Product names, release dates, recent MSRPs, face commanders | Hand entered in `decks.json` from Wizards product pages, buyers guides and decklists |
+| **Wizards of the Coast** | Product names, release dates, recent MSRPs, face commanders; the Comprehensive Rules behind the keyword glossary | Hand entered in `decks.json` from Wizards product pages, buyers guides and decklists; `keywords.json` written by hand from the rules |
+| **[Scryfall](https://scryfall.com/)** image server | Card images in the card lists | The page links `cards.scryfall.io` directly when a card list is opened; the scraper never calls Scryfall |
 
 Only TCGplayer and Card Kingdom are price **vendors** (places the page sends
 you to buy). Zulus Games and Mana Pool were removed on 2026-10-07 for terms
 reasons, and Amazon was never added (see [Evaluated and rejected](#evaluated-and-rejected)).
 
 The scraper (`scrape_prices.py`) runs once a day in GitHub Actions at 01:23 UTC
-and writes `prices.json`, `prices_history.json` and `cards_index.json`. It
+and writes `prices.json`, `prices_history.json`, `cards_index.json` and the
+card lists in `cards/` (see [Card lists and pull odds](#card-lists-and-pull-odds)). It
 records the publish date of each upstream feed it read in `prices.json`
 `upstream`, for example `{"tcgcsv": "2026-10-29T20:06:01+00:00", "mtgjson": "2026-10-30"}`.
 Counts below are from the run of 2026-10-30 unless a date says otherwise.
@@ -163,6 +165,79 @@ run, about 150 requests; caching it is deferred (see the log).
   stale value is carried. The crack and card index floors count only released
   decks (release date on or before the run), so a preorder never lowers them;
   a released deck still waiting for its decklist does count against them.
+
+---
+
+## Card lists and pull odds
+
+Clicking a deck (or "View all N cards") opens every card of the precon with
+its image and prices; "Cards and pull odds" on a box row opens every card a
+pack of that box can hold, with the chance of pulling it. The scraper writes
+the lists every run from the same MTGJSON files and price lookups the crack
+value and the box EV use, so they add up to those numbers.
+
+- **Files**: `cards/decks/<deck id>.json` (121 today) and
+  `cards/boxes/<set code>.json` (34 today, 70 box types). `prices.json` points
+  at them: `crack[<deck>].cards_file`, and `cards_file` plus `cards_kind` on a
+  box row. Each file lists the card details one per line, then a parallel
+  block of short price lines (`prices[i]` belongs to `cards[i]`), because the
+  prices change daily and the details rarely: measured on two real days, this
+  adds about 140 KB a day to the repository instead of about 620 KB. The
+  folder holds about 20 MB (about 4.4 MB compressed in git).
+- **Deck lists**: one row per decklist entry, commander first, with the
+  finish the crack value priced, TCGplayer and Card Kingdom retail for one
+  copy. The rows add up to the deck's crack totals to the cent. In about 15
+  rows the Card Kingdom price is for another finish than TCGplayer's (Card
+  Kingdom does not sell that finish), exactly as the crack value counts it.
+  Oversized planes and schemes (13 decks have 10 each) are in neither the
+  crack value nor the list.
+- **Box lists and odds**: from MTGJSON's booster model for the same box type
+  the EV uses. Per card and finish the file gives the expected copies per
+  pack and the chance that one pack holds at least one copy; the page shows
+  the chance for the whole box as `1 - (1 - pack) ** packs`, which treats
+  packs as independent (cases are not modelled), or "about N.N per box" when
+  a box holds one or more on average. A sheet that never repeats a card in a
+  pack gives a chance equal to its expected copies; a sheet that allows
+  repeats gives `1 - (1 - w/S) ** k`. The cards worth $1 or more, times their
+  copies, times the pack count, rebuild the published EV within 0.5% (a test
+  checks it every run).
+- **Finishes**: a foil sheet reads the foil price, and a foil sheet whose name
+  says etched (MTGJSON has no etched flag) reads the etched price. That
+  matters for Strixhaven collector boosters, whose etched Mystical Archive
+  cards also exist as far pricier foils under the same MTGJSON id: reading the
+  foil price had put that box's EV at $438.64 instead of $387.27 (fixed
+  2026-11-14). When a printing has no price in the sheet's finish, the entry
+  takes the finish that does have one (about 30 entries).
+- **Checked against simulation** (2026-11-11): 300,000 simulated packs for
+  seven box types, and every box type at 3,000,000 packs, found no entry
+  outside chance apart from the two rules fixed above. Not modelled:
+  `balanceColors` on some draft sheets (it nudges commons toward one of each
+  color), and box toppers.
+- **Other sets and faces**: booster sheets hold cards from other sets (The
+  List, Special Guests, commander sets), and deck files list only the front
+  face of split and adventure cards. Their details come from the previous
+  run's file while they are under 22 to 28 days old (by set code, so they do
+  not all fall due at once), else from that set's MTGJSON file, downloaded at
+  most once a run. A first run downloads 47 extra set files (about 93 MB); a
+  normal day none. What cannot be found is left out that day and counted as
+  `unresolved`.
+- **Safety**: a run that fails its gate writes no card file; a deck or set
+  whose MTGJSON data failed keeps yesterday's file and pointer; a list whose
+  deck or set left the catalog is deleted, and nothing outside `cards/decks`
+  and `cards/boxes` ever is. The commit job accepts only card files named
+  `cards/decks/<id>.json` or `cards/boxes/<code>.json`, each strict JSON under
+  8 MB.
+- **Images**: Scryfall's `grid` (488 by 680) for tiles and `display` (672 by
+  936) for the preview, built only from MTGJSON's Scryfall id. Scryfall's
+  image servers have no rate limits; the images are shown whole, never
+  cropped, recolored or watermarked, as Scryfall asks.
+- **Keyword tooltips**: `keywords.json` holds 410 terms (230 keyword
+  abilities, 81 keyword actions, 76 ability words, 23 predefined tokens),
+  written by hand from the Comprehensive Rules effective 2026-11-06 and
+  checked against 13,438 real card texts. 19 everyday verbs (tap, exile,
+  sacrifice, ...) have entries but are not underlined. The page finds terms
+  with the same rules as a Python reference matcher, verified identical on
+  every card text.
 
 ---
 
@@ -697,3 +772,6 @@ Ranked by value per effort, and both far better value than Amazon:
   card.
 - The footer carries Wizards of the Coast's **Fan Content Policy** notice: MTG
   Tracker is unofficial Fan Content, not approved or endorsed by Wizards.
+- **Scryfall** serves the card images; the footer says so and that Scryfall
+  sees the visitor's IP address when a card list is opened. Card images and
+  rules text are property of Wizards of the Coast.

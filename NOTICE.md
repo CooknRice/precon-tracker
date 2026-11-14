@@ -5,9 +5,10 @@ comes from, and how it is computed, is in [`DATA-SOURCES.md`](DATA-SOURCES.md).
 
 ## MTGJSON
 
-`cards_index.json`, the crack values in `prices.json` (`crack`), the box
-expected values (`boxes[][].ev`) and the bundle contents checks are derived
-from [MTGJSON](https://mtgjson.com/) data, used under the MIT License:
+`cards_index.json`, the card lists in `cards/`, the crack values in
+`prices.json` (`crack`), the box expected values (`boxes[][].ev`) and the
+bundle contents checks are derived from [MTGJSON](https://mtgjson.com/) data,
+used under the MIT License:
 
 ```
 MIT License
@@ -46,7 +47,18 @@ Source: [mtgjson/mtgjson LICENSE.txt](https://github.com/mtgjson/mtgjson/blob/ma
   [scrycheck.com](https://scrycheck.com/precons). They are automated
   estimates; see ScryCheck's [accuracy notes](https://scrycheck.com/about).
 
+## Card images
+
+Card images in the card lists are loaded by the visitor's browser straight
+from [Scryfall](https://scryfall.com/)'s image server (`cards.scryfall.io`)
+and shown whole, as Scryfall's image guidelines ask. Nothing is copied into
+this repository.
+
 ## Wizards of the Coast
+
+The keyword definitions in `keywords.json` are short summaries written for
+this site from the Magic: The Gathering Comprehensive Rules (effective
+2026-11-06).
 
 MTG Tracker is unofficial Fan Content permitted under the
 [Fan Content Policy](https://company.wizards.com/en/legal/fancontentpolicy).

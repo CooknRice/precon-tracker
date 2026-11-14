@@ -12,11 +12,13 @@
 //     cache only when its version changed. Kept in its own cache so a shell
 //     version bump does not wipe offline prices. The cached copy is used on
 //     the same three conditions as the shell; the page shows the data's own
-//     date, so the fallback stays honest.
+//     date, so the fallback stays honest. Card lists (cards/decks and
+//     cards/boxes, up to about 1.4 MB each) are cached only once opened, and
+//     only the MAX_CARD_FILES most recently stored are kept.
 //   - ASSETS (manifest, icons): stale while revalidate, only for the files in
 //     ASSETS, so the cache cannot grow without limit.
 const PREFIX = "mtg-tracker-";
-const CACHE = PREFIX + "v7";         // bump whenever this file or ASSETS change
+const CACHE = PREFIX + "v8";         // bump whenever this file or ASSETS change
 const DATA_CACHE = PREFIX + "data";  // not versioned: survives shell updates
 // Caches this app has ever created (precon-ledger-* is its former name).
 // Cache Storage is shared by every project on the cooknrice.github.io origin,
@@ -34,6 +36,8 @@ const ASSETS = [
 ];
 const ASSET_URLS = new Set(ASSETS.map((u) => new URL(u, self.location).href));
 const DATA_RE = /\.json$/i;
+const CARD_FILE_RE = /\/cards\/(decks|boxes)\/[a-z0-9-]+\.json$/;
+const MAX_CARD_FILES = 12;
 // The JSON the page loads at startup (cards_index.json loads only on demand).
 const DATA_PRECACHE = ["./decks.json", "./prices.json", "./prices_history.json"];
 // How long a navigation or data request waits on the network before it
@@ -182,6 +186,16 @@ async function storeData(key, res) {
     return;
   }
   await cache.put(key, res);
+  if (CARD_FILE_RE.test(new URL(key).pathname)) await trimCardFiles(cache);
+}
+
+// Cache.keys() lists entries in the order they were stored (put replaces an
+// entry at the end), so the oldest card lists come first.
+async function trimCardFiles(cache) {
+  const cards = (await cache.keys()).filter((req) => CARD_FILE_RE.test(new URL(req.url).pathname));
+  for (const req of cards.slice(0, Math.max(0, cards.length - MAX_CARD_FILES))) {
+    await cache.delete(req).catch(() => {});
+  }
 }
 
 function sameVersion(a, b) {
