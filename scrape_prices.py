@@ -1610,8 +1610,10 @@ def _pack_ev_from_booster(booster_cfg: dict, price_of_uuid, bulk_threshold: floa
       - 'sheets': {sheetName: {'totalWeight':N, 'foil':bool, 'cards':{uuid:weight}}}
     EV = sum over booster configs (weighted) of sum over sheet slots of
          (count * expected card value on that sheet).
-    price_of_uuid(uuid, is_foil) returns a float price or None (no price).
-    A sheet's `foil` flag selects the foil finish for the SAME card uuids.
+    price_of_uuid(uuid, sheet_fin) returns a float price or None (no price);
+    sheet_fin is the sheet's finish (sheet_finish), since a sheet's `foil`
+    flag, and for etched sheets its name, select the finish of the SAME card
+    uuids.
     A priced card under `bulk_threshold` is worth 0 (it sells only as bulk).
     Returns (ev, coverage). Coverage is the share of the pack's estimated
     value that comes from priced cards, so an unpriced mythic weighs far more
@@ -1650,7 +1652,7 @@ def _pack_ev_from_booster(booster_cfg: dict, price_of_uuid, bulk_threshold: floa
         own: dict = {}  # rarity -> [value sum, count] of this sheet's priced cards
         if sw:
             for uuid, w in cards.items():
-                p = price_of_uuid(uuid, is_foil)
+                p = price_of_uuid(uuid, sheet_finish(name, sh))
                 if p is None or p <= 0:
                     unpriced.append((uuid, w))
                     continue
@@ -1710,14 +1712,27 @@ def _set_code(set_name: str, setcode_map: dict) -> str | None:
     return setcode_map.get(norm(_clean_set_name(set_name))) or setcode_map.get(norm(set_name))
 
 
-def sheet_price(allp: dict, uuid, is_foil: bool = False) -> tuple:
-    """(TCGplayer retail price, MTGJSON finish) of a card on a booster sheet.
-    Foil sheets reference the same uuids; price the sheet's finish, falling
-    back to the others only when it has no price (etched sheets are marked
-    foil but MTGJSON prices them as 'etched'). (None, None) with no price."""
+def sheet_finish(name: str, sheet: dict) -> str:
+    """The finish a booster sheet's cards come in: 'nonfoil', 'foil' or
+    'etched'. MTGJSON has no etched flag: etched sheets are marked foil and
+    named for it (etchedStaRareMythic in Strixhaven collector boosters). The
+    name matters where one printing exists in both foil and etched: the
+    Mystical Archive cards of an etched sheet are worth far less than the
+    same uuid's foil."""
+    if not sheet.get("foil"):
+        return "nonfoil"
+    return "etched" if "etched" in str(name).lower() else "foil"
+
+
+def sheet_price(allp: dict, uuid, sheet_fin: str = "nonfoil") -> tuple:
+    """(TCGplayer retail price, MTGJSON finish) of a card on a booster sheet
+    of finish `sheet_fin` (sheet_finish). Sheets of every finish reference
+    the same uuids; price the sheet's finish, falling back to the others only
+    when it has no price (a printing that exists in one finish only).
+    (None, None) with no price."""
     paper = (allp.get(uuid) or {}).get("paper", {})
     tcg = (paper.get("tcgplayer") or {}).get("retail") or {}
-    return price_in_finish(tcg, finish_order(is_foil))
+    return price_in_finish(tcg, finish_order(sheet_fin != "nonfoil", sheet_fin == "etched"))
 
 
 def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
@@ -1771,8 +1786,8 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
 
     cards_out["failed"] = False
 
-    def price_of(uuid, is_foil=False):
-        return sheet_price(allp, uuid, is_foil)[0]
+    def price_of(uuid, sheet_fin="nonfoil"):
+        return sheet_price(allp, uuid, sheet_fin)[0]
 
     rarities = {c.get("uuid"): c.get("rarity") for c in sdata.get("cards") or []
                 if isinstance(c, dict)}
@@ -2598,13 +2613,13 @@ def box_card_plan(rows: list, cards_out: dict) -> dict | None:
     return {"code": cards_out["code"], "kinds": kinds}
 
 
-def nominal_finish(finishes, is_foil: bool) -> str:
-    """The finish of a booster sheet entry that has no price: on a foil sheet
-    foil if the printing has it, else etched; on other sheets nonfoil if the
-    printing has it, else the finish it does have. The same order of
-    preference as finish_order. `finishes` is the printing's finishes (None
-    when unknown: the sheet's own finish)."""
-    order = ("foil", "etched", "nonfoil") if is_foil else ("nonfoil", "foil", "etched")
+def nominal_finish(finishes, sheet_fin: str) -> str:
+    """The finish of a booster sheet entry that has no price: the sheet's
+    own finish (sheet_finish) if the printing has it, else the next one in
+    finish_order's preference. `finishes` is the printing's finishes (None
+    or empty when unknown: the sheet's own finish)."""
+    order = {"etched": ("etched", "foil", "nonfoil"),
+             "foil": ("foil", "etched", "nonfoil")}.get(sheet_fin, ("nonfoil", "foil", "etched"))
     for f in order:
         if f in (finishes or ()):
             return f
@@ -2614,15 +2629,16 @@ def nominal_finish(finishes, is_foil: bool) -> str:
 def booster_card_odds(cfg: dict, finish_of) -> tuple:
     """Pull odds per (card, finish) for ONE pack of an MTGJSON booster model
     (its shape is described in _pack_ev_from_booster; a sheet may also be
-    `fixed` or `allowDuplicates`). finish_of(uuid, sheet_is_foil) names the
-    finish of a sheet entry. Returns (odds, pack_size): odds[(uuid, finish)]
+    `fixed` or `allowDuplicates`). finish_of(uuid, sheet_fin) names the
+    finish of a sheet entry (sheet_fin: the sheet's finish, sheet_finish). Returns (odds, pack_size): odds[(uuid, finish)]
     = [pack, copies], the probability that a pack holds at least one copy
     and the expected copies per pack; pack_size is the expected number of
     cards in a pack, which the copies add up to.
     A slot that takes k cards from a sheet of total weight S gives a card of
-    weight w k*w/S copies. It holds the card with probability min(1, k*w/S)
-    on a fixed sheet, or one of equal weights drawn without duplicates (exact
-    for draws without replacement), else 1 - (1 - w/S)**k. Sheets of one pack
+    weight w k*w/S copies. On a fixed sheet, or one that never repeats a card
+    in a pack (no allowDuplicates), a pack holds the card at most once, so
+    the chance of holding it equals its expected copies, min(1, k*w/S); on a
+    sheet that allows duplicates it is 1 - (1 - w/S)**k. Sheets of one pack
     layout are independent, and layouts are weighted like the EV weights them.
     """
     sheets = cfg.get("sheets") or {}
@@ -2639,10 +2655,9 @@ def booster_card_odds(cfg: dict, finish_of) -> tuple:
         sw = sh.get("totalWeight") or sum(cards.values())
         if not sw:
             continue
-        is_foil = bool(sh.get("foil"))
-        once = bool(sh.get("fixed")) or (len(set(cards.values())) == 1
-                                         and not sh.get("allowDuplicates"))
-        entries[name] = (once, [((u, finish_of(u, is_foil)), w / sw) for u, w in cards.items()])
+        fin = sheet_finish(name, sh)
+        once = bool(sh.get("fixed")) or not sh.get("allowDuplicates")
+        entries[name] = (once, [((u, finish_of(u, fin)), w / sw) for u, w in cards.items()])
     for b in boosters:
         bw = b.get("weight", 0)
         if not bw:
@@ -2703,12 +2718,12 @@ def box_cards_doc(set_name: str, plan: dict, details_of, allp: dict) -> dict:
     nominal_finish."""
     memo: dict = {}
 
-    def finish_of(uuid, is_foil):
-        key = (uuid, is_foil)
+    def finish_of(uuid, sheet_fin):
+        key = (uuid, sheet_fin)
         if key not in memo:
-            fin = sheet_price(allp, uuid, is_foil)[1]
+            fin = sheet_price(allp, uuid, sheet_fin)[1]
             memo[key] = FINISH_NAMES[fin] if fin else nominal_finish(
-                (details_of(uuid) or {}).get("finishes"), is_foil)
+                (details_of(uuid) or {}).get("finishes"), sheet_fin)
         return memo[key]
 
     kinds: dict = {}
