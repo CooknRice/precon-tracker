@@ -17,14 +17,20 @@ File shape (dump() writes it this way, one series per line, keys sorted):
     }}
 
 Dates follow prices_history.json: a point is dated by the run that would
-have published it. The daily run at 01:23 UTC reads the TCGCSV snapshot of
-the evening before (about 20:05 UTC), so the archive of day D is the point
-of day D + 1 (checked against prices_history.json: 193 of 193 equal).
+have published it. The daily run is scheduled for 01:23 UTC and then reads
+the TCGCSV snapshot of the evening before (built about 20:05 UTC), so the
+archive of day D is the point of day D + 1. That holds for runs that start
+before about 20:05 UTC, which most do although they often start hours late
+(checked against prices_history.json: every point of the Fridays whose run
+came before 20:05 UTC is equal). A run that starts later reads the snapshot
+of its own day, so its point is one snapshot later than its date says; this
+happened on two of the backfilled Fridays and will happen to a weekly point
+update_weekly adds on such a day.
 
 Used by scrape_prices.py main() on healthy runs:
 
-    doc = history_long.load(path)
-    if history_long.update_weekly(doc, prices, decks, run_date):
+    doc = history_long.load(path)     # a damaged file: marked, left alone
+    if history_long.update_weekly(doc, prices, decks, run_date, box_sets):
         history_long.save(path, doc)
 
 and once, locally, for the backfill from archives already on disk (it never
@@ -58,6 +64,9 @@ MAGIC_CATEGORY = "1"        # TCGplayer category id of Magic: The Gathering
 ARCHIVE_NAME = re.compile(r"^prices-(\d{4}-\d{2}-\d{2})\.ppmd\.7z$")
 PRODUCT_URL = re.compile(r"^https://www\.tcgplayer\.com/product/(\d+)(?:[/?#]|$)")
 KEY_PREFIXES = ("deck:", "box:", "bundle:")
+# load() sets this key, with the reason, on the empty doc it returns for a
+# file that exists but cannot be used; dump() never writes it.
+UNREADABLE = "_unreadable"
 
 
 # ---- small helpers ----
@@ -103,8 +112,24 @@ def _clean_series(v) -> list:
     return [[d, by_date[d]] for d in sorted(by_date)]
 
 
-def _thin(points: list) -> list:
-    """Drop points closer than STEP_DAYS to the point kept before them."""
+def _thin(points: list, prefer=frozenset()) -> list:
+    """Drop points closer than STEP_DAYS to the point kept before them.
+
+    With `prefer` (ISO dates), the points on those dates are kept first and
+    every other point only where it is at least STEP_DAYS from all kept
+    points: the backfill prefers archives of the exact target day, so a
+    replacement archive a few days late never pushes out the next week."""
+    if prefer:
+        keep = _thin([p for p in points if p[0] in prefer])
+        kept = [date.fromisoformat(d) for d, _p in keep]
+        for d, p in points:
+            if d in prefer:
+                continue
+            day = date.fromisoformat(d)
+            if all(abs((day - k).days) >= STEP_DAYS for k in kept):
+                keep.append([d, p])
+                kept.append(day)
+        return sorted(keep)
     out: list = []
     last = None
     for d, p in points:
@@ -165,23 +190,58 @@ def move_renamed(doc: dict, decks) -> int:
     return moved
 
 
+def drop_untracked(doc: dict, decks, box_sets=None) -> int:
+    """Drop the series of decks no longer in decks.json (move_renamed has
+    already moved those of former ids) and, when `box_sets` is given, the box
+    series of sets the box phase no longer prices, the way prices_history.json
+    drops them (scrape_prices.migrate_history_ids, run_history_migrations).
+    Nothing is dropped when decks gives no deck ids or box_sets is empty, so
+    an unread decks.json never empties the file. Bundle series stay: a bundle
+    the matcher misses for a day is only absent from that day's prices.json.
+    Returns how many series were dropped."""
+    series = _series(doc)
+    current = _current_deck_ids(decks)
+    sets = set(box_sets) if box_sets else None
+    gone = []
+    for key in sorted(series):
+        if current is not None and key.startswith("deck:") and key[5:] not in current:
+            gone.append(key)
+        elif sets is not None and key.startswith("box:") and key[4:].rpartition("::")[0] not in sets:
+            gone.append(key)
+    for key in gone:
+        n = len(series.pop(key) or [])
+        print(f"  history_long: dropped {n} points of {key}, no longer tracked", flush=True)
+    return len(gone)
+
+
 # ---- the interface scrape_prices.py uses ----
 
 def load(path) -> dict:
-    """The doc at `path`; a missing, unreadable or malformed file gives an
-    empty doc. Malformed points and series are dropped."""
-    try:
-        raw = json.loads(Path(path).read_text(encoding="utf-8"))
-    except Exception:
-        return empty_doc()
+    """The doc at `path`. A missing file gives an empty doc (the first run
+    starts the file). A file that exists but cannot be read or parsed, or
+    holds no "series" object, gives an empty doc marked with UNREADABLE (the
+    reason): update_weekly then adds nothing and save refuses it, so a damaged
+    file (cut short, or holding merge conflict markers) is left for a person
+    to restore instead of being replaced by one point per product. Malformed
+    points and series of a readable file are dropped."""
     doc = empty_doc()
+    p = Path(path)
+    if not p.exists():
+        return doc
+    try:
+        raw = json.loads(p.read_text(encoding="utf-8"))
+    except Exception as e:
+        doc[UNREADABLE] = f"{type(e).__name__}: {e}"[:200]
+        return doc
     series = raw.get("series") if isinstance(raw, dict) else None
-    if isinstance(series, dict):
-        for k, v in series.items():
-            if isinstance(k, str) and k.startswith(KEY_PREFIXES):
-                pts = _clean_series(v)
-                if pts:
-                    doc["series"][k] = pts
+    if not isinstance(series, dict):
+        doc[UNREADABLE] = 'no "series" object'
+        return doc
+    for k, v in series.items():
+        if isinstance(k, str) and k.startswith(KEY_PREFIXES):
+            pts = _clean_series(v)
+            if pts:
+                doc["series"][k] = pts
     return doc
 
 
@@ -228,16 +288,22 @@ def _candidates(prices: dict, decks) -> list:
     return unique
 
 
-def update_weekly(doc, prices, decks, run_date) -> int:
+def update_weekly(doc, prices, decks, run_date, box_sets=None) -> int:
     """Append [run_date, price] to every deck, box row and bundle series whose
     TCGplayer price in `prices` (prices.json) is a Market price
     (price_source == "Market"), when the series is empty or its last point is
     at least STEP_DAYS before run_date. Series of renamed decks (decks.json
-    formerIds) move to the current id first. Returns the number of points
-    added; never raises."""
+    formerIds) move to the current id first, and series no longer tracked
+    are dropped (drop_untracked; box series only when `box_sets`, the sets
+    the box phase prices, is given). A doc load() marked UNREADABLE is left
+    alone. Returns the number of points added; never raises."""
     added = 0
     try:
         if not isinstance(doc, dict):
+            return 0
+        if doc.get(UNREADABLE):
+            print(f"  history_long: file could not be read ({doc[UNREADABLE]}), "
+                  f"nothing added", flush=True)
             return 0
         doc["schema"] = SCHEMA
         doc["source"] = SOURCE
@@ -247,6 +313,10 @@ def update_weekly(doc, prices, decks, run_date) -> int:
             move_renamed(doc, decks)
         except Exception as e:
             print(f"  history_long: rename step skipped: {e}", flush=True)
+        try:
+            drop_untracked(doc, decks, box_sets)
+        except Exception as e:
+            print(f"  history_long: untracked series step skipped: {e}", flush=True)
         if day is None or not isinstance(prices, dict):
             return 0
         today = day.isoformat()
@@ -292,8 +362,11 @@ def dump(doc: dict) -> str:
 
 def save(path, doc: dict) -> None:
     """Write dump(doc) to `path` atomically (a temporary file in the same
-    folder, flushed, then renamed over the old file)."""
+    folder, flushed, then renamed over the old file). Refuses a doc load()
+    marked UNREADABLE, which would replace the damaged file with nothing."""
     path = Path(path)
+    if isinstance(doc, dict) and doc.get(UNREADABLE):
+        raise ValueError(f"{path.name} could not be read ({doc[UNREADABLE]}); not overwriting it")
     text = dump(doc)
     fd, tmp = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=str(path.parent or "."))
     try:
@@ -301,6 +374,8 @@ def save(path, doc: dict) -> None:
             fh.write(text)
             fh.flush()
             os.fsync(fh.fileno())
+        # mkstemp makes the file 0600; the other data files are 0644.
+        os.chmod(tmp, 0o644)
         os.replace(tmp, path)
     except BaseException:
         try:
@@ -349,6 +424,11 @@ def archives_on_disk(adir: Path) -> dict:
         if m and f.is_file() and _day(m.group(1)):
             out[m.group(1)] = f
     return out
+
+
+def run_day_of(archive_day: str) -> str:
+    """The date of the point an archive gives (archive of day D: day D + 1)."""
+    return (date.fromisoformat(archive_day) + timedelta(days=SNAPSHOT_TO_RUN_DAYS)).isoformat()
 
 
 def weekly_plan(available: dict, first: str, last: str) -> tuple:
@@ -421,9 +501,10 @@ def read_market_prices(archive: Path, wanted: set) -> dict:
 
 def backfill(adir: Path, out: Path, prices: dict, decks, first: str = FIRST_ARCHIVE,
              last: str | None = None, workers: int = 4) -> dict:
-    """Build the weekly series from the archives in `adir`, keep any later
-    points the existing `out` file holds (the daily run's), write `out` and
-    return a report."""
+    """Build the weekly series from the archives in `adir`, keep the points
+    the existing `out` file holds outside the rebuilt range (before `first`,
+    and after the last archive: the daily run's), write `out` and return a
+    report."""
     t0 = time.monotonic()
     ids = product_ids(prices, decks)
     wanted = set(ids.values())
@@ -440,7 +521,7 @@ def backfill(adir: Path, out: Path, prices: dict, decks, first: str = FIRST_ARCH
     points: dict = {k: [] for k in ids}
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
         for target, d, mk in pool.map(one, plan):
-            run_day = (date.fromisoformat(d) + timedelta(days=SNAPSHOT_TO_RUN_DAYS)).isoformat()
+            run_day = run_day_of(d)
             for key, pid in ids.items():
                 p = mk.get(pid)
                 if p is not None:
@@ -448,12 +529,22 @@ def backfill(adir: Path, out: Path, prices: dict, decks, first: str = FIRST_ARCH
             print(f"  {d}: {sum(1 for v in mk.values() if v is not None)} of {len(wanted)} priced", flush=True)
 
     doc = empty_doc()
-    old = load(out)["series"]
+    old_doc = load(out)
+    if old_doc.get(UNREADABLE):
+        print(f"  {out.name} could not be read ({old_doc[UNREADABLE]}); rebuilding it "
+              f"from the archives alone", flush=True)
+    old = old_doc["series"]
+    # Points from an archive of the exact target day win over a replacement
+    # archive's (see _thin); old points dated before the rebuilt range (a run
+    # with --first) or after its last point (the daily run's) are kept.
+    exact = frozenset(run_day_of(d) for t, d in plan if t == d)
+    start = run_day_of(plan[0][0]) if plan else None
     for key in sorted(set(points) | set(old)):
         pts = _clean_series(points.get(key, []))
         if pts:
+            earlier = [p for p in old.get(key, []) if start and p[0] < start]
             later = [p for p in old.get(key, []) if p[0] > pts[-1][0]]
-            pts = _thin(pts + later)
+            pts = _thin(earlier + pts + later, exact)
         else:
             pts = old.get(key, [])
         if pts:

@@ -21,8 +21,10 @@ v1.5 changes:
     matches even when the price floor doesn't catch them.
 """
 
+import bisect
 import gzip
 import io
+import itertools
 import json
 import math
 import random
@@ -1115,15 +1117,21 @@ def price_in_finish(by_finish, order: tuple) -> tuple:
 
 
 # Price outlier guard. A TCGplayer retail price far above Card Kingdom's for
-# the same printing and finish is a listing error, not a market (Landing
-# Party, 2026-11-14: a foil Sunpetal Grove at $92.72 against $0.49, while
-# TCGplayer's own market for the card was $0.37). Such a price counts as no
+# the same printing and finish (the finish the TCGplayer price was read in)
+# is not a price for that card (Landing Party, released 2026-11-13: the deck
+# holds a nonfoil Sunpetal Grove, TRC 565, for which MTGJSON has no nonfoil
+# TCGplayer price, so finish_order borrowed the foil one ($92.72, later
+# $31.53: 117 and 40 times Card Kingdom's foil $0.79, not its nonfoil $0.49);
+# and MTGJSON's TCGplayer product for that printing, 726437, is a Surge Foil
+# Mountain on TCGplayer, while the real Sunpetal Grove Surge Foil, 727719,
+# had a $5.00 market). So the case seen was a wrong MTGJSON product mapping
+# plus a borrowed finish, not a TCGplayer listing. Such a price counts as no
 # TCGplayer price everywhere: crack values and top_cards, box EVs, the card
 # lists and anything built on them, all through tcg_retail_guarded, so every
 # figure agrees. Measured over every deck row and box entry of the MTGJSON
 # prices of 2026-11-11, 2026-11-14 and 2026-11-15 against TCGplayer's own
-# listings (TCGCSV): Sunpetal Grove at 40 and 117 times Card Kingdom was an
-# error, while real prices of new Star Trek printings that Card Kingdom still
+# listings (TCGCSV): Sunpetal Grove at 40 and 117 times Card Kingdom was
+# wrong, while real prices of new Star Trek printings that Card Kingdom still
 # listed at placeholder prices stood at 10.6 times (the Surge Foil Captain
 # Janeway, Endgame, $47.38, TCGplayer's market) and 18 times (Gift of
 # Perfection, Extended Art). A ratio of 20 keeps those and still catches the
@@ -1805,8 +1813,8 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
     the UI note: cards under BOX_EV_BULK_THRESHOLD count as 0, box toppers are
     left out. sku_names and sku_ids give the priced SKU's name and TCGplayer
     product id per box type. Returns {} when the set, booster or price data
-    isn't available, and leaves out a type with no booster model, no MTGJSON
-    pack count or too low a coverage.
+    isn't available, and leaves out a type with no booster model or no
+    MTGJSON pack count; a type with too low a coverage gets only {packs}.
     `cards_out`, when given, receives what the set's card list needs (see
     box_cards_doc): 'code', the set's MTGJSON code; 'types', {box_type: {cfg,
     packs}} with the booster model picked here and the MTGJSON pack count
@@ -1890,6 +1898,9 @@ def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
         if pack_ev is None or pack_ev <= 0 or coverage < BOX_EV_MIN_COVERAGE:
             if pack_ev is not None:
                 print(f"  ev: [{set_name}] {t} skipped, coverage {coverage:.2f}", flush=True)
+            # The pack count is MTGJSON's all the same: the page needs it for
+            # the chance of a card per box (box_index.json), EV or not.
+            out[t] = {"packs": packs}
             continue
         out[t] = {"ev": round(pack_ev * packs, 2), "ev_coverage": round(coverage, 3),
                   "packs": packs}
@@ -2850,8 +2861,9 @@ def box_cards_doc(set_name: str, plan: dict, details_of, allp: dict) -> dict:
     the set's box_card_plan and details_of(uuid) returns a card's details
     (card_details) or None when they are not known this run.
     `kinds` has one entry per box row with a booster model: its label, pack
-    count, pack_size, EV, the model's source sets, and `unresolved`, the
-    (card, finish) entries left out for want of details. Each card lists per
+    count, pack_size, EV, the model's source sets, `unresolved`, the
+    (card, finish) entries left out for want of details, and `spread`, the
+    simulated boxes (spread_summary) when add_box_spreads gave the kind one. Each card lists per
     kind its pull odds for every finish it can be pulled in (`odds`, see
     booster_card_odds), rounded to 6 significant digits. `prices` runs
     parallel to `cards`: prices[i] holds one [tcg, ck] pair (the price of one
@@ -2889,7 +2901,8 @@ def box_cards_doc(set_name: str, plan: dict, details_of, allp: dict) -> dict:
             card["odds"].setdefault(kind, {})[fin] = {"pack": _sig6(pack), "copies": _sig6(copies)}
         kinds[kind] = {"label": k["label"], "packs": k["packs"], "pack_size": _sig6(pack_size),
                        "ev": k["ev"], "sources": _strs(k["cfg"].get("sourceSetCodes")),
-                       "unresolved": unresolved}
+                       "unresolved": unresolved} \
+            | ({"spread": k["spread"]} if k.get("spread") else {})
     out, prices, outliers = [], [], []
     for card in sorted(cards.values(), key=_card_order):
         fins = [f for f in FINISHES if f in card["prices"]]
@@ -2921,6 +2934,503 @@ def plan_sources(plan: dict) -> dict:
                 out[u] = codes if have is None or have == codes \
                     else tuple(dict.fromkeys(have + codes))
     return out
+
+
+# ---- Box EV spread: simulated boxes ----
+# The EV is the average box; the spread says how far one box strays from it.
+# SPREAD_BOXES boxes are opened from MTGJSON's booster model with today's
+# prices, by the rules the EV uses: the same model and pack count, TCGplayer
+# retail by sheet_price (outlier guarded), and the $1 rule: a card under
+# BOX_EV_BULK_THRESHOLD is worth 0, as is a card without a price. A pack
+# picks a layout by weight; each slot of k cards draws them from its sheet,
+# with replacement on a sheet that allows duplicates, else k distinct cards,
+# each by weight among those not drawn yet; a fixed sheet gives its fixed
+# contents. The generator is seeded by set code and kind, so the same prices
+# always give the same figures. Pure Python, no numpy.
+# Speed: only the cards worth something are drawn one by one. How many draws
+# of a slot hit one of them is drawn first (binomial for draws with
+# replacement, hypergeometric for distinct draws from a sheet of equal
+# weights), so the many cards worth 0 cost next to nothing. Distinct draws
+# from a sheet of unequal weights go card by card, its cards worth 0 grouped
+# by weight. Each method draws from exactly the distribution described above.
+SPREAD_BOXES = 10_000
+# The spread is optional: no further kind is simulated once less than this
+# much of the run budget is left, so the card lists still get their time.
+SPREAD_RESERVE_SECONDS = 180
+SPREAD_BINS = 20
+# Share of boxes the histogram's range reaches; the few boxes above it count
+# in the last bin, so one rare huge box does not squash every other bar.
+SPREAD_BINS_COVER = 0.99
+
+
+def _binomial(rng: random.Random, n: int, p: float, log_q: float) -> int:
+    """Successes in n trials of chance p (0 < p <= 0.5; log_q = log(1 - p)),
+    by the waiting times between successes: about n * p + 1 draws."""
+    hits, at = 0, 0
+    while True:
+        at += int(math.log(1.0 - rng.random()) / log_q) + 1
+        if at > n:
+            return hits
+        hits += 1
+
+
+class _DrawSheet:
+    """Draws with replacement from one sheet, also used for a slot of one
+    card from a sheet that never repeats a card (one draw is the same
+    either way). draw(rng, n) is the worth of n draws."""
+    __slots__ = ("vals", "cum", "p", "log_q", "flip")
+
+    def __init__(self, vals: list, weights: list, total):
+        self.vals = vals
+        self.cum = list(itertools.accumulate(weights))
+        p = min(1.0, self.cum[-1] / total)
+        # Count the misses when hits are the likelier outcome.
+        self.flip = p > 0.5
+        self.p = 1.0 - p if self.flip else p
+        self.log_q = math.log1p(-self.p) if 0 < self.p < 1 else 0.0
+
+    def draw(self, rng: random.Random, n: int) -> float:
+        hits = _binomial(rng, n, self.p, self.log_q) if self.p > 0 else 0
+        if self.flip:
+            hits = n - hits
+        if not hits:
+            return 0.0
+        return math.fsum(rng.choices(self.vals, cum_weights=self.cum, k=hits))
+
+
+class _EqualOnceSheet:
+    """k distinct cards a slot from a sheet whose cards all weigh the same:
+    the number of cards worth something in a slot is hypergeometric, and
+    which they are is a plain sample of that many of them. Slots without
+    one are skipped over by their waiting time."""
+    __slots__ = ("vals", "n", "_by_k")
+
+    def __init__(self, vals: list, n: int):
+        self.vals = vals
+        self.n = n
+        self._by_k: dict = {}
+
+    def _law(self, k: int) -> tuple:
+        """(log of the chance of none in a slot, or None when it is 0;
+        cumulative chances of 1, 2, ... of them)."""
+        law = self._by_k.get(k)
+        if law is None:
+            v, n = len(self.vals), self.n
+            all_ways = math.comb(n, k)
+            pmf = [math.comb(v, m) * math.comb(n - v, k - m) / all_ways
+                   for m in range(min(v, k) + 1)]
+            law = self._by_k[k] = (math.log(pmf[0]) if pmf[0] > 0 else None,
+                                   list(itertools.accumulate(pmf[1:])))
+        return law
+
+    def draw(self, rng: random.Random, slots: int, k: int) -> float:
+        k = min(k, self.n)
+        log_none, cum = self._law(k)
+        total, at = 0.0, 0
+        while True:
+            at += 1 if log_none is None \
+                else int(math.log(1.0 - rng.random()) / log_none) + 1
+            if at > slots:
+                return total
+            m = 1 + min(bisect.bisect_right(cum, rng.random() * cum[-1]), len(cum) - 1)
+            total += math.fsum(rng.sample(self.vals, m))
+
+
+class _WeightedOnceSheet:
+    """k distinct cards a slot from a sheet of unequal weights, card by
+    card: each draw takes a card by weight among those not drawn yet. The
+    cards worth 0 are grouped by weight (only how many of each weight are
+    left matters); a card worth something is drawn by weight among them,
+    drawing again on one already taken, which keeps those odds exact."""
+    __slots__ = ("vals", "vw", "cum", "vtotal", "zw", "zn", "ztotal", "n")
+
+    def __init__(self, vals: list, weights: list, zero_weights: list):
+        self.vals, self.vw = vals, weights
+        self.cum = list(itertools.accumulate(weights))
+        self.vtotal = self.cum[-1]
+        groups: dict = {}
+        for w in zero_weights:
+            groups[w] = groups.get(w, 0) + 1
+        self.zw = list(groups)
+        self.zn = [groups[w] for w in self.zw]
+        self.ztotal = sum(w * c for w, c in groups.items())
+        self.n = len(vals) + len(zero_weights)
+
+    def draw(self, rng: random.Random, slots: int, k: int) -> float:
+        k = min(k, self.n)
+        rnd, nv, last = rng.random, len(self.vals), len(self.cum) - 1
+        total = 0.0
+        for _ in range(slots):
+            zn = list(self.zn)
+            z, vleft, zleft = self.ztotal, self.vtotal, self.n - nv
+            got: set = set()
+            for _d in range(k):
+                r = rnd() * (z + vleft)
+                if zleft and (r < z or len(got) == nv):
+                    i = len(zn) - 1
+                    for j, w in enumerate(self.zw):
+                        if r < zn[j] * w:
+                            i = j
+                            break
+                        r -= zn[j] * w
+                    while not zn[i]:
+                        i -= 1
+                    zn[i] -= 1
+                    zleft -= 1
+                    z -= self.zw[i]
+                    continue
+                for _t in range(64):
+                    i = min(bisect.bisect_right(self.cum, rnd() * self.vtotal), last)
+                    if i not in got:
+                        break
+                else:
+                    # Nearly all the weight is taken: draw among the rest.
+                    rest = [j for j in range(nv) if j not in got]
+                    i = rng.choices(rest, weights=[self.vw[j] for j in rest])[0]
+                got.add(i)
+                vleft -= self.vw[i]
+                total += self.vals[i]
+        return total
+
+
+def _spread_sheets(cfg: dict, value_of) -> dict:
+    """{sheet name: (mode, data)} for the sheets of one booster model whose
+    cards are worth something (a sheet of cards worth 0 adds 0 and is left
+    out). Modes: 'fixed' (data: the mean worth of one card of the slot, as
+    the EV counts it), 'draw' (with replacement: _DrawSheet), 'once' (no
+    card twice in a slot: (_DrawSheet for slots of one card, the sheet for
+    longer slots)). value_of(uuid, sheet_fin) is a sheet entry's worth in
+    dollars (sheet_fin: sheet_finish)."""
+    out: dict = {}
+    for name, sh in (cfg.get("sheets") or {}).items():
+        cards = sh.get("cards") or {}
+        total = sh.get("totalWeight") or sum(cards.values())
+        if not total:
+            continue
+        fin = sheet_finish(name, sh)
+        entries = [(value_of(u, fin), w) for u, w in cards.items() if w and w > 0]
+        worth = [(v, w) for v, w in entries if v]
+        if not worth:
+            continue
+        if sh.get("fixed"):
+            out[name] = ("fixed", math.fsum(v * w for v, w in entries) / total)
+            continue
+        vals, weights = [v for v, _w in worth], [w for _v, w in worth]
+        single = _DrawSheet(vals, weights, total)
+        if sh.get("allowDuplicates"):
+            out[name] = ("draw", single)
+            continue
+        zero = [w for v, w in entries if not v]
+        if len({w for _v, w in entries}) == 1:
+            out[name] = ("once", (single, _EqualOnceSheet(vals, len(entries))))
+        else:
+            out[name] = ("once", (single, _WeightedOnceSheet(vals, weights, zero)))
+    return out
+
+
+def simulate_boxes(cfg: dict, packs: int, value_of, rng: random.Random,
+                   boxes: int = SPREAD_BOXES) -> list:
+    """The worth of each of `boxes` simulated boxes of `packs` packs of one
+    MTGJSON booster model (its shape: _pack_ev_from_booster), the sheets
+    valued by value_of (see _spread_sheets). A slot whose sheet the model
+    does not describe is worth 0, as in the EV. Draws with replacement from
+    one sheet are pooled per box (they do not depend on the pack they land
+    in), as are a sheet's slots of one layout."""
+    sheets = _spread_sheets(cfg, value_of)
+    pools: list = []        # the _DrawSheet of every pooled sheet
+    pool_at: dict = {}
+    layouts, weights = [], []
+    for b in cfg.get("boosters") or []:
+        bw = b.get("weight", 0)
+        if not bw or bw <= 0:
+            continue
+        fixed, pooled, once = 0.0, [], []
+        for name, k in (b.get("contents") or {}).items():
+            if name not in sheets or not k:
+                continue
+            mode, data = sheets[name]
+            if mode == "fixed":
+                fixed += k * data
+                continue
+            if mode == "once" and k > 1:
+                once.append((data[1], k))
+                continue
+            single = data[0] if mode == "once" else data
+            if id(single) not in pool_at:
+                pool_at[id(single)] = len(pools)
+                pools.append(single)
+            pooled.append((pool_at[id(single)], k))
+        layouts.append((fixed, pooled, once))
+        weights.append(bw)
+    if not layouts:
+        return [0.0] * boxes
+    cum = list(itertools.accumulate(weights))
+    ids = range(len(layouts))
+    out = []
+    for _ in range(boxes):
+        if len(layouts) == 1:
+            counts = ((0, packs),)
+        else:
+            seen: dict = {}
+            for i in rng.choices(ids, cum_weights=cum, k=packs):
+                seen[i] = seen.get(i, 0) + 1
+            counts = sorted(seen.items())
+        need = [0] * len(pools)
+        total = 0.0
+        for i, c in counts:
+            fixed, pooled, once = layouts[i]
+            total += fixed * c
+            for s, k in pooled:
+                need[s] += k * c
+            for sheet, k in once:
+                total += sheet.draw(rng, c, k)
+        for s, n in enumerate(need):
+            if n:
+                total += pools[s].draw(rng, n)
+        out.append(total)
+    return out
+
+
+def _quantile(sorted_vals: list, q: float) -> float:
+    """The q quantile of sorted values, interpolating between neighbours."""
+    pos = q * (len(sorted_vals) - 1)
+    lo = int(pos)
+    hi = min(lo + 1, len(sorted_vals) - 1)
+    return sorted_vals[lo] + (sorted_vals[hi] - sorted_vals[lo]) * (pos - lo)
+
+
+def _nice_width(raw: float) -> float:
+    """The smallest of 1, 2, 2.5 and 5 times a power of ten that is at least
+    `raw` (0.01 for nothing to cover)."""
+    if raw <= 0.01:
+        return 0.01
+    mag = 10.0 ** math.floor(math.log10(raw))
+    for m in (1, 2, 2.5, 5, 10):
+        if m * mag >= raw * (1 - 1e-9):
+            return m * mag
+    return 10 * mag
+
+
+def spread_summary(totals: list, bins: int = SPREAD_BINS) -> dict:
+    """The box file's spread of simulated box values, in dollars to cents:
+    {boxes, mean, p10, p25, p50, p75, p90, bins: {start, width, counts}}.
+    The quantiles interpolate between neighbouring boxes. The histogram has
+    `bins` bins of a round width (_nice_width) from a multiple of it at or
+    below the lowest box, wide enough to reach the SPREAD_BINS_COVER
+    quantile; the boxes above its range count in the last bin, so the counts
+    add up to `boxes`."""
+    vals = sorted(totals)
+    out = {"boxes": len(vals), "mean": round(math.fsum(vals) / len(vals), 2)}
+    for p in (10, 25, 50, 75, 90):
+        out[f"p{p}"] = round(_quantile(vals, p / 100), 2)
+    lo, hi = vals[0], _quantile(vals, SPREAD_BINS_COVER)
+    width = _nice_width((hi - lo) / bins)
+    start = math.floor(lo / width) * width
+    while start + bins * width < hi:
+        width = _nice_width(width * 1.001)
+        start = math.floor(lo / width) * width
+    counts = [0] * bins
+    for v in vals:
+        counts[min(bins - 1, max(0, int((v - start) // width)))] += 1
+    out["bins"] = {"start": round(start, 2), "width": round(width, 2), "counts": counts}
+    return out
+
+
+def row_spread(full: dict) -> dict:
+    """A prices.json box row's spread from its box file's (spread_summary):
+    {p10, p50, p90, boxes}, rounded to a step of $1 when p90 is under $150,
+    $5 when it is under $1,500, else $10."""
+    step = 1 if full["p90"] < 150 else 5 if full["p90"] < 1500 else 10
+    out = {p: int(math.floor(full[p] / step + 0.5) * step) for p in ("p10", "p50", "p90")}
+    out["boxes"] = full["boxes"]
+    return out
+
+
+def box_spread(code: str, kind: str, cfg: dict, packs: int, allp: dict,
+               boxes: int = SPREAD_BOXES) -> dict:
+    """spread_summary of `boxes` simulated boxes of one set's box of one
+    kind: `packs` packs of booster model `cfg`, each sheet entry worth its
+    TCGplayer retail by the EV's own lookup (sheet_price, outlier guarded)
+    when that is at least BOX_EV_BULK_THRESHOLD, else 0 (no price: 0). The
+    generator is random.Random(zlib.crc32(f"{code}:{kind}")), so the same
+    prices give the same figures."""
+    memo: dict = {}
+
+    def value_of(uuid, sheet_fin):
+        key = (uuid, sheet_fin)
+        if key not in memo:
+            p = sheet_price(allp, uuid, sheet_fin)[0]
+            memo[key] = p if p is not None and p >= BOX_EV_BULK_THRESHOLD else 0.0
+        return memo[key]
+
+    rng = random.Random(zlib.crc32(f"{code}:{kind}".encode()))
+    return spread_summary(simulate_boxes(cfg, packs, value_of, rng, boxes))
+
+
+def _put_after(row: dict, after: str, key: str, value) -> None:
+    """Set row[key] = value, placed right after the key `after` (at the end
+    when `after` is missing), in place."""
+    items = [(k, v) for k, v in row.items() if k != key]
+    row.clear()
+    for k, v in items:
+        row[k] = v
+        if k == after:
+            row[key] = value
+    row.setdefault(key, value)
+
+
+def add_box_spreads(box_results: dict, plans: dict, allp: dict) -> dict:
+    """Simulate the boxes of every box row priced this run that has a
+    published EV, a pack count and a booster model (its set's box_card_plan
+    in `plans`, fetch_box_prices.card_plans): the row gets `spread`
+    (row_spread, right after `packs`) and the plan's kind gets the box
+    file's (spread_summary), which box_cards_doc writes. Once less than
+    SPREAD_RESERVE_SECONDS of the run budget is left, the remaining kinds
+    go without; the page copes. Rows carried from an earlier run keep the
+    spread they had. Returns {"<code>:<kind>": (seconds, simulated mean,
+    published EV)} for the log and the measurements."""
+    timings: dict = {}
+    skipped = 0
+    for set_name, plan in plans.items():
+        for r in box_results.get(set_name) or []:
+            if r.get("carried_from"):
+                continue
+            r.pop("spread", None)
+            k = plan["kinds"].get(r.get("kind"))
+            # The plan's kind is this row's (same EV and pack count).
+            if not k or not k.get("cfg") or r.get("ev") is None or not r.get("packs") \
+                    or k.get("ev") != r["ev"] or k.get("packs") != r["packs"]:
+                continue
+            if budget_left() < SPREAD_RESERVE_SECONDS:
+                skipped += 1
+                continue
+            t0 = time.monotonic()
+            # One try for the box file's spread and the row's, so a failure
+            # leaves neither and the two always agree.
+            try:
+                if "spread" not in k:
+                    k["spread"] = box_spread(plan["code"], r["kind"], k["cfg"], r["packs"], allp)
+                _put_after(r, "packs", "spread", row_spread(k["spread"]))
+                timings[f"{plan['code']}:{r['kind']}"] = (time.monotonic() - t0,
+                                                         k["spread"]["mean"], r["ev"])
+            except Exception as e:
+                print(f"  spread: [{set_name}] {r['kind']} failed: {e}", flush=True)
+                k.pop("spread", None)
+                r.pop("spread", None)
+                timings.pop(f"{plan['code']}:{r['kind']}", None)
+                continue
+    total = sum(t for t, _m, _e in timings.values())
+    far = [key for key, (_t, m, ev) in timings.items() if ev and abs(m / ev - 1) > 0.02]
+    print(f"Box spread: {len(timings)} kinds, {SPREAD_BOXES} simulated boxes each, "
+          f"in {total:.1f}s" + (f"; {skipped} left out, run budget nearly spent" if skipped else "")
+          + (f"; mean more than 2% off the EV: {', '.join(far)}" if far else ""), flush=True)
+    return timings
+
+
+# ---- Card to box index (box_index.json) ----
+# Which box kinds can hold a card, for the page's "Boxes that can hold it"
+# and want list planner, without loading the large box files. Keys are
+# norm(full card name), as in cards_index.json (index_name: a reversible
+# card counts as its one face); `aliases` maps the norm of a multi face
+# card's front face to its full name key. `in` lists [box file
+# stem, kind, finish, pack chance] for every kind a prices.json box row
+# points at (cards_file, cards_kind); the chance that one pack holds the
+# card in that finish, to 4 significant digits (two printings of one name in
+# one kind and finish count as either: 1 - (1 - a)(1 - b)). The finish is
+# the one the box file lists the entry under, which is its priced finish
+# (box_cards_doc): a foil sheet card with no foil TCGplayer price but a
+# nonfoil one is listed as nonfoil, so a price that appears or goes away can
+# move an entry between finishes. No updated_at: the file is byte identical,
+# and so not rewritten, while the odds and those finishes stay.
+BOX_INDEX_SCHEMA = 1
+
+
+def _sig4(v: float) -> float:
+    """v rounded to 4 significant digits."""
+    return float(f"{v:.4g}")
+
+
+def index_name(name: str) -> str:
+    """The name a card is indexed under: its own, except that a reversible
+    card, whose MTGJSON name repeats its faces ("Blood Crypt // Blood
+    Crypt"), is indexed under one copy of them, like the other printings."""
+    faces = name.split(" // ")
+    half = len(faces) // 2
+    if len(faces) % 2 == 0 and faces[:half] == faces[half:]:
+        return " // ".join(faces[:half])
+    return name
+
+
+def build_box_index(root: Path, box_results: dict) -> dict:
+    """{schema, aliases, cards} from the box files the rows of box_results
+    point at (see the section comment above)."""
+    kinds_of: dict = {}
+    for rows in box_results.values():
+        for r in rows or []:
+            if isinstance(r.get("cards_kind"), str) and _pointer_ok(root, r.get("cards_file"), "boxes"):
+                kinds_of.setdefault(r["cards_file"], set()).add(r["cards_kind"])
+    chance: dict = {}   # key -> {(stem, kind, finish): chance of none}
+    names: dict = {}
+    for pointer in sorted(kinds_of):
+        stem = Path(pointer).stem
+        doc = json.loads((root / pointer).read_text(encoding="utf-8"))
+        for c in doc.get("cards") or []:
+            name, odds = c.get("name"), c.get("odds")
+            name = index_name(name) if isinstance(name, str) else ""
+            key = norm(name)
+            if not key or not isinstance(odds, dict):
+                continue
+            for kind in sorted(kinds_of[pointer]):
+                for fin, o in (odds.get(kind) or {}).items():
+                    pack = _finite(o.get("pack")) if isinstance(o, dict) else None
+                    if fin not in FINISHES or pack is None or pack <= 0:
+                        continue
+                    none = chance.setdefault(key, {})
+                    none[(stem, kind, fin)] = none.get((stem, kind, fin), 1.0) * (1 - min(pack, 1.0))
+                    names.setdefault(key, set()).add(name)
+    cards = {key: {"name": min(names[key]),
+                   "in": sorted([s, k, f, _sig4(1 - none)] for (s, k, f), none in chance[key].items())}
+             for key in sorted(chance)}
+    aliases: dict = {}
+    for key, e in cards.items():
+        if " // " in e["name"]:
+            front = norm(e["name"].split(" // ")[0])
+            if front and front not in cards and (front not in aliases or key < aliases[front]):
+                aliases[front] = key
+    return {"schema": BOX_INDEX_SCHEMA, "aliases": dict(sorted(aliases.items())), "cards": cards}
+
+
+def dump_box_index(doc: dict) -> str:
+    """box_index.json text: the header keys on their own lines, then one
+    card per line, keys sorted (deterministic)."""
+    def one(v):
+        return json.dumps(v, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+
+    lines = ",\n".join(f"{one(k)}:{one(v)}" for k, v in sorted(doc["cards"].items()))
+    return (f'{{"schema":{one(doc["schema"])},\n"aliases":{one(doc["aliases"])},\n'
+            f'"cards":{{\n{lines}\n}}}}\n')
+
+
+def write_box_index(root: Path, box_results: dict) -> bool:
+    """Write box_index.json from the box files prices.json points at, only
+    when its text changed. An index without cards is not written (the old
+    one stays). Returns whether the file was written."""
+    doc = build_box_index(root, box_results)
+    path = root / "box_index.json"
+    if not doc["cards"]:
+        print("Box index: no box card files to index, box_index.json left as it was", flush=True)
+        return False
+    text = dump_box_index(doc)
+    try:
+        same = path.read_text(encoding="utf-8") == text
+    except OSError:
+        same = False
+    n_in = sum(len(e["in"]) for e in doc["cards"].values())
+    print(f"Box index: {len(doc['cards'])} cards, {n_in} box kind entries, "
+          f"{len(doc['aliases'])} aliases" + (", unchanged" if same else ""), flush=True)
+    if not same:
+        _write_atomic(path, text)
+    return not same
 
 
 # ---- Card files: previous run, details of other sets, writing, cleanup ----
@@ -3416,6 +3926,48 @@ def fetch_ck_phase(decks: list) -> tuple[dict, dict]:
     return ck_sealed, ck_results
 
 
+def update_long_history(path: Path, prices: dict, decks: list, run_date: str,
+                        previous: dict | None = None) -> int:
+    """Add this run's weekly points to history_long.json (history_long.py:
+    update_weekly, then save when it added any). Never raises: a missing
+    module or any error is logged and the run goes on. Returns the points
+    added.
+
+    A file that exists but cannot be read is left as it is, with a warning:
+    starting a fresh doc would replace years of weekly points with one, the
+    case load_history guards prices_history.json against. A series whose
+    TCGplayer product changed since `previous` (the last prices.json) is
+    warned about: the file has no product ids, so its points would mix two
+    products until the backfill is run again."""
+    try:
+        import history_long
+        doc = history_long.load(path)
+        why = doc.get(history_long.UNREADABLE)
+        if why:
+            print(f"::warning::Long history: {path.name} cannot be read ({why}); left as it "
+                  f"is, no points added. Restore it from git.", flush=True)
+            return 0
+        try:
+            before = history_long.product_ids(previous or {}, decks)
+            now = history_long.product_ids(prices, decks)
+            for key in sorted(k for k in now if k in before and before[k] != now[k]
+                              and k in doc["series"]):
+                print(f"::warning::Long history: {key} now follows TCGplayer product "
+                      f"{now[key]} instead of {before[key]}; rerun history_long.py "
+                      f"backfill so its weekly points do not mix the two", flush=True)
+        except Exception as e:
+            print(f"  Long history: product check skipped: {e}", flush=True)
+        added = history_long.update_weekly(doc, prices, decks, run_date,
+                                           box_sets=set(box_sets(decks)))
+        if added:
+            history_long.save(path, doc)
+        print(f"Long history: {added} weekly points added", flush=True)
+        return added
+    except Exception as e:
+        print(f"Long history skipped (not fatal): {type(e).__name__}: {e}", flush=True)
+        return 0
+
+
 def main() -> None:
     start_run_clock()
     reset_card_run()
@@ -3523,6 +4075,16 @@ def main() -> None:
             f"Refusing to overwrite prices.json: only {tcg_hits} TCG hits "
             f"(min {min_hits} of {len(decks)} decks), likely a degraded scrape.")
 
+    # The spread of box values around each EV (simulated boxes), before the
+    # card lists so the box files carry it too. Optional: an error only logs.
+    if healthy:
+        try:
+            add_box_spreads(box_results, getattr(fetch_box_prices, "card_plans", {}),
+                            getattr(_get_allprices, "_data", None) or {})
+        except Exception as e:
+            print(f"Box spread failed (not fatal): {e}", flush=True)
+            traceback.print_exc()
+
     # Card lists (cards/decks, cards/boxes), written before prices.json so
     # its pointers never name a file that is not there yet. Their updated_at
     # is the one of prices.json.
@@ -3571,6 +4133,13 @@ def main() -> None:
     # Stale card files go only now that prices.json no longer points at them.
     if keep_cards:
         prune_card_files(out_path.parent, keep_cards)
+    # Card to box index, from the box files prices.json now points at.
+    if healthy:
+        try:
+            write_box_index(out_path.parent, box_results)
+        except Exception as e:
+            print(f"Box index failed (not fatal): {e}", flush=True)
+            traceback.print_exc()
 
     # Reverse card->decks index (F2: "cheapest precon containing card X").
     # Kept in its own file so prices.json stays lean. Only emitted on a healthy
@@ -3609,6 +4178,12 @@ def main() -> None:
                        previous=previous)
     else:
         print("Skipping history update (degraded run).", flush=True)
+
+    # Long history, one TCGplayer Market point a week (history_long.py).
+    # Optional: a missing module or any error only logs.
+    if healthy:
+        update_long_history(Path(__file__).parent / "history_long.json", output, decks,
+                            output["updated_at"][:10], previous)
 
     ck_hits = sum(1 for v in ck_results.values() if v.get("price") is not None)
     rejected = sum(1 for v in tcg_results.values() if v.get("status") == "tcgcsv-likely-single")
