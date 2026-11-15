@@ -11,7 +11,7 @@
      exact text between its opening and closing tags), or the browser refuses
      to run the app. A remote prices URL (LIVE_PRICES_REMOTE_URL) would also
      need adding to connect-src. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XTfh4/7APazgPhNMp/gUIVktwpYfaEuPG55qU/72ooU='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://cards.scryfall.io; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PctkH0bRkm3IQljPnap0Xqe8/eLzRUF7sZMQySNKqmM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://cards.scryfall.io; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>MTG Tracker · Commander Precon, Sealed Box & Bundle Prices</title>
 <meta name="description" content="Daily prices for Magic: The Gathering Commander precons since 2021, preorders included, their set bundles, and sealed booster boxes from those sets and a few more, checked at TCGplayer and Card Kingdom, with price history and buy signals.">
@@ -1950,6 +1950,101 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
   border-bottom: 1px solid var(--hairline);
 }
 .is-sheet .cv-pv-media { position: static; width: min(236px, 72vw); justify-self: center; margin-top: 8px; }
+
+/* ---------- Share links, collection, saved data, since your last visit ---------- */
+main:focus { outline: none; }
+/* A row of dialog actions: Copy link, Copy decklist, outbound links, and a
+   short status line that names what happened. */
+.dlg-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 14px; }
+.cv-actions { margin-top: 12px; }
+.cv-link { font-family: var(--font-mono); font-size: 11px; color: var(--gold); text-decoration: none; padding: 6px 0; overflow-wrap: anywhere; }
+.cv-link:hover { color: var(--gold-bright); text-decoration: underline; }
+.dlg-status { font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); min-width: 0; overflow-wrap: anywhere; }
+.cv-btn:disabled { opacity: 0.55; cursor: default; }
+.cv-btn:disabled:hover { border-color: var(--ink-faded); color: var(--ink-soft); }
+.copy-scratch { position: fixed; top: 0; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+/* Notice for a share link that names nothing on the page. */
+.link-notice {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px;
+  background: var(--surface); border: 1px solid var(--gold); border-radius: var(--radius-sm);
+  padding: 10px 14px; margin-bottom: 16px; font-size: 13px; color: var(--ink);
+}
+
+/* Since your last visit: a quiet strip with a gold edge, one line per change. */
+.since-strip {
+  background: var(--surface); border: 1px solid var(--hairline); border-left: 3px solid var(--gold-bright);
+  border-radius: var(--radius); padding: 14px 18px; margin-bottom: 24px;
+}
+.since-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+.since-head { font-family: var(--font-ui); font-weight: 600; color: var(--ink-soft); }
+.since-dismiss { padding: 6px 12px; }
+.since-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+.since-list li { font-size: 13px; line-height: 1.5; color: var(--ink-soft); overflow-wrap: anywhere; }
+.since-open {
+  all: unset; cursor: pointer; font-weight: 600; color: var(--ink-strong);
+  text-decoration: underline; text-decoration-color: var(--paper-line); text-underline-offset: 3px;
+}
+.since-open:hover { color: var(--gold-bright); text-decoration-color: currentColor; }
+.since-num { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
+.since-num.now { color: var(--burgundy); font-weight: 600; }
+.since-num.now.good { color: var(--sage-text); }
+.since-note { margin-top: 8px; font-family: var(--font-mono); font-size: 10.5px; line-height: 1.5; color: var(--ink-faded); }
+
+/* Collection: one row per item, its fields, then its figures. */
+.col-trend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 12px; min-height: 20px; }
+.col-trend .pf-label { margin-bottom: 0; }
+.col-trend-note { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); }
+.col-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+.col-item { display: grid; gap: 8px; min-width: 0; background: var(--surface-2); border-radius: var(--radius-sm); padding: 10px 12px; }
+.col-name { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.col-name .uf-kind { flex: none; margin-bottom: 0; }
+.col-title { min-width: 0; font-size: 14px; font-weight: 600; color: var(--ink-strong); overflow-wrap: anywhere; }
+.col-fields { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; }
+.col-field { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.col-flabel { font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faded); }
+.search-input.col-input { width: 6.5em; min-width: 0; max-width: 100%; height: 34px; padding: 6px 8px; font-family: var(--font-mono); font-size: 13px; }
+.search-input.col-input[data-col-field="paid"] { width: 9.5em; }
+.col-remove { padding: 6px 12px; }
+.col-figs { display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--font-mono); font-size: 11px; line-height: 1.5; color: var(--ink-soft); min-width: 0; overflow-wrap: anywhere; }
+.col-money { color: var(--burgundy); font-weight: 600; }
+.col-quiet { color: var(--ink-muted); }
+.col-up { color: var(--success); }
+.col-down { color: var(--burgundy); }
+.col-status { margin-top: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); }
+.col-status:empty { margin: 0; }
+.col-hint { margin-top: 10px; font-family: var(--font-mono); font-size: 10.5px; line-height: 1.5; color: var(--ink-faded); }
+.col-hint a { color: var(--gold); }
+.col-hint a:hover { color: var(--gold-bright); }
+
+/* Own button for boxes and set bundles: outlined, sage when owned. */
+.own-chip {
+  align-self: flex-start; margin-top: 6px; padding: 4px 10px;
+  border: 1px solid var(--ink-faded); border-radius: var(--radius-pill);
+  background: transparent; color: var(--ink-soft);
+  font-family: var(--font-ui); font-size: 11.5px; font-weight: 600; line-height: 1.4; cursor: pointer;
+  transition: border-color 0.12s, color 0.12s;
+}
+.bundle-note .own-chip { margin-top: 0; }
+.own-chip:hover { border-color: var(--sage); color: var(--ink); }
+.own-chip.checked { border-color: var(--sage); background: var(--owned-bg); color: var(--sage-text); }
+
+/* Back up and Restore, in the footer. */
+.saved-data { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.saved-data-head { font-weight: 600; color: var(--ink-soft); }
+.saved-data-actions { display: inline-flex; flex-wrap: wrap; gap: 8px; }
+.saved-data-status { color: var(--ink-soft); min-width: 0; overflow-wrap: anywhere; }
+.saved-data-note { flex-basis: 100%; }
+
+.cv-link:focus-visible, .own-chip:focus-visible, .since-open:focus-visible, .col-hint a:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 2px;
+}
+@media (pointer: coarse) {
+  .own-chip, .col-remove, .since-dismiss { min-height: 40px; }
+  .search-input.col-input { height: 40px; }
+  .cv-link { padding: 11px 0; }
+}
 </style>
 </head>
 <body>
@@ -1970,7 +2065,12 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
   </div>
 </header>
 
-<main id="main">
+<main id="main" tabindex="-1">
+<!-- Shown when a share link (?deck=, ?box=) names nothing this page lists. -->
+<div id="linkNotice" class="link-notice" role="status" hidden>
+  <span id="linkNoticeText"></span>
+  <button type="button" class="cv-btn" id="linkNoticeClose">Dismiss</button>
+</div>
 <!-- Deal of the Day and the feed start as invisible placeholders of about
      their final size (.pending), so the page below them does not jump when
      the data arrives; renderDealOfDay() and renderUnifiedFeed() fill them. -->
@@ -2016,8 +2116,18 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
 
 <div id="staleBanner" class="stale-banner" role="status"></div>
 <div id="storageBanner" class="stale-banner" role="status"></div>
+<!-- Filled by renderSinceStrip() once the price history is in, when the
+     previous visit (precon-lastvisit) is a day old or more. -->
+<section id="sinceStrip" class="since-strip" aria-labelledby="sinceHead" hidden>
+  <div class="since-top">
+    <h2 class="section-head since-head" id="sinceHead">Since your last visit</h2>
+    <button type="button" class="cv-btn since-dismiss" id="sinceDismiss">Dismiss<span class="sr-only"> the changes since your last visit</span></button>
+  </div>
+  <ul class="since-list" id="sinceList"></ul>
+  <p class="since-note"><span id="sinceMore" hidden></span> Recorded prices for the decks you watch or own and the boxes you own, worked out in this browser.</p>
+</section>
 <section class="stats" aria-labelledby="statsHead">
-  <h2 class="sr-only" id="statsHead">At a glance</h2>
+  <h2 class="sr-only" id="statsHead" tabindex="-1">At a glance</h2>
   <div class="stat">
     <div class="stat-label">Decks tracked</div>
     <div class="stat-val" id="statTotal">…</div>
@@ -2046,8 +2156,12 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
 </section>
 
 <section id="portfolio" class="portfolio" aria-labelledby="portfolioHead" hidden>
-  <h2 class="portfolio-head section-head" id="portfolioHead">📊 Your collection</h2>
+  <h2 class="portfolio-head section-head" id="portfolioHead" tabindex="-1">📊 Your collection</h2>
   <div class="portfolio-grid" id="portfolioGrid"></div>
+  <div class="col-trend" id="collectionTrend"></div>
+  <ul class="col-list" id="collectionList"></ul>
+  <p class="col-status" id="collectionStatus" role="status"></p>
+  <p class="col-hint">Mark a deck with ✓ on its card, and a box or a set bundle with its Own button. Your collection is saved only in this browser: <a href="#savedData">back it up</a>.</p>
 </section>
 
 <section class="filters" aria-labelledby="filtersHead">
@@ -2141,7 +2255,17 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     <div>Each card headlines the cheapest place to buy right now, refreshed daily by a GitHub Action scraper: <em style="color:var(--live);">TCGPlayer</em> (Market price, or the lowest current listing when Market sits below it) or <em style="color:var(--live);">Card Kingdom</em> (in stock only). Decks with no live price show their <em style="color:var(--ink-muted);">MSRP</em> for reference only. Singles values come from MTGJSON; "profit to crack" uses the real Card Kingdom buylist and is shown before tax, shipping and fees.</div>
     <div style="margin-top:6px;">Power scores and brackets from <a href="https://scrycheck.com/precons" target="_blank" rel="noopener" style="color:var(--gold);">ScryCheck</a> are automated estimates; see <a href="https://scrycheck.com/about" target="_blank" rel="noopener" style="color:var(--gold);">ScryCheck's accuracy notes</a>. <span id="powerCoverage">Scores shown inline where published.</span> Brackets follow Wizards' official system (<em>B1 casual → B5 cEDH</em>).</div>
     <div class="footer-note">Data sources: TCGplayer prices via <a href="https://tcgcsv.com/" target="_blank" rel="noopener noreferrer">TCGCSV</a>; Card Kingdom prices and stock from Card Kingdom's public pricelist; decklists and card prices from <a href="https://mtgjson.com/" target="_blank" rel="noopener noreferrer">MTGJSON</a> (<a href="https://mtgjson.com/license/" target="_blank" rel="noopener noreferrer">MIT License</a>); power scores from ScryCheck. Prices are refreshed once a day and can lag the vendors' sites.</div>
-    <div class="footer-note">Privacy: no accounts, cookies, analytics or tracking. Your watchlist, owned decks and price targets are saved only in this browser's storage and never leave your device. Fonts load from Google Fonts, which sees your IP address as part of that request. Card images are loaded from <a href="https://scryfall.com/" target="_blank" rel="noopener noreferrer">Scryfall</a>'s image server when you open a card list, and Scryfall sees your IP address as part of those requests.</div>
+    <div class="footer-note">Privacy: no accounts, cookies, analytics or tracking. Your watchlist, owned decks, collection and price targets are saved only in this browser's storage and never leave your device unless you save a backup file. Fonts load from Google Fonts, which sees your IP address as part of that request. Card images are loaded from <a href="https://scryfall.com/" target="_blank" rel="noopener noreferrer">Scryfall</a>'s image server when you open a card list, and Scryfall sees your IP address as part of those requests.</div>
+    <div class="footer-note saved-data" id="savedData">
+      <span class="saved-data-head">Your saved data</span>
+      <span class="saved-data-actions">
+        <button type="button" class="cv-btn" id="backupBtn">Back up</button>
+        <button type="button" class="cv-btn" id="restoreBtn">Restore</button>
+        <input type="file" id="restoreFile" class="sr-only" accept="application/json,.json" tabindex="-1" aria-hidden="true">
+      </span>
+      <span class="saved-data-status" id="savedDataStatus" role="status"></span>
+      <span class="saved-data-note">Back up saves your watchlist, owned decks, collection, price targets and settings as a JSON file; Restore reads one back after you confirm. Safari can clear a site's storage after seven days of using Safari without a visit to the site; the app added to your home screen keeps its own storage.</span>
+    </div>
     <div class="footer-note">MTG Tracker is unofficial Fan Content permitted under the <a href="https://company.wizards.com/en/legal/fancontentpolicy" target="_blank" rel="noopener noreferrer">Fan Content Policy</a>. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</div>
   </div>
   <div>Built for Isaac · <a id="reportLink" href="https://github.com/CooknRice/precon-tracker/issues/new" target="_blank" rel="noopener noreferrer">Report an error</a></div>
@@ -2186,6 +2310,10 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
       <button type="button" class="range-btn" data-range="90" aria-pressed="false" aria-label="3 months">3M</button>
       <button type="button" class="range-btn active" data-range="all" aria-pressed="true" aria-label="All history">All</button>
     </div>
+    <div class="dlg-actions">
+      <button type="button" class="cv-btn" id="chartCopyLink">Copy link</button>
+      <span class="dlg-status" id="chartCopyStatus" role="status"></span>
+    </div>
     <div class="chart-canvas-wrap" id="chartCanvasWrap">
       <!-- SVG injected by renderChart() -->
     </div>
@@ -2203,6 +2331,14 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     <div class="cv-bar">
       <h2 id="cardsModalTitle" class="chart-title">Card list</h2>
       <button type="button" class="compare-modal-close" id="cardsModalClose">Close ×</button>
+    </div>
+    <!-- Filled by fillCardActions(): the deck only parts hide for a box. -->
+    <div id="cvActions" class="dlg-actions cv-actions">
+      <button type="button" class="cv-btn" id="cvCopyLink">Copy link</button>
+      <button type="button" class="cv-btn" id="cvCopyList" hidden>Copy decklist</button>
+      <a class="cv-link" id="cvEdhrec" href="#" target="_blank" rel="noopener noreferrer" hidden>Commander page on EDHREC<span class="sr-deck sr-only"></span> →</a>
+      <a class="cv-link" id="cvSpellbook" href="https://commanderspellbook.com/find-my-combos/" target="_blank" rel="noopener noreferrer" title="Paste the copied decklist there" hidden>Find combos on Commander Spellbook<span class="sr-deck sr-only"></span> →</a>
+      <span class="dlg-status" id="cvCopyStatus" role="status"></span>
     </div>
     <div id="cvTabs" class="cv-tabs" role="tablist" aria-label="Box type" hidden></div>
     <div id="cvPanel">
@@ -2376,6 +2512,11 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     setBackgroundInert(true);
     if (focusEl) focusEl.focus();
   }
+  // Close the open dialog. A dialog opened by the visitor added a history
+  // entry (see dialogOpened), so closing it from the page (Close, Escape,
+  // the backdrop) also steps back over that entry; Back itself arrives as a
+  // popstate, which closes with closingFromHistory set and steps nowhere.
+  let closingFromHistory = false;
   function closeModal() {
     if (!openModalEl) return;
     const closed = openModalEl;
@@ -2383,7 +2524,9 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     openModalEl = null;
     setBackgroundInert(false);
     if (closed.id === "cardsModal") cardListClosed();
+    if (closed.id === "chartModal") chartSpec = null;
     restoreFocus();
+    if (!closingFromHistory) leaveDialogEntry();
   }
   function trapTab(e) {
     if (e.key !== "Tab" || !openModalEl) return;
@@ -2678,8 +2821,8 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     const bundles = LIVE_PRICES?.bundles;
     if (!bundles) return null;
     const ids = [deck.id, ...(deck.formerIds || [])];
-    for (const b of Object.values(bundles)) {
-      if (b && Array.isArray(b.deck_ids) && ids.some(id => b.deck_ids.includes(id)) && posNum(b.price)) return b;
+    for (const [bid, b] of Object.entries(bundles)) {
+      if (b && Array.isArray(b.deck_ids) && ids.some(id => b.deck_ids.includes(id)) && posNum(b.price)) return { ...b, bundleId: bid };
     }
     return null;
   }
@@ -3218,13 +3361,20 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
   // URL like "https://www.cardkingdom.com@evil.example/" whose real host is
   // elsewhere. The host is read by the URL parser, never by pattern matching
   // the string.
-  const LINK_HOSTS = new Set(["www.tcgplayer.com", "www.cardkingdom.com", "scrycheck.com"]);
+  // edhrec.com and commanderspellbook.com are the card list dialog's
+  // "Commander page on EDHREC" and "Find combos" links (see edhrecUrl).
+  const LINK_HOSTS = new Set(["www.tcgplayer.com", "www.cardkingdom.com", "scrycheck.com", "edhrec.com", "commanderspellbook.com"]);
   function safeUrl(u) {
+    const href = safeHref(u);
+    return href ? escapeHtml(href) : "#";
+  }
+  // The same check for a link set as a DOM property: the plain href, or null.
+  function safeHref(u) {
     let url;
-    try { url = new URL(String(u || "")); } catch (e) { return "#"; }
-    if (url.protocol !== "https:" || url.port || url.username || url.password) return "#";
-    if (!LINK_HOSTS.has(url.hostname.toLowerCase())) return "#";
-    return escapeHtml(url.href);
+    try { url = new URL(String(u || "")); } catch (e) { return null; }
+    if (url.protocol !== "https:" || url.port || url.username || url.password) return null;
+    if (!LINK_HOSTS.has(url.hostname.toLowerCase())) return null;
+    return url.href;
   }
 
   // Step line through dated points (a recorded price holds until the next
@@ -3351,6 +3501,14 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
   // as a separate marker and left out of the line, the change and the range.
   let chartCurrentBuy = null;
   let chartDataFn = null;   // recomputes { points, buy } for the open chart
+  // A note of the chart's own (the collection line says what it sums), and
+  // whether its change is neutral (a collection rising is not "bad for a
+  // buyer", which is what burgundy means on an item's chart).
+  let chartCurrentNote = "";
+  let chartNeutral = false;
+  // The share link form of the open chart ({ t: "deck" | "box", ..., chart:
+  // true }), or null when it has none (the collection line).
+  let chartSpec = null;
 
   // Cut the points to the last `range` days, measured back from the history
   // file's date. The price in force at the cutoff is carried in as the first
@@ -3397,8 +3555,9 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     const real = realPts(points);
     const buy = chartCurrentBuy;
     const noteEl = $("chartNote");
-    noteEl.hidden = !buy;
-    noteEl.textContent = buy ? buyNoteText(buy, real.length >= 2) : "";
+    const noteText = [buy ? buyNoteText(buy, real.length >= 2) : "", chartCurrentNote].filter(Boolean).join(" ");
+    noteEl.hidden = !noteText;
+    noteEl.textContent = noteText;
     // History only reaches back window_days, so a range tab that long or
     // longer would draw the same chart as All: hide it.
     for (const b of document.querySelectorAll("#chartModal .range-btn")) {
@@ -3437,7 +3596,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     deltaEl.textContent = `${sign}${deltaPct.toFixed(1)}% · ${spanOf(points)}d`
       + (end.gap ? ` · no tracked price since ${fmtChartDate(end.date)}` : "");
     deltaEl.title = "Change of the plotted line over this range";
-    deltaEl.className = "chart-delta " + (deltaPct > 0.5 ? "up" : deltaPct < -0.5 ? "down" : "flat");
+    deltaEl.className = "chart-delta " + (chartNeutral ? "flat" : deltaPct > 0.5 ? "up" : deltaPct < -0.5 ? "down" : "flat");
 
     // SVG layout (responsive via viewBox)
     const W = 700, H = 320;
@@ -3511,8 +3670,11 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
   }
 
   // Shared modal opener: sets title/subtitle, range buttons, renders.
-  function showChartModal(title, subtitle, dataFn, range) {
+  // `spec` is the chart's share link form (see dialogParams), or null for a
+  // chart with no link; `neutral` colors its change without a verdict.
+  function showChartModal(title, subtitle, dataFn, range, { spec = null, neutral = false } = {}) {
     chartDataFn = dataFn;
+    chartNeutral = neutral;
     refreshChartData();
     chartCurrentRange = range;
     $("chartModalTitle").textContent = title;
@@ -3523,12 +3685,17 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
       b.setAttribute("aria-pressed", on ? "true" : "false");
     });
     renderChart();
+    $("chartCopyLink").hidden = !spec;
+    setDialogStatus("chartCopyStatus", "");
     openModal($("chartModal"), $("chartModalClose"));
+    chartSpec = spec;
+    dialogOpened(spec || { t: "plain" });
   }
   function refreshChartData() {
     const data = chartDataFn ? chartDataFn() : { points: [], buy: null };
     chartCurrentPoints = data.points || [];
     chartCurrentBuy = data.buy || null;
+    chartCurrentNote = typeof data.note === "string" ? data.note : "";
   }
 
   function openChart(deckId, range = "all") {
@@ -3537,7 +3704,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     showChartModal(deck.name, `${deck.set} · best recorded price across vendors`, () => {
       const points = deckPoints(deck);
       return { points, buy: buyAside(points, deckBuy(deck)) };
-    }, range);
+    }, range, { spec: { t: "deck", id: deck.id, chart: true } });
   }
 
   // Sealed box display names. Boxes are grouped under the Commander deck
@@ -3567,7 +3734,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
       const box = findBox(setName, type);
       const points = box ? boxPoints(setName, box) : historyPoints(boxSeries(setName, type), s => s.price, false);
       return { points, buy: buyAside(points, boxBuy(box)) };
-    }, range);
+    }, range, { spec: boxLinkSpec(findBox(setName, type), true) });
   }
 
   function renderCard(d) {
@@ -3822,6 +3989,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
         <div class="bundle-note">
           <span><span class="bundle-label">Set bundle</span> · <a href="${safeUrl(bundle.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(bname)}<span class="sr-only">, includes ${nm}</span></a> · ${priceText} for all ${count} decks</span>
           ${savings}
+          ${SLUG_RE.test(bundle.bundleId) ? ownChipHtml(`bundle:${bundle.bundleId}`, bname) : ""}
         </div>`;
     }
 
@@ -3966,7 +4134,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
   // control of which card was focused and put focus back on the same one.
   // Controls are found by role, not position, since a card's controls change
   // (watching adds the target input).
-  const CARD_CONTROLS = [".watch-toggle", ".own-toggle", "input[data-target]", "input[data-compare]",
+  const CARD_CONTROLS = [".watch-toggle", ".own-toggle", "input[data-target]", "input[data-compare]", ".own-chip",
     "[data-chart-trigger]", ".power-scan", ".vendor-btn", ".view-cards", ".price-label a"];
   function focusedCardControl() {
     const el = document.activeElement;
@@ -4304,6 +4472,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
           <a class="box-item-link" href="${safeUrl(b.url)}" target="_blank" rel="noopener noreferrer">view on TCGPlayer<span class="sr-only">: ${escapeHtml(parts.name || sn)}</span> →</a>
           ${ckLink}
           ${cardsBtn}
+          ${ownChipHtml(boxItemKey(sn, b.type), parts.name || sn)}
         </div>`;
       }).join("");
       return `<div class="box-set"><div class="box-set-name">${escapeHtml(heading)}${sub}</div><div class="box-grid">${items}</div></div>`;
@@ -4813,13 +4982,18 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     const d = PRECONS.find(x => x.id === deckId);
     const ref = d ? deckCardsRef(d) : null;
     if (ref) openCardList({ mode: "deck", file: ref.file, title: d.name, deck: d });
+    return !!ref;
   }
-  function openBoxCards(setName, type) {
+  // `kind` starts the dialog on another box type of the same file (a share
+  // link to a type with no box row of its own); showCardList falls back to
+  // the file's first type when the file lacks it.
+  function openBoxCards(setName, type, kind = null) {
     const b = findBox(setName, type);
     const ref = boxCardsRef(b);
-    if (!ref) return;
+    if (!ref) return false;
     const rows = (getBoxes()?.[setName] || []).filter(r => r && posNum(r.price));
-    openCardList({ mode: "box", file: ref.file, kind: ref.kind, title: boxSetHeading(setName, rows) });
+    openCardList({ mode: "box", file: ref.file, kind: kind || ref.kind, title: boxSetHeading(setName, rows) });
+    return true;
   }
 
   // Open the dialog on one list. The title is known before the file is, so
@@ -4829,8 +5003,10 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     Object.assign(v, { mode, file, kind, deck, data: null, packs: null, entries: [], shown: [], drawn: 0 });
     v.badImages.clear();
     $("cardsModalTitle").textContent = title;
+    fillCardActions();
     openModal(modal, $("cardsModalClose"));
     modal.scrollTop = 0;
+    dialogOpened(cardListSpec());
     loadIntoCardList();
   }
   // Everything under the title bar, back to nothing.
@@ -4854,6 +5030,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     v.token++;
     Object.assign(v, { mode: null, file: null, kind: null, deck: null, data: null, packs: null, entries: [], shown: [], drawn: 0 });
     emptyCardList();
+    fillCardActions();
   }
 
   // Load the open list's file and show it; also the "Try again" action. A
@@ -4898,6 +5075,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
       fillCardHead();
       applyCardFilters();
     }
+    fillCardActions();
   }
 
   // Tabs, one per box type in the file, when it holds more than one.
@@ -4923,6 +5101,9 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     fillCardHead();
     fillBoxFilters();
     applyCardFilters();
+    // The address names the type on show, so a reload or a copied address
+    // opens this tab.
+    if (openModalEl === $("cardsModal")) dialogChanged(cardListSpec());
   }
 
   // Header under the title: a deck's commanders and totals, or a box type's
@@ -5776,7 +5957,12 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     }
   }
 
+  // The filter parameters, then the open dialog's (see dialogParams), so a
+  // filter change made while a share link is in the address keeps it.
   function writeUrlState() {
+    history.replaceState(history.state, "", pageUrl(currentDialogSpec()));
+  }
+  function filterParams() {
     const params = new URLSearchParams();
     const q = searchInput.value.trim();
     if (q) params.set("q", q);
@@ -5786,9 +5972,20 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     if (activeColors.size > 0) params.set("colors", [...activeColors].sort().join(""));
     if (activeBrackets.size > 0) params.set("brackets", [...activeBrackets].sort().join(","));
     if (watchOnly) params.set("watching", "1");
-    const qs = params.toString();
-    const url = qs ? `?${qs}` : window.location.pathname;
-    history.replaceState(null, "", url);
+    return params;
+  }
+  // This page's address with the filters and, when given, a dialog.
+  function pageUrl(spec) {
+    const params = filterParams();
+    for (const [k, v] of dialogParams(spec)) params.set(k, v);
+    const qs = readableQuery(params);
+    return qs ? `?${qs}` : window.location.pathname;
+  }
+  // URLSearchParams writes the ":" of ?box=<stem>:<kind> as %3A; both work,
+  // but a share link reads better with the colon (stem and kind are plain
+  // letters, digits, "-" and "_", see BOX_LINK_RE).
+  function readableQuery(params) {
+    return params.toString().replace(/(^|&)box=([a-z0-9-]+)%3A([a-z0-9_-]+)(?=&|$)/, "$1box=$2:$3");
   }
 
   // Filters only hide and show cards; a new sort order rebuilds the grid.
@@ -5808,34 +6005,814 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     searchTimer = setTimeout(refresh, 120);
   }
 
-  // ---------- Stats ----------
-  // F4: collection portfolio panel — value now vs MSRP paid + gain/loss.
-  function renderPortfolio() {
-    const el = $("portfolio"), grid = $("portfolioGrid");
-    if (!el || !grid) return;
-    const owned = PRECONS.filter(d => ownedSet.has(d.id));
-    if (owned.length === 0) { el.hidden = true; return; }
-    // Value and cost cover the SAME decks: only those with both a live price
-    // and an MSRP. A deck missing either is left out of both sums and counted
-    // by what it lacks, never added as $0 (which faked a loss or a gain).
-    const { priced, unpriced, noPrice, noMsrp, msrp, now } = ownedTotals(owned);
-    const singlesDecks = owned.filter(d => posNum(getCrackValue(d)?.tcg) != null);
-    const singles = singlesDecks.reduce((s, d) => s + getCrackValue(d).tcg, 0);
-    const delta = now - msrp;
-    const deltaPct = msrp > 0 ? (delta / msrp) * 100 : 0;
-    const dirn = delta > 0.5 ? "up" : delta < -0.5 ? "down" : "";
-    const sign = delta >= 0 ? "+" : "−";
-    const has = priced.length > 0;
-    const unpricedNote = unpriced ? `<div class="pf-sub">${missingText(noPrice, noMsrp)}, not counted</div>` : "";
-    el.hidden = false;
-    grid.innerHTML = `
-      <div class="pf-stat"><div class="pf-label">Decks owned</div><div class="pf-val">${owned.length}</div>${unpricedNote}</div>
-      <div class="pf-stat"><div class="pf-label">Value now</div><div class="pf-val">${has ? `$${now.toFixed(0)}` : "n/a"}</div><div class="pf-sub">sealed, best live price</div></div>
-      <div class="pf-stat"><div class="pf-label">Paid at MSRP</div><div class="pf-val">${has ? `$${msrp.toFixed(0)}` : "n/a"}</div>${unpriced && has ? `<div class="pf-sub">for the ${priced.length} counted</div>` : ""}</div>
-      <div class="pf-stat"><div class="pf-label">vs MSRP</div><div class="pf-val ${has ? dirn : ""}">${has ? `${sign}$${Math.abs(delta).toFixed(0)}` : "n/a"}</div><div class="pf-sub">${has ? `${sign}${Math.abs(deltaPct).toFixed(0)}%` : "no deck with both a price and an MSRP"}</div></div>
-      <div class="pf-stat"><div class="pf-label">Singles value</div><div class="pf-val">${singlesDecks.length ? `$${singles.toFixed(0)}` : "n/a"}</div><div class="pf-sub">if cracked (TCG retail)${singlesDecks.length < owned.length ? `, ${singlesDecks.length} of ${owned.length} decks` : ""}</div></div>`;
+  // ---------- Share links and the Back button ----------
+  // Each dialog has an address form, its spec:
+  //   { t: "deck", id, chart }         ?deck=<id>, and &view=chart for its chart
+  //   { t: "box", stem, kind, chart }  ?box=<stem>:<kind>, and &view=chart
+  //   { t: "compare" }, { t: "plain" } no parameters of their own
+  // <stem> names the box card file (cards/boxes/<stem>.json) and <kind> a box
+  // type in it (a box row's cards_kind). A dialog the visitor opens adds a
+  // history entry that holds its spec (pushState), so Back closes it; one
+  // dialog replacing another, or a change of box tab, replaces that entry.
+  // The filter parameters stay in the address beside it (writeUrlState).
+  const BOX_LINK_RE = /^([a-z0-9-]{1,60}):([a-z0-9_-]{1,40})$/;
+  const BOX_FILE_STEM_RE = /^cards\/boxes\/([a-z0-9-]+)\.json$/;
+  function validSpec(x) {
+    if (!x || typeof x !== "object") return null;
+    if (x.t === "deck" && typeof x.id === "string" && SLUG_RE.test(x.id)) return { t: "deck", id: x.id, chart: x.chart === true };
+    if (x.t === "box" && typeof x.stem === "string" && typeof x.kind === "string" && BOX_LINK_RE.test(`${x.stem}:${x.kind}`)) {
+      return { t: "box", stem: x.stem, kind: x.kind, chart: x.chart === true };
+    }
+    if (x.t === "compare" || x.t === "plain") return { t: x.t };
+    return null;
+  }
+  function dialogParams(spec) {
+    const out = [];
+    if (spec && spec.t === "deck") out.push(["deck", spec.id]);
+    else if (spec && spec.t === "box") out.push(["box", `${spec.stem}:${spec.kind}`]);
+    else return out;
+    if (spec.chart) out.push(["view", "chart"]);
+    return out;
+  }
+  // The spec of the open dialog's history entry, if it has one.
+  function currentDialogSpec() {
+    return openModalEl ? validSpec(history.state && history.state.mtgDialog) : null;
+  }
+  // A dialog's share link: this page with the dialog's parameters only.
+  function shareUrl(spec) {
+    const params = new URLSearchParams(dialogParams(spec));
+    const qs = readableQuery(params);
+    return new URL(window.location.pathname, window.location.origin).href + (qs ? `?${qs}` : "");
+  }
+  // The link form of a box row (its card file and type), or null.
+  function boxLinkSpec(b, chart = false) {
+    const ref = boxCardsRef(b);
+    const m = ref && BOX_FILE_STEM_RE.exec(ref.file);
+    return m && BOX_LINK_RE.test(`${m[1]}:${ref.kind}`) ? { t: "box", stem: m[1], kind: ref.kind, chart } : null;
+  }
+  function cardListSpec() {
+    const v = CARD_VIEW;
+    if (v.mode === "deck" && v.deck) return { t: "deck", id: v.deck.id, chart: false };
+    const m = v.mode === "box" ? BOX_FILE_STEM_RE.exec(v.file || "") : null;
+    return m && BOX_LINK_RE.test(`${m[1]}:${v.kind}`) ? { t: "box", stem: m[1], kind: v.kind, chart: false } : { t: "plain" };
+  }
+  // The priced box row a box link names: { set, row, exact }, where exact is
+  // false when the file has a row but none of that type (the card list then
+  // opens on the linked type, the chart cannot).
+  function findBoxLink(stem, kind) {
+    const file = `cards/boxes/${stem}.json`;
+    let near = null;
+    for (const [set, rows] of Object.entries(getBoxes() || {})) {
+      for (const row of (Array.isArray(rows) ? rows : [])) {
+        if (!row || !posNum(row.price)) continue;
+        const ref = boxCardsRef(row);
+        if (!ref || ref.file !== file) continue;
+        if (ref.kind === kind) return { set, row, exact: true };
+        near = near || { set, row, exact: false };
+      }
+    }
+    return near;
   }
 
+  let dialogFromHistory = false;   // set while Back, Forward or a share link opens a dialog
+  let backPending = false;         // closeModal stepped back and that popstate has not come yet
+  let pushAfterBack = null;        // a dialog opened in that moment, pushed once it comes
+  function dialogOpened(spec) {
+    if (dialogFromHistory) return;
+    if (backPending) { pushAfterBack = spec; return; }
+    const state = { mtgDialog: spec };
+    if (history.state && history.state.mtgDialog) history.replaceState(state, "", pageUrl(spec));
+    else history.pushState(state, "", pageUrl(spec));
+  }
+  // The open dialog now shows something else (another box type).
+  function dialogChanged(spec) {
+    if (backPending || !(history.state && history.state.mtgDialog)) return;
+    history.replaceState({ mtgDialog: spec }, "", pageUrl(spec));
+  }
+  // Called by closeModal when the page closed a dialog (not Back).
+  function leaveDialogEntry() {
+    if (backPending || !(history.state && history.state.mtgDialog)) return;
+    backPending = true;
+    history.back();
+  }
+  function onPopState(e) {
+    if (backPending) {
+      backPending = false;
+      const next = pushAfterBack;
+      pushAfterBack = null;
+      if (next && openModalEl) history.pushState({ mtgDialog: next }, "", pageUrl(next));
+      return;
+    }
+    const spec = validSpec(e.state && e.state.mtgDialog);
+    if (openModalEl) {
+      closingFromHistory = true;
+      try { closeModal(); } finally { closingFromHistory = false; }
+    }
+    if (spec) openFromSpec(spec, { fromHistory: true });
+  }
+  // Open the dialog a spec names. False when the page cannot: an id no deck
+  // has (renamed ids resolve through formerIds), a box no longer listed, a
+  // deck with no card list yet.
+  function openFromSpec(spec, { fromHistory = false } = {}) {
+    dialogFromHistory = fromHistory;
+    try {
+      if (spec.t === "compare") {
+        renderCompareModal();
+        openModal(compareModal, $("compareModalClose"));
+        return true;
+      }
+      if (spec.t === "deck") {
+        const id = canonicalId(spec.id);
+        if (!id) return false;
+        if (spec.chart) { openChart(id); return true; }
+        return openDeckCards(id);
+      }
+      if (spec.t === "box") {
+        const hit = findBoxLink(spec.stem, spec.kind);
+        if (!hit || (spec.chart && !hit.exact)) return false;
+        if (spec.chart) { openBoxChart(hit.set, hit.row.type); return true; }
+        return openBoxCards(hit.set, hit.row.type, spec.kind);
+      }
+      return false;
+    } finally {
+      dialogFromHistory = false;
+    }
+  }
+  // A share link in the address: open its dialog once the page has drawn.
+  // The entry under it becomes the plain page, so Back closes the dialog
+  // instead of leaving the site. A reload of an entry this page pushed
+  // keeps its history as it is.
+  function openFromUrl() {
+    const restored = validSpec(history.state && history.state.mtgDialog);
+    if (restored) {
+      if (restored.t === "plain" || !openFromSpec(restored, { fromHistory: true })) history.replaceState(null, "", pageUrl(null));
+      return;
+    }
+    const params = new URLSearchParams(window.location.search);
+    const deck = params.get("deck"), box = params.get("box"), chart = params.get("view") === "chart";
+    if (deck == null && box == null) return;
+    history.replaceState(null, "", pageUrl(null));
+    let spec = null;
+    if (deck != null) spec = validSpec({ t: "deck", id: deck, chart });
+    else {
+      const m = BOX_LINK_RE.exec(box);
+      spec = m ? { t: "box", stem: m[1], kind: m[2], chart } : null;
+    }
+    // A deck whose card list is not published yet opens its chart instead.
+    if (spec && spec.t === "deck" && !spec.chart) {
+      const id = canonicalId(spec.id), d = id ? PRECONS.find(x => x.id === id) : null;
+      if (d && !deckCardsRef(d)) {
+        spec = { t: "deck", id, chart: true };
+        showLinkNotice(`The card list for ${d.name} is not published yet, so the link opened its price chart.`);
+      }
+    }
+    if (spec && openFromSpec(spec)) return;
+    showLinkNotice(deck != null
+      ? "That link points to a deck this page does not list, so nothing was opened."
+      : "That link points to a sealed box this page does not list today, so nothing was opened.");
+  }
+  function showLinkNotice(text) {
+    $("linkNoticeText").textContent = text;
+    $("linkNotice").hidden = false;
+  }
+
+  // ----- Copy link, Copy decklist -----
+  // The clipboard API needs a secure context (https or localhost); the
+  // fallback copies a selected, offscreen text area. The area goes inside
+  // the open dialog, since the page behind it is inert.
+  async function copyText(text) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; }
+    } catch (e) { /* fall through */ }
+    const prev = document.activeElement;
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.className = "copy-scratch";
+    (openModalEl || document.body).appendChild(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    ta.remove();
+    if (prev && prev.focus) prev.focus({ preventScroll: true });
+    return ok;
+  }
+  const statusTimers = {};
+  // A short line beside a dialog's buttons, read out politely; a success
+  // fades after a few seconds, a failure stays.
+  function setDialogStatus(id, text, keep = false) {
+    const el = $(id);
+    if (!el) return;
+    clearTimeout(statusTimers[id]);
+    el.textContent = text;
+    if (text && !keep) statusTimers[id] = setTimeout(() => { el.textContent = ""; }, 4000);
+  }
+  async function copyLinkTo(spec, statusId) {
+    const url = shareUrl(spec);
+    if (await copyText(url)) setDialogStatus(statusId, "Link copied");
+    else setDialogStatus(statusId, `Could not copy. The link is ${url}`, true);
+  }
+  // "1 Card Name" per line, commanders first, one line per name.
+  function decklistText(entries) {
+    const lines = new Map();
+    const add = e => lines.set(e.name, (lines.get(e.name) || 0) + e.qty);
+    entries.filter(e => e.board === "commander").forEach(add);
+    entries.filter(e => e.board !== "commander").forEach(add);
+    return [...lines].map(([name, qty]) => `${qty} ${name}`).join("\n") + "\n";
+  }
+  // EDHREC's commander page slug: the face commander's name (front face of
+  // a two faced card), accents stripped, lowercase, apostrophes, commas and
+  // periods removed, and every other run of characters that are not
+  // letters or digits turned into one "-".
+  function edhrecSlug(name) {
+    return String(name || "").split(" // ")[0]
+      .normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .toLowerCase().replace(/æ/g, "ae")
+      .replace(/['‘’,.]/g, "")
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  }
+  function edhrecUrl(deck) {
+    const slug = deck && deck.commander ? edhrecSlug(deck.commander) : "";
+    return slug ? safeHref(`https://edhrec.com/commanders/${slug}`) : null;
+  }
+  // The row under the card list title: Copy link for every list; for a
+  // deck also Copy decklist (once its file is in) and the two links.
+  function fillCardActions() {
+    const v = CARD_VIEW, deck = v.mode === "deck" ? v.deck : null;
+    const entries = deck && v.data && Array.isArray(v.data.entries) ? v.data.entries : null;
+    $("cvCopyList").hidden = !deck;
+    $("cvCopyList").disabled = !(entries && entries.length);
+    const ed = edhrecUrl(deck);
+    $("cvEdhrec").hidden = !ed;
+    if (ed) $("cvEdhrec").href = ed;
+    for (const el of $("cvActions").querySelectorAll(".sr-deck")) el.textContent = deck ? ` for ${deck.name}` : "";
+    $("cvSpellbook").hidden = !deck;
+    $("cvCopyLink").hidden = !v.mode || cardListSpec().t === "plain";
+    if (!v.mode) setDialogStatus("cvCopyStatus", "");
+  }
+
+  // ---------- Collection (precon-collection) ----------
+  // { schema: 1, items: { "deck:<id>" | "box:<set name>::<type>" |
+  // "bundle:<id>": { qty, paid, opened } } }: qty copies (1 or more), paid
+  // the price paid for one copy or null, opened how many of the copies are
+  // opened (0 to qty). precon-owned stays the owned flag the rest of the page
+  // reads, and a deck is in the collection exactly when it is owned there:
+  // every load and save matches the two (an owned deck with no item gets one
+  // copy priced at its MSRP, which the visitor can change; an item for a deck
+  // no longer owned is dropped). Box and bundle items are kept even when
+  // today's data lacks the row, so one failed scrape cannot erase them.
+  const COLLECTION_MAX_QTY = 999, COLLECTION_MAX_PAID = 100000, COLLECTION_MAX_ITEMS = 2000;
+  let collection = {};   // what this page shows: key -> { qty, paid, opened }
+  const cents = v => Math.round(v * 100) / 100;
+  function itemKeyParts(key) {
+    if (typeof key !== "string" || key.length > 300) return null;
+    let m = /^deck:([a-z0-9-]+)$/.exec(key);
+    if (m) return { kind: "deck", id: m[1] };
+    m = /^bundle:([a-z0-9-]+)$/.exec(key);
+    if (m) return { kind: "bundle", id: m[1] };
+    m = /^box:([^\u0000-\u001f]{1,200})::([a-z0-9_-]{1,40})$/.exec(key);
+    if (m) return { kind: "box", set: m[1], type: m[2] };
+    return null;
+  }
+  // One item with every field checked, or null.
+  function cleanItem(v) {
+    if (!v || typeof v !== "object" || Array.isArray(v)) return null;
+    if (!Number.isInteger(v.qty) || v.qty < 1 || v.qty > COLLECTION_MAX_QTY) return null;
+    let paid = null;
+    if (v.paid != null) {
+      if (typeof v.paid !== "number" || !Number.isFinite(v.paid) || v.paid < 0 || v.paid > COLLECTION_MAX_PAID) return null;
+      paid = cents(v.paid);
+    }
+    const opened = v.opened == null ? 0 : v.opened;
+    if (!Number.isInteger(opened) || opened < 0) return null;
+    return { qty: v.qty, paid, opened: Math.min(opened, v.qty) };
+  }
+  function defaultPaid(id) {
+    const d = PRECONS.find(x => x.id === id);
+    return d && d.msrp != null ? cents(d.msrp) : null;
+  }
+  // What storage holds: valid items, renamed deck ids moved, deleted decks
+  // dropped, and decks matched to `owned` (stored owned ids).
+  function storedCollection(raw, owned) {
+    const src = raw && typeof raw === "object" && !Array.isArray(raw) && raw.items
+      && typeof raw.items === "object" && !Array.isArray(raw.items) ? raw.items : {};
+    const items = {};
+    for (const k of Object.keys(src).slice(0, COLLECTION_MAX_ITEMS)) {
+      const parts = itemKeyParts(k), item = parts && cleanItem(src[k]);
+      if (!item) continue;
+      if (parts.kind !== "deck") { items[k] = item; continue; }
+      const id = aliasId(parts.id);
+      if (!isKnownId(id)) continue;
+      const key = `deck:${id}`;
+      // An item saved under the current id wins over one under a former id.
+      if (!(key in items) || k === key) items[key] = item;
+    }
+    const own = new Set(owned);
+    for (const k of Object.keys(items)) {
+      const parts = itemKeyParts(k);
+      if (parts.kind === "deck" && !own.has(parts.id)) delete items[k];
+    }
+    for (const id of owned) if (!items[`deck:${id}`]) items[`deck:${id}`] = { qty: 1, paid: defaultPaid(id), opened: 0 };
+    return { schema: 1, items };
+  }
+  // What this page shows: decks only when the loaded catalog has them.
+  function pageCollection(items) {
+    const out = {};
+    for (const [k, v] of Object.entries(items)) {
+      const parts = itemKeyParts(k);
+      if (parts && parts.kind === "deck" && !canonicalId(parts.id)) continue;
+      out[k] = v;
+    }
+    return out;
+  }
+  async function storedOwnedIds() {
+    const owned = await loadKey("owned");
+    return Array.isArray(owned) ? storedIdList(owned) : storedIdList([...ownedSet]);
+  }
+  async function loadCollection() {
+    const stored = storedCollection(await loadKey("collection"), await storedOwnedIds());
+    collection = pageCollection(stored.items);
+    return stored;
+  }
+  // First visit with this version: owned decks become items. Nothing is
+  // written for a visitor who owns nothing.
+  async function migrateCollection() {
+    const raw = await loadKey("collection");
+    const stored = await loadCollection();
+    if (raw == null && !Object.keys(stored.items).length) return;
+    if (JSON.stringify(raw) !== JSON.stringify(stored)) await saveKey("collection", stored);
+  }
+  // One change, read, modify, write against what is stored now (see
+  // toggleSavedId), then matched to the owned list again.
+  async function updateCollection(change) {
+    const owned = await storedOwnedIds();
+    const stored = storedCollection(await loadKey("collection"), owned);
+    change(stored.items);
+    const next = storedCollection(stored, owned);
+    collection = pageCollection(next.items);
+    return saveKey("collection", next);
+  }
+  const boxItemKey = (set, type) => `box:${set}::${type}`;
+  const isOwnedItem = key => Object.prototype.hasOwnProperty.call(collection, key);
+
+  // Card Kingdom's cash for the sealed copies: its live offer times the
+  // copies it will take (buy_qty, its maximum), or null when the data has no
+  // offer or no maximum.
+  function ckCash(buy, max, sealed) {
+    const each = posNum(buy);
+    if (each == null || !Number.isInteger(max) || max < 1 || sealed < 1) return null;
+    const n = Math.min(sealed, max);
+    return { each, n, max, total: each * n };
+  }
+  // One item's figures today. unit is the price to buy one sealed copy now
+  // (the price the page headlines), not what a copy would sell for.
+  function collectionItemInfo(key, item) {
+    const parts = itemKeyParts(key);
+    const sealed = item.qty - item.opened;
+    const info = { key, kind: parts.kind, name: "", listed: true, sealed, unit: null, unitLabel: "", ck: null, singles: null };
+    if (parts.kind === "deck") {
+      const d = PRECONS.find(x => x.id === parts.id);
+      info.name = d ? d.name : parts.id;
+      info.deck = d;
+      const bv = d ? bestVendorPrice(d) : null;
+      if (bv) { info.unit = bv.best.price; info.unitLabel = `${bv.best.vendor} ${bv.best.kind}`; }
+      const c = d ? deckEntry(LIVE_PRICES?.vendors?.cardkingdom, d) : null;
+      info.ck = c ? ckCash(c.buy, c.buy_qty, sealed) : null;
+      const cv = d ? getCrackValue(d) : null;
+      info.singlesEach = cv && posNum(cv.tcg) != null ? cv.tcg : null;
+      if (item.opened > 0 && info.singlesEach != null) info.singles = info.singlesEach * item.opened;
+    } else if (parts.kind === "box") {
+      const b = findBox(parts.set, parts.type);
+      info.listed = !!(b && posNum(b.price));
+      info.name = b ? (boxNameParts(b).name || `${parts.set} ${b.label || "box"}`) : `${parts.set} (${parts.type})`;
+      const tb = info.listed ? boxBuyPrice(b) : null;
+      if (tb) { info.unit = tb.price; info.unitLabel = `TCGPlayer ${tb.kind}`; }
+      info.ck = b ? ckCash(b.ck_buy, b.ck_buy_qty, sealed) : null;
+    } else {
+      const b = ownProp(LIVE_PRICES?.bundles, parts.id);
+      info.listed = !!(b && posNum(b.price));
+      info.name = b && typeof b.name === "string" && b.name.trim() ? b.name.trim() : parts.id;
+      const tb = info.listed ? boxBuyPrice(b) : null;
+      if (tb) { info.unit = tb.price; info.unitLabel = `TCGPlayer ${tb.kind}`; }
+    }
+    info.value = sealed > 0 ? (info.unit != null ? info.unit * sealed : null) : 0;
+    // Every copy valued: sealed ones at the price to buy, an opened deck at
+    // its singles. An opened box or bundle has no figure.
+    const openedWorth = item.opened === 0 ? 0 : info.singles;
+    info.worth = info.value != null && openedWorth != null ? info.value + openedWorth : null;
+    info.cost = item.paid != null ? item.paid * item.qty : null;
+    return info;
+  }
+  function collectionInfos() {
+    const order = { deck: 0, box: 1, bundle: 2 };
+    return Object.entries(collection).map(([k, item]) => ({ ...collectionItemInfo(k, item), item }))
+      .sort((a, b) => order[a.kind] - order[b.kind] || a.name.localeCompare(b.name));
+  }
+
+  // Value over time: today's sealed copies at each day's recorded price
+  // (decks: the recorded best of TCGPlayer Market and Card Kingdom in
+  // stock; boxes: TCGPlayer Market). It starts on the first day every such
+  // item has a price, and breaks on a day one of them has none. Bundles have
+  // no recorded history and opened copies no price, so neither is in it.
+  function pointAt(pts, day) {
+    let hit = null;
+    for (const p of pts) { if (p.day > day) break; hit = p; }
+    return hit;
+  }
+  function collectionSeries() {
+    const series = [];
+    let left = 0;
+    for (const [key, item] of Object.entries(collection)) {
+      const sealed = item.qty - item.opened;
+      if (sealed < 1) continue;
+      const parts = itemKeyParts(key);
+      let pts = null;
+      if (parts.kind === "deck") {
+        const d = PRECONS.find(x => x.id === parts.id);
+        pts = d ? deckPoints(d) : null;
+      } else if (parts.kind === "box") {
+        const b = findBox(parts.set, parts.type);
+        pts = b ? boxPoints(parts.set, b) : historyPoints(boxSeries(parts.set, parts.type), s => s.price, false);
+      }
+      if (!pts || !realPts(pts).length) { left++; continue; }
+      series.push({ pts, n: sealed });
+    }
+    if (!series.length) return { points: [], left, start: null };
+    const start = Math.max(...series.map(s => realPts(s.pts)[0].day));
+    const end = Math.max(...series.map(s => s.pts[s.pts.length - 1].day));
+    const out = [];
+    for (let day = start; day <= end; day++) {
+      let sum = 0, ok = true;
+      for (const s of series) {
+        const pt = day > s.pts[s.pts.length - 1].day ? null : pointAt(s.pts, day);
+        if (!pt || pt.gap) { ok = false; break; }
+        sum += pt.price * s.n;
+      }
+      const prev = out[out.length - 1];
+      if (!ok) {
+        if (prev && !prev.gap) out.push({ day, date: isoFromDay(day), price: null, gap: true });
+        continue;
+      }
+      const same = prev && !prev.gap && Math.abs(prev.price - sum) < 0.005;
+      if (!same || day === end) out.push({ day, date: isoFromDay(day), price: cents(sum), carried: !!same });
+    }
+    return { points: out, left, start };
+  }
+  function collectionChartNote(cs) {
+    const bits = ["The line adds up the sealed copies you own today at each day's recorded price (decks: the best of TCGPlayer Market and Card Kingdom in stock; boxes: TCGPlayer Market)."];
+    if (cs.start != null) bits.push(`It starts on ${fmtChartDate(isoFromDay(cs.start))}, the first day every one of them has a price.`);
+    bits.push("Opened copies and bundles are not in it (bundles have no recorded history)"
+      + (cs.left ? `, and neither ${cs.left === 1 ? "is 1 item" : `are ${cs.left} items`} with no recorded price.` : "."));
+    return bits.join(" ");
+  }
+  function openCollectionChart() {
+    showChartModal("Your collection", "Sealed copies you own today · recorded prices", () => {
+      const cs = collectionSeries();
+      return { points: cs.points, buy: null, note: collectionChartNote(cs) };
+    }, "all", { spec: null, neutral: true });
+  }
+
+  // The collection panel. Figures say what they are: "value now" is the
+  // price to buy the sealed copies today, never a price they would sell for.
+  function renderPortfolio() {
+    const el = $("portfolio"), grid = $("portfolioGrid"), list = $("collectionList");
+    if (!el || !grid || !list) return;
+    const infos = collectionInfos();
+    if (!infos.length) { el.hidden = true; list.innerHTML = ""; return; }
+    const keep = focusedCollectionField();
+    el.hidden = false;
+    const $0 = v => `$${v.toFixed(0)}`, $2 = v => `$${v.toFixed(2)}`;
+    const copies = infos.reduce((s, x) => s + x.item.qty, 0);
+    const sealed = infos.reduce((s, x) => s + x.sealed, 0);
+    const valued = infos.filter(x => x.sealed > 0 && x.value != null);
+    const value = valued.reduce((s, x) => s + x.value, 0);
+    const unvalued = infos.filter(x => x.sealed > 0 && x.value == null).length;
+    const paidItems = infos.filter(x => x.cost != null);
+    const paid = paidItems.reduce((s, x) => s + x.cost, 0);
+    const both = infos.filter(x => x.cost != null && x.worth != null);
+    const delta = both.reduce((s, x) => s + x.worth - x.cost, 0);
+    const bothCost = both.reduce((s, x) => s + x.cost, 0);
+    const ckItems = infos.filter(x => x.ck);
+    const ck = ckItems.reduce((s, x) => s + x.ck.total, 0);
+    const opened = infos.filter(x => x.kind === "deck" && x.item.opened > 0);
+    const singles = opened.filter(x => x.singles != null).reduce((s, x) => s + x.singles, 0);
+    const dirn = delta > 0.5 ? "up" : delta < -0.5 ? "down" : "";
+    const sign = delta >= 0 ? "+" : "−";
+    const stat = (label, val, sub, cls = "") => `<div class="pf-stat"><div class="pf-label">${label}</div><div class="pf-val ${cls}">${val}</div>${sub ? `<div class="pf-sub">${sub}</div>` : ""}</div>`;
+    const stats = [
+      stat("Copies owned", String(copies), `${sealed} sealed${copies - sealed ? ` · ${copies - sealed} opened` : ""}`),
+      stat("Value now", valued.length ? $0(value) : "n/a", `sealed, price to buy today${unvalued ? ` · ${unvalued} with no price` : ""}`),
+      stat("Paid", paidItems.length ? $0(paid) : "n/a", paidItems.length < infos.length ? `${infos.length - paidItems.length} with no price entered` : "what you entered"),
+      stat("vs paid", both.length ? `${sign}${$0(Math.abs(delta))}` : "n/a",
+        both.length ? `${bothCost > 0 ? `${sign}${Math.abs(delta / bothCost * 100).toFixed(0)}% · ` : ""}${both.length === infos.length ? "every item" : `${both.length} of ${infos.length} items`}` : "needs a price paid and a value", both.length ? dirn : ""),
+    ];
+    if (ckItems.length) stats.push(stat("CK cash", $0(ck), "Card Kingdom's live cash offer for sealed copies"));
+    if (opened.length) stats.push(stat("Singles", opened.some(x => x.singles != null) ? $0(singles) : "n/a", "opened decks, TCGPlayer retail"));
+    grid.innerHTML = stats.join("");
+
+    // Value over time, as a sparkline that opens the full chart.
+    const cs = collectionSeries();
+    const spark = sparklineSvg(cs.points, "your collection");
+    $("collectionTrend").innerHTML = spark
+      ? `<span class="pf-label">Value over time</span> ${spark} <span class="col-trend-note">sealed copies at recorded prices · select for the chart</span>`
+      : `<span class="pf-label">Value over time</span> <span class="col-trend-note">appears once your sealed copies have two recorded prices</span>`;
+
+    list.innerHTML = infos.map(x => collectionItemHtml(x, $2)).join("");
+    if (keep) restoreCollectionField(keep);
+  }
+  function collectionItemHtml(x, $2) {
+    const { item } = x;
+    const nm = escapeHtml(x.name);
+    const ctx = `<span class="sr-only"> for ${nm}</span>`;
+    const key = escapeHtml(x.key);
+    const kindLabel = { deck: "Deck", box: "Box", bundle: "Bundle" }[x.kind];
+    const figs = [];
+    figs.push(`<span>${x.sealed} sealed${item.opened ? ` · ${item.opened} opened` : ""}</span>`);
+    if (!x.listed) figs.push(`<span class="col-quiet">not in today's price data</span>`);
+    if (x.sealed > 0) {
+      figs.push(x.value != null
+        ? `<span>Value now <strong class="col-money">${$2(x.value)}</strong> <span class="col-quiet">(${x.sealed > 1 ? `${x.sealed} × ` : ""}${$2(x.unit)}, ${escapeHtml(x.unitLabel)}, a price to buy)</span></span>`
+        : `<span class="col-quiet">no price to buy today</span>`);
+    }
+    if (x.ck) figs.push(`<span>CK cash <strong class="col-money">${$2(x.ck.total)}</strong> <span class="col-quiet">(${x.ck.n} × ${$2(x.ck.each)}${x.ck.n < x.sealed ? `, Card Kingdom takes up to ${x.ck.max}` : ""})</span></span>`);
+    if (x.kind === "deck" && item.opened > 0) {
+      figs.push(x.singles != null
+        ? `<span>Singles <strong class="col-money">${$2(x.singles)}</strong> <span class="col-quiet">(${item.opened > 1 ? `${item.opened} × ` : ""}${$2(x.singlesEach)}, TCGPlayer retail)</span></span>`
+        : `<span class="col-quiet">no singles value today</span>`);
+    }
+    if (x.cost != null && x.worth != null) {
+      const d = x.worth - x.cost;
+      figs.push(`<span>vs paid <strong class="${d > 0.005 ? "col-up" : d < -0.005 ? "col-down" : ""}">${d >= 0 ? "+" : "−"}${$2(Math.abs(d))}</strong></span>`);
+    }
+    const placeholder = x.kind === "deck" && x.deck && x.deck.msrp != null ? `MSRP ${x.deck.msrp.toFixed(2)}` : "not entered";
+    return `<li class="col-item" data-col-key="${key}">
+      <div class="col-name"><span class="uf-kind uf-${x.kind}">${kindLabel}</span> <span class="col-title">${nm}</span></div>
+      <div class="col-fields">
+        <label class="col-field"><span class="col-flabel">Copies${ctx}</span><input type="number" class="search-input col-input" data-col-field="qty" value="${item.qty}" min="1" max="${COLLECTION_MAX_QTY}" step="1" inputmode="numeric" autocomplete="off"></label>
+        <label class="col-field"><span class="col-flabel">Paid each, $${ctx}</span><input type="number" class="search-input col-input" data-col-field="paid" value="${item.paid != null ? item.paid.toFixed(2) : ""}" min="0" max="${COLLECTION_MAX_PAID}" step="0.01" inputmode="decimal" placeholder="${escapeHtml(placeholder)}" autocomplete="off"></label>
+        <label class="col-field"><span class="col-flabel">Opened${ctx}</span><input type="number" class="search-input col-input" data-col-field="opened" value="${item.opened}" min="0" max="${item.qty}" step="1" inputmode="numeric" autocomplete="off"></label>
+        <button type="button" class="cv-btn col-remove" data-col-remove>Remove${ctx}</button>
+      </div>
+      <div class="col-figs">${figs.join("")}</div>
+    </li>`;
+  }
+  // The panel is rebuilt after each change; focus goes back to the same
+  // field of the same item.
+  function focusedCollectionField() {
+    const el = document.activeElement;
+    const li = el && el.closest ? el.closest("#collectionList .col-item") : null;
+    if (!li) return null;
+    const items = [...$("collectionList").querySelectorAll(".col-item")];
+    return { key: li.dataset.colKey, field: el.dataset.colField || (el.matches("[data-col-remove]") ? "remove" : null), index: items.indexOf(li) };
+  }
+  function restoreCollectionField(keep) {
+    const items = [...$("collectionList").querySelectorAll(".col-item")];
+    let li = items.find(x => x.dataset.colKey === keep.key);
+    if (!li && items.length) li = items[Math.min(Math.max(keep.index, 0), items.length - 1)];
+    const target = li
+      ? (keep.field === "remove" || !li.querySelector(`[data-col-field="${keep.field}"]`)
+        ? li.querySelector(keep.field === "remove" ? "[data-col-remove]" : ".col-input")
+        : li.querySelector(`[data-col-field="${keep.field}"]`))
+      : $("portfolioHead");
+    if (target) target.focus({ preventScroll: true });
+  }
+  // A field was changed: check it, save it, or put the saved value back
+  // with a note. Only whole copies; a price to the cent.
+  async function onCollectionChange(input) {
+    const li = input.closest(".col-item"), key = li && li.dataset.colKey;
+    const field = input.dataset.colField;
+    const cur = key && collection[key];
+    if (!cur || !field) return;
+    const raw = input.value.trim();
+    let next = null;
+    if (field === "qty" && /^\d{1,3}$/.test(raw) && +raw >= 1) next = { ...cur, qty: +raw, opened: Math.min(cur.opened, +raw) };
+    else if (field === "opened" && /^\d{1,3}$/.test(raw) && +raw <= cur.qty) next = { ...cur, opened: +raw };
+    else if (field === "paid" && raw === "" && !input.validity.badInput) next = { ...cur, paid: null };
+    else if (field === "paid" && /^\d{1,6}(\.\d{1,2})?$/.test(raw) && +raw <= COLLECTION_MAX_PAID) next = { ...cur, paid: cents(+raw) };
+    if (!next) {
+      const msg = { qty: "Copies is a whole number from 1 to 999.", opened: `Opened is a whole number from 0 to ${cur.qty}.`, paid: "Paid each is a price like 45 or 45.50, or empty." }[field];
+      setDialogStatus("collectionStatus", `${msg} The saved value is back.`, true);
+      input.value = field === "paid" ? (cur.paid != null ? cur.paid.toFixed(2) : "") : String(cur[field]);
+      return;
+    }
+    setDialogStatus("collectionStatus", "");
+    await updateCollection(items => { if (items[key]) items[key] = next; });
+    // A change fired by Tab arrives before focus reaches the next field.
+    await new Promise(r => setTimeout(r, 0));
+    renderPortfolio();
+    renderSinceRefresh();
+  }
+  async function removeCollectionItem(key) {
+    const parts = itemKeyParts(key);
+    if (!parts) return;
+    if (parts.kind === "deck") {
+      await toggleSavedId("owned", parts.id, false);
+      await updateCollection(() => {});
+      renderStats();
+      patchCards([parts.id]);
+    } else {
+      await updateCollection(items => { delete items[key]; });
+    }
+    renderPortfolio();
+    syncOwnChips();
+  }
+  // The Own buttons on box tiles and bundle notes, set from the collection
+  // without redrawing what holds them.
+  function ownChipState(btn) {
+    const on = isOwnedItem(btn.dataset.ownItem);
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    btn.classList.toggle("checked", on);
+    const label = btn.querySelector(".own-chip-label");
+    if (label) label.textContent = on ? "✓ Owned" : "Own";
+  }
+  function syncOwnChips() {
+    for (const btn of document.querySelectorAll(".own-chip[data-own-item]")) ownChipState(btn);
+  }
+  async function toggleOwnItem(btn) {
+    const key = btn.dataset.ownItem;
+    const parts = itemKeyParts(key);
+    if (!parts || parts.kind === "deck") return;
+    const add = !isOwnedItem(key);
+    await updateCollection(items => {
+      if (add) { if (!items[key]) items[key] = { qty: 1, paid: null, opened: 0 }; }
+      else delete items[key];
+    });
+    syncOwnChips();
+    renderPortfolio();
+  }
+  function ownChipHtml(key, name) {
+    const on = isOwnedItem(key);
+    return `<button type="button" class="own-chip${on ? " checked" : ""}" data-own-item="${escapeHtml(key)}" aria-pressed="${on}"><span class="own-chip-label" aria-hidden="true">${on ? "✓ Owned" : "Own"}</span><span class="sr-only">Own ${escapeHtml(name)}</span></button>`;
+  }
+
+  // ---------- Back up and Restore ----------
+  // Every key the site saves (stored as precon-<key>). A backup is plain
+  // JSON with only what the visitor entered on this page.
+  const BACKUP_KEYS = ["owned", "watched", "targets", "collection", "theme", "cardview", "lastvisit"];
+  const RESTORE_MAX_BYTES = 1000000;
+  async function backupData() {
+    const keys = {};
+    for (const k of BACKUP_KEYS) {
+      const v = await loadKey(k);
+      if (v != null) keys[`precon-${k}`] = v;
+    }
+    const doc = { app: "mtg-tracker", kind: "backup", schema: 1, created: new Date().toISOString(), keys };
+    const name = `mtg-tracker-backup-${localTodayIso()}.json`;
+    const url = URL.createObjectURL(new Blob([JSON.stringify(doc, null, 1) + "\n"], { type: "application/json" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    a.hidden = true;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    const n = Object.keys(keys).length;
+    setDialogStatus("savedDataStatus", n ? `Saved ${name}.` : `Saved ${name}. Nothing is saved in this browser yet, so it is empty.`, true);
+  }
+  // Check every field of a backup. Returns null for a file that is not a
+  // backup, else { values, skipped, created }: values holds the keys that
+  // passed, ready to save; skipped names the keys that did not. A key is
+  // taken whole or not at all.
+  function readBackup(doc) {
+    if (!doc || typeof doc !== "object" || Array.isArray(doc) || doc.app !== "mtg-tracker") return null;
+    const k = doc.keys;
+    if (!k || typeof k !== "object" || Array.isArray(k)) return null;
+    const values = {}, skipped = [];
+    const isObj = v => !!v && typeof v === "object" && !Array.isArray(v);
+    const ids = v => Array.isArray(v) && v.length <= 2000 && v.every(x => typeof x === "string" && SLUG_RE.test(x)) ? storedIdList(v) : undefined;
+    const checks = {
+      owned: ids,
+      watched: ids,
+      targets: v => isObj(v) && Object.keys(v).length <= 2000
+        && Object.entries(v).every(([id, n]) => SLUG_RE.test(id) && typeof n === "number" && Number.isFinite(n) && n > 0 && n <= 1e6)
+        ? storedTargets(v) : undefined,
+      collection: v => isObj(v) && v.schema === 1 && isObj(v.items) && Object.keys(v.items).length <= COLLECTION_MAX_ITEMS
+        && Object.entries(v.items).every(([key, item]) => itemKeyParts(key) && cleanItem(item)) ? v : undefined,
+      theme: v => (v === "light" || v === "dark") ? v : undefined,
+      cardview: v => (v === "grid" || v === "list") ? v : undefined,
+      lastvisit: v => typeof v === "string" && dayNum(v) != null && v <= localTodayIso() ? v : undefined,
+    };
+    for (const name of BACKUP_KEYS) {
+      const sk = `precon-${name}`;
+      if (!Object.prototype.hasOwnProperty.call(k, sk)) continue;
+      const v = checks[name](k[sk]);
+      if (v === undefined) skipped.push(name); else values[name] = v;
+    }
+    const created = typeof doc.created === "string" && Number.isFinite(Date.parse(doc.created)) ? doc.created : null;
+    return { values, skipped, created };
+  }
+  const BACKUP_NAMES = { owned: "owned decks", watched: "watchlist", targets: "price targets", collection: "collection", theme: "theme", cardview: "card list view", lastvisit: "last visit date" };
+  function backupSummary(values) {
+    return Object.keys(values).map(name => {
+      const v = values[name];
+      const n = name === "collection" ? Object.keys(v.items).length : Array.isArray(v) ? v.length : name === "targets" ? Object.keys(v).length : null;
+      return `${BACKUP_NAMES[name]}${n != null ? ` (${n})` : ""}`;
+    }).join(", ");
+  }
+  async function restoreFromFile(file) {
+    const say = (t) => setDialogStatus("savedDataStatus", t, true);
+    if (!file) return;
+    if (file.size > RESTORE_MAX_BYTES) { say("That file is too large to be an MTG Tracker backup, so nothing was restored."); return; }
+    let doc;
+    try { doc = JSON.parse(await file.text()); }
+    catch (e) { say("That file is not valid JSON, so nothing was restored."); return; }
+    const got = readBackup(doc);
+    if (!got) { say("That file is not an MTG Tracker backup, so nothing was restored."); return; }
+    const names = Object.keys(got.values);
+    if (!names.length) { say("Nothing in that backup could be used, so nothing was restored."); return; }
+    const made = got.created ? new Date(got.created).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }) : "at an unknown time";
+    const ok = window.confirm(`Restore the backup made ${made}?\n\nIt replaces what this browser has saved for: ${backupSummary(got.values)}.`
+      + `${got.skipped.length ? `\n\nLeft out because they did not pass the checks: ${got.skipped.map(n => BACKUP_NAMES[n]).join(", ")}.` : ""}`
+      + "\n\nAnything the backup does not hold stays as it is.");
+    if (!ok) { say("Restore cancelled. Nothing was changed."); return; }
+    // The owned list first: the collection is matched to it.
+    const order = ["owned", "watched", "targets", "theme", "cardview", "lastvisit"];
+    for (const name of order) if (name in got.values) await saveKey(name, got.values[name]);
+    if ("collection" in got.values) await saveKey("collection", storedCollection(got.values.collection, await storedOwnedIds()));
+    else await updateCollection(() => {});
+    await Promise.all([loadOwned(), loadWatched(), loadTargets(), loadCardView(), loadTheme()]);
+    await loadCollection();
+    renderStats();
+    renderPortfolio();
+    patchCards(null);
+    syncOwnChips();
+    say(`Restored ${backupSummary(got.values)} from the backup made ${made}.`
+      + (got.skipped.length ? ` Left out: ${got.skipped.map(n => BACKUP_NAMES[n]).join(", ")}.` : ""));
+  }
+
+  // ---------- Since your last visit (precon-lastvisit) ----------
+  // When the previous visit (a local date) is a day old or more, list up to
+  // SINCE_MAX changes for watched or owned decks and owned boxes since then:
+  // a price target reached, a new low over the recorded range, or a move of
+  // 10% or more. All of it comes from prices_history.json in this browser.
+  const SINCE_MAX = 6, SINCE_MOVE = 0.10;
+  let prevVisit = null;     // the saved date before this visit, read at init
+  let sinceItems = [];      // what the strip shows, for its buttons
+  let sinceDismissed = false;
+  function sinceChanges(lastDay) {
+    const found = [];
+    const look = (name, pts, open, target = null, buyNow = null) => {
+      const real = realPts(pts);
+      const end = pts[pts.length - 1];
+      if (real.length < 2 || !end || end.gap || end.day <= lastDay) return;
+      const thenPt = pointAt(pts, lastDay);
+      const then = thenPt && !thenPt.gap ? thenPt.price : null;
+      const now = end.price;
+      if (then == null || then <= 0) return;
+      const pct = (now - then) / then;
+      const low = Math.min(...real.map(p => p.price));
+      const pay = buyNow != null ? buyNow : now;
+      let kind = null;
+      if (target != null && pay <= target && then > target) kind = "target";
+      else if (now <= low + 0.005 && now < then - 0.005 && spanOf(pts) >= 7) kind = "low";
+      else if (Math.abs(pct) >= SINCE_MOVE) kind = "move";
+      if (kind) found.push({ kind, name, then, now: kind === "target" ? pay : now, pct, target, days: spanOf(pts), open });
+    };
+    for (const d of PRECONS) {
+      const watching = watchSet.has(d.id);
+      if (!watching && !ownedSet.has(d.id)) continue;
+      const target = watching && targets[d.id] != null ? targets[d.id] : null;
+      look(d.name, deckPoints(d), { t: "deck", id: d.id }, target, effectivePrice(d));
+    }
+    for (const key of Object.keys(collection)) {
+      const parts = itemKeyParts(key);
+      if (!parts || parts.kind !== "box") continue;
+      const b = findBox(parts.set, parts.type);
+      if (b) look(boxNameParts(b).name || `${parts.set} ${b.label || "box"}`, boxPoints(parts.set, b), { t: "boxchart", set: parts.set, type: parts.type });
+    }
+    const rank = { target: 0, low: 1, move: 2 };
+    return found.sort((a, b) => rank[a.kind] - rank[b.kind] || Math.abs(b.pct) - Math.abs(a.pct) || a.name.localeCompare(b.name));
+  }
+  function sinceLineHtml(x, i) {
+    const num = (v, now, good) => `<span class="since-num${now ? " now" : ""}${good ? " good" : ""}">$${v.toFixed(2)}</span>`;
+    const name = `<button type="button" class="since-open" data-since="${i}">${escapeHtml(x.name)}<span class="sr-only">, open its price chart</span></button>`;
+    if (x.kind === "target") return `${name} reached your ${num(x.target)} target: ${num(x.now, true, true)}, from ${num(x.then)}`;
+    if (x.kind === "low") return `${name} is at a new ${x.days} day low: from ${num(x.then)} to ${num(x.now, true, true)}`;
+    const up = x.pct > 0;
+    return `${name} is ${up ? "up" : "down"} ${Math.abs(x.pct * 100).toFixed(0)}%: from ${num(x.then)} to ${num(x.now, true, !up)}`;
+  }
+  function renderSinceStrip() {
+    const el = $("sinceStrip");
+    if (!el || sinceDismissed) return;
+    const lastDay = dayNum(prevVisit), today = dayNum(localTodayIso());
+    const all = lastDay != null && today != null && today - lastDay >= 1 ? sinceChanges(lastDay) : [];
+    sinceItems = all.slice(0, SINCE_MAX);
+    if (!sinceItems.length) { el.hidden = true; return; }
+    $("sinceHead").textContent = `Since your last visit on ${releaseDayText(prevVisit)}`;
+    $("sinceList").innerHTML = sinceItems.map((x, i) => `<li>${sinceLineHtml(x, i)}</li>`).join("");
+    $("sinceMore").textContent = all.length > SINCE_MAX ? `and ${all.length - SINCE_MAX} more` : "";
+    $("sinceMore").hidden = all.length <= SINCE_MAX;
+    el.hidden = false;
+  }
+  // A strip on show follows the data it lists (a target cleared, a deck no
+  // longer watched); one never shown stays away.
+  function renderSinceRefresh() {
+    if (!$("sinceStrip").hidden) renderSinceStrip();
+  }
+
+  // ---------- Stats ----------
+  // The collection panel is renderPortfolio, under "Collection" above.
   // Totals over owned decks that have both a live price and an MSRP.
   // noPrice: no live price today; noMsrp: priced, but MSRP unknown.
   function ownedTotals(owned) {
@@ -6006,9 +6983,20 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
         const id = ownBtn.dataset.id;
         const anchor = scrollAnchor();
         await toggleSavedId("owned", id, !ownedSet.has(id));
+        // The collection follows the owned list (one copy at MSRP, or gone).
+        await updateCollection(() => {});
         renderStats();
         renderPortfolio();
+        renderSinceRefresh();
         patchCards([id], { anchor });
+        return;
+      }
+      // A set bundle's Own button, in the bundle note of each of its decks.
+      const chip = e.target.closest(".own-chip[data-own-item]");
+      if (chip) {
+        const anchor = scrollAnchor();
+        await toggleOwnItem(chip);
+        holdAnchor(anchor);
         return;
       }
       const watchBtn = e.target.closest(".watch-toggle");
@@ -6105,6 +7093,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     $("compareOpen").addEventListener("click", () => {
       renderCompareModal();
       openModal(compareModal, $("compareModalClose"));
+      dialogOpened({ t: "compare" });
     });
     $("compareModalClose").addEventListener("click", closeModal);
     compareModal.addEventListener("click", e => {
@@ -6128,6 +7117,66 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
         });
         renderChart();
       });
+    });
+
+    // Share links: Copy link in both dialogs, Copy decklist, Back.
+    window.addEventListener("popstate", onPopState);
+    $("chartCopyLink").addEventListener("click", () => { if (chartSpec) copyLinkTo(chartSpec, "chartCopyStatus"); });
+    $("cvCopyLink").addEventListener("click", () => {
+      const spec = cardListSpec();
+      if (spec.t !== "plain") copyLinkTo(spec, "cvCopyStatus");
+    });
+    $("cvCopyList").addEventListener("click", async () => {
+      const v = CARD_VIEW;
+      if (v.mode !== "deck" || !v.data) return;
+      const ok = await copyText(decklistText(v.data.entries));
+      setDialogStatus("cvCopyStatus", ok ? "Decklist copied" : "Could not copy the decklist", !ok);
+    });
+    $("linkNoticeClose").addEventListener("click", () => {
+      $("linkNotice").hidden = true;
+      $("main").focus({ preventScroll: true });
+    });
+
+    // Since your last visit: each name opens its chart.
+    $("sinceList").addEventListener("click", e => {
+      const btn = e.target.closest("[data-since]");
+      const x = btn && sinceItems[Number(btn.dataset.since)];
+      if (!x) return;
+      if (x.open.t === "deck") openChart(x.open.id);
+      else openBoxChart(x.open.set, x.open.type);
+    });
+    $("sinceDismiss").addEventListener("click", () => {
+      sinceDismissed = true;
+      $("sinceStrip").hidden = true;
+      $("statsHead").focus({ preventScroll: true });
+    });
+
+    // Collection: fields save on change, Remove, the value line's chart.
+    const colList = $("collectionList");
+    colList.addEventListener("change", e => {
+      const input = e.target.closest("input[data-col-field]");
+      if (input) onCollectionChange(input);
+    });
+    colList.addEventListener("click", e => {
+      const btn = e.target.closest("[data-col-remove]");
+      const li = btn && btn.closest(".col-item");
+      if (li) removeCollectionItem(li.dataset.colKey);
+    });
+    $("collectionTrend").addEventListener("click", e => {
+      if (e.target.closest("[data-chart-trigger]")) openCollectionChart();
+    });
+    $("collectionTrend").addEventListener("keydown", e => {
+      if ((e.key !== "Enter" && e.key !== " ") || !e.target.matches?.("[data-chart-trigger]")) return;
+      e.preventDefault();
+      openCollectionChart();
+    });
+    $("backupBtn").addEventListener("click", () => { backupData().catch(err => { console.warn("Backup failed:", err); setDialogStatus("savedDataStatus", "The backup could not be made.", true); }); });
+    $("restoreBtn").addEventListener("click", () => $("restoreFile").click());
+    $("restoreFile").addEventListener("change", async e => {
+      const input = e.target, file = input.files && input.files[0];
+      try { await restoreFromFile(file); }
+      catch (err) { console.warn("Restore failed:", err); setDialogStatus("savedDataStatus", "The backup could not be read, so nothing was restored.", true); }
+      finally { input.value = ""; $("restoreBtn").focus({ preventScroll: true }); }
     });
 
     // Card list dialog. Its clicks are delegated here; a click on a .cv-open
@@ -6271,6 +7320,8 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     // Its "Cards and pull odds" button opens the card list instead.
     $("boxBody").addEventListener("click", e => {
       if (e.target.closest(".box-item-link")) return;  // let the real link navigate
+      const chip = e.target.closest(".own-chip[data-own-item]");
+      if (chip) { toggleOwnItem(chip); return; }
       const item = e.target.closest(".box-item");
       if (!item) return;
       const cardsBtn = e.target.closest(".box-cards");
@@ -6292,7 +7343,7 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
 
     // Another tab (or the installed app) changed saved data: reload it so this
     // tab neither shows stale state nor writes it back over the newer data.
-    const SYNCED_KEYS = ["precon-owned", "precon-watched", "precon-targets", "precon-theme"];
+    const SYNCED_KEYS = ["precon-owned", "precon-watched", "precon-targets", "precon-theme", "precon-collection"];
     window.addEventListener("storage", async e => {
       // Only saved data; the storage probe (precon-probe) must not trigger a
       // full rebuild in every other open tab on each page load.
@@ -6300,9 +7351,12 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
       if (e.key === "precon-theme") { await loadTheme(); return; }
       if (!PRECONS.length) return;
       await Promise.all([loadOwned(), loadWatched(), loadTargets()]);
+      await loadCollection();
       const anchor = scrollAnchor();
       renderStats();
       renderPortfolio();
+      syncOwnChips();
+      renderSinceRefresh();
       patchCards(null, { passive: true, anchor });
     });
   }
@@ -6355,6 +7409,9 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     // mapped and ids that no longer exist dropped.
     await Promise.all([loadOwned(), loadWatched(), loadTargets(), loadCardView()]);
     await migrateSavedIds();
+    await migrateCollection();
+    const lv = await loadKey("lastvisit");
+    prevVisit = typeof lv === "string" && dayNum(lv) != null ? lv : null;
     safely("years", fillYearFilter);
     safely("url", readUrlState);
     safely("stale", updateStaleBanner);
@@ -6372,6 +7429,8 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
       grid.innerHTML = `<div class="empty" role="alert">Something went wrong showing the decks. Please <a href="https://github.com/${REPO_SLUG}/issues/new" target="_blank" rel="noopener noreferrer">report it</a>.</div>`;
     }
     safely("compare", renderCompareBar);
+    // A share link opens its dialog over the drawn page.
+    safely("link", openFromUrl);
 
     // Second pass once history is in: everything that reads it. The reader
     // did not cause these rebuilds, so focus goes back without scrolling.
@@ -6383,6 +7442,11 @@ a.cv-price:hover { color: var(--gold-bright); text-decoration: underline; }
     safely("deal", renderDealOfDay);
     safely("feed", renderUnifiedFeed);
     if (PRICE_HISTORY || BOX_HISTORY) {
+      safely("since", renderSinceStrip);
+      safely("portfolio", renderPortfolio);
+      // This visit is the next one's "last visit", once there was history
+      // to compare against.
+      saveKey("lastvisit", localTodayIso());
       safely("boxes", renderBoxes);
       safely("grid", () => patchCards(null, { passive: true, anchor }));
     }

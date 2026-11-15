@@ -1114,6 +1114,55 @@ def price_in_finish(by_finish, order: tuple) -> tuple:
     return None, None
 
 
+# Price outlier guard. A TCGplayer retail price far above Card Kingdom's for
+# the same printing and finish is a listing error, not a market (Landing
+# Party, 2026-11-14: a foil Sunpetal Grove at $92.72 against $0.49, while
+# TCGplayer's own market for the card was $0.37). Such a price counts as no
+# TCGplayer price everywhere: crack values and top_cards, box EVs, the card
+# lists and anything built on them, all through tcg_retail_guarded, so every
+# figure agrees. Measured over every deck row and box entry of the MTGJSON
+# prices of 2026-11-11, 2026-11-14 and 2026-11-15 against TCGplayer's own
+# listings (TCGCSV): Sunpetal Grove at 40 and 117 times Card Kingdom was an
+# error, while real prices of new Star Trek printings that Card Kingdom still
+# listed at placeholder prices stood at 10.6 times (the Surge Foil Captain
+# Janeway, Endgame, $47.38, TCGplayer's market) and 18 times (Gift of
+# Perfection, Extended Art). A ratio of 20 keeps those and still catches the
+# errors seen; a $10 floor leaves cheap cards alone.
+OUTLIER_RATIO = 20.0
+OUTLIER_FLOOR = 10.00
+# (uuid, MTGJSON finish) -> (TCGplayer price, Card Kingdom price) of every
+# outlier tcg_retail_guarded met this run, for the logs.
+_PRICE_OUTLIERS: dict = {}
+
+
+def is_price_outlier(tcg, ck) -> bool:
+    """Is TCGplayer retail `tcg` an outlier against Card Kingdom retail `ck`
+    of the same printing and finish? Only when both are known, `tcg` is at
+    least OUTLIER_FLOOR and above OUTLIER_RATIO times `ck`."""
+    return (tcg is not None and ck is not None and ck > 0
+            and tcg >= OUTLIER_FLOOR and tcg > OUTLIER_RATIO * ck)
+
+
+def tcg_retail_guarded(paper, order: tuple, uuid=None) -> tuple:
+    """(price, finish, outlier) of a printing's TCGplayer retail price, read
+    from an MTGJSON 'paper' price map like price_in_finish reads it (the
+    first finish in `order` with a price). `outlier` is None, or {tcg, ck}
+    when that price is an outlier (is_price_outlier) against Card Kingdom
+    retail in the same finish: the price is then None while `finish` still
+    names the finish of the listing left out. Every TCGplayer retail price
+    of a card goes through here, so all figures leave out the same prices."""
+    paper = paper if isinstance(paper, dict) else {}
+    tcg, fin = price_in_finish(((paper.get("tcgplayer") or {}).get("retail")), order)
+    if tcg is None:
+        return None, None, None
+    ck = _latest_price(((paper.get("cardkingdom") or {}).get("retail") or {}).get(fin))
+    if not is_price_outlier(tcg, ck):
+        return tcg, fin, None
+    if uuid is not None:
+        _PRICE_OUTLIERS[(uuid, fin)] = (tcg, ck)
+    return None, fin, {"tcg": _cents(tcg), "ck": _cents(ck)}
+
+
 def _get_allprices(session: requests.Session) -> dict:
     """Download + parse MTGJSON AllPricesToday ONCE per run (about 5.5 MB gz,
     a few hundred MB parsed). Cached on the function so the crack phase and
@@ -1137,6 +1186,8 @@ def fetch_crack_values(decks: list, session: requests.Session,
     cannot price anything, so main() knows the result is incomplete.
     Each card is priced in the finish the deck holds (MTGJSON isFoil and
     isEtched), so a foil only face commander counts at its foil price.
+    A TCGplayer price the outlier guard rejects (tcg_retail_guarded) counts
+    as no TCGplayer price, in the totals, top_cards and the card list alike.
     card_count, priced and missing count cards (copies), not decklist rows:
     a deck with 32 Plains in 2 rows counts 32.
     Returns { deck_id: {tcg, cardkingdom, card_count, priced, missing} }.
@@ -1212,11 +1263,13 @@ def fetch_crack_values(decks: list, session: requests.Session,
         return {}
     price_by_uuid: dict = {}
     finish_by_uuid: dict = {}   # the finish those prices are for (card lists)
+    outlier_by_uuid: dict = {}  # TCGplayer prices left out (tcg_retail_guarded)
     for u, fins in need_uuids:
         paper = (pdata.get(u) or {}).get("paper", {})
         ckp = paper.get("cardkingdom") or {}
-        tcgp = paper.get("tcgplayer") or {}
-        tcg_retail, tcg_fin = price_in_finish(tcgp.get("retail"), fins)
+        tcg_retail, tcg_fin, outlier = tcg_retail_guarded(paper, fins, u)
+        if outlier:
+            outlier_by_uuid[(u, fins)] = outlier
         ck_retail, ck_fin = price_in_finish(ckp.get("retail"), fins)
         # The buylist price of the same finish CK sells, so a card never
         # sells for more than it costs because the two sides read different
@@ -1244,6 +1297,10 @@ def fetch_crack_values(decks: list, session: requests.Session,
         seen_names = set()  # dedupe for the reverse index (per deck)
         for u, cnt, nm, is_basic, fins in cards:
             tcg_r, ck_r, ck_bl = price_by_uuid.get((u, fins), (None, None, None))
+            o = outlier_by_uuid.get((u, fins))
+            if o:
+                print(f"  crack: [{did}] {nm}: TCGplayer ${o['tcg']:.2f} left out as an "
+                      f"outlier (Card Kingdom ${o['ck']:.2f})", flush=True)
             if tcg_r is not None:
                 tcg_buy += tcg_r * cnt
                 tcg_sell_est += tcg_r * TCG_SELL_RATE * cnt
@@ -1287,7 +1344,8 @@ def fetch_crack_values(decks: list, session: requests.Session,
             }
             try:
                 card_docs[did] = deck_cards_doc(deck_by_id[did], deck_map[did], deck_rows[did],
-                                                cards, price_by_uuid, finish_by_uuid, results[did])
+                                                cards, price_by_uuid, finish_by_uuid, results[did],
+                                                outlier_by_uuid)
             except Exception as e:
                 # The crack value stands; the deck keeps its previous card list.
                 print(f"  crack: [{did}] card list not built: {e}", flush=True)
@@ -1729,10 +1787,13 @@ def sheet_price(allp: dict, uuid, sheet_fin: str = "nonfoil") -> tuple:
     of finish `sheet_fin` (sheet_finish). Sheets of every finish reference
     the same uuids; price the sheet's finish, falling back to the others only
     when it has no price (a printing that exists in one finish only).
-    (None, None) with no price."""
+    (None, None) with no price. A price the outlier guard rejects
+    (tcg_retail_guarded) reads as no price: (None, its finish). This is the
+    one lookup the box EV and the box card lists price sheet entries with."""
     paper = (allp.get(uuid) or {}).get("paper", {})
-    tcg = (paper.get("tcgplayer") or {}).get("retail") or {}
-    return price_in_finish(tcg, finish_order(sheet_fin != "nonfoil", sheet_fin == "etched"))
+    price, fin, _outlier = tcg_retail_guarded(
+        paper, finish_order(sheet_fin != "nonfoil", sheet_fin == "etched"), uuid)
+    return price, fin
 
 
 def compute_box_ev(set_name: str, setcode_map: dict, session: requests.Session,
@@ -1857,6 +1918,32 @@ def _ck_qty(v) -> int:
     """CK stock count as a non negative int; anything unusable counts as 0."""
     f = _finite(v)
     return int(f) if f is not None and f > 0 else 0
+
+
+# Card Kingdom offers seen this run that were at or above its own retail
+# price and so dropped as stale: [(product name, offer, retail)], for the logs.
+_CK_STALE_OFFERS: list = []
+
+
+def ck_live_offer(rec: dict | None) -> tuple:
+    """(cash offer, max quantity) Card Kingdom pays today for one sealed copy
+    of an indexed CK SKU (_index_ck_sealed), or (None, None) when it is not
+    buying: no offer price, `qty_buying` 0 (CK keeps price_buy filled in
+    while it buys none, checked 2026-11-14 against its buylist pages), or an
+    offer at or above CK's own retail price for the SKU, which is a stale
+    offer and is logged. With no retail price there is nothing to compare."""
+    rec = rec or {}
+    buy, qty, retail = rec.get("buy"), rec.get("qty_buy") or 0, rec.get("retail")
+    if buy is None or qty < 1:
+        return None, None
+    if retail is not None and buy >= retail:
+        name = rec.get("raw") or rec.get("name") or ""
+        if all(n != name for n, _b, _r in _CK_STALE_OFFERS):
+            _CK_STALE_OFFERS.append((name, buy, retail))
+            print(f"  CK: [{name}] offer ${buy:.2f} is at or above CK retail "
+                  f"${retail:.2f}: stale, left out", flush=True)
+        return None, None
+    return buy, qty
 
 
 def _classify_ck_box(name: str) -> str | None:
@@ -2010,7 +2097,9 @@ def _pick_ck(cands: list) -> dict | None:
 
 def match_ck_decks(decks: list, ck_decks: list) -> dict:
     """Match each precon to a CK commander-deck SKU → vendor records keyed by
-    deck id: {price, url, status, qty, buy}. Conservative to avoid false
+    deck id: {price, url, status, qty, buy}, plus buy_qty when buy is set
+    (ck_live_offer: buy is CK's live cash offer, None when it is not
+    buying, and buy_qty the most copies it takes). Conservative to avoid false
     positives: requires the precon name to equal/contain the CK deck name AND
     the CK edition to name the same release (ck_edition_matches_set). Exact
     names beat partial ones. Unmatched decks get a CK search link with status
@@ -2036,13 +2125,16 @@ def match_ck_decks(decks: list, ck_decks: list) -> dict:
         set_match = [c for c in cands if set_ok(c)]
         chosen = _pick_ck(exact_set or set_match)
         if chosen:
+            buy, buy_qty = ck_live_offer(chosen)
             out[did] = {
                 "price": chosen["retail"],
                 "url": chosen["url"],
                 "status": "ok" if chosen["retail"] is not None else "out-of-stock",
                 "qty": chosen["qty"],
-                "buy": chosen["buy"],
+                "buy": buy,
             }
+            if buy is not None:
+                out[did]["buy_qty"] = buy_qty
         else:
             out[did] = {"price": None, "url": search, "status": "no-match"}
     n = sum(1 for v in out.values() if v.get("price") is not None)
@@ -2287,7 +2379,10 @@ def fetch_box_prices(decks: list, session: requests.Session, groups: list,
                     r["ck_price"] = ck["retail"]
                     r["ck_qty"] = ck.get("qty") or 0
                     r["ck_url"] = ck.get("url")
-                    r["ck_buy"] = ck.get("buy")
+                    # CK's live cash offer, None when it is not buying (ck_live_offer).
+                    r["ck_buy"], buy_qty = ck_live_offer(ck)
+                    if r["ck_buy"] is not None:
+                        r["ck_buy_qty"] = buy_qty
             # Stable order: play, collector, jumpstart.
             order = {"play": 0, "collector": 1, "jumpstart": 2}
             rows.sort(key=lambda r: order.get(r["type"], 9))
@@ -2344,12 +2439,19 @@ _SET_CODE_RE = re.compile(r"^[A-Z0-9]{2,8}$")
 # the source sets do not all fall due on the same run.
 CARD_REFRESH_DAYS = 28
 CARD_REFRESH_SPREAD = 7
+# Box card details read before this date predate the "gc" key (Game
+# Changer), so they are read again once instead of waiting for their refresh
+# (box_details_due). None turns this off.
+CARD_GC_SINCE = "2026-11-15"
 # Key order of a deck row and of a box card (keys a card lacks are left out).
+# "new" (a printing new to Magic) and "gc" (a Game Changer) are written only
+# when true.
 DECK_ROW_KEYS = ("uuid", "name", "qty", "board", "type", "mana", "mv", "colors",
                  "rarity", "set", "num", "finish", "img", "back", "text", "faces",
-                 "keywords", "tcg_id")
+                 "keywords", "new", "gc", "tcg_id")
 BOX_DETAIL_KEYS = ("uuid", "name", "type", "mana", "mv", "colors", "rarity", "set",
-                   "num", "img", "back", "text", "faces", "keywords", "tcg_id", "finishes")
+                   "num", "img", "back", "text", "faces", "keywords", "gc", "tcg_id",
+                   "finishes")
 BOX_CARD_KEYS = BOX_DETAIL_KEYS + ("odds",)
 
 # Card details read from MTGJSON set files this run. Each set file is read at
@@ -2368,6 +2470,8 @@ def reset_card_run() -> None:
     fetch_box_prices.card_plans = {}
     fetch_box_prices.cards_failed = []
     fetch_box_prices.cards_keep = set()
+    _PRICE_OUTLIERS.clear()
+    _CK_STALE_OFFERS.clear()
 
 
 def _cents(v) -> float | None:
@@ -2394,7 +2498,8 @@ def card_details(card: dict, by_uuid: dict | None = None) -> dict:
     object: uuid, name, type (this face's type line), mana, mv, colors (color
     identity in WUBRG order), rarity, set, num, img (Scryfall id), back (True
     when the card has a second image face), text (this face's oracle text),
-    faces and keywords. Also `finishes`, the printing's finishes, and
+    faces, keywords and gc (True for a Game Changer, MTGJSON isGameChanger;
+    left out otherwise). Also `finishes`, the printing's finishes, and
     `_tcg_ids`, its (regular, etched) TCGplayer product ids (card_tcg_id).
     A multi face card gets `faces` ([{name, type, mana, text}], front first)
     and the keywords of every face when `by_uuid` (the cards of its set by
@@ -2438,6 +2543,8 @@ def card_details(card: dict, by_uuid: dict | None = None) -> dict:
         else:
             out["_faces"] = True
     out["keywords"] = sorted(keywords)
+    if card.get("isGameChanger") is True:
+        out["gc"] = True
     out["finishes"] = [f for f in FINISHES if f in _strs(card.get("finishes"))]
     out["_tcg_ids"] = (_digits(ids.get("tcgplayerProductId")),
                        _digits(ids.get("tcgplayerEtchedProductId")))
@@ -2499,20 +2606,32 @@ def details_due(code: str, fetched, today: str) -> bool:
     return age < 0 or age >= limit
 
 
+def box_details_due(code: str, fetched, today: str) -> bool:
+    """details_due for the card details a box file keeps, which are also due
+    once when they were read before CARD_GC_SINCE (they lack "gc")."""
+    return details_due(code, fetched, today) or (
+        CARD_GC_SINCE is not None and str(fetched) < CARD_GC_SINCE <= today)
+
+
 # ---- Deck card lists ----
 
 def deck_card_row(card: dict, qty, board: str) -> dict:
     """One row of a deck's card list: the card's details (card_details) with
-    `qty` and `board` ('commander', or 'main' for the main board). The finish
-    is added by deck_cards_doc, which also lists the prices."""
+    `qty` and `board` ('commander', or 'main' for the main board), and `new`
+    True when the printing is new to Magic (MTGJSON isReprint is not true;
+    MTGJSON leaves false booleans out). The finish is added by
+    deck_cards_doc, which also lists the prices."""
     row = card_details(card)
+    if card.get("isReprint") is not True:
+        row["new"] = True
     row["qty"] = qty
     row["board"] = "commander" if board == "commander" else "main"
     return row
 
 
 def deck_cards_doc(deck: dict, source: str, rows: list, cards: list,
-                   price_by_uuid: dict, finish_by_uuid: dict, crack: dict) -> dict:
+                   price_by_uuid: dict, finish_by_uuid: dict, crack: dict,
+                   outlier_by_uuid: dict | None = None) -> dict:
     """The card list of one deck, cards/decks/<deck-id>.json, still without
     updated_at and the other faces (update_card_files adds them). `rows`
     (deck_card_row) and `cards` are the decklist rows fetch_crack_values
@@ -2520,13 +2639,19 @@ def deck_cards_doc(deck: dict, source: str, rows: list, cards: list,
     row gets the finish its price is for. `prices` runs parallel to `cards`:
     prices[i] = [tcg, ck], the very TCGplayer and Card Kingdom retail prices
     the crack value sums for one copy of cards[i], rounded to cents (None
-    when MTGJSON has none). `totals` repeats the deck's crack entry."""
-    out, prices = [], []
-    for row, (u, _cnt, _nm, _basic, fins) in zip(rows, cards):
+    when MTGJSON has none). `totals` repeats the deck's crack entry.
+    `outliers` lists the rows whose TCGplayer price the outlier guard left
+    out (outlier_by_uuid, see tcg_retail_guarded): [{i: row index, tcg, ck}].
+    `profile` (deck_profile) summarizes the new cards and Game Changers."""
+    out, prices, outliers = [], [], []
+    for i, (row, (u, _cnt, _nm, _basic, fins)) in enumerate(zip(rows, cards)):
         tcg, ck, _ck_buy = price_by_uuid.get((u, fins), (None, None, None))
         finish = finish_by_uuid.get((u, fins)) or FINISH_NAMES[fins[0]]
         out.append(dict(row, finish=finish, tcg_id=card_tcg_id(row, finish == "etched")))
         prices.append([_cents(tcg), _cents(ck)])
+        o = (outlier_by_uuid or {}).get((u, fins))
+        if o:
+            outliers.append({"i": i, "tcg": o["tcg"], "ck": o["ck"]})
     return {
         "schema": CARDS_SCHEMA,
         "deck_id": deck["id"],
@@ -2534,9 +2659,25 @@ def deck_cards_doc(deck: dict, source: str, rows: list, cards: list,
         "source": source,
         "totals": {"cards": crack["card_count"], "tcg": crack["tcg"],
                    "cardkingdom": crack["cardkingdom"], "missing": crack["missing"]},
+        "outliers": outliers,
+        "profile": deck_profile(out, prices, crack["tcg"]),
         "cards": out,
         "prices": prices,
     }
+
+
+def deck_profile(rows: list, prices: list, tcg_total) -> dict:
+    """crack[deck].profile from a deck's card list rows and their prices
+    (deck_cards_doc): `new`, the copies of new cards (the qty of the rows
+    marked new); `new_share`, the share of the crack TCGplayer total
+    (`tcg_total`) that new rows carry, from the rows' prices in cents times
+    qty, 2 decimals, None when the total is None or 0; `gc`, the names of
+    the deck's Game Changers, sorted, each once."""
+    new = sum(r["qty"] for r in rows if r.get("new"))
+    new_tcg = sum((p[0] or 0) * r["qty"] for r, p in zip(rows, prices) if r.get("new"))
+    share = round(new_tcg / tcg_total, 2) if tcg_total else None
+    return {"new": new, "new_share": share,
+            "gc": sorted({r["name"] for r in rows if r.get("gc")})}
 
 
 def _note_fetched(fetched: dict, code: str, when) -> None:
@@ -2684,14 +2825,17 @@ def booster_card_odds(cfg: dict, finish_of) -> tuple:
 
 def finish_prices(allp: dict, uuid, finish: str) -> dict:
     """{tcg, ck}: TCGplayer and Card Kingdom retail for one copy of a card in
-    one finish, rounded to cents, None where MTGJSON has no price."""
+    one finish, rounded to cents, None where MTGJSON has no price. A
+    TCGplayer price the outlier guard rejects is None, and `outlier` then
+    holds {tcg, ck}, the prices compared (tcg_retail_guarded)."""
     paper = (allp.get(uuid) or {}).get("paper", {})
     key = "normal" if finish == "nonfoil" else finish
-
-    def retail(vendor):
-        return _cents(_latest_price(((paper.get(vendor) or {}).get("retail") or {}).get(key)))
-
-    return {"tcg": retail("tcgplayer"), "ck": retail("cardkingdom")}
+    tcg, _fin, outlier = tcg_retail_guarded(paper, (key,), uuid)
+    ck = _latest_price(((paper.get("cardkingdom") or {}).get("retail") or {}).get(key))
+    out = {"tcg": _cents(tcg), "ck": _cents(ck)}
+    if outlier:
+        out["outlier"] = outlier
+    return out
 
 
 def _card_order(card: dict) -> tuple:
@@ -2715,7 +2859,8 @@ def box_cards_doc(set_name: str, plan: dict, details_of, allp: dict) -> dict:
     kind, in the order nonfoil, foil, etched. A sheet entry has the finish
     whose TCGplayer price the EV reads (sheet_price), so prices times copies
     times packs adds up to the EV; without a price it has its
-    nominal_finish."""
+    nominal_finish. `outliers` lists the entries whose TCGplayer price the
+    outlier guard left out: [{uuid, finish, tcg, ck}], in file order."""
     memo: dict = {}
 
     def finish_of(uuid, sheet_fin):
@@ -2745,16 +2890,22 @@ def box_cards_doc(set_name: str, plan: dict, details_of, allp: dict) -> dict:
         kinds[kind] = {"label": k["label"], "packs": k["packs"], "pack_size": _sig6(pack_size),
                        "ev": k["ev"], "sources": _strs(k["cfg"].get("sourceSetCodes")),
                        "unresolved": unresolved}
-    out, prices = [], []
+    out, prices, outliers = [], [], []
     for card in sorted(cards.values(), key=_card_order):
         fins = [f for f in FINISHES if f in card["prices"]]
         prices.append([[card["prices"][f]["tcg"], card["prices"][f]["ck"]] for f in fins])
+        for f in fins:
+            o = card["prices"][f].get("outlier")
+            if o:
+                outliers.append({"uuid": card["uuid"], "finish": f, "tcg": o["tcg"], "ck": o["ck"]})
+                print(f"  cards: [{set_name}] {card['name']} ({f}): TCGplayer ${o['tcg']:.2f} "
+                      f"left out as an outlier (Card Kingdom ${o['ck']:.2f})", flush=True)
         card["odds"] = {kind: {f: o[f] for f in FINISHES if f in o}
                         for kind, o in card["odds"].items()}
         card["tcg_id"] = card_tcg_id(card, fins == ["etched"])
         out.append({key: card[key] for key in BOX_CARD_KEYS if key in card})
     return {"schema": CARDS_SCHEMA, "set": set_name, "code": plan["code"],
-            "kinds": kinds, "cards": out, "prices": prices}
+            "kinds": kinds, "outliers": outliers, "cards": out, "prices": prices}
 
 
 def plan_sources(plan: dict) -> dict:
@@ -2990,7 +3141,7 @@ def update_card_files(root: Path, decks: list, crack_results: dict, box_results:
                                            for u, c in prev["cards"].items()) if d}
         prev_boxes[set_name] = prev
         # Sets whose cards the previous file holds and that are not due yet.
-        held = {c for c, when in prev["fetched"].items() if not details_due(c, when, today)}
+        held = {c for c, when in prev["fetched"].items() if not box_details_due(c, when, today)}
         for u, codes in plan_sources(plan).items():
             interest.add(u)
             if u in _CARD_DETAILS:
@@ -2999,7 +3150,7 @@ def update_card_files(root: Path, decks: list, crack_results: dict, box_results:
             if old is None:
                 want_details(wanted, u, tuple(c for c in codes if c not in held),
                              tuple(c for c in codes if c in held))
-            elif details_due(old["set"], prev["fetched"].get(old["set"]), today):
+            elif box_details_due(old["set"], prev["fetched"].get(old["set"]), today):
                 want_details(wanted, u, (old["set"],))
 
     # 2. Download the set files those cards need, largest need first.
@@ -3017,13 +3168,17 @@ def update_card_files(root: Path, decks: list, crack_results: dict, box_results:
             out, multi, unresolved, from_prev = finish_deck_doc(doc, prev_decks[did], today)
             out = {k: out[k] for k in ("schema", "deck_id", "name", "source")} \
                 | {"updated_at": updated_at} \
-                | {k: out[k] for k in ("totals", "fetched", "cards", "prices")}
+                | {k: out[k] for k in ("totals", "fetched")} \
+                | ({"outliers": out["outliers"]} if out.get("outliers") else {}) \
+                | {k: out[k] for k in ("cards", "prices")}
             write_cards_file(decks_dir / f"{did}.json", out)
         except Exception as e:
             # The deck keeps its previous file, if it has one.
             print(f"  cards: [{did}] card file not written: {e}", flush=True)
             continue
         written_decks.add(did)
+        # The profile of the card list just written (deck_profile).
+        crack_results[did]["profile"] = doc["profile"]
         n_rows += len(out["cards"])
         n_multi += multi
         n_unresolved += unresolved
@@ -3033,6 +3188,12 @@ def update_card_files(root: Path, decks: list, crack_results: dict, box_results:
     allp = getattr(_get_allprices, "_data", None) or {}
     written_boxes: dict = {}   # set_name -> (code, kinds written)
     n_kinds = n_cards = n_entries = n_left_out = 0
+    # Game Changer is a property of the card, not the printing: details kept
+    # from a previous file take it from any printing of the same name read
+    # this run, so the flag does not wait for their next refresh.
+    read_now = list(_CARD_DETAILS.values()) + [r for doc in deck_docs.values() for r in doc["cards"]]
+    names_read = {d.get("name") for d in read_now}
+    gc_names = {d.get("name") for d in read_now if d.get("gc")}
     for set_name, plan in plans.items():
         prev = prev_boxes[set_name]
         from_prev: set = set()
@@ -3043,6 +3204,9 @@ def update_card_files(root: Path, decks: list, crack_results: dict, box_results:
                 det = prev["cards"].get(uuid)
                 if det is not None:
                     from_prev.add(uuid)
+                    if det.get("name") in names_read:
+                        det = {k: v for k, v in det.items() if k != "gc"} \
+                            | ({"gc": True} if det["name"] in gc_names else {})
             return det
 
         try:
@@ -3053,8 +3217,9 @@ def update_card_files(root: Path, decks: list, crack_results: dict, box_results:
                               prev["fetched"].get(c["set"]) if c["uuid"] in from_prev else today)
             out = {k: out[k] for k in ("schema", "set", "code")} | {"updated_at": updated_at} \
                 | {"kinds": out["kinds"],
-                   "fetched": {k: fetched[k] for k in sorted(fetched) if fetched[k]},
-                   "cards": out["cards"], "prices": out["prices"]}
+                   "fetched": {k: fetched[k] for k in sorted(fetched) if fetched[k]}} \
+                | ({"outliers": out["outliers"]} if out["outliers"] else {}) \
+                | {"cards": out["cards"], "prices": out["prices"]}
             write_cards_file(boxes_dir / f"{plan['code'].lower()}.json", out)
         except Exception as e:
             # The set keeps its previous file and pointers, if it has them.
@@ -3454,6 +3619,9 @@ def main() -> None:
     print(f"Bundles:   {len(bundles)} sets")
     print(f"Crack val: {len(crack_results)} decks priced")
     print(f"Boxes:     {len(box_results)} sets with sealed boxes")
+    print(f"Outliers:  {len(_PRICE_OUTLIERS)} TCGplayer prices left out "
+          f"(over {OUTLIER_RATIO:g} times Card Kingdom's, at least ${OUTLIER_FLOOR:.2f})")
+    print(f"CK offers: {len(_CK_STALE_OFFERS)} stale sealed offers left out")
 
 
 # Box history entries written before rows recorded their booster kind carry

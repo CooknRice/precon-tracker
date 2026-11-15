@@ -171,7 +171,7 @@ Emoji and Unicode glyphs are used as compact, consistent marks (no icon font):
 | `📊` | Portfolio panel |
 | `◐` | Theme toggle |
 | `●` | Live price dot |
-| `✓` | Owned deck |
+| `✓` | Owned deck; "✓ Owned" on a box or bundle `.own-chip` |
 | `🟢 🟡 🔴` | Buy signal levels (good buy / fair / hold) |
 | `▲` | "Profit to crack" flag |
 | `⚠` | Stale data and blocked storage banners |
@@ -208,8 +208,42 @@ logic is in the inline `<script>`.
   `.uf-bundle`). Bundles are links to their product page.
 - Deal of the Day and the feed render once, after `prices_history.json` has
   loaded or failed; until then they show a `.pending` placeholder.
+- `.since-strip` (`.since-top` / `.since-head` / `.since-dismiss` /
+  `.since-list` / `.since-open` / `.since-num` (`.now`, `.good`) /
+  `.since-note`): "Since your last visit on Nov 1", up to 6 changes for
+  watched or owned decks and owned boxes since the previous visit (a price
+  target reached, a new low over the recorded range, a move of 10% or more,
+  "from $A to $B"). It shows only when that visit is a day old or more,
+  appears once the price history is in (above the stats, so mostly below
+  the first screen), and Dismiss hides it for this visit. Each name is a
+  button that opens its chart. Computed in the browser; nothing is sent.
 - `.portfolio` (`.portfolio-grid` / `.portfolio-head` / `.pf-stat` /
-  `.pf-label` / `.pf-val` / `.pf-sub`): owned collection value against MSRP.
+  `.pf-label` / `.pf-val` / `.pf-sub`): the collection panel ("Your
+  collection"), shown when the collection holds anything. Stats: copies
+  (sealed and opened), "Value now" (sealed copies at the price to buy today,
+  never called a sale price), "Paid" (what the visitor entered), "vs paid"
+  (only items with both), "CK cash" (Card Kingdom's live cash offer times
+  the sealed copies it takes, `buy_qty`; shown only when the data has an
+  offer and a maximum) and "Singles" (opened decks, TCGPlayer retail).
+  - `.col-trend` (`.col-trend-note`): "Value over time" sparkline; it opens
+    the chart dialog on the collection line (today's sealed copies at each
+    day's recorded price, from the first day all of them have one, with a
+    note saying what is left out). Its change is drawn neutral, not as a
+    buyer's verdict.
+  - `.col-list` of `.col-item` (`.col-name` with a `.uf-kind` badge,
+    `.col-title`; `.col-fields` of labelled `.col-field` / `.col-flabel` /
+    `.col-input` for Copies, Paid each and Opened, and `.col-remove`;
+    `.col-figs` with `.col-money`, `.col-quiet`, `.col-up`, `.col-down`).
+    Fields save on change; a value that fails its check is put back with a
+    note in `.col-status`. A deck's Paid starts at its MSRP.
+  - `.col-hint`: how to add items, and a link to the saved data controls.
+- `.own-chip` (`.checked`, `aria-pressed`): the Own button on each box tile
+  and in each deck's set bundle note. Outlined; owned is `--owned-bg` with
+  `--sage-text`. The visible "Own" or "✓ Owned" is hidden from screen
+  readers, which hear "Own <product>" and the pressed state.
+- `.link-notice`: at the top of `<main>`, when a share link names a deck or
+  box the page does not list (or a deck whose card list is not out yet, whose
+  chart opens instead). Dismissable.
 - `.stats` / `.stat` / `.stat-label` / `.stat-val` / `.stat-sub`: summary tiles.
 
 ### Deck card (`.card`, states `.owned`, `.deal`, `.watching`, `.target-hit`)
@@ -325,10 +359,36 @@ logic is in the inline `<script>`.
     first preview.
   - Escape closes the innermost layer: tooltip, then preview, then dialog.
     After Escape closes a preview, hover opens nothing until the mouse moves.
+  - `.dlg-actions` / `.cv-actions` under the title bar: "Copy link"; for a
+    deck also "Copy decklist" ("1 Card Name" per line, commanders first;
+    enabled once the file is in), `.cv-link` "Commander page on EDHREC" and
+    "Find combos on Commander Spellbook" (where the copied list is pasted).
+    `.dlg-status` says what happened ("Link copied", or the link itself when
+    the clipboard refuses).
+- **Share links and Back.** `?deck=<id>` opens a deck's card list and
+  `?deck=<id>&view=chart` its chart; `?box=<stem>:<kind>` opens a box type's
+  card list (`<stem>` is the box card file's name, `<kind>` its type) and
+  `&view=chart` its chart. Renamed ids resolve through `formerIds` and the
+  address is rewritten to the current id. The price chart dialog has a
+  "Copy link" too (hidden for the collection line). Opening any dialog by
+  hand pushes a history entry, so Back closes it and Forward reopens it;
+  Close, Escape and the backdrop step back over that entry. A share link
+  opened from outside becomes an entry over the plain page, so Back closes
+  the dialog instead of leaving the site. Filter parameters stay beside the
+  dialog's (filters still use `replaceState`). A box tab change rewrites the
+  address to that type.
 
 ### Misc
 - `.sr-only` (visually hidden text for screen readers), `.footer-note`
   (sources, privacy, Fan Content notice), `.empty`.
+- `.saved-data` (`.saved-data-head` / `.saved-data-actions` /
+  `.saved-data-status` / `.saved-data-note`) in the footer: "Back up"
+  downloads every saved key as `mtg-tracker-backup-YYYY-MM-DD.json`;
+  "Restore" reads one back after a confirmation that names what it replaces.
+  Every key is checked whole (types, ranges, id shapes); a key that fails is
+  left out and named, anything the file lacks stays as it is, and a file
+  that is not a backup changes nothing. The note warns that Safari can clear
+  a site's storage after seven days of use without a visit.
 
 ---
 
@@ -365,9 +425,13 @@ logic is in the inline `<script>`.
   recompute that hash, or the browser refuses to run the app:
   `python3 -c "import re,hashlib,base64;s=open('index.html').read();b=re.search(r'<script>(.*?)</script>',s,re.S).group(1);print(base64.b64encode(hashlib.sha256(b.encode()).digest()).decode())"`.
   Setting `LIVE_PRICES_REMOTE_URL` would also need that host in `connect-src`.
-  Links built from data go through `safeUrl`, which allows only
-  tcgplayer.com, cardkingdom.com and scrycheck.com; the fixed footer links are
-  written into the page.
+  Links built from data go through `safeUrl` (HTML) or `safeHref` (a DOM
+  property), which allow only www.tcgplayer.com, www.cardkingdom.com,
+  scrycheck.com, edhrec.com and commanderspellbook.com; the fixed footer
+  links are written into the page. The EDHREC slug is the face commander's
+  name with accents stripped, lowercase, apostrophes, commas and periods
+  removed and other runs of non alphanumeric characters turned into one "-".
+  The page never fetches EDHREC (its terms forbid automated queries).
 - **Data:** `prices.json` (live prices from TCGplayer and Card Kingdom, crack
   values, bundles, boxes), `prices_history.json` (90 calendar days of changes),
   `cards_index.json` (card to decks), `decks.json` (catalog). Regenerated daily
@@ -375,7 +439,13 @@ logic is in the inline `<script>`.
   (`.nojekyll`, so these `.md` files are served raw, never as `.html`). How each
   number is computed is in `DATA-SOURCES.md`.
 - **Saved data:** watchlist, owned decks and targets live in `localStorage`
-  (`precon-*`). Each save rereads storage and applies one change, a `storage`
+  (`precon-*`), with `precon-collection` (`{"schema":1,"items":{"deck:<id>"
+  | "box:<set name>::<type>" | "bundle:<id>": {qty, paid, opened}}}`),
+  `precon-lastvisit` (a local date, written once the price history has
+  loaded), `precon-theme` and `precon-cardview`. `precon-owned` stays the
+  owned flag: a deck is in the collection exactly when it is owned, and
+  every load and save matches the two (existing owners get one copy per
+  owned deck, priced at MSRP, on their first visit with this version). Each save rereads storage and applies one change, a `storage`
   event keeps tabs in sync, and renamed ids move through `decks.json`
   `formerIds` (written back). An id that is in neither `decks.json` nor any
   `formerIds` is removed from storage on the next visit; only the id of an
