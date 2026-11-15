@@ -25,7 +25,7 @@ concurrency:
 
 jobs:
   # Runs every third party package (pip installs, the scraper, vendor data)
-  # with a read only token, and hands the data files (the three top level
+  # with a read only token, and hands the data files (the top level data
   # files and the card lists in cards/) to the commit job.
   scrape:
     runs-on: ubuntu-latest
@@ -53,9 +53,12 @@ jobs:
         run: python test_data_integrity.py --catalog
 
       - name: Keep the last committed data for comparison
+        # history_long.json lets the gate refuse a run that lost a large part
+        # of the weekly history; a checkout without it skips that comparison.
         run: |
           mkdir -p "$RUNNER_TEMP/previous"
           cp prices.json prices_history.json cards_index.json "$RUNNER_TEMP/previous/"
+          if [ -f history_long.json ]; then cp history_long.json "$RUNNER_TEMP/previous/"; fi
 
       - name: Run scraper
         run: python scrape_prices.py
@@ -70,6 +73,9 @@ jobs:
         run: python test_data_integrity.py --gate --previous "$RUNNER_TEMP/previous"
 
       - name: Hand the data to the commit job
+        # box_index.json and history_long.json are optional: a listed file that
+        # does not exist (box_index.json before a run has first written it) is
+        # simply not uploaded, and the commit job keeps what is committed.
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: scraped-data
@@ -77,6 +83,8 @@ jobs:
             prices.json
             prices_history.json
             cards_index.json
+            box_index.json
+            history_long.json
             cards/decks/*.json
             cards/boxes/*.json
           if-no-files-found: error
@@ -101,22 +109,29 @@ jobs:
           path: ${{ runner.temp }}/scraped
 
       - name: Check and place the data files
-        # Only the expected files: the three top level files, and card lists
-        # named cards/decks/<id>.json or cards/boxes/<code>.json. Each must
-        # be strict JSON (no NaN or Infinity) and under the size cap. The
-        # card folders are then made to match the artifact exactly, so a
-        # list the scraper dropped is deleted; nothing else is ever deleted.
+        # Only the expected files: the three required top level files, the two
+        # optional ones (box_index.json and history_long.json, kept as
+        # committed when the artifact lacks them), and card lists named
+        # cards/decks/<id>.json or cards/boxes/<code>.json. Each must be
+        # strict JSON (no NaN or Infinity) and under its size cap; the two
+        # optional files must also be schema 1 objects holding their map. The
+        # card folders are then made to match the artifact exactly, so a list
+        # the scraper dropped is deleted; nothing else is ever deleted.
         run: |
           /usr/bin/python3 - "$RUNNER_TEMP/scraped" <<'PY'
           import json, math, pathlib, re, shutil, sys
           src = pathlib.Path(sys.argv[1])
           top = {"prices.json", "prices_history.json", "cards_index.json"}
+          # Optional top level files: the map each must hold, and its size cap.
+          optional = {"box_index.json": ("cards", 4_000_000),
+                      "history_long.json": ("series", 8_000_000)}
           card_re = re.compile(r"cards/(decks|boxes)/[a-z0-9-]+\.json")
           got = {p.relative_to(src).as_posix() for p in src.rglob("*") if p.is_file()}
           assert top <= got, f"artifact lacks {sorted(top - got)}"
-          odd = sorted(n for n in got - top if not card_re.fullmatch(n))
+          extra = sorted(got & set(optional))
+          odd = sorted(n for n in got - top - set(optional) if not card_re.fullmatch(n))
           assert not odd, f"unexpected artifact contents: {odd}"
-          cards = sorted(got - top)
+          cards = sorted(got - top - set(optional))
           assert len(cards) <= 1000, f"{len(cards)} card files is far more than expected"
           def bad(x):
               raise ValueError(f"non standard JSON number {x}")
@@ -127,9 +142,14 @@ jobs:
               return v
           for name in sorted(got):
               f = src / name
-              assert f.stat().st_size <= 8_000_000, f"{name} is over 8 MB"
-              json.loads(f.read_text(encoding="utf-8"), parse_constant=bad, parse_float=finite)
-          for name in sorted(top):
+              cap = optional.get(name, (None, 8_000_000))[1]
+              assert f.stat().st_size <= cap, f"{name} is over {cap // 1_000_000} MB"
+              doc = json.loads(f.read_text(encoding="utf-8"), parse_constant=bad, parse_float=finite)
+              if name in optional:
+                  key = optional[name][0]
+                  assert isinstance(doc, dict) and doc.get("schema") == 1 and isinstance(doc.get(key), dict) \
+                      and doc[key], f"{name} is not a schema 1 file with a {key} map"
+          for name in sorted(top) + extra:
               shutil.copyfile(src / name, name)
           if cards:
               # A run without card lists keeps the committed ones as they are.
@@ -143,7 +163,7 @@ jobs:
                           f.unlink()
               for name in cards:
                   shutil.copyfile(src / name, name)
-          print(f"artifact OK: 3 data files, {len(cards)} card files")
+          print(f"artifact OK: 3 data files, optional {extra or 'none'}, {len(cards)} card files")
           PY
 
       - name: Commit updated prices.json
@@ -151,6 +171,10 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add prices.json prices_history.json cards_index.json
+          # The optional files are added only once they exist.
+          for f in box_index.json history_long.json; do
+            if [ -f "$f" ]; then git add "$f"; fi
+          done
           git add --all -- cards/decks cards/boxes
           if git diff --staged --quiet; then
             echo "No price changes today."

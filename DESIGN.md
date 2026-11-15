@@ -167,7 +167,8 @@ Emoji and Unicode glyphs are used as compact, consistent marks (no icon font):
 |---|---|
 | `🏆` | Best buys feed head |
 | `★` | Low badge ("★ 90 day low"), watched deck, "Watching only" filter |
-| `🔎` | Staple finder (card search) |
+| `🔎` | Where to get a card (the finder) |
+| `🧾` | Plan a buy (want list planner) |
 | `📊` | Portfolio panel |
 | `◐` | Theme toggle |
 | `●` | Live price dot |
@@ -176,6 +177,8 @@ Emoji and Unicode glyphs are used as compact, consistent marks (no icon font):
 | `▲` | "Profit to crack" flag |
 | `⚠` | Stale data and blocked storage banners |
 | `→` | Outbound "view on …" links and arrows in ranges |
+| `n/a*` | A card price left out as an outlier; the asterisk points to the reason in its title and in the card preview |
+| `≈` | A modeled figure: est. singles, the typical simulated box |
 
 ---
 
@@ -200,8 +203,66 @@ logic is in the inline `<script>`.
   (`.dod-sep`) / `.dod-flag`: the single best deal, a labelled section.
 - `.staple-finder` with `.staple-head` / `.staple-input` / `.staple-results` /
   `.staple-row` (`.staple-row-name` / `.staple-row-set` / `.staple-row-price`) /
-  `.staple-cardname` / `.staple-empty` / `.staple-alts` and `.staple-alt`
-  ("Did you mean" buttons): the cheapest precon containing a card.
+  `.staple-empty` / `.staple-alts` and `.staple-alt` ("Did you mean"
+  buttons): "Where to get a card". The search waits 250 ms after typing,
+  matches names in both card indexes (`cards_index.json` and
+  `box_index.json`, loaded together on first use) and shows the best match
+  in a `.finder` (shared with the finder dialog):
+  - `.fd-name` (Cormorant italic), then three `.fd-block`s, each headed by
+    an `h4.fd-label` with a `.fd-count`:
+  - **Buy the single** (`.fd-single`): `.fd-best` with the `.fd-price`
+    (burgundy, links to the printing on TCGPlayer or a Card Kingdom search)
+    and `.fd-what` ("TCGPlayer retail · TRC 429, nonfoil · as printed in
+    Federation Fleet"): the lower of the two retail prices of the cheapest
+    printing and finish in the lists loaded, with outlier guarded TCGPlayer
+    prices already left out (the `.fd-note` counts them). Deck files load by
+    themselves for a card in at most 25 decks; past that, and for box files
+    (up to about 1.3 MB each), only on request (`.fd-acts` buttons). Files
+    load at most 6 at a time, with a `.fd-progress` status line ("Loading
+    35 precon lists: 12 of 35").
+  - **Precons with it** (`.fd-decks`): today's rows as `.staple-row`s,
+    cheapest to buy first, 8 at first (`.fd-more` "Show all 120 precons"),
+    each with "its copy $1.55 TCG, nonfoil" once its file is in. A row opens
+    the deck's chart, as before.
+  - **Boxes that can hold it** (`.fd-boxes`, `.fd-box-list` of `.fd-box`
+    with `.fd-box-open`, `.fd-odds`, `.fd-box-meta`): per box type from
+    `box_index.json` (the card key, then its alias), finishes together:
+    "in about 41% of boxes · about 0.51 copies per box" (or "about 1 in 25
+    boxes"), the finishes, the box price you can pay and its EV. Packs come
+    from the prices.json row whose `cards_file` and `cards_kind` match; a
+    row with no `packs` (Mystery Booster Commander Edition) shows the chance
+    per pack only. **Never a cost per copy figure.** A box opens its card
+    list.
+- `.planner` (`.planner-head`, `.planner-toggle` with `aria-expanded` and
+  `.planner-hint`, `.planner-body`): "Plan a buy", closed until opened, so
+  it moves nothing on first paint. `.planner-input` (a labelled textarea),
+  `.planner-help`, `.planner-opts` (two `.cv-check` boxes: leave out decks
+  I own; leave out cards my decks already give me), `.planner-actions`
+  (`.planner-go`, `.planner-status` role status). Results in
+  `.planner-results`:
+  - `.plan-head` (focus target after a change), `.plan-block`s: "Not found"
+    (`.plan-list`, `.plan-miss`, "Did you mean" `.staple-alt`s that rewrite
+    that line and plan again), "In no precon we track" (each opens the
+    finder dialog), "Staples in more than 25 precons" (left out unless
+    ticked; ticking loads every list that holds it), "Your decks already
+    give".
+  - `.plan-table` (a real table with a caption; under 720 px each row
+    becomes a block of labelled figures from `data-label`): Precon
+    (`.plan-deck` opens its card list, `.plan-set`, `.plan-names`), Covers
+    ("1 of your 3 cards", copies), Your cards in it, Deck price (with
+    `.plan-vendor`), Difference ("$28.84 less than the deck", or "more",
+    `.plan-more` in `--sage-text`), Rest of the deck (TCGPlayer singles not
+    covered, an extra that does not rank). Ranked by the value covered minus
+    the deck price; 15 rows, then "Show all".
+  - Parsing: plain names, "1 Sol Ring", "1x Sol Ring", Moxfield, Archidekt
+    and Arena exports ((SET) numbers, `*F*`, `[Category]`, `^tag^`, `#tag`
+    and "SB:" stripped); headers, `#` and `//` comments skipped; the first
+    250 nonblank lines. Names match the index keys (the scraper's `norm`)
+    and aliases; unmatched ones get up to three suggestions by shared
+    letter pairs.
+  - Each wanted card is valued at its cheapest printing in the precon lists
+    loaded (the lower retail price, outlier guarded), counted up to the
+    copies wanted, so one odd printing cannot make a deck look cheap.
 - **Best buys feed:** `section.best-deals` (`.best-deals-head`,
   `.best-deals-grid`) of `.best-deal` / `.uf-item` tiles (`.bd-name`,
   `.bd-price`, `.bd-disc`) with a `.uf-kind` badge (`.uf-deck`, `.uf-box`,
@@ -224,12 +285,15 @@ logic is in the inline `<script>`.
   never called a sale price), "Paid" (what the visitor entered), "vs paid"
   (only items with both), "CK cash" (Card Kingdom's live cash offer times
   the sealed copies it takes, `buy_qty`; shown only when the data has an
-  offer and a maximum) and "Singles" (opened decks, TCGPlayer retail).
-  - `.col-trend` (`.col-trend-note`): "Value over time" sparkline; it opens
-    the chart dialog on the collection line (today's sealed copies at each
-    day's recorded price, from the first day all of them have one, with a
-    note saying what is left out). Its change is drawn neutral, not as a
-    buyer's verdict.
+  offer and a maximum; checked with real data on 2026-11-15) and "Singles"
+  (opened decks, TCGPlayer retail).
+  - `.col-trend` (`.col-trend-note`): "Value over time" sparkline (daily
+    history only); it opens the chart dialog on the collection line
+    (today's sealed copies at each day's recorded price, from the first day
+    all of them have one, with a note saying what is left out). Once the
+    weekly history has loaded the chart line also reaches back before the
+    daily window and includes bundles; a missing week for any item breaks
+    it. Its change is drawn neutral, not as a buyer's verdict.
   - `.col-list` of `.col-item` (`.col-name` with a `.uf-kind` badge,
     `.col-title`; `.col-fields` of labelled `.col-field` / `.col-flabel` /
     `.col-input` for Copies, Paid each and Opened, and `.col-remove`;
@@ -267,7 +331,21 @@ logic is in the inline `<script>`.
 - Singles: `.crack-value` (`.worth`, `.crack-flag` "▲ profit to crack … before
   fees", `.crack-est` for the labelled TCG 70% estimate) · `.chase-cards`
   (`.chase-price` / `.chase-share`) · `.data-carried` when a value comes from an
-  earlier run.
+  earlier run. `.card-meta` keeps the singles line and the top cards side by
+  side and wraps the two lines below to the full width:
+  - `.deck-exits` (`.exits-key` "Exits", `.exit-num`): "Card Kingdom buys
+    sealed: $81.00 cash (up to 6) · singles to CK: $45.10", or "Card Kingdom
+    is not buying this deck sealed" when CK lists the deck with no live offer
+    (`buy` null). The sealed figure is CK's live cash offer with its maximum
+    quantity (`buy`, `buy_qty`); the singles figure is `crack.sell_cardkingdom`.
+    A deck CK does not list gets no sealed part. Facts side by side: no profit
+    or arbitrage wording, no badge, no verdict. The title adds the store
+    credit note.
+  - `.deck-profile` (`.profile-names`): "38 new cards · 40% of singles value"
+    or "All reprints", then "1 Game Changer (Farewell)" when any, from
+    `crack[deck].profile`. A Game Changer is a fact about a card, never shown
+    as the reason for the deck's bracket; ScryCheck's page, linked from the
+    power row, explains its own rating.
 - Signals: `.signals-row` with one `.buy-signal` (`.buy` / `.ok` / `.hold`) ·
   `.power-row` (`.power-score` / `.power-label` / `.power-bracket` /
   `.power-divider` / `.power-scan`).
@@ -276,7 +354,11 @@ logic is in the inline `<script>`.
   `.compare-toggle`. Toggling one keeps focus on the same control after the
   grid rerenders.
 - `.bundle-note` (`.bundle-label` / `.bundle-savings` / `.bundle-basis`): the
-  set bundle price, and "saves $X" only when the saving rounds to at least
+  set bundle price, its chart control (a `.sparkline` of the last 90 days
+  with `data-bundle-chart` once the weekly history has loaded; before that
+  a `.bundle-chart` button of the same 60 by 18 px box, so nothing moves;
+  bundles have no daily history, and the weekly file loads only when a
+  chart opens), and "saves $X" only when the saving rounds to at least
   $0.01, with the basis of the saving (each deck at the lower of TCGplayer
   Market and Card Kingdom in stock, with the parts in its tooltip).
 - **Preorder label**: a deck whose `releaseDate` is after the visitor's local
@@ -315,6 +397,15 @@ logic is in the inline `<script>`.
   count or booster model yet, or coverage under 90%) shows no EV line.
   `.box-ev-note` builds its rules from `box_ev_basis` (only cards worth $1.00
   or more count, box toppers left out, the coverage minimum).
+  - `.box-ckbuy`: "CK buys this box: $150.00 cash (up to 8)", only while CK is
+    buying (`ck_buy` with `ck_buy_qty`); nothing when it is not.
+  - `.box-spread`: "Typical box ≈ $165 · 8 in 10 between $100 and $265
+    (simulated)", from the row's `spread` (p50, p10, p90, already rounded by
+    the scraper), shown only beside an EV line. Never a chance of profit or a
+    break even rate, and never a change from the day before.
+  - `.box-credit-note` (inside `.box-ev-note`, when any box has an offer): the
+    store credit note (see Tech context, `CK_CREDIT`) with a link to Card
+    Kingdom's sealed buylist page.
 
 ### Filters and controls
 - `.filters` / `.filter-group` / `.filter-label` / `.search-input` /
@@ -330,11 +421,41 @@ logic is in the inline `<script>`.
   makes the page inert, traps Tab, closes on Escape and returns focus to the
   control that opened it.
 - Compare: `.compare-bar` (`.compare-bar-actions`) / `.compare-modal-inner` /
-  `.compare-modal-close` / `.compare-table` (`th.deck-h`).
+  `.compare-modal-close` / `.compare-table` (`th.deck-h`). The "CK buys
+  sealed" row gives Card Kingdom's live cash offer and its maximum ("$84.00
+  cash up to 18"), "not buying", or n/a when CK does not list the deck; a
+  `.compare-note` under the table explains it and carries the store credit
+  note when any compared deck has an offer.
 - Price chart: `.chart-modal-inner` / `.chart-header` / `.chart-title` /
   `.chart-subtitle` / `.chart-svg` / `.chart-canvas-wrap` / `.chart-summary` /
   `.chart-price-now` / `.chart-delta` / `.chart-range` / `.range-btn` (1W, 1M,
-  3M) / `.chart-note` / `.chart-empty`. Inline `.sparkline` previews open it.
+  3M, 6M, 1Y, All) / `.chart-note` / `.chart-empty`. Inline `.sparkline`
+  previews open it.
+  - **Long history.** `history_long.json` (one TCGPlayer Market point a
+    week from TCGCSV's archive, from Feb 2024; about 570 KB) loads only when
+    a chart opens. Inside the daily window the daily points win; the weekly
+    points fill the time before the first daily day and are drawn as their
+    own `.price-line.weekly` (`--gold`, thinner) that holds to the first
+    daily day and stops there, so the two sources are never joined. A week
+    with no point (more than 10 days between points) ends the line a week
+    after the last point: a gap, never an interpolation. A `.daily-line`
+    marker reads "daily from here". `.chart-long` (`#chartLongText`) says
+    "One point a week before Aug 17, 2026, from TCGCSV's archive of
+    TCGPlayer Market prices", and for decks that Card Kingdom has no
+    history that far back; while loading it says so, and on failure it
+    offers `.chart-retry` "Try again" (focus moves to the line).
+  - A range that would show the same as All is `disabled` (faded), never
+    hidden, so the row never moves; while the weekly file loads, 6M and 1Y
+    wait for it. Axes past about 8 months label months with years.
+  - `.msrp-line` (dashed `--ink-muted`, labelled "MSRP $59.99", decks only,
+    inside the y range) and `.release-line` (dotted `--sage`, "Release Mar
+    8, 2024"; presale points can sit before it). Labels are
+    `.chart-mark-label`. No trend line, no forecast.
+  - The svg's `aria-label` is a sentence: the dates, first and last price,
+    low, high and MSRP.
+  - Set bundles get a chart (title the bundle, subtitle "Set bundle ·
+    TCGPlayer Market price"): the weekly points plus today's Market price,
+    no share link.
   - Points are placed by calendar date as a **step line** (a price holds until
     the next change). The range buttons cut by date back from the history
     file's date and carry in the price at the cutoff.
@@ -357,6 +478,51 @@ logic is in the inline `<script>`.
   - Keyword tooltip `#cvKwTip` (role tooltip) on each `.cv-kw` term in the
     preview's rules text; terms come from `keywords.json`, loaded on the
     first preview.
+  - Badges in the caption (`.cv-badge`): finish, copies, `.cv-new` "New" (a
+    printing MTGJSON does not list as a reprint; deck lists only; gold
+    outline, no fill) and `.cv-gc` "Game Changer" (Wizards' list; plain
+    outline). The preview repeats them under its meta line (`.cv-pv-flags`).
+  - **Outlier prices** (`.cv-price.cv-outlier`): a TCGPlayer price the
+    scraper left out (card file header `outliers`; at least $10 and more
+    than 20 times Card Kingdom's for the same printing and finish) reads
+    "n/a*", links nowhere, and carries the reason in its title and for screen
+    readers: "No TCGPlayer price: the $31.53 matched to this card (foil) is
+    more than 20 times Card Kingdom's foil price of $0.79, so it is left out
+    as unreliable." The preview shows the same sentence (`.cv-pv-outlier`)
+    and the list header counts such cards. The wording says what was
+    matched to the card, never that this printing is listed at that price.
+  - **Deck header strip** `.cv-profile` (three `.cv-pf-block` sections, each
+    with an `h3.cv-pf-label`): the mana curve of the nonland cards
+    (`.cv-curve`, one `.cv-curve-col` per mana value 0 to 7+, bars in a
+    fixed 48px track, the count above and an sr-only sentence per column),
+    the type mix (`.cv-mix`, copies per type) and the TCGPlayer value split
+    between new cards and reprints (`.cv-split` bar, `.cv-split-new` in
+    `--gold-fill`, the rest `--ink-faded`, with `.cv-key` swatches and the
+    figures in text). Copies count, as in the totals.
+  - **New cards only** (`.cv-f-new`, `.cv-check`): a labelled checkbox among
+    the deck controls; hidden for a deck with no new cards, cleared by Clear
+    filters.
+  - **Box spread** `.cv-spread` (box lists, per type, when the box file has
+    `kinds[kind].spread`): "10,000 simulated boxes · TCGPlayer retail before
+    fees", a `.cv-spread-lead` line (typical box, 8 in 10, half), and a
+    `.cv-hist` histogram (`role="img"` with a full sentence as its label;
+    20 `.cv-hist-col` bars, the middle 8 in 10 in `.mid` with `--ink-soft`,
+    the tails `--ink-faded` at reduced opacity; `.cv-hist-axis` gives start,
+    middle and end). The note says the last bar also holds every box above
+    its range (at most 1 in 100). Figures are rounded like the row spread
+    ($1, $5 or $10 by size), so they match the box tile.
+  - `details.cv-how` "How this is worked out" (`.cv-how-body`,
+    `.cv-how-top`): the pack count and that MTGJSON publishes the pack
+    contents, the $1 rule and toppers (from `box_ev_basis`), coverage
+    (`ev_coverage` of the box row), the 10,000 simulated boxes, that the
+    average uses expected copies while the simulation draws whole packs (both
+    figures), the five cards that carry the most value (price times expected
+    copies per box, with their share of the average), and that it is not a
+    forecast. Never a chance of profit or a break even rate.
+  - `.cv-pv-also` / `.cv-pv-find` in the preview: "Also in 3 precons and
+    2 boxes" (other than the list it is shown in; "Where else to get this
+    card" until both indexes, loaded on the first preview, are in). It
+    opens the finder dialog in place of the card list.
   - Escape closes the innermost layer: tooltip, then preview, then dialog.
     After Escape closes a preview, hover opens nothing until the mouse moves.
   - `.dlg-actions` / `.cv-actions` under the title bar: "Copy link"; for a
@@ -365,6 +531,12 @@ logic is in the inline `<script>`.
     "Find combos on Commander Spellbook" (where the copied list is pasted).
     `.dlg-status` says what happened ("Link copied", or the link itself when
     the clipboard refuses).
+- Finder dialog `#findModal` (`.find-modal-inner`, `#findModalTitle`
+  "Where to get Sol Ring", `#findBody` as a `.finder`): `.dlg-actions`
+  with "← Back to the card list" (only when opened from a preview; it
+  reopens that list) and "Copy link". `?card=<key>` (the card's index key,
+  `[a-z0-9]`) opens it; a key that is no card says so inside the dialog.
+  Rows in it open a deck's chart or a box's card list, replacing it.
 - **Share links and Back.** `?deck=<id>` opens a deck's card list and
   `?deck=<id>&view=chart` its chart; `?box=<stem>:<kind>` opens a box type's
   card list (`<stem>` is the box card file's name, `<kind>` its type) and
@@ -432,9 +604,18 @@ logic is in the inline `<script>`.
   name with accents stripped, lowercase, apostrophes, commas and periods
   removed and other runs of non alphanumeric characters turned into one "-".
   The page never fetches EDHREC (its terms forbid automated queries).
+- **Dated constants:** `CK_CREDIT` (Card Kingdom pays 130% of a sealed cash
+  offer as store credit, checked 2026-11-14 on
+  https://www.cardkingdom.com/purchasing/mtg_sealed) is typed in by hand,
+  never scraped; update its date when checking again. `OUTLIER_RATIO` (20)
+  mirrors the scraper's outlier rule and only words the note.
 - **Data:** `prices.json` (live prices from TCGplayer and Card Kingdom, crack
   values, bundles, boxes), `prices_history.json` (90 calendar days of changes),
-  `cards_index.json` (card to decks), `decks.json` (catalog). Regenerated daily
+  `history_long.json` (one TCGPlayer Market point a week per deck, box and
+  bundle since Feb 2024, loaded when a chart opens), `cards_index.json`
+  (card to decks) and `box_index.json` (card to box types with the chance
+  per pack, about 2.2 MB, loaded with it by the finder, the planner and the
+  first card preview), `decks.json` (catalog). Regenerated daily
   at 01:23 UTC by `scrape_prices.py` in GitHub Actions; served by GitHub Pages
   (`.nojekyll`, so these `.md` files are served raw, never as `.html`). How each
   number is computed is in `DATA-SOURCES.md`.

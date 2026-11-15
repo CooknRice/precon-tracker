@@ -11,7 +11,7 @@
      exact text between its opening and closing tags), or the browser refuses
      to run the app. A remote prices URL (LIVE_PRICES_REMOTE_URL) would also
      need adding to connect-src. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PctkH0bRkm3IQljPnap0Xqe8/eLzRUF7sZMQySNKqmM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://cards.scryfall.io; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-GGvZ+fdGViT9N8WWUt/l/FfGLPAijInshPT3BIq5HFk='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://cards.scryfall.io; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>MTG Tracker · Commander Precon, Sealed Box & Bundle Prices</title>
 <meta name="description" content="Daily prices for Magic: The Gathering Commander precons since 2021, preorders included, their set bundles, and sealed booster boxes from those sets and a few more, checked at TCGplayer and Card Kingdom, with price history and buy signals.">
@@ -2045,6 +2045,227 @@ main:focus { outline: none; }
   .search-input.col-input { height: 40px; }
   .cv-link { padding: 11px 0; }
 }
+/* ---------- Sell side, deck profile and box spread (F2) ---------- */
+/* Deck card: the Exits line (Card Kingdom's sealed cash offer beside its
+   singles buylist) and the profile line (new cards, Game Changers). */
+.card-meta { flex-wrap: wrap; row-gap: 3px; }
+.deck-exits, .deck-profile { flex-basis: 100%; font-family: var(--font-mono); font-size: 10.5px; line-height: 1.5; color: var(--ink-muted); }
+.deck-exits .exits-key { color: var(--ink-soft); font-weight: 600; }
+.deck-exits .exit-num { color: var(--ink-soft); }
+.deck-profile .profile-names { color: var(--ink-faded); }
+/* Box tile: CK's cash offer and the simulated spread. */
+.box-ckbuy, .box-spread { font-family: var(--font-mono); font-size: 10.5px; line-height: 1.45; color: var(--ink-muted); }
+.box-credit-note { display: block; margin-top: 6px; }
+.box-credit-note a, .compare-note a { color: var(--gold); }
+.box-credit-note a:hover, .compare-note a:hover { color: var(--gold-bright); }
+.compare-note a:focus-visible, .box-credit-note a:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+.compare-note { margin-top: 12px; font-family: var(--font-mono); font-size: 11px; line-height: 1.55; color: var(--ink-muted); }
+
+/* Card list badges: New (gold outline, featured) and Game Changer (plain
+   outline, a fact). Outlier prices carry their reason in the title. */
+.cv-badge.cv-new { color: var(--gold); border-color: currentColor; background: none; }
+.cv-badge.cv-gc { color: var(--ink); border-color: var(--ink-faded); background: none; text-transform: none; letter-spacing: 0.02em; }
+.cv-price.cv-outlier { cursor: help; }
+.cv-pv-flags { margin-top: 8px; }
+
+/* "New cards only": a labelled checkbox, as tall as the selects beside it. */
+.cv-controls .cv-f-new { flex: 0 0 auto; }
+.cv-check {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 38px;
+  padding: 0 12px; border: 1px solid var(--paper-line); border-radius: var(--radius-sm);
+  background: var(--surface-2); font-size: 12.5px; color: var(--ink-soft); cursor: pointer; white-space: nowrap;
+}
+.cv-check input { margin: 0; accent-color: var(--gold); cursor: pointer; }
+.cv-check:focus-within { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+
+/* Deck header strip: mana curve, card types, value split. Fixed heights,
+   so the strip never moves the list under it. */
+.cv-profile { display: flex; flex-wrap: wrap; gap: 14px 32px; margin-top: 16px; padding: 14px 16px; border: 1px solid var(--hairline); border-radius: var(--radius-sm); background: var(--surface-2); }
+.cv-pf-block { min-width: 0; }
+.cv-pf-value { flex: 1 1 220px; max-width: 360px; }
+.cv-pf-label {
+  font-family: var(--font-mono); font-size: 9.5px; font-weight: 400; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--ink-faded); margin-bottom: 8px;
+}
+.cv-curve { list-style: none; display: flex; align-items: flex-end; gap: 4px; }
+.cv-curve-col { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 22px; }
+.cv-curve-n, .cv-curve-mv { font-family: var(--font-mono); font-size: 10px; line-height: 1; color: var(--ink-muted); height: 10px; }
+.cv-curve-mv { color: var(--ink-faded); }
+.cv-curve-track { display: flex; align-items: flex-end; width: 100%; height: 48px; border-bottom: 1px solid var(--paper-line); }
+.cv-curve-bar { display: block; width: 100%; background: var(--ink-muted); border-radius: 3px 3px 0 0; }
+.cv-pf-list { list-style: none; display: flex; flex-wrap: wrap; gap: 3px 14px; font-size: 12.5px; color: var(--ink-soft); }
+.cv-mix { max-width: 300px; }
+.cv-pf-value .cv-pf-list { flex-direction: column; }
+.cv-pf-money { font-family: var(--font-mono); color: var(--burgundy); }
+.cv-pf-text { margin-top: 6px; font-family: var(--font-mono); font-size: 10.5px; line-height: 1.55; color: var(--ink-muted); }
+.cv-split { display: flex; height: 8px; margin-bottom: 8px; border-radius: var(--radius-pill); overflow: hidden; background: var(--ink-faded); }
+.cv-split-new { display: block; background: var(--gold-fill); }
+.cv-key { display: inline-block; width: 9px; height: 9px; margin-right: 6px; border-radius: 2px; background: var(--ink-faded); vertical-align: 0; }
+.cv-key-new { background: var(--gold-fill); }
+
+/* Box header: the simulated spread histogram, then "How this is worked out". */
+.cv-spread { margin-top: 16px; padding: 14px 16px; border: 1px solid var(--hairline); border-radius: var(--radius-sm); background: var(--surface-2); max-width: 640px; }
+.cv-spread-lead { font-family: var(--font-mono); font-size: 12px; line-height: 1.55; color: var(--ink-muted); margin-bottom: 10px; }
+.cv-spread-lead strong { font-weight: 500; color: var(--burgundy); }
+.cv-hist { display: flex; align-items: flex-end; gap: 2px; height: 72px; border-bottom: 1px solid var(--paper-line); }
+.cv-hist-col { flex: 1 1 0; display: flex; align-items: flex-end; height: 100%; min-width: 0; }
+.cv-hist-bar { display: block; width: 100%; background: var(--ink-faded); opacity: 0.55; border-radius: 2px 2px 0 0; }
+.cv-hist-col.mid .cv-hist-bar { background: var(--ink-soft); opacity: 1; }
+.cv-key-mid { background: var(--ink-soft); }
+.cv-hist-axis { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; font-family: var(--font-mono); font-size: 10px; color: var(--ink-faded); }
+.cv-how { margin-top: 12px; max-width: 880px; }
+.cv-how summary {
+  display: inline-block; cursor: pointer; padding: 4px 0;
+  font-family: var(--font-mono); font-size: 11px; color: var(--gold);
+}
+.cv-how summary:hover { color: var(--gold-bright); text-decoration: underline; }
+.cv-how summary:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; border-radius: 3px; }
+.cv-how-body { margin-top: 6px; font-family: var(--font-mono); font-size: 11px; line-height: 1.6; color: var(--ink-muted); }
+.cv-how-body p + p, .cv-how-body ol + p { margin-top: 8px; }
+.cv-how-sub { margin-top: 8px; }
+.cv-how-top { margin: 4px 0 0 18px; }
+.cv-how-top li { margin-top: 2px; }
+.cv-how-name { font-family: var(--font-ui); font-size: 12px; color: var(--ink-soft); }
+@media (pointer: coarse) {
+  .cv-check { min-height: 40px; }
+  .cv-how summary { padding: 10px 0; }
+}
+/* ---------- Long price charts (weekly history before the daily window) ---------- */
+.range-btn:disabled { color: var(--ink-faded); opacity: 0.5; cursor: default; }
+.range-btn:disabled:hover { color: var(--ink-faded); }
+.chart-range { flex-wrap: wrap; max-width: 100%; }
+.chart-svg .price-line.weekly { stroke: var(--gold); stroke-width: 1.5; opacity: 0.85; }
+.chart-svg .price-area.weekly { fill: var(--gold); fill-opacity: 0.05; }
+.chart-svg .price-dot.weekly { fill: var(--gold); }
+.chart-svg .msrp-line { stroke: var(--ink-muted); stroke-width: 1; stroke-dasharray: 6 4; }
+.chart-svg .release-line { stroke: var(--sage); stroke-width: 1; stroke-dasharray: 2 3; }
+.chart-svg .daily-line { stroke: var(--ink-faded); stroke-width: 1; stroke-dasharray: 1 3; }
+.chart-svg .chart-mark-label { fill: var(--ink-muted); font-size: 10px; font-family: var(--font-mono); }
+.chart-long { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.chart-long:focus { outline: none; }
+.chart-long:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+.chart-retry { padding: 4px 12px; }
+/* A set bundle's chart control before the weekly history has loaded: the
+   size of the sparkline that replaces it, so nothing moves. */
+.bundle-chart {
+  display: inline-block; vertical-align: middle; margin-left: 8px;
+  width: 60px; height: 18px; padding: 0; box-sizing: border-box;
+  background: transparent; border: 1px dotted var(--ink-faded); border-radius: 2px;
+  color: var(--gold-bright); font-family: var(--font-mono); font-size: 9.5px; line-height: 16px;
+  letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
+}
+.bundle-chart:hover { border-color: var(--gold-bright); }
+
+/* ---------- Where to get a card (finder: page section and dialog) ---------- */
+.finder .fd-name { font-family: var(--font-display); font-size: 22px; font-weight: 500; font-style: italic; color: var(--ink-strong); margin: 4px 0 2px; }
+.finder .fd-name:focus { outline: none; }
+.fd-block { margin-top: 12px; }
+.fd-block:empty { display: none; }
+.fd-label {
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; color: var(--ink-muted);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+}
+.fd-count { font-family: var(--font-mono); color: var(--ink-faded); font-weight: 500; letter-spacing: 0; }
+.fd-count::before { content: "· "; }
+.fd-best { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.fd-price { font-family: var(--font-ui); font-size: 20px; font-weight: 700; color: var(--burgundy); text-decoration: none; }
+a.fd-price:hover { text-decoration: underline; }
+.fd-what { font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); min-width: 0; overflow-wrap: anywhere; }
+.fd-note { font-family: var(--font-mono); font-size: 10.5px; line-height: 1.55; color: var(--ink-muted); margin-top: 4px; overflow-wrap: anywhere; }
+.fd-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 8px; }
+.fd-acts .cv-btn { padding: 6px 12px; text-align: left; }
+.fd-progress { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-soft); min-height: 16px; margin-top: 6px; }
+.fd-progress:focus { outline: none; }
+.fd-decks { display: flex; flex-direction: column; gap: 6px; }
+.fd-more { align-self: flex-start; padding: 6px 12px; margin-top: 2px; }
+.fd-box-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.fd-box {
+  display: flex; flex-direction: column; gap: 2px;
+  background: var(--surface-2); border: 1px solid var(--hairline); border-radius: var(--radius-sm); padding: 8px 12px;
+}
+.fd-box-open {
+  all: unset; cursor: pointer; font-family: var(--font-ui); font-size: 13.5px; font-weight: 600;
+  color: var(--ink-strong); overflow-wrap: anywhere;
+}
+.fd-box-open:hover { color: var(--gold-bright); }
+.fd-odds { font-family: var(--font-mono); font-size: 12px; color: var(--ink); }
+.fd-box-meta { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-muted); overflow-wrap: anywhere; }
+.find-modal-inner { max-width: 720px; }
+.find-modal-inner .chart-title { padding-right: 84px; overflow-wrap: anywhere; }
+.find-modal-inner .finder { margin-top: 8px; }
+/* The card preview's way into the finder. */
+.cv-pv-also { margin-top: 10px; }
+.cv-pv-find { padding: 6px 12px; font-size: 11.5px; text-align: left; min-height: 32px; }
+
+/* ---------- Plan a buy ---------- */
+.planner {
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 24px;
+}
+.planner-head { margin: 0; }
+.planner-toggle {
+  all: unset; cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px;
+  font-family: var(--font-ui); font-size: 13px; font-weight: 600; color: var(--ink-soft);
+}
+.planner-toggle::after { content: "▸"; color: var(--ink-faded); font-size: 11px; }
+.planner-toggle[aria-expanded="true"]::after { content: "▾"; }
+.planner-toggle:hover { color: var(--gold-bright); }
+.planner-hint { font-weight: 400; color: var(--ink-muted); font-size: 12px; }
+.planner-body { margin-top: 12px; }
+.planner-input {
+  display: block; width: 100%; box-sizing: border-box; resize: vertical; min-height: 120px; margin-top: 6px;
+  background: var(--surface-2); border: 1px solid var(--hairline); border-radius: var(--radius-sm);
+  padding: 10px 12px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.5; color: var(--ink);
+}
+.planner-input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(198,154,62,0.18); }
+.planner-help { font-family: var(--font-mono); font-size: 10.5px; line-height: 1.55; color: var(--ink-muted); margin-top: 6px; }
+.planner-opts { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-top: 10px; }
+.planner .cv-check { white-space: normal; max-width: 100%; box-sizing: border-box; padding-top: 4px; padding-bottom: 4px; }
+.planner-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 10px; }
+.planner-status { font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); min-width: 0; overflow-wrap: anywhere; }
+.planner-results:empty { display: none; }
+.planner-results { margin-top: 14px; border-top: 1px solid var(--paper-line); padding-top: 12px; }
+.plan-head { font-family: var(--font-ui); font-size: 14px; font-weight: 600; color: var(--ink-strong); }
+.plan-head:focus { outline: none; }
+.plan-head:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+.plan-block { margin-top: 12px; }
+.plan-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.plan-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.plan-miss { font-family: var(--font-mono); font-size: 12px; color: var(--ink); overflow-wrap: anywhere; }
+.plan-chips { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+.plan-table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 12.5px; }
+.plan-table th, .plan-table td { padding: 8px 10px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--paper-line); }
+.plan-table thead th {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--ink-muted);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.plan-table tbody th { font-weight: 400; min-width: 0; }
+.plan-num { font-family: var(--font-mono); color: var(--ink); }
+.plan-more { color: var(--sage-text); }
+.plan-vendor, .plan-set, .plan-names { display: block; font-family: var(--font-mono); font-size: 10px; color: var(--ink-muted); white-space: normal; }
+.plan-names { color: var(--ink-soft); margin-top: 2px; overflow-wrap: anywhere; }
+.plan-deck { all: unset; cursor: pointer; font-weight: 600; color: var(--ink-strong); overflow-wrap: anywhere; }
+.plan-deck:hover { color: var(--gold-bright); }
+/* Narrow screens: each precon becomes a block with labelled figures. */
+@media (max-width: 720px) {
+  .plan-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .plan-table, .plan-table tbody, .plan-table tr, .plan-table th, .plan-table td { display: block; width: 100%; box-sizing: border-box; }
+  .plan-table tr { border-bottom: 1px solid var(--paper-line); padding: 8px 0; }
+  .plan-table th, .plan-table td { border: none; padding: 2px 0; }
+  .plan-table td { display: flex; justify-content: space-between; gap: 10px; white-space: normal; text-align: right; }
+  .plan-table td::before { content: attr(data-label); font-family: var(--font-mono); font-size: 10px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; text-align: left; }
+  .plan-table td::before { flex: none; }
+  .plan-table td > span { min-width: 0; }
+}
+.bundle-chart:focus-visible, .fd-box:focus-within, .fd-price:focus-visible, .plan-deck:focus-visible,
+.planner-toggle:focus-visible, .planner-input:focus-visible, .fd-box-open:focus-visible {
+  outline: 2px solid var(--gold-bright); outline-offset: 2px;
+}
+.fd-box-open:focus-visible { outline: none; }
+@media (pointer: coarse) {
+  .planner-toggle { min-height: 40px; }
+  .fd-box-open { padding: 6px 0; }
+}
 </style>
 </head>
 <body>
@@ -2087,9 +2308,29 @@ main:focus { outline: none; }
 </section>
 
 <section id="stapleFinder" class="staple-finder" aria-labelledby="stapleHead">
-  <h2 class="staple-head section-head" id="stapleHead"><label for="stapleInput">🔎 Find the cheapest precon with a card</label></h2>
+  <h2 class="staple-head section-head" id="stapleHead"><label for="stapleInput">🔎 Where to get a card: the single, the precons with it, the boxes that can hold it</label></h2>
   <input type="text" id="stapleInput" class="staple-input" placeholder="Card name, for example Sol Ring, Arcane Signet, Lightning Bolt…" autocomplete="off">
-  <div id="stapleResults" class="staple-results"></div>
+  <div id="stapleResults" class="staple-results finder"></div>
+</section>
+
+<!-- Plan a buy: a want list against every precon (renderPlan). Collapsed
+     until opened, so it costs nothing and moves nothing on first paint. -->
+<section id="planner" class="planner" aria-labelledby="planHead">
+  <h2 class="section-head planner-head" id="planHead"><button type="button" class="planner-toggle" id="planToggle" aria-expanded="false" aria-controls="planBody">🧾 Plan a buy <span class="planner-hint">which precon covers most of your want list</span></button></h2>
+  <div id="planBody" class="planner-body" hidden>
+    <label class="filter-label" for="planInput">Your want list</label>
+    <textarea id="planInput" class="planner-input" rows="8" spellcheck="false" autocomplete="off" placeholder="1 Sol Ring&#10;1x Arcane Signet&#10;Swords to Plowshares"></textarea>
+    <p class="planner-help" id="planHelp">One card per line, up to 250 lines. Plain names, “1 Sol Ring”, “1x Sol Ring” and Moxfield, Archidekt or Arena exports all work; section headers and comments are skipped.</p>
+    <div class="planner-opts">
+      <label class="cv-check"><input type="checkbox" id="planSkipOwned"> Leave out decks I own</label>
+      <label class="cv-check"><input type="checkbox" id="planHaveOwned"> Leave out cards my decks already give me</label>
+    </div>
+    <div class="planner-actions">
+      <button type="button" class="cv-btn planner-go" id="planGo">Plan a buy</button>
+      <span id="planStatus" class="planner-status" role="status"></span>
+    </div>
+    <div id="planResults" class="planner-results"></div>
+  </div>
 </section>
 
 <section id="unifiedFeed" class="best-deals pending" aria-labelledby="feedHead" aria-busy="true">
@@ -2308,6 +2549,8 @@ main:focus { outline: none; }
       <button type="button" class="range-btn" data-range="7" aria-pressed="false" aria-label="1 week">1W</button>
       <button type="button" class="range-btn" data-range="30" aria-pressed="false" aria-label="1 month">1M</button>
       <button type="button" class="range-btn" data-range="90" aria-pressed="false" aria-label="3 months">3M</button>
+      <button type="button" class="range-btn" data-range="182" aria-pressed="false" aria-label="6 months">6M</button>
+      <button type="button" class="range-btn" data-range="365" aria-pressed="false" aria-label="1 year">1Y</button>
       <button type="button" class="range-btn active" data-range="all" aria-pressed="true" aria-label="All history">All</button>
     </div>
     <div class="dlg-actions">
@@ -2319,6 +2562,25 @@ main:focus { outline: none; }
     </div>
     <div class="chart-empty" id="chartEmpty"></div>
     <p class="chart-note" id="chartNote" hidden></p>
+    <!-- The weekly history before the daily window: what it is, or its
+         loading and error states (renderChart). -->
+    <p class="chart-note chart-long" id="chartLong" tabindex="-1" hidden><span id="chartLongText"></span> <button type="button" class="cv-btn chart-retry" id="chartLongRetry" hidden>Try again</button></p>
+  </div>
+</div>
+
+<!-- Where to get a card: the single, the precons with it and the boxes that
+     can hold it. Opened from the card preview ("Also in N precons and M
+     boxes") and by a ?card= share link; filled by renderFinder(). -->
+<div id="findModal" class="compare-modal" role="dialog" aria-modal="true" aria-labelledby="findModalTitle">
+  <div class="compare-modal-inner chart-modal-inner find-modal-inner">
+    <button type="button" class="compare-modal-close" id="findModalClose">Close ×</button>
+    <h2 id="findModalTitle" class="chart-title">Where to get a card</h2>
+    <div class="dlg-actions">
+      <button type="button" class="cv-btn" id="findBack" hidden>← Back to the card list</button>
+      <button type="button" class="cv-btn" id="findCopyLink">Copy link</button>
+      <span class="dlg-status" id="findCopyStatus" role="status"></span>
+    </div>
+    <div id="findBody" class="finder"></div>
   </div>
 </div>
 
@@ -2354,6 +2616,11 @@ main:focus { outline: none; }
             <option value="type">By card type</option>
             <option value="none">No groups</option>
           </select>
+        </div>
+        <!-- Hidden for a deck with no new cards (showCardList). -->
+        <div class="filter-group cv-f-new" data-cv-for="deck">
+          <span class="filter-label" aria-hidden="true">Show</span>
+          <label class="cv-check"><input type="checkbox" id="cvNewOnly"> New cards only</label>
         </div>
         <div class="filter-group">
           <label class="filter-label" for="cvSort">Sort by</label>
@@ -2525,6 +2792,7 @@ main:focus { outline: none; }
     setBackgroundInert(false);
     if (closed.id === "cardsModal") cardListClosed();
     if (closed.id === "chartModal") chartSpec = null;
+    if (closed.id === "findModal") finderClosed();
     restoreFocus();
     if (!closingFromHistory) leaveDialogEntry();
   }
@@ -3328,6 +3596,59 @@ main:focus { outline: none; }
     };
   }
 
+  // Card Kingdom pays this share of a sealed cash offer as store credit.
+  // Read off CK's sealed buylist page by hand on the date given ($548.60 of
+  // credit on a $422.00 cash offer), never scraped: update the date when
+  // checking again.
+  const CK_CREDIT = { rate: 1.3, checked: "2026-11-14", url: "https://www.cardkingdom.com/purchasing/mtg_sealed" };
+  function ckCreditText() {
+    return `Card Kingdom pays ${Math.round(CK_CREDIT.rate * 100)}% of a sealed cash offer as store credit instead (checked ${fmtUtcDay(CK_CREDIT.checked, { month: "short", day: "numeric", year: "numeric" })}).`;
+  }
+  function ckCreditNoteHtml() {
+    return `${escapeHtml(ckCreditText())} <a href="${safeUrl(CK_CREDIT.url)}" target="_blank" rel="noopener noreferrer">Card Kingdom's sealed buylist →</a>`;
+  }
+  // Card Kingdom's live sealed cash offer for a deck: { each, max }, null
+  // when CK lists the deck but is not buying it, undefined when CK does
+  // not list it at all (then the page says nothing about it).
+  function ckSealedOffer(d) {
+    const c = deckEntry(LIVE_PRICES?.vendors?.cardkingdom, d);
+    if (!c || typeof c !== "object") return undefined;
+    const each = posNum(c.buy);
+    return each != null && Number.isInteger(c.buy_qty) && c.buy_qty >= 1 ? { each, max: c.buy_qty } : null;
+  }
+  // The deck card's "Exits" line: what Card Kingdom pays in cash for the
+  // sealed deck today, beside what it pays for the singles (its buylist
+  // total, crack.sell_cardkingdom). Facts side by side, no verdict.
+  function deckExitsHtml(d, crack) {
+    const offer = ckSealedOffer(d);
+    const singles = crack ? posNum(crack.sell_cardkingdom) : null;
+    const parts = [];
+    if (offer) parts.push(`Card Kingdom buys sealed: <span class="exit-num">$${offer.each.toFixed(2)}</span> cash (up to ${offer.max})`);
+    else if (offer === null) parts.push("Card Kingdom is not buying this deck sealed");
+    if (singles != null) parts.push(`singles to CK: <span class="exit-num">$${singles.toFixed(2)}</span>`);
+    if (!parts.length) return "";
+    const title = `Card Kingdom's buylist today, cash before shipping and condition grading.${offer ? ` ${ckCreditText()}` : ""}`;
+    return `<div class="deck-exits" title="${escapeHtml(title)}"><span class="exits-key">Exits</span> ${parts.join(" · ")}</div>`;
+  }
+  // The deck card's profile line, from crack[deck].profile: how many cards
+  // are new to Magic and their share of the singles value, and any Game
+  // Changers by name. A Game Changer is a fact about a card, never shown as
+  // the reason for a deck's bracket (ScryCheck's page, linked on the card,
+  // explains its own rating).
+  function deckProfileLine(d) {
+    const p = deckEntry(LIVE_PRICES?.crack, d)?.profile;
+    if (!p || typeof p !== "object" || !Number.isInteger(p.new) || p.new < 0) return "";
+    const bits = [];
+    if (p.new === 0) bits.push("All reprints");
+    else {
+      const share = typeof p.new_share === "number" && p.new_share >= 0 && p.new_share <= 1 ? Math.round(p.new_share * 100) : null;
+      bits.push(`${p.new} new ${p.new === 1 ? "card" : "cards"}${share != null ? ` · ${share}% of singles value` : ""}`);
+    }
+    const gc = (Array.isArray(p.gc) ? p.gc : []).filter(n => typeof n === "string" && n.trim());
+    if (gc.length) bits.push(`${gc.length} Game ${gc.length === 1 ? "Changer" : "Changers"} <span class="profile-names">(${gc.map(escapeHtml).join(", ")})</span>`);
+    return `<div class="deck-profile" title="New cards: printings MTGJSON does not list as reprints, and their share of the deck's TCGPlayer singles value. Game Changers: cards on Wizards' list for the Commander brackets.">${bits.join(" · ")}</div>`;
+  }
+
   // ---------- Rendering ----------
   function formatDate(iso) {
     if (!iso) return "";
@@ -3405,7 +3726,9 @@ main:focus { outline: none; }
   // colour: down=sage, up=burgundy, flat=gold. x is placed by DATE and the
   // line is drawn as steps, because a recorded price holds until the next
   // change; spacing by entry index squeezed long quiet spells.
-  function sparklineSvg(pts, label) {
+  // `trigger` is the attribute the click handlers look for (a deck card's
+  // own chart by default; a bundle passes data-bundle-chart).
+  function sparklineSvg(pts, label, trigger = 'data-chart-trigger="1"') {
     const real = realPts(pts || []);
     if (real.length < 2) return "";
     const w = 60, h = 18, pad = 1;
@@ -3424,7 +3747,7 @@ main:focus { outline: none; }
     const end = pts[pts.length - 1];
     const stopped = end.gap ? ` · no tracked price since ${fmtChartDate(end.date)}` : "";
     const title = `${n} ${n === 1 ? "day" : "days"} · $${first.toFixed(2)} → $${last.toFixed(2)}${stopped}`;
-    return `<svg class="sparkline ${trend}" data-chart-trigger="1" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="button" tabindex="0" aria-label="Open price chart${label ? ` for ${escapeHtml(label)}` : ""}: ${title}"><title>${title} · click for full chart</title><path class="sparkline-area" d="${area}"/><path d="${line}"/></svg>`;
+    return `<svg class="sparkline ${trend}" ${trigger} width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="button" tabindex="0" aria-label="Open price chart${label ? ` for ${escapeHtml(label)}` : ""}: ${title}"><title>${title} · click for full chart</title><path class="sparkline-area" d="${area}"/><path d="${line}"/></svg>`;
   }
 
   // How old the prices really are. TCGPlayer prices come from TCGCSV's daily
@@ -3468,10 +3791,13 @@ main:focus { outline: none; }
   // History dates are UTC calendar days. new Date("2026-10-07") is UTC
   // midnight, which every US time zone displays as Oct 6, so build a LOCAL
   // date from the parts instead.
-  function fmtChartDate(iso) {
+  function fmtChartDate(iso, form = "day") {
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || "");
     if (!m) return "";
-    return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    // "day": Feb 9; "year": Feb 9, 2024; "month": Feb 2024 (long axes).
+    const opts = form === "month" ? { month: "short", year: "numeric" }
+      : form === "year" ? { month: "short", day: "numeric", year: "numeric" } : { month: "short", day: "numeric" };
+    return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString("en-US", opts);
   }
 
   // Pick "nice" tick values for the Y axis: rounded steps whose first tick is
@@ -3509,6 +3835,11 @@ main:focus { outline: none; }
   // The share link form of the open chart ({ t: "deck" | "box", ..., chart:
   // true }), or null when it has none (the collection line).
   let chartSpec = null;
+  // What the open chart draws beside its line: { long (it reads the weekly
+  // history), from (the first daily day when weekly points come before it),
+  // msrp (decks: a dashed line), release (ISO date: a marker), longNote (the
+  // sentence about the weekly points) }.
+  let chartExtra = {};
 
   // Cut the points to the last `range` days, measured back from the history
   // file's date. The price in force at the cutoff is carried in as the first
@@ -3523,7 +3854,7 @@ main:focus { outline: none; }
     const inside = all.filter(p => p.day >= cutoff);
     const before = all.filter(p => p.day < cutoff).pop();
     if (before && !before.gap && (!inside.length || inside[0].day > cutoff)) {
-      inside.unshift({ day: cutoff, date: isoFromDay(cutoff), price: before.price, carried: true });
+      inside.unshift({ day: cutoff, date: isoFromDay(cutoff), price: before.price, carried: true, weekly: !!before.weekly });
     }
     return tidyGaps(inside);
   }
@@ -3547,6 +3878,25 @@ main:focus { outline: none; }
     return `${line} ${why} ${$2(b.price)} (${b.label}), shown as the hollow dot.`;
   }
 
+  // The sentence under the chart about the weekly points, or their loading
+  // and error states. { text, retry }.
+  function longNoteOf(points) {
+    const x = chartExtra;
+    if (!x.long) return { text: "", retry: false };
+    if (LONG.state === "loading" || LONG.state === "idle") return { text: "Loading the weekly price history from TCGCSV's archive…", retry: false };
+    if (LONG.state === "error") return { text: "The weekly price history from TCGCSV's archive could not be loaded, so only the recorded daily prices show.", retry: true };
+    // The collection line explains its own sources (chartCurrentNote).
+    if (x.longQuiet) return { text: "", retry: false };
+    const bits = [];
+    if (x.longNote) bits.push(x.longNote);
+    else if (x.from != null && points.some(p => p.weekly)) {
+      bits.push(`One point a week before ${fmtChartDate(isoFromDay(x.from), "year")}, from TCGCSV's archive of TCGPlayer Market prices; the daily recorded prices take over from there.`);
+      if (x.ckNote) bits.push("Card Kingdom has no price history that far back.");
+    }
+    if (bits.length && points.some(p => p.weekly && p.gap)) bits.push("A break in the line is a week with no Market price.");
+    return { text: bits.join(" "), retry: false };
+  }
+
   function renderChart() {
     const wrap = $("chartCanvasWrap");
     const empty = $("chartEmpty");
@@ -3558,14 +3908,27 @@ main:focus { outline: none; }
     const noteText = [buy ? buyNoteText(buy, real.length >= 2) : "", chartCurrentNote].filter(Boolean).join(" ");
     noteEl.hidden = !noteText;
     noteEl.textContent = noteText;
-    // History only reaches back window_days, so a range tab that long or
-    // longer would draw the same chart as All: hide it.
+    const ln = longNoteOf(points);
+    $("chartLong").hidden = !ln.text;
+    $("chartLongText").textContent = ln.text;
+    $("chartLongRetry").hidden = !ln.retry;
+    // A range that would draw the same chart as All is disabled, not
+    // hidden, so the row of buttons never moves. While the weekly history
+    // is loading, the ranges past the daily window wait for it.
+    const allReal = realPts(all);
+    const endDay = dayNum(HIST_REF) ?? (all.length ? all[all.length - 1].day : null);
+    const firstDay = allReal.length ? allReal[0].day : null;
+    const waiting = chartExtra.long && (LONG.state === "loading" || LONG.state === "idle");
     for (const b of document.querySelectorAll("#chartModal .range-btn")) {
       if (b.dataset.range === "all") {
-        b.title = HIST_WINDOW ? `All recorded history (the last ${HIST_WINDOW} days)` : "All recorded history";
-      } else {
-        b.hidden = HIST_WINDOW != null && parseInt(b.dataset.range, 10) >= HIST_WINDOW;
+        b.title = firstDay != null ? `All recorded history, from ${fmtChartDate(isoFromDay(firstDay), "year")}` : "All recorded history";
+        continue;
       }
+      const days = parseInt(b.dataset.range, 10);
+      const same = firstDay == null || endDay == null || firstDay >= endDay - days;
+      const off = same && !(waiting && days > (HIST_WINDOW || 90));
+      b.disabled = off;
+      b.title = off ? "Same as All: the recorded history is shorter than this" : "";
     }
     // The big number is the price you can pay today, as on the card; the
     // change beside it is the plotted line's.
@@ -3577,7 +3940,7 @@ main:focus { outline: none; }
       wrap.innerHTML = "";
       empty.classList.add("visible");
       empty.textContent = all.length === 0
-        ? (historyReady ? "No price history yet." : "Loading price history…")
+        ? (!historyReady || waiting ? "Loading price history…" : "No price history yet.")
         : real.length === 0
           ? "No price was recorded in this window."
           : "Only one price recorded so far. Come back in a few days as the daily scraper builds up history.";
@@ -3603,8 +3966,10 @@ main:focus { outline: none; }
     const padL = 56, padR = 24, padT = 24, padB = 40;
     const innerW = W - padL - padR, innerH = H - padT - padB;
 
-    // The buy marker shares the axis so it stays inside the plot.
-    const prices = real.map(p => p.price).concat(buy ? [buy.price] : []);
+    // The buy marker and the MSRP line share the axis so they stay inside
+    // the plot.
+    const msrp = posNum(chartExtra.msrp);
+    const prices = real.map(p => p.price).concat(buy ? [buy.price] : [], msrp != null ? [msrp] : []);
     const yMin = Math.min(...prices), yMax = Math.max(...prices);
     // Pad range so the line doesn't kiss the top/bottom edges, then snap the
     // bounds to the outer nice ticks so every tick sits inside the plot.
@@ -3622,30 +3987,45 @@ main:focus { outline: none; }
     const yLabels = yTicks.map(t =>
       `<text class="axis-label" x="${padL - 8}" y="${(Y(t) + 3).toFixed(1)}" text-anchor="end">$${t.toFixed(2)}</text>`).join("");
 
-    // X axis: up to 5 date labels evenly spaced IN TIME (first and last included).
+    // X axis: up to 5 date labels evenly spaced IN TIME (first and last
+    // included); a span of more than about 8 months names the month and year.
     const labelCount = Math.min(5, (d1 - d0) + 1);
+    const form = dspan > 240 ? "month" : "day";
     const xLabels = Array.from({ length: labelCount }, (_, i) => {
       const day = d0 + Math.round(i * (d1 - d0) / Math.max(1, labelCount - 1));
-      return `<text class="axis-label" x="${X(day).toFixed(1)}" y="${H - padB + 18}" text-anchor="middle">${fmtChartDate(isoFromDay(day))}</text>`;
+      const anchor = labelCount > 1 && i === 0 ? "start" : labelCount > 1 && i === labelCount - 1 ? "end" : "middle";
+      return `<text class="axis-label" x="${X(day).toFixed(1)}" y="${H - padB + 18}" text-anchor="${anchor}">${fmtChartDate(isoFromDay(day), form)}</text>`;
     }).join("");
 
     // Step line: a recorded price holds until the next change, and stops at
-    // a gap (no tracked price from that day).
-    const { line: linePath, area: areaPath } = stepPaths(points, X, Y, padT + innerH);
+    // a gap (no tracked price from that day). Weekly points from the archive
+    // are drawn as their own, fainter line that holds up to the first daily
+    // day and stops there, so the two sources are never joined into one.
+    const weeklyPts = points.filter(p => p.weekly);
+    const dailyPts = points.filter(p => !p.weekly);
+    if (weeklyPts.length && dailyPts.length && !weeklyPts[weeklyPts.length - 1].gap) {
+      weeklyPts.push({ day: dailyPts[0].day, date: dailyPts[0].date, price: null, gap: true, weekly: true });
+    }
+    const wk = stepPaths(weeklyPts, X, Y, padT + innerH);
+    const dy = stepPaths(dailyPts, X, Y, padT + innerH);
 
     // A dot per recorded change, plus the endpoint. Carried points (window
     // start, today) are not observations of a change, so they get no dot,
-    // except the endpoint, which says since when the price has held.
+    // except the endpoint, which says since when the price has held. Weekly
+    // points get small dots only when a range shows few of them.
     const lastIdx = points.length - 1;
+    const weeklyDots = weeklyPts.filter(p => !p.gap).length <= 60;
     const dots = points.map((p, i) => {
       if (p.gap || (p.carried && i !== lastIdx)) return "";
       const isEnd = i === lastIdx;
-      let tip = `${fmtChartDate(p.date)} · $${p.price.toFixed(2)}`;
+      if (p.weekly && !isEnd && !weeklyDots) return "";
+      let tip = `${fmtChartDate(p.date, "year")} · $${p.price.toFixed(2)}${p.weekly ? " (weekly point)" : ""}`;
       if (isEnd && p.carried) {
         const since = [...points].reverse().find(q => !q.carried && !q.gap);
         if (since) tip += ` (unchanged since ${fmtChartDate(since.date)})`;
       }
-      return `<circle class="price-dot${isEnd ? " endpoint" : ""}" cx="${X(p.day).toFixed(1)}" cy="${Y(p.price).toFixed(1)}" r="${isEnd ? 4 : 2}"><title>${tip}</title></circle>`;
+      const r = isEnd ? 4 : p.weekly ? 1.5 : 2;
+      return `<circle class="price-dot${isEnd ? " endpoint" : ""}${p.weekly && !isEnd ? " weekly" : ""}" cx="${X(p.day).toFixed(1)}" cy="${Y(p.price).toFixed(1)}" r="${r}"><title>${tip}</title></circle>`;
     }).join("");
 
     // Today's buyable price, beside the line's end and joined to it by a
@@ -3657,16 +4037,194 @@ main:focus { outline: none; }
         + `<circle class="buy-dot" cx="${x}" cy="${y1}" r="5"><title>Today · $${buy.price.toFixed(2)}, ${escapeHtml(buy.label)} (not part of the recorded line)</title></circle>`;
     }
 
+    // Context marks, never part of the line: MSRP (decks), the release day
+    // (presale prices can come before it) and where the daily prices start.
+    let marks = "";
+    if (msrp != null) {
+      const y = Y(msrp).toFixed(1);
+      const labelY = Y(msrp) - padT < 14 ? Y(msrp) + 12 : Y(msrp) - 5;
+      marks += `<line class="msrp-line" x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}"/>`
+        + `<text class="chart-mark-label" x="${W - padR}" y="${labelY.toFixed(1)}" text-anchor="end">MSRP $${msrp.toFixed(2)}</text>`;
+    }
+    const vMark = (day, cls, label, y) => {
+      const x = X(day), near = x > W - padR - 96;
+      return `<line class="${cls}" x1="${x.toFixed(1)}" y1="${padT}" x2="${x.toFixed(1)}" y2="${padT + innerH}"/>`
+        + `<text class="chart-mark-label" x="${(near ? x - 4 : x + 4).toFixed(1)}" y="${y}" text-anchor="${near ? "end" : "start"}">${label}</text>`;
+    };
+    const rel = dayNum(chartExtra.release);
+    if (rel != null && rel > d0 && rel <= d1) marks += vMark(rel, "release-line", `Release ${fmtChartDate(isoFromDay(rel), dspan > 240 ? "year" : "day")}`, padT + 10);
+    const from = chartExtra.from;
+    if (from != null && weeklyPts.some(p => !p.gap) && dailyPts.length && from > d0 && from <= d1) {
+      marks += vMark(from, "daily-line", "daily from here", padT + innerH - 6);
+    }
+
+    // A sentence for screen readers instead of an unlabelled picture.
+    const lo = Math.min(...real.map(p => p.price)), hi = Math.max(...real.map(p => p.price));
+    const aria = `Price chart from ${fmtChartDate(points[0].date, "year")} to ${fmtChartDate(end.date, "year")}: from $${first.toFixed(2)} to $${last.toFixed(2)}, low $${lo.toFixed(2)}, high $${hi.toFixed(2)}`
+      + (msrp != null ? `, MSRP $${msrp.toFixed(2)}` : "") + ".";
+
     wrap.innerHTML = `
-      <svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Price history chart">
+      <svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${escapeHtml(aria)}">
         ${gridLines}
-        <path class="price-area" d="${areaPath}"/>
-        <path class="price-line" d="${linePath}"/>
+        ${marks}
+        <path class="price-area weekly" d="${wk.area}"/>
+        <path class="price-line weekly" d="${wk.line}"/>
+        <path class="price-area" d="${dy.area}"/>
+        <path class="price-line" d="${dy.line}"/>
         ${dots}
         ${buyMark}
         ${yLabels}
         ${xLabels}
       </svg>`;
+  }
+
+  // ---------- Long price history (history_long.json) ----------
+  // One TCGPlayer Market point a week per product, from TCGCSV's archive
+  // (from 2024-02-09; each point is dated by the daily run that would have
+  // read that snapshot, so they fall on Fridays) and then the daily scrape.
+  // The file is about 570 KB, so it loads only when a chart opens. Inside
+  // the daily history's window the daily points win; weekly points fill the
+  // time before it. A week with no point is drawn as a gap, never bridged.
+  const LONG = { state: "idle", series: null, parsed: new Map(), promise: null };
+  const LONG_TIMEOUT_MS = 30000;
+  const WEEK_GAP_DAYS = 10;   // a longer step between weekly points is a missing week
+  function loadLongHistory() {
+    if (LONG.state === "ready") return Promise.resolve(true);
+    if (LONG.promise) return LONG.promise;
+    LONG.state = "loading";
+    LONG.promise = (async () => {
+      const ctl = typeof AbortController === "function" ? new AbortController() : null;
+      const timer = ctl ? setTimeout(() => ctl.abort(), LONG_TIMEOUT_MS) : null;
+      try {
+        const res = await fetch("./history_long.json", { cache: "no-cache", signal: ctl ? ctl.signal : undefined });
+        if (!res.ok) throw new Error(`history_long.json HTTP ${res.status}`);
+        const data = await res.json();
+        if (!data || data.schema !== 1 || !data.series || typeof data.series !== "object" || Array.isArray(data.series)) {
+          throw new Error("history_long.json is not schema 1");
+        }
+        LONG.series = data.series;
+        LONG.parsed.clear();
+        LONG.state = "ready";
+        return true;
+      } catch (e) {
+        console.warn("Weekly price history unavailable:", e);
+        LONG.state = "error";
+        return false;
+      } finally {
+        clearTimeout(timer);
+        LONG.promise = null;
+      }
+    })();
+    return LONG.promise;
+  }
+  // Start the load for a chart that reads it, and redraw what depends on it
+  // once it is in: the open chart, the bundle sparklines.
+  function needLongHistory() {
+    if (LONG.state === "ready" || LONG.promise) return;
+    loadLongHistory().then(ok => {
+      if (openModalEl === $("chartModal") && chartExtra.long) safely("chart", () => { refreshChartData(); renderChart(); });
+      if (ok) safely("bundles", patchBundleCards);
+    });
+  }
+  // One series as dated points, each checked, sorted, one per day.
+  function longSeries(key) {
+    if (LONG.state !== "ready") return [];
+    if (LONG.parsed.has(key)) return LONG.parsed.get(key);
+    const raw = ownProp(LONG.series, key);
+    const pts = [];
+    for (const p of Array.isArray(raw) ? raw : []) {
+      if (!Array.isArray(p)) continue;
+      const day = dayNum(p[0]), price = posNum(p[1]);
+      if (day != null && price != null) pts.push({ day, date: p[0], price, weekly: true });
+    }
+    pts.sort((a, b) => a.day - b.day);
+    const out = pts.filter((p, i) => !i || p.day !== pts[i - 1].day);
+    LONG.parsed.set(key, out);
+    return out;
+  }
+  // Weekly points with a gap point a week after any point whose next one
+  // (or `untilDay`) is more than WEEK_GAP_DAYS away.
+  function weeklyWithGaps(pts, untilDay) {
+    const out = [];
+    pts.forEach((p, i) => {
+      out.push(p);
+      const next = i + 1 < pts.length ? pts[i + 1].day : untilDay;
+      if (next != null && next - p.day > WEEK_GAP_DAYS) out.push({ day: p.day + 7, date: isoFromDay(p.day + 7), price: null, gap: true, weekly: true });
+    });
+    return out;
+  }
+  // The daily points (historyPoints) with the weekly ones before them.
+  // keys: the series names to try, the first with points wins (a renamed
+  // deck's series may still sit under a former id). { points, from }: from
+  // is the first daily day when weekly points come before it, else null.
+  function withLongHistory(daily, keys) {
+    let weekly = [];
+    for (const k of keys) { weekly = longSeries(k); if (weekly.length) break; }
+    const start = daily.length ? daily[0].day : null;
+    const before = start == null ? weekly : weekly.filter(p => p.day < start);
+    if (!before.length) return { points: daily, from: null };
+    return { points: weeklyWithGaps(before, start).concat(daily), from: start };
+  }
+  const deckLongKeys = d => [d.id, ...(d.formerIds || [])].map(id => `deck:${id}`);
+  const deckLongPoints = d => withLongHistory(deckPoints(d), deckLongKeys(d));
+  function boxLongPoints(setName, type) {
+    const box = findBox(setName, type);
+    const daily = box ? boxPoints(setName, box) : historyPoints(boxSeries(setName, type), s => s.price, false);
+    return withLongHistory(daily, [`box:${setName}::${type}`]);
+  }
+
+  // ----- Set bundles -----
+  // Bundles have no daily history, so their line is the weekly points and
+  // today's TCGPlayer Market price from prices.json.
+  function bundleById(bid) {
+    const b = SLUG_RE.test(bid || "") ? ownProp(LIVE_PRICES?.bundles, bid) : null;
+    return b && typeof b === "object" && posNum(b.price) ? b : null;
+  }
+  const bundleName = b => (typeof b?.name === "string" && b.name.trim() ? b.name.trim() : "Set bundle");
+  function bundlePoints(bid, b) {
+    const weekly = longSeries(`bundle:${bid}`);
+    const today = dayNum(HIST_REF) ?? dayNum(typeof LIVE_PRICES?.updated_at === "string" ? LIVE_PRICES.updated_at.slice(0, 10) : "");
+    const last = weekly[weekly.length - 1];
+    if (b && b.price_source === "Market" && today != null && (!last || last.day < today)) {
+      return weeklyWithGaps(weekly, today).concat([{ day: today, date: isoFromDay(today), price: b.price, weekly: true }]);
+    }
+    return weeklyWithGaps(weekly, null);
+  }
+  function bundleBuy(b) {
+    const tb = b ? boxBuyPrice(b) : null;
+    return tb ? { price: tb.price, label: `TCGPlayer ${tb.kind}`, kind: "box", marketBelow: posNum(b.price_low) != null && b.price_low > b.price } : null;
+  }
+  // The newest release among a bundle's decks: the day the bundle shipped.
+  function bundleRelease(b) {
+    const ids = new Set((Array.isArray(b?.deck_ids) ? b.deck_ids : []).map(id => canonicalId(id) || id));
+    return PRECONS.filter(d => ids.has(d.id) && d.releaseDate).map(d => d.releaseDate).sort().pop() || null;
+  }
+  function openBundleChart(bid, range = "all") {
+    const b = bundleById(bid);
+    if (!b) return;
+    showChartModal(bundleName(b), "Set bundle · TCGPlayer Market price", () => {
+      const bb = bundleById(bid);
+      const points = bundlePoints(bid, bb);
+      return { points, buy: buyAside(points, bundleBuy(bb)), long: true, release: bundleRelease(bb),
+               longNote: "Set bundles have no daily history here: one point a week from TCGCSV's archive of TCGPlayer Market prices, then today's Market price." };
+    }, range);
+  }
+  // The bundle's chart control on a deck card: a sparkline of its last 90
+  // days once the weekly history is in, before that a plain button of the
+  // same size (the history loads only when a chart opens).
+  function bundleSparkHtml(bid, b) {
+    if (!SLUG_RE.test(bid || "")) return "";
+    const name = bundleName(b);
+    if (LONG.state === "ready") {
+      const svg = sparklineSvg(windowPoints(bundlePoints(bid, b), "90"), name, `data-bundle-chart="${bid}"`);
+      if (svg) return svg;
+    }
+    return `<button type="button" class="bundle-chart" data-bundle-chart="${bid}">Chart<span class="sr-only">: price history of ${escapeHtml(name)}</span></button>`;
+  }
+  // Redraw the deck cards that show a bundle (their sparkline is new).
+  function patchBundleCards() {
+    const ids = PRECONS.filter(d => getBundleForDeck(d)).map(d => d.id);
+    if (ids.length) patchCards(ids, { passive: true });
   }
 
   // Shared modal opener: sets title/subtitle, range buttons, renders.
@@ -3690,20 +4248,24 @@ main:focus { outline: none; }
     openModal($("chartModal"), $("chartModalClose"));
     chartSpec = spec;
     dialogOpened(spec || { t: "plain" });
+    if (chartExtra.long) needLongHistory();
   }
   function refreshChartData() {
     const data = chartDataFn ? chartDataFn() : { points: [], buy: null };
     chartCurrentPoints = data.points || [];
     chartCurrentBuy = data.buy || null;
     chartCurrentNote = typeof data.note === "string" ? data.note : "";
+    chartExtra = { long: !!data.long, from: data.from ?? null, msrp: data.msrp ?? null, release: data.release || null,
+                   longNote: data.longNote || "", longQuiet: !!data.longQuiet, ckNote: !!data.ckNote };
   }
 
   function openChart(deckId, range = "all") {
     const deck = PRECONS.find(d => d.id === deckId);
     if (!deck) return;
     showChartModal(deck.name, `${deck.set} · best recorded price across vendors`, () => {
-      const points = deckPoints(deck);
-      return { points, buy: buyAside(points, deckBuy(deck)) };
+      const long = deckLongPoints(deck);
+      return { points: long.points, buy: buyAside(long.points, deckBuy(deck)), long: true, from: long.from,
+               msrp: deck.msrp, release: deck.releaseDate || null, ckNote: true };
     }, range, { spec: { t: "deck", id: deck.id, chart: true } });
   }
 
@@ -3727,13 +4289,15 @@ main:focus { outline: none; }
     return (ownSets.length === 1 && ownSets[0]) ? ownSets[0] : setName;
   }
 
-  // Open the chart for a sealed box, keyed "<set>::<type>" in BOX_HISTORY.
+  // Open the chart for a sealed box, keyed "<set>::<type>" in BOX_HISTORY
+  // and "box:<set>::<type>" in the weekly history.
   function openBoxChart(setName, type, range = "all") {
     const title = (b => (b && boxNameParts(b).name) || `${setName} ${b?.label || "box"}`)(findBox(setName, type));
     showChartModal(title, "Sealed box · TCGPlayer Market price", () => {
       const box = findBox(setName, type);
-      const points = box ? boxPoints(setName, box) : historyPoints(boxSeries(setName, type), s => s.price, false);
-      return { points, buy: buyAside(points, boxBuy(box)) };
+      const long = boxLongPoints(setName, type);
+      const rel = box && dayNum(box.set_release) != null ? box.set_release : null;
+      return { points: long.points, buy: buyAside(long.points, boxBuy(box)), long: true, from: long.from, release: rel };
     }, range, { spec: boxLinkSpec(findBox(setName, type), true) });
   }
 
@@ -3907,7 +4471,7 @@ main:focus { outline: none; }
       singlesLine = `<span class="crack-value data-carried">Singles value appears once the decklist is published.</span>`;
     }
 
-    const metaBits = [singlesLine].filter(Boolean).join("");
+    const metaBits = [singlesLine, deckExitsHtml(d, crack), deckProfileLine(d)].filter(Boolean).join("");
 
     // Power rating from ScryCheck (scrycheck.com): automated estimates copied
     // into decks.json where ScryCheck publishes a score; other decks say they
@@ -3987,7 +4551,7 @@ main:focus { outline: none; }
         : `$${bundle.price.toFixed(2)}`;
       bundleNote = `
         <div class="bundle-note">
-          <span><span class="bundle-label">Set bundle</span> · <a href="${safeUrl(bundle.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(bname)}<span class="sr-only">, includes ${nm}</span></a> · ${priceText} for all ${count} decks</span>
+          <span><span class="bundle-label">Set bundle</span> · <a href="${safeUrl(bundle.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(bname)}<span class="sr-only">, includes ${nm}</span></a> · ${priceText} for all ${count} decks ${bundleSparkHtml(bundle.bundleId, bundle)}</span>
           ${savings}
           ${SLUG_RE.test(bundle.bundleId) ? ownChipHtml(`bundle:${bundle.bundleId}`, bname) : ""}
         </div>`;
@@ -4135,7 +4699,7 @@ main:focus { outline: none; }
   // Controls are found by role, not position, since a card's controls change
   // (watching adds the target input).
   const CARD_CONTROLS = [".watch-toggle", ".own-toggle", "input[data-target]", "input[data-compare]", ".own-chip",
-    "[data-chart-trigger]", ".power-scan", ".vendor-btn", ".view-cards", ".price-label a"];
+    "[data-chart-trigger]", "[data-bundle-chart]", ".power-scan", ".vendor-btn", ".view-cards", ".price-label a"];
   function focusedCardControl() {
     const el = document.activeElement;
     const card = el && el !== document.body && grid.contains(el) ? el.closest("article[data-id]") : null;
@@ -4163,78 +4727,722 @@ main:focus { outline: none; }
     }
   }
 
-  // ---------- Staple finder (reverse card -> cheapest precon) ----------
-  // Rank every card in the index against the query: exact name, then a whole
-  // word match ("rift" finds Cyclonic Rift), then a word that starts with the
-  // query, then a plain substring ("rift" inside Mulldrifter). Scanning the
-  // whole index before ranking matters: stopping at the first few substring
-  // hits in file order picked Mulldrifter over Cyclonic Rift. Lower is better.
+  // ---------- Where to get a card (the staple finder) ----------
+  // Starts from a card and says three things: the cheapest single among the
+  // printings in the products we track, the precons that hold it (today's
+  // rows) and the box types that can hold it (box_index.json). Deck files
+  // load on demand (all of them only on request for a card in more than
+  // FINDER_AUTO_DECKS decks); box files only on request, as they are large.
+  // Never a cost per copy figure: a box is not a way to buy one card.
+  let BOX_INDEX = null, boxIndexPromise = null;
+  function loadBoxIndex() {
+    if (BOX_INDEX) return Promise.resolve(BOX_INDEX);
+    if (boxIndexPromise) return boxIndexPromise;
+    boxIndexPromise = (async () => {
+      try {
+        const res = await fetch("./box_index.json", { cache: "no-cache" });
+        if (!res.ok) throw new Error(`box_index.json HTTP ${res.status}`);
+        const data = await res.json();
+        if (!data || data.schema !== 1 || !data.cards || typeof data.cards !== "object") throw new Error("box_index.json is not schema 1");
+        BOX_INDEX = { cards: data.cards, aliases: data.aliases && typeof data.aliases === "object" ? data.aliases : {} };
+      } catch (e) {
+        console.warn("Card to box index unavailable:", e);
+      } finally {
+        boxIndexPromise = null;   // a failed load can be tried again
+      }
+      return BOX_INDEX;
+    })();
+    return boxIndexPromise;
+  }
+  const loadFinderIndexes = () => Promise.all([loadCardIndex(), loadBoxIndex()]);
+  const FINDER_AUTO_DECKS = 25;   // also the planner's staple line
+  const FILE_LOADS_AT_ONCE = 6;
+
+  // Card keys: the scraper's norm() (lowercase, only a to z and 0 to 9) of
+  // the name the card is indexed under (scrape_prices.index_name: a
+  // reversible card "A // A" counts as "A").
+  const normName = s => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+  function indexName(name) {
+    const faces = String(name || "").split(" // ");
+    const half = faces.length / 2;
+    if (faces.length % 2 === 0 && faces.slice(0, half).join(" // ") === faces.slice(half).join(" // ")) return faces.slice(0, half).join(" // ");
+    return String(name || "");
+  }
+  const cardKeyOf = name => normName(indexName(name));
+  // The front face of a multi face card in the deck index ("Delver of
+  // Secrets" for "Delver of Secrets // Insectile Aberration"), for names
+  // pasted without their back face. box_index.json brings its own aliases.
+  let frontAlias = null, frontAliasOf = null;
+  function frontAliases() {
+    if (frontAlias && frontAliasOf === CARD_INDEX) return frontAlias;
+    const out = new Map();
+    for (const [k, v] of Object.entries(CARD_INDEX || {})) {
+      if (!v || typeof v.name !== "string" || !v.name.includes(" // ")) continue;
+      const front = normName(v.name.split(" // ")[0]);
+      if (front && !ownProp(CARD_INDEX, front) && !out.has(front)) out.set(front, k);
+    }
+    frontAliasOf = CARD_INDEX;
+    return (frontAlias = out);
+  }
+  const knownCardKey = k => !!(ownProp(CARD_INDEX, k) || ownProp(BOX_INDEX?.cards, k));
+  // A key as given, else its alias (box_index.json, then the deck index).
+  function resolveCardKey(key) {
+    if (!key) return null;
+    if (knownCardKey(key)) return key;
+    const a = ownProp(BOX_INDEX?.aliases, key);
+    if (typeof a === "string" && knownCardKey(a)) return a;
+    return frontAliases().get(key) || null;
+  }
+  function cardNameOf(key) {
+    const v = ownProp(CARD_INDEX, key) || ownProp(BOX_INDEX?.cards, key);
+    return v && typeof v.name === "string" ? v.name : "";
+  }
+  // The catalog decks whose list has the card (today's rows), renames
+  // resolved, each once.
+  function decksWithCard(key) {
+    const v = ownProp(CARD_INDEX, key), out = [], seen = new Set();
+    for (const id of Array.isArray(v?.decks) ? v.decks : []) {
+      const d = deckById(canonicalId(id) || id);
+      if (d && !seen.has(d.id)) { seen.add(d.id); out.push(d); }
+    }
+    return out;
+  }
+  let deckMap = null, deckMapOf = null;
+  function deckById(id) {
+    if (deckMapOf !== PRECONS) { deckMap = new Map(PRECONS.map(d => [d.id, d])); deckMapOf = PRECONS; }
+    return deckMap.get(id) || null;
+  }
+  // "<stem>:<kind>" -> { set, row }: the priced box row whose card file and
+  // kind those are. The packs of a box type come from this row.
+  let boxRefMap = null, boxRefOf = null;
+  function boxRowByRef(stem, kind) {
+    if (boxRefOf !== LIVE_PRICES) {
+      boxRefMap = new Map();
+      for (const [set, rows] of Object.entries(getBoxes() || {})) {
+        for (const row of Array.isArray(rows) ? rows : []) {
+          const ref = boxCardsRef(row), m = ref && BOX_FILE_STEM_RE.exec(ref.file);
+          if (m && !boxRefMap.has(`${m[1]}:${ref.kind}`)) boxRefMap.set(`${m[1]}:${ref.kind}`, { set, row });
+        }
+      }
+      boxRefOf = LIVE_PRICES;
+    }
+    return boxRefMap.get(`${stem}:${kind}`) || null;
+  }
+  // The box types that can hold a card, one per (box file, kind) with a box
+  // row, finishes together: { stem, kind, set, row, finishes, pack (chance
+  // of at least one in a pack, finishes taken as independent), packs, box
+  // (the same for a whole box, or null without a pack count), copies
+  // (expected copies per box, from the per pack chances) }. Most likely first.
+  function boxTypesFor(key) {
+    const c = ownProp(BOX_INDEX?.cards, key), by = new Map();
+    for (const it of Array.isArray(c?.in) ? c.in : []) {
+      if (!Array.isArray(it) || it.length < 4) continue;
+      const [stem, kind, finish, pack] = it;
+      if (typeof stem !== "string" || !/^[a-z0-9-]+$/.test(stem) || typeof kind !== "string" || !FINISHES.includes(finish)) continue;
+      if (typeof pack !== "number" || !(pack > 0 && pack <= 1)) continue;
+      const k = `${stem}:${kind}`;
+      if (!by.has(k)) by.set(k, { stem, kind, finishes: [] });
+      by.get(k).finishes.push({ finish, pack });
+    }
+    const out = [];
+    for (const t of by.values()) {
+      const hit = boxRowByRef(t.stem, t.kind);
+      if (!hit) continue;
+      const packs = Number.isInteger(hit.row.packs) && hit.row.packs > 0 ? hit.row.packs : null;
+      const pack = 1 - t.finishes.reduce((a, f) => a * (1 - f.pack), 1);
+      const perPack = t.finishes.reduce((a, f) => a + f.pack, 0);
+      out.push({ ...t, set: hit.set, row: hit.row, packs, pack,
+                 box: packs ? 1 - Math.pow(1 - pack, packs) : null, copies: packs ? perPack * packs : null });
+    }
+    return out.sort((a, b) => (b.box ?? b.pack) - (a.box ?? a.pack) || a.stem.localeCompare(b.stem));
+  }
+  // "in about 41% of boxes", "about 1 in 25 boxes".
+  function chanceText(p, unit) {
+    const one = unit === "boxes" ? "box" : "pack";
+    if (p >= 0.995) return `in nearly every ${one}`;
+    if (p >= 0.095) return `in about ${Math.round(p * 100)}% of ${unit}`;
+    return `about 1 in ${Math.round(1 / p).toLocaleString("en-US")} ${unit}`;
+  }
+  function copiesText(c) {
+    const v = c >= 10 ? Math.round(c) : c >= 1 ? +c.toFixed(1) : +c.toPrecision(2);
+    return `about ${v.toLocaleString("en-US")} ${v === 1 ? "copy" : "copies"} per box`;
+  }
+  const finishList = fins => fins.map(f => FINISH_LABEL[f.finish].toLowerCase()).join(" and ");
+
+  // A parsed deck file's rows by card key, built once per file.
+  const DECK_ROWS = new WeakMap();
+  function deckRowsByKey(file) {
+    let m = DECK_ROWS.get(file);
+    if (!m) {
+      m = new Map();
+      for (const e of file.entries) {
+        const k = cardKeyOf(e.name);
+        if (!m.has(k)) m.set(k, []);
+        m.get(k).push(e);
+      }
+      DECK_ROWS.set(file, m);
+    }
+    return m;
+  }
+  const loadedDeckFile = d => { const ref = deckCardsRef(d); return ref ? CARD_FILES.get(ref.file) || null : null; };
+  // The lower of a printing's two retail prices (the TCGPlayer one is
+  // already gone when the outlier guard left it out): { price, vendor }.
+  function printingBest(p) {
+    if (p.tcg != null && (p.ck == null || p.tcg <= p.ck)) return { price: p.tcg, vendor: "tcg" };
+    if (p.ck != null) return { price: p.ck, vendor: "ck" };
+    return null;
+  }
+  // The box set's own name for a box card file (its first row's SKU set).
+  function boxFileTitle(stem) {
+    for (const [set, rows] of Object.entries(getBoxes() || {})) {
+      const row = (Array.isArray(rows) ? rows : []).find(r => { const ref = boxCardsRef(r); return ref && ref.file === `cards/boxes/${stem}.json`; });
+      if (row) return boxNameParts(row).set || set;
+    }
+    return stem.toUpperCase();
+  }
+  // Every printing and finish of a card in the files loaded so far, from
+  // the given decks and box files: { name, set, num, finish, tcg, ck,
+  // outlier, tcg_id, where: [product names] }, one per printing and finish.
+  function cardPrintings(key, decks, stems = []) {
+    const by = new Map();
+    const add = (e, finish, tcg, ck, outlier, where) => {
+      const id = `${e.uuid || `${e.set}|${e.num}`}|${finish}`;
+      let p = by.get(id);
+      if (!p) by.set(id, p = { name: e.name, set: e.set, num: e.num, finish, tcg, ck, outlier, tcg_id: e.tcg_id, where: [] });
+      if (!p.where.includes(where)) p.where.push(where);
+    };
+    for (const d of decks) {
+      const file = loadedDeckFile(d);
+      for (const e of file ? deckRowsByKey(file).get(key) || [] : []) add(e, e.finish, e.tcg, e.ck, e.outlier, d.name);
+    }
+    for (const stem of stems) {
+      const file = CARD_FILES.get(`cards/boxes/${stem}.json`);
+      if (!file) continue;
+      const where = boxFileTitle(stem);
+      for (const { card, prices } of file.cards) {
+        if (cardKeyOf(card.name) !== key) continue;
+        for (const f of FINISHES) if (prices[f]) add(card, f, prices[f].tcg, prices[f].ck, prices[f].outlier, where);
+      }
+    }
+    return [...by.values()];
+  }
+  // The cheapest of them: { p, price, vendor } or null.
+  function cheapestPrinting(prints) {
+    let best = null;
+    for (const p of prints) {
+      const b = printingBest(p);
+      if (b && (!best || b.price < best.price)) best = { p, ...b };
+    }
+    return best;
+  }
+  const printingLabel = p => [p.set && p.num ? `${p.set} ${p.num}` : p.set, FINISH_LABEL[p.finish].toLowerCase()].filter(Boolean).join(", ");
+
+  // Load card files, at most FILE_LOADS_AT_ONCE at a time. onStep(done,
+  // failed) runs after each one. Files already in the cache cost nothing.
+  async function loadCardFilesLimited(jobs, onStep) {
+    let next = 0, done = 0, failed = 0;
+    const worker = async () => {
+      while (next < jobs.length) {
+        const j = jobs[next++];
+        try { await loadCardFile(j.mode, j.file); } catch (e) { failed++; }
+        done++;
+        onStep(done, failed);
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(FILE_LOADS_AT_ONCE, jobs.length) }, worker));
+    return { done, failed };
+  }
+
+  // One finder per host element (the page section, the dialog body):
+  // { key, token, allDecks, boxes, moreDecks, failed, loading }.
+  const FINDERS = new Map();
+  // Rebuild part of a host and give focus back to the control that had it
+  // (every control in a finder carries a data-fk key).
+  function keepFinderFocus(host, fn) {
+    const el = document.activeElement;
+    const fk = el && host.contains(el) && el.dataset ? el.dataset.fk : null;
+    fn();
+    if (!fk) return;
+    const again = host.querySelector(`[data-fk="${CSS.escape(fk)}"]`);
+    (again || host.querySelector(".fd-name, .fd-progress")).focus({ preventScroll: true });
+  }
+  // Show a card in a host. alts: other names the page search matched.
+  function showFinder(host, key, { alts = [], heading = true } = {}) {
+    const prev = FINDERS.get(host.id);
+    const st = { key, token: (prev ? prev.token : 0) + 1, allDecks: false, boxes: false, moreDecks: false, failed: 0, loading: false, heading, alts };
+    FINDERS.set(host.id, st);
+    const name = cardNameOf(key);
+    host.innerHTML = `
+      ${heading ? `<h3 class="fd-name" tabindex="-1">${escapeHtml(name)}</h3>` : ""}
+      <div class="fd-block fd-single"></div>
+      <p class="fd-progress" role="status" tabindex="-1"></p>
+      <div class="fd-block fd-decks"></div>
+      <div class="fd-block fd-boxes"></div>
+      ${alts.length ? `<div class="staple-alts">Did you mean ${alts.map((a, i) => `<button type="button" class="staple-alt" data-fk="alt${i}" data-staple-alt="${escapeHtml(a.name)}">${escapeHtml(a.name)}</button>`).join("")}</div>` : ""}`;
+    drawFinder(host);
+    const decks = decksWithCard(key);
+    if (decks.length && decks.length <= FINDER_AUTO_DECKS) finderLoad(host, "decks");
+  }
+  function stopFinder(host) {
+    const st = FINDERS.get(host.id);
+    if (st) st.token++;
+  }
+  // Load what a finder needs: "decks" (every deck file with the card) or
+  // "boxes" (every box file that can hold it), with a progress line.
+  async function finderLoad(host, what) {
+    const st = FINDERS.get(host.id);
+    if (!st) return;
+    const token = st.token, key = st.key;
+    if (what === "decks") st.allDecks = true; else st.boxes = true;
+    const jobs = what === "decks"
+      ? decksWithCard(key).map(d => deckCardsRef(d)).filter(Boolean).map(r => ({ mode: "deck", file: r.file }))
+      : [...new Set(boxTypesFor(key).map(t => t.stem))].map(s => ({ mode: "box", file: `cards/boxes/${s}.json` }));
+    const todo = jobs.filter(j => !CARD_FILES.has(j.file));
+    const prog = host.querySelector(".fd-progress");
+    const label = what === "decks" ? "precon lists" : "box lists";
+    if (todo.length) {
+      st.loading = true;
+      drawFinder(host);
+      prog.textContent = `Loading ${todo.length} ${label}: 0 of ${todo.length}`;
+      const r = await loadCardFilesLimited(todo, (done) => {
+        if (FINDERS.get(host.id)?.token === token) prog.textContent = `Loading ${todo.length} ${label}: ${done} of ${todo.length}`;
+      });
+      if (FINDERS.get(host.id)?.token !== token) return;
+      st.loading = false;
+      st.failed += r.failed;
+      prog.textContent = r.failed ? `${r.failed} of ${todo.length} ${label} could not be loaded.` : `Loaded ${todo.length} ${label}.`;
+    }
+    drawFinder(host);
+  }
+  // Fill the three blocks of a finder from what is loaded now.
+  function drawFinder(host) {
+    const st = FINDERS.get(host.id);
+    if (!st) return;
+    const key = st.key, decks = decksWithCard(key), types = boxTypesFor(key);
+    const stems = [...new Set(types.map(t => t.stem))];
+    const $2 = v => `$${v.toFixed(2)}`;
+    keepFinderFocus(host, () => {
+      // Buy the single.
+      const loadedDecks = decks.filter(d => loadedDeckFile(d));
+      const loadedStems = st.boxes ? stems.filter(s => CARD_FILES.has(`cards/boxes/${s}.json`)) : [];
+      const prints = cardPrintings(key, loadedDecks, loadedStems);
+      const best = cheapestPrinting(prints);
+      const left = prints.filter(p => p.tcg == null && p.outlier).length;
+      let single = `<h4 class="fd-label">Buy the single</h4>`;
+      if (best) {
+        const e = { name: best.p.name, tcg_id: best.p.tcg_id };
+        const href = cardPriceHref(e, best.vendor);
+        const vendor = best.vendor === "tcg" ? "TCGPlayer retail" : "Card Kingdom retail";
+        const where = best.p.where[0] + (best.p.where.length > 1 ? ` and ${best.p.where.length - 1} more` : "");
+        const price = href && href !== "#"
+          ? `<a class="fd-price" data-fk="buy" href="${href}" target="_blank" rel="noopener noreferrer">${$2(best.price)}<span class="sr-only"> at ${best.vendor === "tcg" ? "TCGPlayer" : "Card Kingdom"}</span></a>`
+          : `<span class="fd-price">${$2(best.price)}</span>`;
+        const scope = [loadedDecks.length ? `${loadedDecks.length} precon ${loadedDecks.length === 1 ? "list" : "lists"}` : "", loadedStems.length ? `${loadedStems.length} box ${loadedStems.length === 1 ? "list" : "lists"}` : ""].filter(Boolean).join(" and ");
+        single += `<p class="fd-best">${price} <span class="fd-what">${vendor} · ${escapeHtml(printingLabel(best.p))} · as printed in ${escapeHtml(where)}</span></p>`
+          + `<p class="fd-note">The cheapest of ${prints.length} ${prints.length === 1 ? "printing" : "printings and finishes"} in the ${scope} loaded, at retail before shipping.`
+          + (left ? ` ${left === 1 ? "One TCGPlayer price was" : `${left} TCGPlayer prices were`} left out as unreliable (more than ${OUTLIER_RATIO} times Card Kingdom's for the same printing).` : "") + `</p>`;
+      } else if (st.loading) {
+        single += `<p class="fd-note">Looking through the lists…</p>`;
+      } else if (prints.length) {
+        single += `<p class="fd-note">No retail price for this card in the lists loaded.</p>`;
+      } else if (decks.length > FINDER_AUTO_DECKS && !st.allDecks) {
+        single += `<p class="fd-note">${decks.length} precons hold this card, so their lists load only when you ask.</p>`;
+      } else if (!decks.length && types.length && !st.boxes) {
+        single += `<p class="fd-note">No precon we track holds it; its price is in the box lists.</p>`;
+      } else {
+        single += `<p class="fd-note">No price for this card in the lists we track.</p>`;
+      }
+      const acts = [];
+      if (decks.length > FINDER_AUTO_DECKS && !st.allDecks) acts.push(`<button type="button" class="cv-btn" data-fk="decks" data-fd-act="decks">Compare the printings in all ${decks.length} precon lists</button>`);
+      if (stems.length && !st.boxes) acts.push(`<button type="button" class="cv-btn" data-fk="boxes" data-fd-act="boxes">Also check ${stems.length === 1 ? "the box list" : `the ${stems.length} box lists`}</button><span class="fd-note">large files, up to about 1.3 MB each</span>`);
+      if (acts.length) single += `<div class="fd-acts">${acts.join("")}</div>`;
+      host.querySelector(".fd-single").innerHTML = single;
+
+      // Precons with it: today's rows, cheapest to buy first.
+      const rows = decks.map(d => { const bv = bestVendorPrice(d); return { d, ep: bv ? bv.best.price : null, vendor: bv ? bv.best.vendor : null }; })
+        .sort((a, b) => (a.ep ?? Infinity) - (b.ep ?? Infinity) || a.d.name.localeCompare(b.d.name));
+      const shown = st.moreDecks ? rows : rows.slice(0, 8);
+      let dh = `<h4 class="fd-label">Precons with it <span class="fd-count">${rows.length}</span></h4>`;
+      if (!rows.length) dh += `<p class="fd-note">No precon we track lists this card today.</p>`;
+      dh += shown.map(({ d, ep, vendor }) => {
+        const file = loadedDeckFile(d);
+        const own = file ? cheapestPrinting(cardPrintings(key, [d])) : null;
+        const copy = own ? `its copy ${$2(own.price)} ${own.vendor === "tcg" ? "TCG" : "CK"}, ${escapeHtml(FINISH_LABEL[own.p.finish].toLowerCase())}` : "";
+        return `
+        <div class="staple-row" data-fk="d-${d.id}" data-staple-id="${d.id}" role="button" tabindex="0">
+          <div>
+            <div class="staple-row-name">${escapeHtml(d.name)}<span class="sr-only">, open price history</span></div>
+            <div class="staple-row-set">${escapeHtml(d.set)}${vendor ? ` · ${escapeHtml(vendor)}` : ""}${copy ? ` · ${copy}` : ""}</div>
+          </div>
+          <div class="staple-row-price">${ep != null ? $2(ep) : "no price"}</div>
+        </div>`;
+      }).join("");
+      if (rows.length > shown.length) dh += `<button type="button" class="cv-btn fd-more" data-fk="more" data-fd-act="more">Show all ${rows.length} precons</button>`;
+      host.querySelector(".fd-decks").innerHTML = dh;
+
+      // Boxes that can hold it.
+      let bh = `<h4 class="fd-label">Boxes that can hold it <span class="fd-count">${types.length}</span></h4>`;
+      if (!BOX_INDEX) bh += `<p class="fd-note">The card to box index could not be loaded.</p>`;
+      else if (!types.length) bh += `<p class="fd-note">No sealed box we track can hold this card.</p>`;
+      else {
+        bh += `<ul class="fd-box-list">` + types.map((t, i) => {
+          const pay = boxBuyPrice(t.row), ev = posNum(t.row.ev);
+          const odds = t.box != null
+            ? `${chanceText(t.box, "boxes")} · ${copiesText(t.copies)}`
+            : `${chanceText(t.pack, "packs")} (the pack count of this box is not known)`;
+          const money = [pay ? `Box ${$2(pay.price)} TCGPlayer ${pay.kind}` : "No box price today", ev != null ? `EV ${$2(ev)}` : ""].filter(Boolean).join(" · ");
+          return `<li class="fd-box">
+            <button type="button" class="fd-box-open" data-fk="b${i}" data-fd-set="${escapeHtml(t.set)}" data-fd-type="${escapeHtml(t.row.type || "")}" data-fd-kind="${escapeHtml(t.kind)}">${escapeHtml(boxNameParts(t.row).name || t.set)}<span class="sr-only">, open its cards and pull odds</span></button>
+            <span class="fd-odds">${odds}</span>
+            <span class="fd-box-meta">${escapeHtml(finishList(t.finishes))} · ${money}</span>
+          </li>`;
+        }).join("") + `</ul><p class="fd-note">Chances per box assume packs are independent and count every finish; copies per box add up the chance per pack, from MTGJSON's booster data. EV is the box's singles at TCGPlayer retail, counting cards worth $1.00 or more.</p>`;
+      }
+      host.querySelector(".fd-boxes").innerHTML = bh;
+    });
+  }
+
+  // The finder dialog. back: the card list spec to return to, when the
+  // dialog was opened from a card preview.
+  let findSpec = null, findBackSpec = null;
+  async function openFinder(key, { back = null } = {}) {
+    const modal = $("findModal"), body = $("findBody");
+    findBackSpec = back;
+    $("findBack").hidden = !back;
+    $("findModalTitle").textContent = "Where to get a card";
+    setDialogStatus("findCopyStatus", "");
+    stopFinder(body);
+    body.innerHTML = `<p class="staple-empty">Loading the card indexes…</p>`;
+    openModal(modal, $("findModalClose"));
+    modal.scrollTop = 0;
+    findSpec = { t: "card", key };
+    dialogOpened(findSpec);
+    await loadFinderIndexes();
+    if (openModalEl !== modal || !findSpec || findSpec.key !== key) return;
+    if (!CARD_INDEX && !BOX_INDEX) { body.innerHTML = `<p class="staple-empty" role="alert">The card indexes could not be loaded. Check your connection and try again.</p>`; return; }
+    const k = resolveCardKey(key);
+    if (!k) { body.innerHTML = `<p class="staple-empty" role="alert">That card is not in any precon or box this page tracks.</p>`; return; }
+    if (k !== key) { findSpec = { t: "card", key: k }; dialogChanged(findSpec); }
+    $("findModalTitle").textContent = `Where to get ${cardNameOf(k)}`;
+    showFinder(body, k, { heading: false });
+  }
+  function finderClosed() {
+    stopFinder($("findBody"));
+    findSpec = findBackSpec = null;
+  }
+  // From a card preview: the card list gives way to the finder, which can
+  // bring it back.
+  function openFinderFromCardList(e) {
+    const back = cardListSpec();
+    closeCardPreview("none");
+    cardListClosed();
+    openFinder(cardKeyOf(e.name), { back: back.t !== "plain" ? back : null });
+  }
+  // The preview's line: "Also in 3 precons and 2 boxes" (other than the
+  // list it is shown in), once both indexes are in.
+  function alsoText(e) {
+    const key = CARD_INDEX || BOX_INDEX ? resolveCardKey(cardKeyOf(e.name)) : null;
+    if (!key) return "Where else to get this card";
+    const v = CARD_VIEW;
+    const decks = decksWithCard(key).filter(d => !(v.mode === "deck" && v.deck && d.id === v.deck.id)).length;
+    const m = v.mode === "box" ? BOX_FILE_STEM_RE.exec(v.file || "") : null;
+    const boxes = boxTypesFor(key).filter(t => !(m && t.stem === m[1] && t.kind === v.kind)).length;
+    if (!decks && !boxes) return "Where to get it: no other precon or box we track has it";
+    const parts = [decks ? `${decks} ${decks === 1 ? "precon" : "precons"}` : "", boxes ? `${boxes} ${boxes === 1 ? "box" : "boxes"}` : ""].filter(Boolean);
+    return `Also in ${parts.join(" and ")}`;
+  }
+
+  // Rank every card in both indexes against the query: exact name, then a
+  // whole word match ("rift" finds Cyclonic Rift), then a word that starts
+  // with the query, then a plain substring ("rift" inside Mulldrifter).
+  // Scanning everything before ranking matters: stopping at the first few
+  // substring hits in file order picked Mulldrifter over Cyclonic Rift.
+  // Lower is better. Returns [{ key, name }].
   function stapleMatches(query) {
     const q = query.toLowerCase();
     const qn = q.replace(/[^a-z0-9]+/g, "");
     const qWords = q.split(/[^a-z0-9]+/).filter(Boolean);
     if (!qn) return [];
-    const out = [];
+    const out = [], seen = new Set();
     // Object.entries lists own keys only, so "constructor" can't resolve to
     // Object.prototype.constructor the way CARD_INDEX[qn] did.
-    for (const [k, v] of Object.entries(CARD_INDEX)) {
-      if (!v || typeof v.name !== "string" || !k.includes(qn)) continue;
-      const words = v.name.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
-      let score = 3;
-      if (k === qn) score = 0;
-      else if (qWords.length === 1 && words.includes(qWords[0])) score = 1;
-      else if (words.some(w => w.startsWith(qWords[0] || qn))) score = 2;
-      out.push({ v, score });
+    for (const src of [CARD_INDEX || {}, BOX_INDEX?.cards || {}]) {
+      for (const [k, v] of Object.entries(src)) {
+        if (seen.has(k) || !v || typeof v.name !== "string" || !k.includes(qn)) continue;
+        seen.add(k);
+        const words = v.name.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+        let score = 3;
+        if (k === qn) score = 0;
+        else if (qWords.length === 1 && words.includes(qWords[0])) score = 1;
+        else if (words.some(w => w.startsWith(qWords[0] || qn))) score = 2;
+        out.push({ key: k, name: v.name, score });
+      }
     }
-    out.sort((a, b) => a.score - b.score || a.v.name.length - b.v.name.length || a.v.name.localeCompare(b.v.name));
-    return out.map(x => x.v);
+    out.sort((a, b) => a.score - b.score || a.name.length - b.name.length || a.name.localeCompare(b.name));
+    return out;
   }
 
+  // The page's finder: the best match for what is typed, with the next few
+  // names as "Did you mean" buttons.
   async function renderStapleResults(query) {
     const box = $("stapleResults");
     if (!box) return;
     const q = (query || "").trim().toLowerCase();
-    if (q.length < 3) { box.innerHTML = q ? '<div class="staple-empty">Keep typing…</div>' : ""; return; }
-    if (!CARD_INDEX) {
-      // Lazy-load on first use (the index is ~440 KB — see loadCardIndex).
-      box.innerHTML = '<div class="staple-empty">Loading card index…</div>';
-      await loadCardIndex();
-      // Bail if the user kept typing while we loaded — a later call will render.
+    const showText = html => { stopFinder(box); box.innerHTML = html; };
+    if (q.length < 3) { showText(q ? '<div class="staple-empty">Keep typing…</div>' : ""); return; }
+    if (!CARD_INDEX || !BOX_INDEX) {
+      // Loaded on first use (the deck index is about 440 KB, the box index
+      // about 2.2 MB), together.
+      if (!box.querySelector(".fd-single")) showText('<div class="staple-empty">Loading the card indexes…</div>');
+      await loadFinderIndexes();
+      // Bail if the user kept typing while we loaded: a later call renders.
       const cur = ($("stapleInput")?.value || "").trim().toLowerCase();
       if (cur !== q) return;
-      if (!CARD_INDEX) { box.innerHTML = '<div class="staple-empty">Card index unavailable.</div>'; return; }
+      if (!CARD_INDEX && !BOX_INDEX) { showText('<div class="staple-empty">Card index unavailable.</div>'); return; }
     }
-
     const matches = stapleMatches(q);
-    if (matches.length === 0) { box.innerHTML = `<div class="staple-empty">No tracked precon contains a card matching “${escapeHtml(query)}”.</div>`; return; }
+    if (!matches.length) { showText(`<div class="staple-empty">No precon or box we track has a card matching “${escapeHtml(query)}”.</div>`); return; }
+    showFinder(box, matches[0].key, { alts: matches.slice(1, 6) });
+  }
 
-    // Show the best match's decks, and offer the next few names in case the
-    // user meant one of those. Rank decks by the BEST price across vendors,
-    // the same price the cards headline.
-    const card = matches[0];
-    const alts = matches.slice(1, 6);
-    const altLine = alts.length
-      ? `<div class="staple-alts">Did you mean ${alts.map(a => `<button type="button" class="staple-alt" data-staple-alt="${escapeHtml(a.name)}">${escapeHtml(a.name)}</button>`).join("")}</div>`
-      : "";
-    const byId = Object.fromEntries(PRECONS.map(d => [d.id, d]));
-    const decks = (Array.isArray(card.decks) ? card.decks : [])
-      .map(id => byId[canonicalId(id) || id]).filter(Boolean)
-      .map(d => {
-        const bv = bestVendorPrice(d);
-        return { d, ep: bv ? bv.best.price : null, vendor: bv ? bv.best.vendor : null };
-      })
-      .sort((a, b) => (a.ep ?? Infinity) - (b.ep ?? Infinity));
-    if (decks.length === 0) { box.innerHTML = `<div class="staple-empty">No tracked precon currently lists ${escapeHtml(card.name)}.</div>${altLine}`; return; }
+  // ---------- Plan a buy (want list planner) ----------
+  // A pasted want list against every precon: which deck covers the most of
+  // it, by value, against the price you can pay for the deck. Each wanted
+  // card is valued at its cheapest tracked printing (outlier guarded),
+  // counted up to the copies wanted, so one odd printing cannot make a deck
+  // look like a bargain. Cards in more than FINDER_AUTO_DECKS decks are
+  // staples, left out unless included, so one list does not load all 121
+  // deck files. Nothing leaves the browser.
+  const PLAN_MAX_LINES = 250;
+  const PLAN_SHOW = 15;
+  const PLAN = { token: 0, include: new Set(), showAll: false, last: null };
+  // Section headers of the usual exports, alone on a line (with a count).
+  const WANT_HEADER_RE = /^(deck|decklist|commanders?|companions?|sideboard|maybeboard|mainboard|main|considering|tokens?|lands?|creatures?|instants?|sorcery|sorceries|artifacts?|enchantments?|planeswalkers?|battles?|spells?|other)\s*(\(\d+\))?\s*:?$/i;
+  // One line of a want list: { qty, name } or null for a header, comment
+  // or blank. "1 Sol Ring", "1x Sol Ring", "Sol Ring", Moxfield "1 Sol Ring
+  // (CMM) 410 *F*", Archidekt "1x Sol Ring (cmm) 410 [Ramp] ^Have^", Arena
+  // "1 Sol Ring (CMM) 410", "SB: 1 Sol Ring".
+  function parseWantLine(raw) {
+    let t = String(raw || "").trim();
+    if (!t || t.startsWith("#") || t.startsWith("//")) return null;
+    if (t.endsWith(":") || WANT_HEADER_RE.test(t)) return null;
+    t = t.replace(/^SB:\s*/i, "");
+    let qty = 1;
+    const m = /^(\d{1,3})\s*x?\s+(.+)$/i.exec(t);
+    if (m) { qty = Math.max(1, Math.min(99, parseInt(m[1], 10))); t = m[2]; }
+    t = t.replace(/\s+#.*$/, "")                       // Moxfield tags
+      .replace(/\s*\^[^^]*\^/g, "")                     // Archidekt color tags
+      .replace(/\s*\[[^\]]*\]/g, "")                    // Archidekt categories
+      .replace(/\s+\*[A-Za-z]+\*/g, "")                 // foil and etched marks
+      .replace(/\s+\([A-Za-z0-9]{2,6}\)(\s+[A-Za-z0-9★★-]+)?\s*$/, "")  // (SET) number
+      .trim();
+    if (!/[a-z]/i.test(t)) return null;
+    return { qty, name: t };
+  }
+  // The want list: { wants: Map key -> { key, name, qty, lines: [i] },
+  // unmatched: [{ i, name, qty }], read (lines read), cut (lines past the
+  // cap) }. Needs both indexes.
+  function readWantList(text) {
+    const all = String(text || "").split(/\r?\n/);
+    const lines = [];
+    for (let i = 0; i < all.length; i++) if (all[i].trim()) lines.push(i);
+    const read = lines.slice(0, PLAN_MAX_LINES), cut = lines.length - read.length;
+    const wants = new Map(), unmatched = [];
+    for (const i of read) {
+      const w = parseWantLine(all[i]);
+      if (!w) continue;
+      const key = resolveCardKey(cardKeyOf(w.name)) || resolveCardKey(normName(w.name.split(/\s+\/\/?\s+/)[0]));
+      if (!key) { unmatched.push({ i, name: w.name, qty: w.qty }); continue; }
+      const cur = wants.get(key);
+      if (cur) { cur.qty = Math.min(99, cur.qty + w.qty); cur.lines.push(i); }
+      else wants.set(key, { key, name: cardNameOf(key), qty: w.qty, lines: [i] });
+    }
+    return { wants, unmatched, read: read.length, cut };
+  }
+  // "Did you mean": up to three names close to an unmatched one, by shared
+  // letter pairs of the keys (Dice), from both indexes.
+  function pairsOf(k) {
+    const out = new Set();
+    for (let i = 0; i + 1 < k.length; i++) out.add(k.slice(i, i + 2));
+    return out;
+  }
+  function suggestNames(name) {
+    const q = normName(name);
+    if (q.length < 3) return [];
+    const qp = pairsOf(q), found = [], seen = new Set();
+    for (const src of [CARD_INDEX || {}, BOX_INDEX?.cards || {}]) {
+      for (const [k, v] of Object.entries(src)) {
+        if (seen.has(k) || !v || typeof v.name !== "string" || Math.abs(k.length - q.length) > Math.max(6, q.length)) continue;
+        seen.add(k);
+        let common = 0;
+        const kp = pairsOf(k);
+        for (const p of kp) if (qp.has(p)) common++;
+        let score = (2 * common) / (qp.size + kp.size || 1);
+        if (k.startsWith(q) || q.startsWith(k)) score += 0.25;
+        if (score >= 0.55) found.push({ name: v.name, score });
+      }
+    }
+    return found.sort((a, b) => b.score - a.score || a.name.length - b.name.length).slice(0, 3).map(x => x.name);
+  }
+  // The copies of a card a deck file gives, and its rows.
+  const deckCopies = (file, key) => (deckRowsByKey(file).get(key) || []).reduce((a, e) => a + e.qty, 0);
+  const planSay = text => { $("planStatus").textContent = text; };
 
-    const head = `<div class="staple-empty">Cheapest precons containing <span class="staple-cardname">${escapeHtml(card.name)}</span>:</div>`;
-    box.innerHTML = head + decks.map(({ d, ep, vendor }) => `
-      <div class="staple-row" data-staple-id="${escapeHtml(d.id)}" role="button" tabindex="0">
-        <div>
-          <div class="staple-row-name">${escapeHtml(d.name)}<span class="sr-only">, open price history</span></div>
-          <div class="staple-row-set">${escapeHtml(d.set)}${vendor ? ` · ${escapeHtml(vendor)}` : ""}</div>
-        </div>
-        <div class="staple-row-price">${ep != null ? "$" + ep.toFixed(2) : "no price"}</div>
-      </div>`).join("") + altLine;
+  async function renderPlan() {
+    const token = ++PLAN.token;
+    const out = $("planResults");
+    const text = $("planInput").value;
+    if (!text.trim()) { out.innerHTML = ""; planSay("Paste a want list first."); return; }
+    planSay("Loading the card indexes…");
+    await loadFinderIndexes();
+    if (token !== PLAN.token) return;
+    if (!CARD_INDEX) { out.innerHTML = ""; planSay("The card index could not be loaded. Check your connection and try again."); return; }
+    const list = readWantList(text);
+    const skipOwned = $("planSkipOwned").checked, haveOwned = $("planHaveOwned").checked;
+
+    // Sort the wanted cards: in no precon, staples, the rest.
+    const noPrecon = [], staples = [], ranked = [];
+    for (const w of list.wants.values()) {
+      w.decks = decksWithCard(w.key);
+      if (!w.decks.length) noPrecon.push(w);
+      else if (w.decks.length > FINDER_AUTO_DECKS && !PLAN.include.has(w.key)) staples.push(w);
+      else ranked.push(w);
+    }
+    // Cards the visitor's own decks give (only when asked): their files are
+    // needed first.
+    const owned = PRECONS.filter(d => ownedSet.has(d.id));
+    const candidates = new Map();
+    for (const w of ranked) for (const d of w.decks) if (!(skipOwned && ownedSet.has(d.id))) candidates.set(d.id, d);
+    const needOwned = haveOwned ? owned.filter(d => ranked.some(w => w.decks.includes(d))) : [];
+    const jobs = [...new Map([...candidates.values(), ...needOwned].map(d => [d.id, deckCardsRef(d)]).filter(([, r]) => r)).values()]
+      .filter(r => !CARD_FILES.has(r.file)).map(r => ({ mode: "deck", file: r.file }));
+    let failed = 0;
+    if (jobs.length) {
+      planSay(`Loading deck lists: 0 of ${jobs.length}`);
+      const r = await loadCardFilesLimited(jobs, done => { if (token === PLAN.token) planSay(`Loading deck lists: ${done} of ${jobs.length}`); });
+      failed = r.failed;
+      if (token !== PLAN.token) return;
+    }
+    // Copies the owned decks give, taken off what is wanted.
+    const given = [];
+    if (haveOwned) {
+      for (const w of ranked) {
+        let have = 0;
+        const from = [];
+        for (const d of owned) {
+          const f = loadedDeckFile(d);
+          const n = f ? deckCopies(f, w.key) : 0;
+          if (n) { have += n; from.push(d.name); }
+        }
+        if (have) { given.push({ w, have: Math.min(have, w.qty), from }); w.want = Math.max(0, w.qty - have); }
+        else w.want = w.qty;
+      }
+    } else for (const w of ranked) w.want = w.qty;
+    const active = ranked.filter(w => w.want > 0);
+    // Each wanted card at its cheapest printing among the deck lists loaded.
+    for (const w of active) {
+      w.best = cheapestPrinting(cardPrintings(w.key, w.decks.filter(d => loadedDeckFile(d))));
+      w.unit = w.best ? w.best.price : null;
+    }
+    const wantedCopies = active.reduce((a, w) => a + w.want, 0);
+    // Score every candidate deck whose file is in.
+    const rows = [];
+    for (const d of candidates.values()) {
+      const file = loadedDeckFile(d);
+      if (!file) continue;
+      let copies = 0, value = 0;
+      const coveredRows = new Map(), names = [];
+      for (const w of active) {
+        const rowsFor = deckRowsByKey(file).get(w.key) || [];
+        const has = rowsFor.reduce((a, e) => a + e.qty, 0);
+        const n = Math.min(has, w.want);
+        if (!n) continue;
+        copies += n;
+        if (w.unit != null) value += n * w.unit;
+        names.push(n > 1 ? `${n} ${w.name}` : w.name);
+        // Which of the deck's own rows the covered copies come from, so the
+        // rest of the deck leaves them out.
+        let left = n;
+        for (const e of rowsFor) { const take = Math.min(left, e.qty); if (take) coveredRows.set(e, take); left -= take; }
+      }
+      if (!copies) continue;
+      let rest = 0;
+      for (const e of file.entries) if (e.tcg != null) rest += (e.qty - (coveredRows.get(e) || 0)) * e.tcg;
+      const bv = bestVendorPrice(d);
+      const price = bv ? bv.best.price : null;
+      rows.push({ d, copies, value: cents(value), price, vendor: bv ? `${bv.best.vendor} ${bv.best.kind}` : "", diff: price != null ? cents(value - price) : null, rest: cents(rest), names });
+    }
+    rows.sort((a, b) => (a.diff == null) - (b.diff == null) || (b.diff ?? b.value) - (a.diff ?? a.value) || b.copies - a.copies || a.d.name.localeCompare(b.d.name));
+    PLAN.last = { list, noPrecon, staples, ranked, given, active, rows, wantedCopies, failed, skipOwned };
+    drawPlan();
+    const n = rows.length;
+    planSay(n ? `${n} ${n === 1 ? "precon covers" : "precons cover"} some of your list.` : "No precon covers the cards left in your list.");
+  }
+
+  function drawPlan() {
+    const P = PLAN.last, out = $("planResults");
+    if (!P) { out.innerHTML = ""; return; }
+    const $2 = v => `$${v.toFixed(2)}`;
+    const keep = document.activeElement && out.contains(document.activeElement) ? document.activeElement.dataset.fk : null;
+    const parts = [];
+    const matched = P.list.wants.size;
+    parts.push(`<h3 class="plan-head" id="planResultsHead" tabindex="-1">Your list: ${matched} ${matched === 1 ? "card" : "cards"} found${P.list.unmatched.length ? `, ${P.list.unmatched.length} not found` : ""}</h3>`);
+    if (P.list.cut) parts.push(`<p class="fd-note">Only the first ${PLAN_MAX_LINES} lines were read; ${P.list.cut} more ${P.list.cut === 1 ? "was" : "were"} left out.</p>`);
+    if (P.failed) parts.push(`<p class="fd-note" role="alert">${P.failed} deck ${P.failed === 1 ? "list" : "lists"} could not be loaded, so ${P.failed === 1 ? "that deck is" : "those decks are"} missing below. Plan again to retry.</p>`);
+    if (P.list.unmatched.length) {
+      parts.push(`<div class="plan-block"><h4 class="fd-label">Not found</h4><ul class="plan-list">` + P.list.unmatched.map((u, j) => {
+        const alts = suggestNames(u.name);
+        return `<li><span class="plan-miss">${escapeHtml(u.name)}</span>${alts.length ? ` <span class="staple-alts">Did you mean ${alts.map((a, k) =>
+          `<button type="button" class="staple-alt" data-fk="fix${j}-${k}" data-plan-fix="${u.i}" data-plan-qty="${u.qty}" data-plan-name="${escapeHtml(a)}">${escapeHtml(a)}</button>`).join("")}</span>` : ` <span class="fd-note">no close name in the cards we track</span>`}</li>`;
+      }).join("") + `</ul></div>`);
+    }
+    if (P.noPrecon.length) {
+      parts.push(`<div class="plan-block"><h4 class="fd-label">In no precon we track</h4><p class="plan-chips">` + P.noPrecon.map((w, j) =>
+        `<button type="button" class="staple-alt" data-fk="np${j}" data-plan-find="${w.key}">${escapeHtml(w.name)}<span class="sr-only">: where to get it</span></button>`).join("") + `</p></div>`);
+    }
+    const stapleRows = [...P.staples, ...P.ranked.filter(w => PLAN.include.has(w.key))];
+    if (stapleRows.length) {
+      parts.push(`<div class="plan-block"><h4 class="fd-label">Staples in more than ${FINDER_AUTO_DECKS} precons</h4><p class="fd-note">Left out of the ranking unless you include them, since nearly every deck has them (including one loads every deck list that holds it).</p><div class="plan-chips">`
+        + stapleRows.map(w => `<label class="cv-check"><input type="checkbox" data-fk="st-${w.key}" data-plan-staple="${w.key}"${PLAN.include.has(w.key) ? " checked" : ""}> ${escapeHtml(w.name)} <span class="fd-count">${w.decks.length} precons</span></label>`).join("") + `</div></div>`);
+    }
+    if (P.given.length) {
+      parts.push(`<div class="plan-block"><h4 class="fd-label">Your decks already give</h4><p class="fd-note">${P.given.map(g => `${g.have > 1 ? `${g.have} ` : ""}${escapeHtml(g.w.name)} (${escapeHtml(g.from.join(", "))})`).join("; ")}</p></div>`);
+    }
+    if (P.rows.length) {
+      const shown = PLAN.showAll ? P.rows : P.rows.slice(0, PLAN_SHOW);
+      parts.push(`<div class="plan-block"><h4 class="fd-label">Precons by what they cover</h4>
+        <table class="plan-table">
+          <caption class="sr-only">Precons ranked by the value of your wanted cards each covers against the deck's price</caption>
+          <thead><tr><th scope="col">Precon</th><th scope="col">Covers</th><th scope="col">Your cards in it</th><th scope="col">Deck price</th><th scope="col">Difference</th><th scope="col">Rest of the deck</th></tr></thead>
+          <tbody>${shown.map((r, j) => {
+            const diff = r.diff == null ? "n/a" : r.diff >= 0 ? `${$2(r.diff)} more than the deck` : `${$2(-r.diff)} less than the deck`;
+            const list = r.names.length > 6 ? `${r.names.slice(0, 6).join(", ")} and ${r.names.length - 6} more` : r.names.join(", ");
+            return `<tr>
+              <th scope="row" data-label="Precon"><button type="button" class="plan-deck" data-fk="pd${j}" data-plan-deck="${r.d.id}">${escapeHtml(r.d.name)}<span class="sr-only">, open its card list</span></button><span class="plan-set">${escapeHtml(r.d.set)}</span><span class="plan-names">${escapeHtml(list)}</span></th>
+              <td data-label="Covers"><span>${r.copies} of your ${P.wantedCopies} ${P.wantedCopies === 1 ? "card" : "cards"}</span></td>
+              <td data-label="Your cards in it" class="plan-num"><span>${$2(r.value)}</span></td>
+              <td data-label="Deck price" class="plan-num"><span>${r.price != null ? `${$2(r.price)}<span class="plan-vendor">${escapeHtml(r.vendor)}</span>` : "no price today"}</span></td>
+              <td data-label="Difference" class="plan-num${r.diff != null && r.diff >= 0 ? " plan-more" : ""}"><span>${diff}</span></td>
+              <td data-label="Rest of the deck" class="plan-num"><span>+${$2(r.rest)}<span class="plan-vendor">other singles, TCGPlayer</span></span></td>
+            </tr>`;
+          }).join("")}</tbody>
+        </table>
+        ${P.rows.length > shown.length ? `<button type="button" class="cv-btn fd-more" data-fk="planmore" data-plan-more>Show all ${P.rows.length} precons</button>` : ""}
+        <p class="fd-note">“Your cards in it” values each wanted card at its cheapest printing in the precon lists we track (TCGPlayer or Card Kingdom retail, whichever is lower, with unreliable TCGPlayer prices left out), counted up to the copies you want. The deck price is the cheapest price you can pay for it today. “Rest of the deck” is the deck's other singles at TCGPlayer retail: an extra, not part of the ranking. Retail prices are before shipping and fees.</p>
+      </div>`);
+    } else if (P.active.length) {
+      parts.push(`<p class="fd-note">No precon we track covers ${P.skipOwned ? "the cards left once your own decks are left out" : "these cards"}.</p>`);
+    }
+    out.innerHTML = parts.join("");
+    if (keep) { const again = out.querySelector(`[data-fk="${CSS.escape(keep)}"]`); (again || $("planResultsHead")).focus({ preventScroll: true }); }
+  }
+  // "Did you mean": put the suggestion on that line of the list, plan again.
+  function fixWantLine(i, qty, name) {
+    const lines = $("planInput").value.split(/\r?\n/);
+    if (i < 0 || i >= lines.length) return;
+    lines[i] = `${qty} ${name}`;
+    $("planInput").value = lines.join("\n");
+    renderPlan().then(() => $("planResultsHead")?.focus({ preventScroll: true }));
   }
 
   // ---------- Deal of the Day ----------
@@ -4452,6 +5660,17 @@ main:focus { outline: none; }
           const tail = oos ? " (out of stock)" : cheaper ? ` · save $${(tcgBuy - b.ck_price).toFixed(2)}` : "";
           ckLine = `<span class="box-ck${cheaper ? " cheaper" : ""}">CK $${b.ck_price.toFixed(2)}${tail}</span>`;
         }
+        // Card Kingdom's live cash offer for the sealed box, only while CK
+        // is buying it (ck_buy with its maximum, ck_buy_qty).
+        const ckBuyLine = posNum(b.ck_buy) != null && Number.isInteger(b.ck_buy_qty) && b.ck_buy_qty >= 1
+          ? `<span class="box-ckbuy" title="${escapeHtml(`Card Kingdom's buylist today, cash before shipping. ${ckCreditText()}`)}">CK buys this box: $${b.ck_buy.toFixed(2)} cash (up to ${b.ck_buy_qty})</span>`
+          : "";
+        // The simulated spread of box values (row spread: p10, p50, p90,
+        // already rounded by the scraper). Only with a published EV.
+        const sp = b.spread;
+        const spreadLine = evLine && sp && [sp.p10, sp.p50, sp.p90].every(x => typeof x === "number" && Number.isFinite(x) && x >= 0) && sp.p10 <= sp.p50 && sp.p50 <= sp.p90
+          ? `<span class="box-spread" title="${escapeHtml(`From ${Number.isInteger(sp.boxes) ? sp.boxes.toLocaleString("en-US") : "10,000"} simulated boxes at TCGPlayer retail before fees; cards under $1 count as $0. The card list shows how it is worked out.`)}">Typical box ≈ $${sp.p50.toLocaleString("en-US")} · 8 in 10 between $${sp.p10.toLocaleString("en-US")} and $${sp.p90.toLocaleString("en-US")} (simulated)</span>`
+          : "";
         const ckLink = b.ck_url
           ? `<a class="box-item-link" href="${safeUrl(b.ck_url)}" target="_blank" rel="noopener noreferrer">view on Card Kingdom<span class="sr-only">: ${escapeHtml(boxNameParts(b).name || sn)}</span> →</a>`
           : "";
@@ -4467,7 +5686,9 @@ main:focus { outline: none; }
           <span class="box-item-price">$${tb.price.toFixed(2)} ${spark}</span>
           ${tcgNote}
           ${ckLine}
+          ${ckBuyLine}
           ${evLine}
+          ${spreadLine}
           ${carriedLine}
           <a class="box-item-link" href="${safeUrl(b.url)}" target="_blank" rel="noopener noreferrer">view on TCGPlayer<span class="sr-only">: ${escapeHtml(parts.name || sn)}</span> →</a>
           ${ckLink}
@@ -4479,10 +5700,12 @@ main:focus { outline: none; }
     }).join("");
     // Show the EV methodology note only if at least one box has an EV.
     const anyEv = Object.values(boxes).some(rows => Array.isArray(rows) && rows.some(r => r && posNum(r.ev) != null));
+    const anyCkBuy = Object.values(boxes).some(rows => Array.isArray(rows) && rows.some(r => r && posNum(r.ck_buy) != null));
     const note = $("boxEvNote");
     if (note) {
       note.hidden = !anyEv;
-      if (anyEv) note.innerHTML = `<strong>*</strong> ${escapeHtml(boxEvNoteText(LIVE_PRICES?.box_ev_basis))}`;
+      if (anyEv) note.innerHTML = `<strong>*</strong> ${escapeHtml(boxEvNoteText(LIVE_PRICES?.box_ev_basis))}`
+        + (anyCkBuy ? ` <span class="box-credit-note">${ckCreditNoteHtml()}</span>` : "");
     }
   }
 
@@ -4599,28 +5822,82 @@ main:focus { outline: none; }
       text: text(c.text),
       faces: faces.length > 1 ? faces : null,
       keywords: Array.isArray(c.keywords) ? c.keywords.filter(k => typeof k === "string") : [],
+      // Written only when true: new to Magic (MTGJSON does not mark the
+      // printing a reprint; deck rows only) and on the Game Changers list.
+      isNew: c.new === true,
+      gc: c.gc === true,
       tcg_id: TCG_ID_RE.test(tcgId) ? tcgId : null,
+      outlier: null,
     };
     // The filter reads name, type and rules text, of every face.
     card.hay = [card.name, card.type, card.text, ...faces.flatMap(f => [f.name, f.type, f.text])].join(" ").toLowerCase();
     return card;
   }
 
+  // The price outlier guard (scrape_prices.py OUTLIER_RATIO and
+  // OUTLIER_FLOOR): a TCGplayer price of at least $10 and more than 20 times
+  // Card Kingdom's for the same printing and finish counts as no price. The
+  // card files record what was left out; the page only explains it.
+  const OUTLIER_RATIO = 20;
+  function outlierRecord(o) {
+    if (!o || typeof o !== "object") return null;
+    const tcg = posNum(o.tcg), ck = posNum(o.ck);
+    return tcg != null && ck != null ? { tcg, ck } : null;
+  }
+  // The note for an entry whose TCGplayer price was left out. It says what
+  // was matched to the card, not that this printing is listed at that
+  // price: the one live case is a listing MTGJSON maps to the wrong product.
+  function outlierNote(e) {
+    const o = e && e.outlier;
+    if (!o) return "";
+    const fin = FINISH_LABEL[e.finish].toLowerCase();
+    return `No TCGPlayer price: the $${o.tcg.toFixed(2)} matched to this card (${fin}) is more than ${OUTLIER_RATIO} times Card Kingdom's ${fin} price of $${o.ck.toFixed(2)}, so it is left out as unreliable.`;
+  }
+  // A box kind's simulated spread (box file kinds[kind].spread), checked
+  // whole: {boxes, mean, p10, p25, p50, p75, p90, bins: {start, width,
+  // counts}}, or null. The quantiles must be in order and the counts add up
+  // to the boxes (the last bin also holds the boxes above its range).
+  function boxSpreadOf(s) {
+    if (!s || typeof s !== "object") return null;
+    const q = ["p10", "p25", "p50", "p75", "p90"];
+    const nums = [s.mean, ...q.map(k => s[k])];
+    if (!nums.every(v => typeof v === "number" && Number.isFinite(v) && v >= 0)) return null;
+    if (q.some((k, i) => i && s[k] < s[q[i - 1]])) return null;
+    const b = s.bins;
+    if (!Number.isInteger(s.boxes) || s.boxes < 1 || !b || typeof b !== "object") return null;
+    const counts = Array.isArray(b.counts) ? b.counts : [];
+    if (!counts.length || !counts.every(n => Number.isInteger(n) && n >= 0)) return null;
+    if (counts.reduce((a, n) => a + n, 0) !== s.boxes) return null;
+    if (typeof b.start !== "number" || !Number.isFinite(b.start) || b.start < 0 || posNum(b.width) == null) return null;
+    return { boxes: s.boxes, mean: s.mean, p10: s.p10, p25: s.p25, p50: s.p50, p75: s.p75, p90: s.p90,
+             bins: { start: b.start, width: b.width, counts } };
+  }
+
   // A deck file as { updatedAt, totals: {cards, tcg, ck}, entries }.
   function parseDeckFile(data) {
     const entries = [];
+    // Header "outliers": [{i, tcg, ck}], i the row in cards. The row's own
+    // TCGplayer price is already null; the record says what was left out.
+    const outliers = new Map();
+    for (const o of Array.isArray(data.outliers) ? data.outliers : []) {
+      const rec = outlierRecord(o);
+      if (rec && Number.isInteger(o.i) && o.i >= 0) outliers.set(o.i, rec);
+    }
     data.cards.forEach((c, i) => {
       const card = cardDetails(c);
       if (!card) return;
       const p = Array.isArray(data.prices[i]) ? data.prices[i] : [];
+      const tcg = posNum(p[0]);
       entries.push({
         ...card,
         idx: entries.length,
         qty: Number.isInteger(c.qty) && c.qty > 0 ? c.qty : 1,
         board: c.board === "commander" ? "commander" : "main",
         finish: FINISHES.includes(c.finish) ? c.finish : "nonfoil",
-        tcg: posNum(p[0]),
+        tcg,
         ck: posNum(p[1]),
+        // A record only counts while the row really has no TCGplayer price.
+        outlier: tcg == null ? outliers.get(i) || null : null,
       });
     });
     const t = data.totals && typeof data.totals === "object" ? data.totals : {};
@@ -4646,8 +5923,17 @@ main:focus { outline: none; }
         packs: Number.isInteger(k.packs) && k.packs > 0 ? k.packs : null,
         ev: posNum(k.ev),
         unresolved: Number.isInteger(k.unresolved) && k.unresolved > 0 ? k.unresolved : 0,
+        sources: Array.isArray(k.sources) ? k.sources.filter(s => typeof s === "string" && /^[A-Za-z0-9]{2,6}$/.test(s)) : [],
+        spread: boxSpreadOf(k.spread),
         entries: null,
       });
+    }
+    // Header "outliers": [{uuid, finish, tcg, ck}], one per printing and
+    // finish whose TCGplayer price was left out.
+    const outliers = new Map();
+    for (const o of Array.isArray(data.outliers) ? data.outliers : []) {
+      const rec = outlierRecord(o);
+      if (rec && typeof o.uuid === "string" && FINISHES.includes(o.finish)) outliers.set(`${o.uuid}|${o.finish}`, rec);
     }
     const cards = [];
     data.cards.forEach((c, i) => {
@@ -4662,7 +5948,8 @@ main:focus { outline: none; }
       const prices = {};
       fins.forEach((f, j) => {
         const p = row && Array.isArray(row[j]) ? row[j] : [];
-        prices[f] = { tcg: posNum(p[0]), ck: posNum(p[1]) };
+        const tcg = posNum(p[0]);
+        prices[f] = { tcg, ck: posNum(p[1]), outlier: tcg == null && card.uuid ? outliers.get(`${card.uuid}|${f}`) || null : null };
       });
       cards.push({ card, odds, prices });
     });
@@ -4688,6 +5975,7 @@ main:focus { outline: none; }
             finish: f,
             tcg: prices[f].tcg,
             ck: prices[f].ck,
+            outlier: prices[f].outlier,
             kind: key,
             pack,
             copies: typeof v.copies === "number" && v.copies > 0 ? v.copies : pack,
@@ -4816,7 +6104,15 @@ main:focus { outline: none; }
     const qty = withQty && e.qty > 1
       ? `<span class="cv-badge cv-qty"><span aria-hidden="true">x${e.qty}</span><span class="sr-only">${e.qty} copies</span></span>` : "";
     const finish = e.finish !== "nonfoil" ? `<span class="cv-badge">${FINISH_LABEL[e.finish]}</span>` : "";
-    return qty + finish;
+    return qty + finish + cardFlagsHtml(e);
+  }
+  // "New" (a printing new to Magic) and "Game Changer" (on Wizards' list
+  // for the Commander brackets): facts about the card, nothing more.
+  const NEW_TITLE = "New card: MTGJSON does not list this printing as a reprint";
+  const GC_TITLE = "On Wizards' Game Changers list for the Commander brackets";
+  function cardFlagsHtml(e) {
+    return (e.isNew ? `<span class="cv-badge cv-new" title="${NEW_TITLE}">New</span>` : "")
+      + (e.gc ? `<span class="cv-badge cv-gc" title="${GC_TITLE}">Game Changer</span>` : "");
   }
 
   // One vendor's price for one copy: a link to that vendor when a safe one
@@ -4832,13 +6128,17 @@ main:focus { outline: none; }
   function cardPriceHtml(e, vendor) {
     const tcg = vendor === "tcg";
     const price = tcg ? e.tcg : e.ck;
-    const href = cardPriceHref(e, vendor);
-    const amount = price != null ? `$${price.toFixed(2)}` : `<span aria-hidden="true">n/a</span><span class="sr-only">no price</span>`;
-    const inner = `<span class="cv-vendor" aria-hidden="true">${tcg ? "TCG" : "CK"} </span>${amount}<span class="sr-only"> at ${tcg ? "TCGPlayer" : "Card Kingdom"} for ${escapeHtml(cardLabel(e))}</span>`;
-    const cls = `cv-price${tcg ? " cv-tcg" : ""}${price == null ? " none" : ""}`;
+    // A TCGPlayer price left out as an outlier reads "n/a" with the reason
+    // in the title (and for screen readers), and links nowhere: the listing
+    // it came from is not one to send anyone to.
+    const note = tcg && price == null ? outlierNote(e) : "";
+    const href = note ? "#" : cardPriceHref(e, vendor);
+    const amount = price != null ? `$${price.toFixed(2)}` : `<span aria-hidden="true">n/a${note ? "*" : ""}</span><span class="sr-only">no price</span>`;
+    const inner = `<span class="cv-vendor" aria-hidden="true">${tcg ? "TCG" : "CK"} </span>${amount}<span class="sr-only"> at ${tcg ? "TCGPlayer" : "Card Kingdom"} for ${escapeHtml(cardLabel(e))}${note ? `. ${escapeHtml(note)}` : ""}</span>`;
+    const cls = `cv-price${tcg ? " cv-tcg" : ""}${price == null ? " none" : ""}${note ? " cv-outlier" : ""}`;
     return href !== "#"
       ? `<a class="${cls}" href="${href}" target="_blank" rel="noopener noreferrer">${inner}</a>`
-      : `<span class="${cls}">${inner}</span>`;
+      : `<span class="${cls}"${note ? ` title="${escapeHtml(note)}"` : ""}>${inner}</span>`;
   }
 
   // A chance as text. Short form: one decimal under 10%, whole percent from
@@ -5072,6 +6372,8 @@ main:focus { outline: none; }
       showBoxKind(v.kind);
     } else {
       v.entries = data.entries;
+      // The filter shows only when it would keep some cards.
+      $("cvNewOnly").closest(".filter-group").hidden = !v.entries.some(e => e.isNew);
       fillCardHead();
       applyCardFilters();
     }
@@ -5113,7 +6415,7 @@ main:focus { outline: none; }
     const v = CARD_VIEW, data = v.data;
     const stat = (label, value, cls) => `<div><dt>${label}</dt><dd${cls ? ` class="${cls}"` : ""}>${value}</dd></div>`;
     const stats = [], notes = [];
-    let lead = "";
+    let lead = "", extra = "";
     if (v.mode === "deck") {
       let names = data.entries.filter(e => e.board === "commander").map(e => e.name);
       if (!names.length && v.deck && v.deck.commander) names = [v.deck.commander, v.deck.partner].filter(Boolean);
@@ -5127,6 +6429,9 @@ main:focus { outline: none; }
       const noTcg = lacking(e => e.tcg), noCk = lacking(e => e.ck);
       const gaps = [noTcg ? `${noTcg} at TCGPlayer` : "", noCk ? `${noCk} at Card Kingdom` : ""].filter(Boolean);
       if (gaps.length) notes.push(`The totals leave out cards with no price: ${gaps.join(", ")}.`);
+      const odd = data.entries.filter(e => e.tcg == null && e.outlier).length;
+      if (odd) notes.push(`${odd === 1 ? "1 card's TCGPlayer price is" : `${odd} cards' TCGPlayer prices are`} left out as unreliable (marked n/a*): ${odd === 1 ? "its" : "each"} card says why.`);
+      extra = deckProfileHtml(data.entries);
     } else {
       const kind = data.kinds.get(v.kind);
       // With several box types the selected tab already names the box.
@@ -5147,10 +6452,149 @@ main:focus { outline: none; }
       if (kind.unresolved) {
         notes.push(`${kind.unresolved} ${kind.unresolved === 1 ? "entry is" : "entries are"} missing from this list today: the card details could not be read.`);
       }
+      const odd = v.entries.filter(e => e.tcg == null && e.outlier).length;
+      if (odd) notes.push(`${odd === 1 ? "1 entry's TCGPlayer price is" : `${odd} entries' TCGPlayer prices are`} left out as unreliable (marked n/a*) and ${odd === 1 ? "counts" : "count"} as no price in the estimate.`);
+      extra = boxSpreadHtml(kind, v.entries, boxRowFor(v.file, kind.key));
     }
     const day = fmtUtcDay(data.updatedAt, { month: "short", day: "numeric", year: "numeric" });
     if (day) stats.push(stat("Prices from", day));
-    $("cvHead").innerHTML = `${lead}<dl class="cv-stats">${stats.join("")}</dl>${notes.map(n => `<p class="cv-note">${n}</p>`).join("")}`;
+    $("cvHead").innerHTML = `${lead}<dl class="cv-stats">${stats.join("")}</dl>${extra}${notes.map(n => `<p class="cv-note">${n}</p>`).join("")}`;
+  }
+
+  // The deck header strip: the mana curve of the nonland cards (mana value
+  // 0 to 7+), the type mix, and how the TCGPlayer value splits between new
+  // cards and reprints. Copies count, as in the totals. Built from the deck
+  // file only; nothing here comes from markup in the data.
+  const CURVE_TOP = 7;
+  function deckProfileHtml(entries) {
+    const curve = new Array(CURVE_TOP + 1).fill(0);
+    const types = new Map(CARD_GROUPS.filter(([k]) => k !== "Commander").map(([k, plural]) => [k, { plural, n: 0 }]));
+    let newVal = 0, oldVal = 0, newCopies = 0, priced = 0;
+    for (const e of entries) {
+      const words = e.type.split("—")[0].split(/\s+/);
+      if (!words.includes("Land")) curve[Math.min(CURVE_TOP, Math.max(0, Math.floor(e.mv)))] += e.qty;
+      types.get(CARD_TYPE_ORDER.find(t => words.includes(t)) || "Other").n += e.qty;
+      if (e.isNew) newCopies += e.qty;
+      if (e.tcg != null) {
+        priced++;
+        if (e.isNew) newVal += e.tcg * e.qty; else oldVal += e.tcg * e.qty;
+      }
+    }
+    const nonland = curve.reduce((a, n) => a + n, 0);
+    const top = Math.max(1, ...curve);
+    const cards = n => `${n} ${n === 1 ? "card" : "cards"}`;
+    const bars = curve.map((n, mv) => {
+      const label = mv === CURVE_TOP ? `${CURVE_TOP}+` : String(mv);
+      const h = n ? Math.max(4, Math.round((n / top) * 100)) : 0;
+      return `<li class="cv-curve-col"><span class="cv-curve-n" aria-hidden="true">${n || ""}</span>`
+        + `<span class="cv-curve-track" aria-hidden="true"><span class="cv-curve-bar" style="height:${h}%"></span></span>`
+        + `<span class="cv-curve-mv" aria-hidden="true">${label}</span>`
+        + `<span class="sr-only">Mana value ${mv === CURVE_TOP ? `${CURVE_TOP} or more` : mv}: ${cards(n)}</span></li>`;
+    }).join("");
+    const mix = [...types.values()].filter(t => t.n)
+      .map(t => `<li>${t.n === 1 ? t.plural.replace(/ies$/, "y").replace(/s$/, "") : t.plural} <span class="cv-num">${t.n}</span></li>`).join("");
+    const total = newVal + oldVal;
+    let split;
+    if (!priced || total <= 0) {
+      split = `<p class="cv-pf-text">No TCGPlayer prices to split today.</p>`;
+    } else {
+      const share = Math.round((newVal / total) * 100);
+      const money = x => `$${x.toFixed(2)}`;
+      split = `<div class="cv-split" aria-hidden="true"><span class="cv-split-new" style="width:${share}%"></span></div>`
+        + `<ul class="cv-pf-list">`
+        + `<li><span class="cv-key cv-key-new" aria-hidden="true"></span>New cards <span class="cv-num">${newCopies}</span> · <span class="cv-pf-money">${money(newVal)}</span> <span class="cv-num">(${share}%)</span></li>`
+        + `<li><span class="cv-key" aria-hidden="true"></span>Reprints <span class="cv-num">${entries.reduce((a, e) => a + (e.isNew ? 0 : e.qty), 0)}</span> · <span class="cv-pf-money">${money(oldVal)}</span> <span class="cv-num">(${100 - share}%)</span></li>`
+        + `</ul>`;
+    }
+    return `<div class="cv-profile">`
+      + `<section class="cv-pf-block" aria-labelledby="cvCurveHead"><h3 class="cv-pf-label" id="cvCurveHead">Mana curve · ${cards(nonland)} without lands</h3>`
+      + `<ol class="cv-curve" role="list">${bars}</ol></section>`
+      + `<section class="cv-pf-block" aria-labelledby="cvMixHead"><h3 class="cv-pf-label" id="cvMixHead">Card types</h3><ul class="cv-pf-list cv-mix">${mix}</ul></section>`
+      + `<section class="cv-pf-block cv-pf-value" aria-labelledby="cvSplitHead"><h3 class="cv-pf-label" id="cvSplitHead">TCGPlayer value · new cards and reprints</h3>${split}</section>`
+      + `</div>`;
+  }
+
+  // The prices.json box row behind a box file's kind, or null.
+  function boxRowFor(file, kind) {
+    for (const rows of Object.values(getBoxes() || {})) {
+      for (const r of Array.isArray(rows) ? rows : []) if (r && r.cards_file === file && r.cards_kind === kind) return r;
+    }
+    return null;
+  }
+  // The step the scraper rounds a row's spread to (row_spread): $1 under a
+  // p90 of $150, $5 under $1,500, else $10. The dialog rounds the file's
+  // finer figures the same way, so they match the box tile.
+  function spreadStep(p90) { return p90 < 150 ? 1 : p90 < 1500 ? 5 : 10; }
+  function spreadMoney(v, step) { return `$${(Math.floor(v / step + 0.5) * step).toLocaleString("en-US")}`; }
+
+  // A box kind's simulated spread: a small histogram of the simulated boxes
+  // (bars from the box file's bins; the last bin also holds the boxes above
+  // its range) and the "How this is worked out" panel. Never a chance of
+  // profit or a break even rate, and never a change from one day to the
+  // next: the figures are sampled and move a little every day.
+  function boxSpreadHtml(kind, entries, row) {
+    const s = kind.spread;
+    const basis = LIVE_PRICES?.box_ev_basis;
+    const floor = posNum(basis?.bulk_threshold) ?? 1;
+    const money2 = x => `$${x.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    let hist = "";
+    if (s) {
+      const step = spreadStep(s.p90), m = x => spreadMoney(x, step);
+      const { start, width, counts } = s.bins;
+      const top = Math.max(1, ...counts), last = counts.length - 1;
+      const edge = start + counts.length * width;
+      const bars = counts.map((n, i) => {
+        const lo = start + i * width, hi = lo + width;
+        const mid = hi > s.p10 && lo < s.p90;
+        const h = n ? Math.max(2, Math.round((n / top) * 100)) : 0;
+        return `<span class="cv-hist-col${mid ? " mid" : ""}"><span class="cv-hist-bar" style="height:${h}%"></span></span>`;
+      }).join("");
+      const boxes = s.boxes.toLocaleString("en-US");
+      const label = `Histogram of ${boxes} simulated boxes, valued at TCGPlayer retail before fees: 1 in 10 below ${m(s.p10)}, half below ${m(s.p50)}, 9 in 10 below ${m(s.p90)}. The bars run from ${m(start)} to ${m(edge)}; the last bar also holds the boxes above ${m(edge)}.`;
+      hist = `<section class="cv-spread" aria-labelledby="cvSpreadHead">`
+        + `<h3 class="cv-pf-label" id="cvSpreadHead">${boxes} simulated boxes · TCGPlayer retail before fees</h3>`
+        + `<p class="cv-spread-lead">Typical box ≈ <strong>${m(s.p50)}</strong> · 8 in 10 between <strong>${m(s.p10)}</strong> and <strong>${m(s.p90)}</strong> · half between ${m(s.p25)} and ${m(s.p75)}</p>`
+        + `<div class="cv-hist" role="img" aria-label="${escapeHtml(label)}">${bars}</div>`
+        + `<div class="cv-hist-axis" aria-hidden="true"><span>${m(start)}</span><span>${m(start + (counts.length / 2) * width)}</span><span>${m(edge)}+</span></div>`
+        + `<p class="cv-pf-text"><span class="cv-key cv-key-mid" aria-hidden="true"></span>Bars in this shade: the middle 8 in 10 boxes. The last bar also holds every box above ${m(edge)}, at most 1 in 100. The figures are sampled, so they move a little from day to day.</p>`
+        + `</section>`;
+    }
+    if (!s && kind.ev == null) return "";
+    // How this is worked out: from the box file, prices.json and the
+    // scraper's own recorded rules.
+    const how = [];
+    const src = kind.sources.length ? ` (cards from ${kind.sources.map(escapeHtml).join(", ")})` : "";
+    how.push(kind.packs != null
+      ? `A ${escapeHtml(kind.label)} holds ${kind.packs} packs. MTGJSON publishes what a pack can hold: its possible layouts, how often each turns up and the card sheets each slot draws from${src}.`
+      : `MTGJSON publishes what a pack can hold: its possible layouts, how often each turns up and the card sheets each slot draws from${src}.`);
+    how.push(`Each card counts at its TCGPlayer retail price in its finish, before fees. Cards under ${money2(floor)} count as $0, since they rarely sell, and so do cards with no price today.${basis?.box_toppers === false ? " Box toppers are left out." : ""}`);
+    const cov = row && typeof row.ev_coverage === "number" && row.ev_coverage > 0 && row.ev_coverage <= 1 ? row.ev_coverage : null;
+    if (cov != null) {
+      how.push(cov >= 0.9995
+        ? "Real card prices back all of the estimated value."
+        : `Real card prices back ${(Math.floor(cov * 1000) / 10).toFixed(1)}% of the estimated value; the rest belongs to cards with no price today${posNum(basis?.min_coverage) != null ? `, and an estimate is shown only from ${Math.round(basis.min_coverage * 100)}%` : ""}.`);
+    }
+    if (s) {
+      how.push(`${s.boxes.toLocaleString("en-US")} boxes are simulated: each pack picks a layout by its published weight and each slot draws real cards from its sheet. A box is worth the sum of its cards, and the figures above are read off those boxes.`);
+      if (kind.ev != null) how.push(`The average, est. singles ≈ ${money2(kind.ev)}, adds up each card's price times its expected copies per box; the simulation draws whole packs instead, so its own mean, ${money2(s.mean)}, can differ a little.`);
+    }
+    // The cards that carry the most value: price times expected copies per
+    // box, for the cards the estimate counts.
+    let topList = "";
+    if (kind.packs != null) {
+      const counted = entries.filter(e => e.tcg != null && e.tcg >= floor)
+        .map(e => ({ e, per: e.tcg * e.copies * kind.packs }))
+        .sort((a, b) => b.per - a.per || cardByName(a.e, b.e)).slice(0, 5);
+      const base = kind.ev;
+      if (counted.length) {
+        topList = `<p class="cv-how-sub">The cards that carry the most value, as average value per box (price times expected copies):</p><ol class="cv-how-top">`
+          + counted.map(({ e, per }) => `<li><span class="cv-how-name">${escapeHtml(cardLabel(e))}</span> <span class="cv-num">${money2(e.tcg)} each · ≈ ${money2(per)} a box${base ? ` · ${pctText(per / base)} of the average` : ""}</span></li>`).join("")
+          + `</ol>`;
+      }
+    }
+    how.push("One box can land anywhere in this range, or outside it. This shows how values spread at today's prices; it is not a forecast, and fees, shipping and your time are not taken off.");
+    return hist + `<details class="cv-how"><summary>How this is worked out</summary><div class="cv-how-body">`
+      + how.slice(0, -1).map(t => `<p>${t}</p>`).join("") + topList + `<p>${how[how.length - 1]}</p></div></details>`;
   }
 
   // Controls back to their defaults for a newly opened list: no filters,
@@ -5160,6 +6604,7 @@ main:focus { outline: none; }
     for (const el of $("cvControls").querySelectorAll("[data-cv-for]")) el.hidden = el.dataset.cvFor !== CARD_VIEW.mode;
     $("cvFilter").value = "";
     $("cvMinPrice").value = "";
+    $("cvNewOnly").checked = false;
     $("cvGroup").value = "type";
     $("cvFinish").innerHTML = $("cvRarity").innerHTML = "";
     const sorts = deck
@@ -5188,6 +6633,7 @@ main:focus { outline: none; }
   function clearCardFilters() {
     $("cvFilter").value = "";
     $("cvMinPrice").value = "";
+    $("cvNewOnly").checked = false;
     $("cvFinish").value = $("cvRarity").value = "all";
     applyCardFilters();
     $("cvFilter").focus();
@@ -5200,6 +6646,7 @@ main:focus { outline: none; }
     if (!v.data) return;
     const words = $("cvFilter").value.toLowerCase().split(/\s+/).filter(Boolean);
     let list = v.entries.filter(e => words.every(w => e.hay.includes(w)));
+    if (v.mode === "deck" && $("cvNewOnly").checked) list = list.filter(e => e.isNew);
     if (v.mode === "box") {
       const finish = $("cvFinish").value, rarity = $("cvRarity").value;
       const min = parseFloat($("cvMinPrice").value);
@@ -5365,7 +6812,9 @@ main:focus { outline: none; }
   function previewPriceNode(e, vendor) {
     const tcg = vendor === "tcg";
     const price = tcg ? e.tcg : e.ck;
-    const href = cardPriceHref(e, vendor);
+    // An outlier links nowhere, as in the list (see cardPriceHtml); the
+    // preview states the reason under the prices.
+    const href = tcg && price == null && e.outlier ? "#" : cardPriceHref(e, vendor);
     const node = href !== "#" ? cvEl("a") : cvEl("span");
     node.className = `cv-price${tcg ? " cv-tcg" : ""}${price == null ? " none" : ""}`;
     if (href !== "#") {
@@ -5434,6 +6883,12 @@ main:focus { outline: none; }
     if (e.qty > 1) meta.push(`${e.qty} copies`);
     const metaText = meta.filter(Boolean).join(" · ");
     if (metaText) info.append(cvEl("p", "cv-pv-meta", metaText));
+    if (e.isNew || e.gc) {
+      const flags = cvEl("p", "cv-badges cv-pv-flags");
+      if (e.isNew) { const b = cvEl("span", "cv-badge cv-new", "New card"); b.title = NEW_TITLE; flags.append(b); }
+      if (e.gc) { const b = cvEl("span", "cv-badge cv-gc", "Game Changer"); b.title = GC_TITLE; flags.append(b); }
+      info.append(flags);
+    }
     if (e.faces) e.faces.forEach(f => info.append(previewFaceNode(f, true)));
     else info.append(previewFaceNode({ name: e.name, type: e.type, mana: e.mana, text: e.text }, false));
 
@@ -5458,7 +6913,20 @@ main:focus { outline: none; }
       prices.append(row);
     }
     info.append(prices);
+    if (e.tcg == null && e.outlier) info.append(cvEl("p", "cv-pv-note cv-pv-outlier", outlierNote(e)));
     if (e.qty > 1) info.append(cvEl("p", "cv-pv-note", "Prices are for one copy."));
+    // Where else the card is: opens the finder. The counts need both card
+    // indexes, loaded on the first preview; until then the button says
+    // only what it does, in the same space.
+    const also = cvEl("p", "cv-pv-also");
+    const find = cvEl("button", "cv-btn cv-pv-find", alsoText(e));
+    find.type = "button";
+    find.dataset.cvFind = "";
+    also.append(find);
+    info.append(also);
+    if (!CARD_INDEX || !BOX_INDEX) {
+      loadFinderIndexes().then(() => { if (PV.entry === e && find.isConnected) find.textContent = alsoText(e); });
+    }
 
     body.append(top, media, info);
     previewArtFill(e);
@@ -5631,6 +7099,7 @@ main:focus { outline: none; }
   function onPreviewClick(ev) {
     if (ev.target.closest("[data-cv-pv-close]")) { closeCardPreview("opener"); return; }
     if (ev.target.closest("[data-cv-flip]")) { flipCardPreview(ev.target.closest("[data-cv-flip]")); return; }
+    if (ev.target.closest("[data-cv-find]")) { if (PV.entry) openFinderFromCardList(PV.entry); return; }
     const kw = ev.target.closest(".cv-kw");
     if (kw) toggleKwTip(kw, ev.detail === 0 ? "keyboard" : lastPointerType);
   }
@@ -5903,6 +7372,12 @@ main:focus { outline: none; }
       })],
       ["Singles · buy (NM)", decks.map(d => { const b = crackBuyValue(d); if (b) { const p = []; if (b.tcg != null) p.push(`TCG $${b.tcg.toFixed(0)}`); if (b.ck != null) p.push(`CK $${b.ck.toFixed(0)}`); return p.join(" · "); } return NA; })],
       ["Singles · sell", decks.map(d => { const sv = crackSellValue(d); if (sv) { const p = []; if (sv.ck != null) p.push(`CK buylist $${sv.ck.toFixed(0)}`); if (sv.estimate != null) p.push(`TCG est. $${sv.estimate.toFixed(0)}`); return p.join(" · "); } return NA; })],
+      // Card Kingdom's live cash offer for the sealed deck, and its maximum.
+      ["CK buys sealed", decks.map(d => {
+        const o = ckSealedOffer(d);
+        if (o === undefined) return NA;
+        return o ? `$${o.each.toFixed(2)} cash ${muted(`up to ${o.max}`)}` : muted("not buying");
+      })],
       ["Strategy", decks.map(d => `<span style="font-size:12px; line-height:1.45;">${escapeHtml(d.desc)}</span>`)],
     ];
 
@@ -5912,7 +7387,8 @@ main:focus { outline: none; }
 
     // The scroller is focusable so keyboard users can scroll it with the
     // arrow keys on a narrow screen (the dialog's Tab trap includes it).
-    compareTableWrap.innerHTML = `<div class="compare-scroll" tabindex="0" role="region" aria-label="Deck comparison table, scrolls sideways" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="compare-table"><thead><tr><th></th>${headers}</tr></thead><tbody>${body}</tbody></table></div>`;
+    compareTableWrap.innerHTML = `<div class="compare-scroll" tabindex="0" role="region" aria-label="Deck comparison table, scrolls sideways" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="compare-table"><thead><tr><th></th>${headers}</tr></thead><tbody>${body}</tbody></table></div>`
+      + (decks.some(d => ckSealedOffer(d)) ? `<p class="compare-note">CK buys sealed: Card Kingdom's live cash offer today and the most copies it takes. ${ckCreditNoteHtml()}</p>` : "");
   }
 
   // Year options come from the catalog, so a new year's decks get an option
@@ -6016,6 +7492,8 @@ main:focus { outline: none; }
   // dialog replacing another, or a change of box tab, replaces that entry.
   // The filter parameters stay in the address beside it (writeUrlState).
   const BOX_LINK_RE = /^([a-z0-9-]{1,60}):([a-z0-9_-]{1,40})$/;
+  // ?card=<key>: a card key as the indexes write it (see cardKeyOf).
+  const CARD_KEY_RE = /^[a-z0-9]{1,160}$/;
   const BOX_FILE_STEM_RE = /^cards\/boxes\/([a-z0-9-]+)\.json$/;
   function validSpec(x) {
     if (!x || typeof x !== "object") return null;
@@ -6023,11 +7501,13 @@ main:focus { outline: none; }
     if (x.t === "box" && typeof x.stem === "string" && typeof x.kind === "string" && BOX_LINK_RE.test(`${x.stem}:${x.kind}`)) {
       return { t: "box", stem: x.stem, kind: x.kind, chart: x.chart === true };
     }
+    if (x.t === "card" && typeof x.key === "string" && CARD_KEY_RE.test(x.key)) return { t: "card", key: x.key };
     if (x.t === "compare" || x.t === "plain") return { t: x.t };
     return null;
   }
   function dialogParams(spec) {
     const out = [];
+    if (spec && spec.t === "card") return [["card", spec.key]];
     if (spec && spec.t === "deck") out.push(["deck", spec.id]);
     else if (spec && spec.t === "box") out.push(["box", `${spec.stem}:${spec.kind}`]);
     else return out;
@@ -6127,6 +7607,7 @@ main:focus { outline: none; }
         if (spec.chart) { openChart(id); return true; }
         return openDeckCards(id);
       }
+      if (spec.t === "card") { openFinder(spec.key); return true; }
       if (spec.t === "box") {
         const hit = findBoxLink(spec.stem, spec.kind);
         if (!hit || (spec.chart && !hit.exact)) return false;
@@ -6150,9 +7631,17 @@ main:focus { outline: none; }
     }
     const params = new URLSearchParams(window.location.search);
     const deck = params.get("deck"), box = params.get("box"), chart = params.get("view") === "chart";
-    if (deck == null && box == null) return;
+    const card = params.get("card");
+    if (deck == null && box == null && card == null) return;
     history.replaceState(null, "", pageUrl(null));
     let spec = null;
+    if (card != null && deck == null && box == null) {
+      // An unknown card says so inside the dialog.
+      const cs = validSpec({ t: "card", key: card.toLowerCase().replace(/[^a-z0-9]+/g, "") });
+      if (cs && openFromSpec(cs)) return;
+      showLinkNotice("That link does not name a card, so nothing was opened.");
+      return;
+    }
     if (deck != null) spec = validSpec({ t: "deck", id: deck, chart });
     else {
       const m = BOX_LINK_RE.exec(box);
@@ -6419,9 +7908,13 @@ main:focus { outline: none; }
     for (const p of pts) { if (p.day > day) break; hit = p; }
     return hit;
   }
-  function collectionSeries() {
+  // long: also read the weekly history (once it has loaded, for the chart;
+  // the sparkline stays on the daily history), which adds the time before
+  // the daily window and the bundles.
+  function collectionSeries({ long = false } = {}) {
     const series = [];
-    let left = 0;
+    let left = 0, bundles = 0, from = null;
+    const useLong = long && LONG.state === "ready";
     for (const [key, item] of Object.entries(collection)) {
       const sealed = item.qty - item.opened;
       if (sealed < 1) continue;
@@ -6429,15 +7922,22 @@ main:focus { outline: none; }
       let pts = null;
       if (parts.kind === "deck") {
         const d = PRECONS.find(x => x.id === parts.id);
-        pts = d ? deckPoints(d) : null;
+        const r = d ? (useLong ? deckLongPoints(d) : { points: deckPoints(d), from: null }) : null;
+        pts = r && r.points;
+        if (r && r.from != null) from = from == null ? r.from : Math.max(from, r.from);
       } else if (parts.kind === "box") {
+        const r = useLong ? boxLongPoints(parts.set, parts.type) : null;
         const b = findBox(parts.set, parts.type);
-        pts = b ? boxPoints(parts.set, b) : historyPoints(boxSeries(parts.set, parts.type), s => s.price, false);
+        pts = r ? r.points : b ? boxPoints(parts.set, b) : historyPoints(boxSeries(parts.set, parts.type), s => s.price, false);
+        if (r && r.from != null) from = from == null ? r.from : Math.max(from, r.from);
+      } else if (parts.kind === "bundle" && useLong) {
+        pts = bundlePoints(parts.id, bundleById(parts.id));
+        if (realPts(pts).length) bundles++;
       }
       if (!pts || !realPts(pts).length) { left++; continue; }
       series.push({ pts, n: sealed });
     }
-    if (!series.length) return { points: [], left, start: null };
+    if (!series.length) return { points: [], left, start: null, long: useLong, bundles, from };
     const start = Math.max(...series.map(s => realPts(s.pts)[0].day));
     const end = Math.max(...series.map(s => s.pts[s.pts.length - 1].day));
     const out = [];
@@ -6456,19 +7956,22 @@ main:focus { outline: none; }
       const same = prev && !prev.gap && Math.abs(prev.price - sum) < 0.005;
       if (!same || day === end) out.push({ day, date: isoFromDay(day), price: cents(sum), carried: !!same });
     }
-    return { points: out, left, start };
+    return { points: out, left, start, long: useLong, bundles, from };
   }
   function collectionChartNote(cs) {
-    const bits = ["The line adds up the sealed copies you own today at each day's recorded price (decks: the best of TCGPlayer Market and Card Kingdom in stock; boxes: TCGPlayer Market)."];
-    if (cs.start != null) bits.push(`It starts on ${fmtChartDate(isoFromDay(cs.start))}, the first day every one of them has a price.`);
-    bits.push("Opened copies and bundles are not in it (bundles have no recorded history)"
+    const bits = ["The line adds up the sealed copies you own today at each day's recorded price (decks: the best of TCGPlayer Market and Card Kingdom in stock; boxes" + (cs.long ? " and bundles" : "") + ": TCGPlayer Market)."];
+    if (cs.long && cs.from != null && cs.start != null && cs.start < cs.from) {
+      bits.push(`Before ${fmtChartDate(isoFromDay(cs.from), "year")} it uses one TCGPlayer Market point a week from TCGCSV's archive, and a week missing for any item breaks the line.`);
+    }
+    if (cs.start != null) bits.push(`It starts on ${fmtChartDate(isoFromDay(cs.start), "year")}, the first day every one of them has a price.`);
+    bits.push((cs.long ? "Opened copies are not in it" : "Opened copies and bundles are not in it (bundles have only the weekly history, which loads with the chart)")
       + (cs.left ? `, and neither ${cs.left === 1 ? "is 1 item" : `are ${cs.left} items`} with no recorded price.` : "."));
     return bits.join(" ");
   }
   function openCollectionChart() {
     showChartModal("Your collection", "Sealed copies you own today · recorded prices", () => {
-      const cs = collectionSeries();
-      return { points: cs.points, buy: null, note: collectionChartNote(cs) };
+      const cs = collectionSeries({ long: true });
+      return { points: cs.points, buy: null, note: collectionChartNote(cs), long: true, longQuiet: true };
     }, "all", { spec: null, neutral: true });
   }
 
@@ -6905,6 +8408,26 @@ main:focus { outline: none; }
   }
 
   // ---------- Wire up events ----------
+  // Clicks inside a finder (the page section or the dialog body).
+  function onFinderClick(host, e) {
+    const act = e.target.closest("[data-fd-act]");
+    if (act) {
+      const st = FINDERS.get(host.id);
+      if (act.dataset.fdAct === "more") { if (st) { st.moreDecks = true; drawFinder(host); } return; }
+      finderLoad(host, act.dataset.fdAct === "boxes" ? "boxes" : "decks");
+      return;
+    }
+    const box = e.target.closest("[data-fd-kind]");
+    if (box) { openBoxCards(box.dataset.fdSet, box.dataset.fdType, box.dataset.fdKind); return; }
+    const row = e.target.closest("[data-staple-id]");
+    if (row) openChart(row.dataset.stapleId);
+  }
+  function onFinderKey(e) {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const row = e.target.closest("[data-staple-id]");
+    if (row && e.target === row) { e.preventDefault(); openChart(row.dataset.stapleId); }
+  }
+
   function wireEvents() {
     searchInput.addEventListener("input", onSearchInput);
     yearFilter.addEventListener("change", refresh);
@@ -7006,6 +8529,8 @@ main:focus { outline: none; }
         patchCards([id]);
         return;
       }
+      const bundleBtn = e.target.closest("[data-bundle-chart]");
+      if (bundleBtn) { openBundleChart(bundleBtn.dataset.bundleChart); return; }
       const sparkBtn = e.target.closest("[data-chart-trigger]");
       if (sparkBtn) {
         const card = sparkBtn.closest("article[data-id]");
@@ -7034,6 +8559,13 @@ main:focus { outline: none; }
 
     // Keyboard accessibility for the sparkline (it's a focusable role=button)
     grid.addEventListener("keydown", e => {
+      // The bundle sparkline is an svg role=button too (its stand in is a
+      // real button, which already clicks on Enter and Space).
+      if ((e.key === "Enter" || e.key === " ") && e.target.matches?.("svg[data-bundle-chart]")) {
+        e.preventDefault();
+        openBundleChart(e.target.dataset.bundleChart);
+        return;
+      }
       if ((e.key !== "Enter" && e.key !== " ") || !e.target.matches?.("[data-chart-trigger]")) return;
       e.preventDefault();
       const card = e.target.closest("article[data-id]");
@@ -7117,6 +8649,13 @@ main:focus { outline: none; }
         });
         renderChart();
       });
+    });
+    // The weekly history failed to load: try once more. The button goes
+    // away while it loads, so focus moves to the line that says so.
+    $("chartLongRetry").addEventListener("click", () => {
+      needLongHistory();
+      renderChart();
+      $("chartLong").focus({ preventScroll: true });
     });
 
     // Share links: Copy link in both dialogs, Copy decklist, Back.
@@ -7218,7 +8757,7 @@ main:focus { outline: none; }
     const filterCardsSoon = () => { clearTimeout(cardFilterTimer); cardFilterTimer = setTimeout(applyCardFilters, 120); };
     $("cvFilter").addEventListener("input", filterCardsSoon);
     $("cvMinPrice").addEventListener("input", filterCardsSoon);
-    for (const id of ["cvGroup", "cvSort", "cvFinish", "cvRarity"]) $(id).addEventListener("change", applyCardFilters);
+    for (const id of ["cvGroup", "cvSort", "cvFinish", "cvRarity", "cvNewOnly"]) $(id).addEventListener("change", applyCardFilters);
     cardsModal.addEventListener("error", onCardImageError, true);
 
     // Card preview and keyword tooltips (see "Card preview" above).
@@ -7285,10 +8824,16 @@ main:focus { outline: none; }
       }
       // Bundles render as links to their product page, not buttons.
     });
-    // Staple finder: live search + click a result to open that deck's chart.
+    // Where to get a card: a search that waits for a pause in typing, then
+    // the finder's own controls (shared with the finder dialog).
     const stapleInput = $("stapleInput");
     if (stapleInput) {
-      stapleInput.addEventListener("input", e => renderStapleResults(e.target.value));
+      let stapleTimer = null;
+      stapleInput.addEventListener("input", e => {
+        clearTimeout(stapleTimer);
+        const value = e.target.value;
+        stapleTimer = setTimeout(() => renderStapleResults(value), 250);
+      });
       const sr = $("stapleResults");
       sr.addEventListener("click", async e => {
         const alt = e.target.closest("[data-staple-alt]");
@@ -7296,19 +8841,52 @@ main:focus { outline: none; }
           // The results are rebuilt, which removes the focused suggestion;
           // put focus back on the search box so Tab continues into them.
           stapleInput.value = alt.dataset.stapleAlt;
+          clearTimeout(stapleTimer);
           await renderStapleResults(stapleInput.value);
           stapleInput.focus();
           return;
         }
-        const row = e.target.closest("[data-staple-id]");
-        if (row) openChart(row.dataset.stapleId);
+        onFinderClick(sr, e);
       });
-      sr.addEventListener("keydown", e => {
-        if (e.key !== "Enter" && e.key !== " ") return;
-        const row = e.target.closest("[data-staple-id]");
-        if (row) { e.preventDefault(); openChart(row.dataset.stapleId); }
-      });
+      sr.addEventListener("keydown", e => onFinderKey(e));
     }
+    // Plan a buy: the section opens and closes; the list plans on request.
+    $("planToggle").addEventListener("click", () => {
+      const body = $("planBody"), open = body.hidden;
+      body.hidden = !open;
+      $("planToggle").setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) { loadFinderIndexes(); $("planInput").focus(); }
+    });
+    $("planGo").addEventListener("click", () => { PLAN.showAll = false; renderPlan(); });
+    for (const id of ["planSkipOwned", "planHaveOwned"]) $(id).addEventListener("change", () => { if (PLAN.last) renderPlan(); });
+    const planOut = $("planResults");
+    planOut.addEventListener("click", e => {
+      const fix = e.target.closest("[data-plan-fix]");
+      if (fix) { fixWantLine(parseInt(fix.dataset.planFix, 10), parseInt(fix.dataset.planQty, 10) || 1, fix.dataset.planName); return; }
+      const find = e.target.closest("[data-plan-find]");
+      if (find) { openFinder(find.dataset.planFind); return; }
+      const deck = e.target.closest("[data-plan-deck]");
+      if (deck) { if (!openDeckCards(deck.dataset.planDeck)) openChart(deck.dataset.planDeck); return; }
+      if (e.target.closest("[data-plan-more]")) { PLAN.showAll = true; drawPlan(); }
+    });
+    planOut.addEventListener("change", e => {
+      const box = e.target.closest("[data-plan-staple]");
+      if (!box) return;
+      if (box.checked) PLAN.include.add(box.dataset.planStaple); else PLAN.include.delete(box.dataset.planStaple);
+      renderPlan();
+    });
+    const findBody = $("findBody");
+    findBody.addEventListener("click", e => onFinderClick(findBody, e));
+    findBody.addEventListener("keydown", e => onFinderKey(e));
+    $("findModalClose").addEventListener("click", closeModal);
+    $("findModal").addEventListener("click", e => { if (e.target === $("findModal")) closeModal(); });
+    $("findCopyLink").addEventListener("click", () => { if (findSpec) copyLinkTo(findSpec, "findCopyStatus"); });
+    $("findBack").addEventListener("click", () => {
+      const back = findBackSpec;
+      if (!back) return;
+      finderClosed();
+      if (!openFromSpec(back)) closeModal();
+    });
     // Sealed-box section is collapsible.
     $("boxToggle").addEventListener("click", () => {
       const body = $("boxBody");

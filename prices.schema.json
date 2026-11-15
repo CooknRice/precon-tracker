@@ -113,6 +113,41 @@
             },
             "maxItems": 4
           },
+          "profile": {
+            "type": "object",
+            "required": [
+              "new",
+              "new_share",
+              "gc"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "new": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Copies of cards new to Magic (the deck card list rows marked new: MTGJSON isReprint not true)."
+              },
+              "new_share": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Share of the crack TCGplayer total that the new cards carry, 2 decimals; null when that total is null or 0."
+              },
+              "gc": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Names of the deck's Game Changers (MTGJSON isGameChanger, from Wizards' list), sorted."
+              }
+            },
+            "description": "New cards and Game Changers of the deck, from its card list; written for decks whose card list was written by the same run."
+          },
           "carried_from": {
             "type": [
               "string",
@@ -208,7 +243,13 @@
                 "number",
                 "null"
               ],
-              "minimum": 0
+              "minimum": 0,
+              "description": "Card Kingdom's live cash offer for one sealed box, or null when it is not buying (no offer, qty_buying 0, or an offer at or above its own retail price)."
+            },
+            "ck_buy_qty": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "The most boxes Card Kingdom buys at that offer; present only when ck_buy is set."
             },
             "price_source": {
               "type": [
@@ -228,7 +269,36 @@
             "packs": {
               "type": "integer",
               "minimum": 1,
-              "description": "Booster packs in the priced SKU, from MTGJSON sealed product contents (box topper packs excluded)."
+              "description": "Booster packs in the priced SKU, from MTGJSON sealed product contents (box topper packs excluded). Present whenever MTGJSON gives the count, also when the EV is withheld for low coverage."
+            },
+            "spread": {
+              "type": "object",
+              "required": [
+                "p10",
+                "p50",
+                "p90",
+                "boxes"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "p10": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "p50": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "p90": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "boxes": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "description": "Simulated box values (keys in the order p10, p50, p90, boxes): the 10th, 50th and 90th percentile of `boxes` simulated boxes in dollars, counted like the EV (cards worth $1.00 or more), rounded to $1 when the box file's p90 is under $150, $5 under $1,500, else $10. Present only when this run simulated the box (or carried from the run that did); the box file's kinds[cards_kind].spread holds the full figures."
             },
             "ev_coverage": {
               "type": "number",
@@ -269,6 +339,29 @@
                 "booster"
               ],
               "description": "The key of this row's box type inside the card list's kinds."
+            }
+          },
+          "dependencies": {
+            "ck_buy_qty": {
+              "required": [
+                "ck_buy"
+              ],
+              "properties": {
+                "ck_buy": {
+                  "type": "number"
+                }
+              }
+            },
+            "spread": {
+              "required": [
+                "ev",
+                "packs"
+              ],
+              "properties": {
+                "ev": {
+                  "type": "number"
+                }
+              }
             }
           }
         }
@@ -494,7 +587,13 @@
             "number",
             "null"
           ],
-          "minimum": 0
+          "minimum": 0,
+          "description": "Card Kingdom only: its live cash offer for one sealed copy, or null when it is not buying (no offer, qty_buying 0, or an offer at or above its own retail price, treated as stale)."
+        },
+        "buy_qty": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Card Kingdom only: the most copies it buys at that offer (its pricelist qty_buying); present only when buy is set."
         },
         "price_low": {
           "type": [
@@ -520,7 +619,19 @@
         "price",
         "url",
         "status"
-      ]
+      ],
+      "dependencies": {
+        "buy_qty": {
+          "required": [
+            "buy"
+          ],
+          "properties": {
+            "buy": {
+              "type": "number"
+            }
+          }
+        }
+      }
     }
   }
 }

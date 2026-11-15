@@ -4,8 +4,11 @@ A record of where MTG Tracker's numbers come from, how each one is computed,
 and which sources were evaluated and deliberately **not** adopted. Written so
 these decisions don't get relitigated.
 
-Last reviewed: **2026-10-30** (after the audit fix round and the Star Trek
-preorders, see `IMPROVEMENTS-LOG.md` row 6)
+Last reviewed: **2026-11-15** (the next updates: price outlier guard, Card
+Kingdom sealed offers, new cards and Game Changers, box EV spread, the card to
+box index and the weekly history since 2024). The earlier review was
+2026-10-30 (after the audit fix round and the Star Trek preorders, see
+`IMPROVEMENTS-LOG.md` row 6).
 
 ---
 
@@ -13,11 +16,11 @@ preorders, see `IMPROVEMENTS-LOG.md` row 6)
 
 | Source | What it gives us | Access |
 |---|---|---|
-| **TCGplayer** (via [TCGCSV](https://tcgcsv.com/)) | Deck, sealed box and set bundle prices: Market, lowest listing, product links | Free public mirror of TCGplayer's catalog and prices, republished daily around 20:05 UTC |
-| **Card Kingdom** | Deck and box retail price, stock count and buylist price | Free official [sealed pricelist API](https://api.cardkingdom.com/api/sealed_pricelist), no auth |
-| **[MTGJSON](https://mtgjson.com/)** | Decklists, per card prices (crack value), sealed product contents (bundles, pack counts), booster models (box EV) | Free, MIT License (see [Attribution and licences](#attribution-and-licences)) |
+| **TCGplayer** (via [TCGCSV](https://tcgcsv.com/)) | Deck, sealed box and set bundle prices: Market, lowest listing, product links; one Market price a week since 2024 from TCGCSV's price archive | Free public mirror of TCGplayer's catalog and prices, republished daily around 20:05 UTC; the archive was downloaded once (see [Long price history](#long-price-history-history_longjson)) |
+| **Card Kingdom** | Deck and box retail price, stock count, and its live cash offer for sealed copies with the most it buys | Free official [sealed pricelist API](https://api.cardkingdom.com/api/sealed_pricelist), no auth |
+| **[MTGJSON](https://mtgjson.com/)** | Decklists, per card prices (crack value), sealed product contents (bundles, pack counts), booster models (box EV, its spread, pull odds), new card and Game Changer flags | Free, MIT License (see [Attribution and licences](#attribution-and-licences)) |
 | **[ScryCheck](https://scrycheck.com/precons)** | Power score and bracket per deck | Hand entered in `decks.json`; the scraper never calls it |
-| **Wizards of the Coast** | Product names, release dates, recent MSRPs, face commanders; the Comprehensive Rules behind the keyword glossary | Hand entered in `decks.json` from Wizards product pages, buyers guides and decklists; `keywords.json` written by hand from the rules |
+| **Wizards of the Coast** | Product names, release dates, recent MSRPs, face commanders; the Comprehensive Rules behind the keyword glossary; the Commander Game Changers list | Hand entered in `decks.json` from Wizards product pages, buyers guides and decklists; `keywords.json` written by hand from the rules; Game Changers read from MTGJSON, which carries Wizards' list |
 | **[Scryfall](https://scryfall.com/)** image server | Card images in the card lists | The page links `cards.scryfall.io` directly when a card list is opened; the scraper never calls Scryfall |
 
 Only TCGplayer and Card Kingdom are price **vendors** (places the page sends
@@ -25,8 +28,11 @@ you to buy). Zulus Games and Mana Pool were removed on 2026-10-07 for terms
 reasons, and Amazon was never added (see [Evaluated and rejected](#evaluated-and-rejected)).
 
 The scraper (`scrape_prices.py`) runs once a day in GitHub Actions at 01:23 UTC
-and writes `prices.json`, `prices_history.json`, `cards_index.json` and the
-card lists in `cards/` (see [Card lists and pull odds](#card-lists-and-pull-odds)). It
+and writes `prices.json`, `prices_history.json`, `cards_index.json`, the
+card lists in `cards/` (see [Card lists and pull odds](#card-lists-and-pull-odds)),
+`box_index.json` (see [Card to box index](#card-to-box-index-box_indexjson)) and,
+once a week per product, `history_long.json` (see
+[Long price history](#long-price-history-history_longjson)). It
 records the publish date of each upstream feed it read in `prices.json`
 `upstream`, for example `{"tcgcsv": "2026-10-29T20:06:01+00:00", "mtgjson": "2026-10-30"}`.
 Counts below are from the run of 2026-10-30 unless a date says otherwise.
@@ -103,7 +109,7 @@ Coverage on 2026-10-30: 121 of 121 decks, 33 set bundles, 71 box rows across
 ## Card Kingdom
 
 - One request to the official sealed pricelist gives every SKU's retail price,
-  stock count (`qty`) and buylist price (`buy`).
+  stock count (`qty`) and buylist offer (see [Sealed offers](#sealed-offers)).
 - The indexer accepts deck SKUs named like "Commander 2021 - Deck". The CK
   edition must name the same release as the deck's set (a word comparison);
   there is no name only fallback across releases.
@@ -117,14 +123,45 @@ Coverage on 2026-10-30: 121 of 121 decks, 33 set bundles, 71 box rows across
 - The buylist feeds the crack math ("profit to crack" uses the real CK
   buylist only).
 
+### Sealed offers
+
+- **What is recorded**: `vendors.cardkingdom[<deck>].buy` is Card Kingdom's
+  live cash offer for one sealed copy of the deck, and `buy_qty` the most
+  copies it buys at that price (the pricelist's `qty_buying`). Box rows carry
+  the same pair as `ck_buy` and `ck_buy_qty`. `buy` (or `ck_buy`) is null when
+  Card Kingdom is not buying, and the quantity is then left out.
+- **Only live offers count.** The pricelist keeps `price_buy` filled in while
+  `qty_buying` is 0, and Card Kingdom's buylist pages then show no offer
+  (checked 2026-11-14). So an offer counts only while `qty_buying` is 1 or
+  more. An offer at or above Card Kingdom's own retail price for that SKU is
+  treated as stale, logged and left out; only two SKUs had one on 2026-11-14
+  (Turtle Team-Up and the Marvel Super Heroes Jumpstart Booster Box), and
+  both had `qty_buying` 0 anyway.
+- On the pricelist of 2026-11-14 (23:08 UTC), 80 of 121 decks and 48 of 72
+  box rows had a live offer. The old rule (any `price_buy`) had shown 113
+  decks and 64 box rows, 33 and 16 of them offers Card Kingdom was not
+  making.
+- **Store credit**: Card Kingdom pays 130% of the cash offer in store credit
+  (confirmed 2026-11-14 on its [sealed buylist page](https://www.cardkingdom.com/purchasing/mtg_sealed):
+  $548.60 in credit on a $422.00 cash offer). The page keeps this as a dated
+  constant and states it as such; it is never scraped.
+- **On the page**: "Card Kingdom buys sealed: $81.00 cash (up to 6)" on the
+  deck card, "CK buys this box" on the box tile, a "CK buys sealed" row in
+  Compare and a CK cash column in the collection, which counts at most
+  `buy_qty` sealed copies. It is shown as an exit price, with no profit or
+  arbitrage wording and no badge.
+
 ### Vendor links
 
 The scraper keeps a vendor link only if it is `https` on exactly
 `www.tcgplayer.com` or `www.cardkingdom.com`; anything else is replaced by that
 vendor's search link before `prices.json` is written. On the page, every link
 built from data goes through `safeUrl`, which allows only tcgplayer.com,
-cardkingdom.com and scrycheck.com; the fixed footer links (TCGCSV, MTGJSON,
-Wizards, GitHub) are written into the page itself.
+cardkingdom.com, scrycheck.com, edhrec.com and commanderspellbook.com (the
+last two for the card list dialog's EDHREC and Commander Spellbook links,
+see [Share links](#share-links-and-what-stays-in-your-browser)); the fixed
+footer links (TCGCSV, MTGJSON, Wizards, GitHub) are written into the page
+itself.
 
 ---
 
@@ -153,6 +190,7 @@ run, about 150 requests; caching it is deferred (see the log).
     only ever shown as a labelled estimate.
   - "Profit to crack" needs a margin of at least the larger of $10 or 15% of
     the sealed price, and is stated before tax, shipping and grading.
+  - TCGplayer card prices go through the outlier guard first (below).
 - **`cards_index.json`**: card name to the decks that contain it, built from
   the decklists; it powers the staple finder.
 - **When MTGJSON fails**: a deck whose decklist fails to download keeps the
@@ -165,6 +203,48 @@ run, about 150 requests; caching it is deferred (see the log).
   stale value is carried. The crack and card index floors count only released
   decks (release date on or before the run), so a preorder never lowers them;
   a released deck still waiting for its decklist does count against them.
+
+### Price outlier guard
+
+- **Rule**: a TCGplayer retail card price is left out as unreliable when Card
+  Kingdom prices the same printing in the same finish, the TCGplayer price is
+  at least **$10.00**, and it is more than **20 times** Card Kingdom's
+  (`OUTLIER_RATIO` and `OUTLIER_FLOOR` in `scrape_prices.py`). It then counts
+  as no TCGplayer price everywhere: crack values and chase cards, box EVs,
+  the EV spread and both kinds of card list, all through one helper
+  (`tcg_retail_guarded`), so the lists still add up to the totals.
+- **The case seen**: Landing Party (released 2026-11-13) holds a nonfoil
+  Sunpetal Grove (TRC 565). MTGJSON had no nonfoil TCGplayer price for it, so
+  the finish fallback borrowed the foil one: $92.72 on 2026-11-14, then
+  $31.53, which is 117 and 40 times Card Kingdom's foil $0.79. And MTGJSON
+  maps that printing to TCGplayer product 726437, which is a Surge Foil
+  Mountain; the real Sunpetal Grove Surge Foil had a $5.00 market. So the
+  bad price came from a wrong MTGJSON product mapping plus a borrowed finish,
+  not from a TCGplayer listing. It had made a deck with a $48 market show
+  $240.89 of singles, with Sunpetal Grove as its top card; with the guard,
+  Landing Party's singles are $98.07 (2026-11-15).
+- **Why 20 times and not 10**: the first draft of the rule said 10. Measured
+  over every deck row and box entry on three MTGJSON price days, a ratio of
+  10 also hides a real price: the Surge Foil Captain Janeway, Endgame
+  (Federation Fleet) at $47.38, which is TCGplayer's own market for that
+  product (listings from $41.45), against a Card Kingdom placeholder of $4.49
+  (10.6 times). Gift of Perfection Extended Art (box TRK) stood at $14.44, 18
+  times a $0.79 Card Kingdom price, and was probably real (the next day's
+  $8.72 is TCGplayer's market for it). Card Kingdom often
+  lists brand new Universes Beyond printings at placeholder prices for a
+  while, so the ratio has to be wide.
+- **Limits**: no ratio separates every case. A real price above 20 times
+  such a placeholder would be hidden, and a smaller error passes (a foil
+  Temple of Enlightenment at $10.00, 12.7 times Card Kingdom's $0.79, against
+  a TCGplayer mid of $1.49). The $10 floor keeps the guard off cheap cards.
+- **Recorded**: a deck card list lists the rows left out in a header key
+  `outliers` (`[{"i": 60, "tcg": 31.53, "ck": 0.79}]`: row, TCGplayer price,
+  Card Kingdom price compared); a box card list as `[{"uuid", "finish",
+  "tcg", "ck"}]`. The key is there only when something was left out. The page
+  shows "n/a" for that TCGplayer price with a note saying what TCGplayer
+  lists and why it is left out. A deck row's own Card Kingdom price can be in
+  another finish than the one compared (Card Kingdom does not sell every
+  finish), so the note quotes the prices from the `outliers` entry.
 
 ---
 
@@ -239,6 +319,60 @@ value and the box EV use, so they add up to those numbers.
   with the same rules as a Python reference matcher, verified identical on
   every card text.
 
+### New cards and Game Changers
+
+- **Flags**: a deck row gets `"new": true` when the printing is new to Magic
+  (MTGJSON's `isReprint` is not true; MTGJSON leaves false flags out) and
+  `"gc": true` when MTGJSON's `isGameChanger` is true. Box cards get the same
+  `gc` flag. Both are written only when true. The Game Changer list itself is
+  Wizards' (the Commander brackets' Game Changers); MTGJSON carries it.
+- **Deck profile**: `crack[<deck>].profile` is `{"new", "new_share", "gc"}`:
+  the copies of new cards, the share of the deck's TCGplayer singles value
+  they carry (2 decimals, null without a total), and the sorted names of its
+  Game Changers. It is written for every deck whose card list the run wrote.
+- **Facts on 2026-11-15**: 2,230 of 10,527 deck rows are new cards, a median
+  27% of a deck's singles value; 10 decks have none (five 2022 Starter decks
+  and five 2026 Foundations Commander decks); 10 Game Changer rows sit in 9
+  decks, and 85 box cards are Game Changers.
+- **Game Changers do not explain a deck's bracket**: only 9 of 65 B3 decks
+  hold one. The page shows them as a fact and links ScryCheck's own
+  reasoning, never as the cause of the bracket.
+- Box card details are reused from the previous file for up to 28 days, so
+  details read before the flag existed were reread once (`CARD_GC_SINCE`,
+  the first run on or after 2026-11-15, about 49 MTGJSON set files). Without
+  that, 41 Game Changers on bonus sheets (Rhystic Study, Necropotence,
+  Vampiric Tutor and others) would have gone unflagged for weeks.
+
+### Card to box index (`box_index.json`)
+
+- **What it is**: which box types can hold a card, so the page can answer
+  "Boxes that can hold it" and plan a want list without loading the large box
+  files. It is written from the box card lists every healthy run, but is byte
+  identical (and so not rewritten) while the odds stay the same; it has no
+  `updated_at`.
+- **Format**: `{"schema":1, "aliases":{...}, "cards":{...}}`, one card per
+  line. A card key is the card name in lowercase letters and digits only (the
+  same `norm` key `cards_index.json` uses). Each card lists `in`: `[box file
+  stem, kind, finish, chance one pack holds it]`, to 4 significant digits,
+  for every kind a `prices.json` box row points at. `aliases` maps the front
+  face of a multi face card ("A // B") to its full name key, when that front
+  face is not a card key itself.
+- **Merging**: several printings of one name in the same file, kind and
+  finish (a regular and a showcase printing, say) become one entry with the
+  chance `1 - (1 - a)(1 - b)`; the exact chance lies between that and `a + b`,
+  under about 1.5% apart at these odds. Reversible cards whose MTGJSON name
+  repeats the faces ("Blood Crypt // Blood Crypt") are indexed under one copy
+  of the faces, so they join the card's other printings.
+- **Finish** is the priced finish the box file lists the entry under, so a
+  price that appears or goes away can move an entry between finishes.
+- **The page** takes the pack count from the box row (`cards_file` plus
+  `cards_kind`) and shows `1 - (1 - pack) ** packs` per box. Mystery Booster
+  Commander Edition has no MTGJSON pack count, so its entries show the chance
+  per pack only.
+- **Size**: about 2.16 MB raw (13,513 cards, 39,588 box kind entries and 566
+  aliases on 2026-11-15). The page loads it only when the staple finder or
+  the want list planner asks for it.
+
 ---
 
 ## Box EV rules
@@ -282,6 +416,41 @@ value and the box EV use, so they add up to those numbers.
   $1.00 or more count; cheaper cards count as $0, since they rarely sell."),
   so the text follows the data.
 - It is an average over many boxes; any single box varies widely.
+
+### EV spread (what a typical box holds)
+
+- **Method**: for every box row with a published EV, a pack count and a
+  booster model, the scraper simulates **10,000 boxes**. Each pack picks a
+  layout by its weight; each sheet slot draws its cards with replacement
+  when the sheet allows duplicates, else by weight without replacement
+  inside that slot; a fixed sheet gives its fixed contents. A card drawn is
+  worth its TCGplayer retail in the entry's finish by the very lookup the EV
+  uses (outlier guard included) when that is **$1.00 or more**, else $0; an
+  unpriced card is $0. Pure Python; about 29 s for all 70 box types locally
+  (not yet timed in CI).
+- **Seeds**: each box type has its own generator,
+  `random.Random(zlib.crc32("<set code>:<kind>"))`, so the same prices always
+  give the same figures.
+- **Recorded**: the box row's `spread` is `{"p10", "p50", "p90", "boxes"}`,
+  rounded to $1 while p90 is under $150, $5 under $1,500, else $10. The box
+  file's `kinds[<kind>].spread` holds the mean, p10, p25, p50, p75 and p90 to
+  the cent and a 20 bin histogram up to the 99th percentile; the boxes above
+  it count in the last bin, so the bins add up to 10,000.
+- **The average is not quite the EV**: the EV, the odds and the card to box
+  index use the expected copies per slot, while the simulation draws distinct
+  cards one by one. The two models give nearly the same mean (a reviewer
+  measured a difference of at most 0.28%), and with sampling noise the
+  simulated mean was within 1.4% of the EV for all 70 box types on
+  2026-11-15. A test fails any box type more than 3% apart.
+- **What the page says**: "Typical box ≈ $89 · 8 in 10 between $56 and $147
+  (simulated)", labelled TCGplayer retail before fees, with a small histogram
+  and a "How this is worked out" panel. It never shows a chance of profit or
+  a break even rate: that false precision was removed from the site before.
+- **Day to day**: the same prices always give the same figures, but card
+  prices move daily, so the figures move a little from day to day; the page
+  does not show spread changes. The spread is skipped when the run's time budget is nearly
+  spent (the page copes), and rows carried from an earlier run keep the
+  spread they had. Mystery Booster Commander Edition has no EV, so no spread.
 
 ---
 
@@ -494,6 +663,90 @@ Each runs once and is recorded by name in `migrations`:
 
 ---
 
+## Long price history (`history_long.json`)
+
+One TCGplayer Market price a week for every deck, box type and set bundle,
+from 2024-02-09 on, beside the 90 day daily history. Card Kingdom has no long
+history: its pricelist only ever gives today's prices.
+
+- **Source**: TCGCSV keeps a daily archive of its TCGplayer prices from
+  2024-02-08 on (its [FAQ](https://tcgcsv.com/faq) and
+  [docs](https://tcgcsv.com/docs)). For the backfill, one archive a week was
+  downloaded once: 145 archives, 2024-02-08 to 2026-11-12 (486.6 MB in all),
+  kept outside the repository in `~/precon-tracker-backups/tcgcsv-archive/`
+  and never downloaded again. Downloads ran one at a time with the scraper's
+  own TCGCSV User Agent, at least 2 s apart; after one HTTP 429 at that pace
+  (about 72 downloads in), later downloads ran 10 s apart. Products are
+  matched by their current TCGplayer product id from `prices.json`.
+- **Format**: `{"schema":1, "source": ..., "series": {"deck:<id>": [[date,
+  price], ...], "box:<set>::<type>": [...], "bundle:<id>": [...]}}`, one
+  series per line, keys sorted, dates ascending, prices in dollars to cents.
+  226 series and 26,447 points on 2026-11-15: about 573 KB raw, 134 KB
+  gzipped. It grows by about 4.9 KB a week. The page loads it only when a
+  chart opens.
+- **Dates are archive day + 1**: the archive of day D is dated D + 1, so the
+  backfilled points fall on Fridays. The daily run (scheduled 01:23 UTC)
+  reads the snapshot TCGCSV built the evening before, so this matches the
+  dates of `prices_history.json`: of 2,319 points that overlap the daily
+  history, every point on 15 of the 17 weekly dates is equal.
+- **Late runs**: the other two dates, 2026-08-28 and 2026-10-30, differ
+  because the daily run on those days started after TCGCSV's 20:05 UTC
+  build and read that day's snapshot. A point the daily run adds on such a
+  day is likewise one snapshot later than its date says, so a weekly point
+  can differ from the daily history's value for its date.
+- **Gaps**: weeks when TCGplayer had no Market price for a thinly traded
+  product have no point (17 gaps of 14 days, 7 of 21, one of 28 and one of
+  49 among 26,221). They are real gaps in TCGplayer's data, to be drawn as
+  gaps, never interpolated. Many series start with presale prices weeks
+  before release.
+- **Daily extension**: on healthy runs the scraper adds a point for every
+  product with a Market price once its last point is at least 7 days old.
+  Carried box rows and Low or Mid fallbacks are not recorded. Series of decks
+  renamed with `formerIds` move to the new id; series of decks and box sets
+  that left the catalog are dropped. A file that exists but cannot be read
+  is left as it is with a warning, never replaced (restore it from git).
+- **Product switches are only warned about**: a series has no product id, so
+  if the TCGplayer product behind a box type or bundle changes, the run logs
+  a warning and the series would join two products until the backfill is
+  rerun from the stored archives. It has happened once, to the Strixhaven
+  play box on 2026-10-30.
+- **Rebuilding it**: `python3 -I history_long.py backfill --archives
+  ~/precon-tracker-backups/tcgcsv-archive --out history_long.json` reads
+  only the stored archives (it never opens a network connection) and gives a
+  byte identical file.
+
+---
+
+## Share links and what stays in your browser
+
+- **Share links**: `?deck=<id>` opens that deck's card list, and
+  `?deck=<id>&view=chart` its price chart; `?box=<set code>:<kind>` opens a
+  box type's card list (`&view=chart` its chart). Renamed decks resolve
+  through `formerIds`; an unknown id shows a short notice instead of a blank
+  page. Every card list and chart has a "Copy link" button, and Back closes
+  a dialog opened this way. The filter parameters keep working as before.
+- **Deck tools**: "Copy decklist" copies plain text ("1 Card Name" per line,
+  commander first). "Commander page on EDHREC" links
+  `https://edhrec.com/commanders/<slug>`, built from the face commander's
+  name, and "Find combos on Commander Spellbook" opens its find my combos
+  page, where the visitor pastes the copied list. The site never fetches
+  either site (EDHREC's terms forbid automated queries).
+- **Collection**: owned decks stay in `precon-owned`; quantities, the price
+  paid per copy and how many are opened, for decks, boxes and bundles, are
+  in `precon-collection`. Both live only in the visitor's browser storage,
+  like the watchlist and price targets. "Back up" saves every key the site
+  stores as a JSON file on the visitor's own device
+  (`mtg-tracker-backup-<date>.json`); "Restore" reads one back after a
+  confirmation and checks every field. Nothing is uploaded anywhere, and the
+  backup holds only what the visitor entered. Safari can clear a site's
+  storage after seven days of Safari use without a visit; the home screen
+  app keeps its own storage, and the page says so.
+- **Since your last visit**: computed in the browser from
+  `prices_history.json` against the date in `precon-lastvisit`; nothing is
+  sent anywhere.
+
+---
+
 ## How a run protects the data
 
 - **Budget**: the fetch phases share 15 minutes (`RUN_BUDGET_SECONDS`). A
@@ -517,15 +770,20 @@ Each runs once and is recorded by name in `migrations`:
 - `scrape-prices.yml` runs at 01:23 UTC (6:23 PM PDT, 5:23 PM PST), after
   TCGCSV's daily publish, so each history day gets exactly one snapshot even
   when GitHub starts the job hours late. It is two jobs: `scrape` (read only
-  token: install, `--catalog`, scraper, gate) hands the three data files to
-  `commit` (write token, runs no third party code, accepts only those three
-  files as strict JSON).
+  token: install, `--catalog`, scraper, gate) hands the data files to
+  `commit` (write token, runs no third party code). The commit job accepts
+  only the three required files, the two optional ones (`box_index.json`
+  under 4 MB and `history_long.json` under 8 MB, each a schema 1 object, kept
+  as committed when the artifact lacks them) and the card lists, all as
+  strict JSON.
 - The gate is `python test_data_integrity.py --gate --previous <last committed
   data>`: every data test, coverage floors, a check that the files come from
   this run, upstream freshness (a TCGCSV older than 3 days blocks the commit; a
   MTGJSON older than 7 days only warns, because crack and EV values carry
   forward), and no sharp drop against the last run. History is compared over
-  its last 60 days, so trimming and one off migrations pass.
+  its last 60 days, so trimming and one off migrations pass, and
+  `history_long.json` may lose at most 10% of the weekly points of the series
+  still tracked.
 - **Coverage floors scale with the catalog**, so adding or removing decks never
   blocks the scheduled runs: TCGplayer and Card Kingdom prices on at least 84%
   of decks, fully priced crack entries on at least 90% of released decks
@@ -549,6 +807,17 @@ Each runs once and is recorded by name in `migrations`:
   must equal the components' total minus the bundle's own payable price;
   bundle and box links must be on the vendor's https host; no generated name
   or label may contain markup or control characters.
+- Checks on the newer data: no card list holds a TCGplayer price the outlier
+  guard should have left out (box lists always, since both prices of a pair
+  are in one finish; deck rows where an `outliers` entry or a box list of the
+  same run proves the finish), and every `outliers` entry is one; a Card
+  Kingdom offer has its quantity and sits below Card Kingdom's retail; spread
+  quantiles are ordered, rounded by the step rule, equal between the row and
+  its box file, and the simulated mean is within 3% of the EV; each deck
+  profile matches its card list; `box_index.json` matches the box files' odds
+  exactly as the scraper merges them; `history_long.json` keys are tracked
+  decks, tracked box sets or bundle ids, with dates ascending at least 6 days
+  apart from 2024-02-09 on and prices in cents.
 - `validate.yml` runs on every push to main and every pull request without
   scraping: catalog checks, data tests in `--pending-scrape` mode, the page
   shell check (`--page`: the CSP hash of the inline script, and that every
@@ -767,7 +1036,12 @@ Ranked by value per effort, and both far better value than Amazon:
   footer links the licence.
 - **TCGplayer** prices come via **TCGCSV**, and **Card Kingdom** prices, stock
   and buylist come from its public pricelist; both are credited in the page
-  footer and every price links to its product page.
+  footer and every price links to its product page. The weekly history comes
+  from TCGCSV's price archive. TCGCSV's FAQ sets no attribution rules and says
+  permission is implicit, adding that a link thanking TCGCSV is always
+  appreciated; `NOTICE.md` and the footer give that link.
+- The **Game Changer** flags follow Wizards of the Coast's Commander Game
+  Changers list, as MTGJSON publishes it.
 - **ScryCheck** power scores are credited and linked in the footer and on each
   card.
 - The footer carries Wizards of the Coast's **Fan Content Policy** notice: MTG

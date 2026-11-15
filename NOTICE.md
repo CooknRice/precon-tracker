@@ -5,10 +5,12 @@ comes from, and how it is computed, is in [`DATA-SOURCES.md`](DATA-SOURCES.md).
 
 ## MTGJSON
 
-`cards_index.json`, the card lists in `cards/`, the crack values in
-`prices.json` (`crack`), the box expected values (`boxes[][].ev`) and the
-bundle contents checks are derived from [MTGJSON](https://mtgjson.com/) data,
-used under the MIT License:
+`cards_index.json`, `box_index.json`, the card lists in `cards/` (with their
+new card and Game Changer flags), the crack values and deck profiles in
+`prices.json` (`crack`), the box expected values and their simulated spread
+(`boxes[][].ev`, `boxes[][].spread`) and the bundle contents checks are
+derived from [MTGJSON](https://mtgjson.com/) data, used under the MIT
+License:
 
 ```
 MIT License
@@ -40,9 +42,19 @@ Source: [mtgjson/mtgjson LICENSE.txt](https://github.com/mtgjson/mtgjson/blob/ma
 ## Price and score sources
 
 - **TCGplayer** prices, read through [TCGCSV](https://tcgcsv.com/), a free
-  public mirror of TCGplayer's catalog and prices.
-- **Card Kingdom** prices, stock and buylist, from Card Kingdom's public
-  [sealed pricelist](https://api.cardkingdom.com/api/sealed_pricelist).
+  public mirror of TCGplayer's catalog and prices. The weekly history in
+  `history_long.json` (2024-02-09 on) comes from TCGCSV's daily
+  [price archive](https://tcgcsv.com/faq), each archive file downloaded once.
+  TCGCSV's FAQ sets no attribution rules and says permission is implicit; it
+  adds that a link thanking TCGCSV is always appreciated, so: thank you,
+  [TCGCSV](https://tcgcsv.com/). Its FAQ in turn thanks Hoodwill for sharing
+  some of the price data they have recorded.
+- **Card Kingdom** prices, stock and sealed buylist offers, from Card
+  Kingdom's public
+  [sealed pricelist](https://api.cardkingdom.com/api/sealed_pricelist). The
+  store credit rate the page states (130% of the cash offer) is from Card
+  Kingdom's [sealed buylist page](https://www.cardkingdom.com/purchasing/mtg_sealed),
+  checked 2026-11-14.
 - **ScryCheck** power scores and brackets, from
   [scrycheck.com](https://scrycheck.com/precons). They are automated
   estimates; see ScryCheck's [accuracy notes](https://scrycheck.com/about).
@@ -58,7 +70,8 @@ this repository.
 
 The keyword definitions in `keywords.json` are short summaries written for
 this site from the Magic: The Gathering Comprehensive Rules (effective
-2026-11-06).
+2026-11-06). The Game Changer flags on cards and decks follow Wizards of the
+Coast's Commander Game Changers list, as MTGJSON publishes it.
 
 MTG Tracker is unofficial Fan Content permitted under the
 [Fan Content Policy](https://company.wizards.com/en/legal/fancontentpolicy).

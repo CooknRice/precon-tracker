@@ -53,7 +53,7 @@ jobs:
         run: python test_data_integrity.py --page
 
       - name: Compile the Python
-        run: python -m py_compile scrape_prices.py test_data_integrity.py
+        run: python -m py_compile scrape_prices.py history_long.py test_data_integrity.py
 
       - name: Check page and service worker syntax
         # Parse only: a syntax error in the inline script blanks the page for

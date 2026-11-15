@@ -143,6 +143,38 @@ PINNED_PACKS = {
     ("Bloomburrow Commander", "collector"): 12,
 }
 
+# The price outlier guard (the scraper's OUTLIER_RATIO and OUTLIER_FLOOR): a
+# TCGplayer retail price of at least $10.00 and over 20 times Card Kingdom's
+# retail for the same printing and finish is left out as unreliable. Card
+# files hold prices rounded to cents, so the checks allow half a cent on
+# each side (OUTLIER_SLACK) before calling a price clearly in or out.
+OUTLIER_RATIO = 20.0
+OUTLIER_FLOOR = 10.00
+OUTLIER_SLACK = 0.005
+# Box EV spread (scrape_prices.add_box_spreads): the simulated mean against
+# the published EV. It ran at most 1.4% apart on 2026-11-15 (70 box types,
+# 10,000 boxes each); sampling noise alone is well under that.
+SPREAD_MEAN_SLACK = 0.03
+SPREAD_FILE_KEYS = ["boxes", "mean", "p10", "p25", "p50", "p75", "p90", "bins"]
+SPREAD_ROW_KEYS = ["p10", "p50", "p90", "boxes"]
+# Size caps the commit job enforces for the two optional top level files;
+# the tests fail first, so a run that outgrows them never reaches it.
+BOX_INDEX_MAX_BYTES = 4_000_000
+HISTORY_LONG_MAX_BYTES = 8_000_000
+# history_long.json: weekly points from TCGCSV's first archive (2024-02-08,
+# dated one day later, as the daily run would have dated it), at least this
+# many days apart. The daily run adds a point once the last one is 7 days
+# old and every backfilled gap is 7 days or more (2026-11-15); the floor of
+# 6 leaves a day of slack, while a duplicated or daily series still fails.
+HISTORY_LONG_FIRST = "2024-02-09"
+HISTORY_LONG_MIN_GAP_DAYS = 6
+# Points of tracked series that history_long.json may lose against the last
+# committed run. update_weekly only ever adds points or drops whole series
+# of decks and sets that left the catalog, which the gate leaves out of the
+# count, so any real loss is a damaged or replaced file.
+MAX_HISTORY_LONG_DROP = 0.10
+HISTORY_LONG_BUNDLE_KEY = re.compile(r"bundle:[a-z0-9]+(?:-[a-z0-9]+)*-bundle")
+
 # TCGplayer statuses that say a deck has no TCGplayer price today (the
 # scraper's TCG_NO_PRICE_STATUSES), as opposed to a fetch that failed.
 TCG_NO_PRICE_STATUSES = ("tcgcsv-no-price", "tcgcsv-no-product-match",
@@ -435,7 +467,8 @@ CATALOG_TESTS = (test_decks_schema, test_unique_deck_ids, test_id_slug_format,
 def test_strict_json():
     """Every data file the page loads is standard JSON a browser accepts: no
     NaN, Infinity, out of range numbers or repeated keys."""
-    for name in ("decks.json", "prices.json", "prices_history.json", "cards_index.json"):
+    for name in ("decks.json", "prices.json", "prices_history.json", "cards_index.json",
+                 "box_index.json", "history_long.json"):
         if (ROOT / name).exists():
             load(name)
 
@@ -956,6 +989,60 @@ DECK_FILE_KEYS = ["schema", "deck_id", "name", "source", "updated_at", "totals",
 BOX_FILE_KEYS = ["schema", "set", "code", "updated_at", "kinds", "fetched", "cards", "prices"]
 
 
+def _file_keys(rel: str, doc: dict, keys: list):
+    """A card file's header keys in order. `outliers` (the TCGplayer prices
+    the outlier guard left out) may follow `fetched`, only when non empty."""
+    want = list(keys)
+    if "outliers" in doc:
+        want.insert(want.index("fetched") + 1, "outliers")
+        assert isinstance(doc["outliers"], list) and doc["outliers"], f"{rel}: outliers is empty or not a list"
+    assert list(doc) == want, f"{rel}: keys {list(doc)}"
+
+
+def _flags(c: dict, where: str, allowed: tuple):
+    """The optional flags of a card (deck rows: new and gc; box cards: gc)
+    are written only when true, after keywords and before tcg_id."""
+    keys = list(c)
+    for flag in ("new", "gc"):
+        if flag not in c:
+            continue
+        assert flag in allowed, f"{where}: unexpected key {flag}"
+        assert c[flag] is True, f"{where}: {flag} is {c[flag]!r}, written only when true"
+        i = keys.index(flag)
+        assert "keywords" not in keys or keys.index("keywords") < i, f"{where}: {flag} before keywords"
+        assert "tcg_id" not in keys or i < keys.index("tcg_id"), f"{where}: {flag} after tcg_id"
+
+
+def clearly_outlier(tcg, ck) -> bool:
+    """A TCGplayer price `tcg` the guard must have left out against Card
+    Kingdom's `ck` in the same finish, whatever rounding to cents hid."""
+    return num(tcg) and num(ck) and tcg >= OUTLIER_FLOOR + OUTLIER_SLACK \
+        and tcg > OUTLIER_RATIO * (ck + OUTLIER_SLACK) + OUTLIER_SLACK
+
+
+def clearly_not_outlier(tcg, ck) -> bool:
+    """A TCGplayer price the guard could not have left out (the opposite
+    test, with the same rounding allowance)."""
+    return not (num(tcg) and num(ck) and ck >= 0) or tcg < OUTLIER_FLOOR - OUTLIER_SLACK \
+        or tcg < OUTLIER_RATIO * (ck - OUTLIER_SLACK) - OUTLIER_SLACK
+
+
+def _box_finish_prices() -> dict:
+    """{(uuid, finish): (tcg, ck, updated_at)} over every box card file: the
+    TCGplayer and Card Kingdom retail of one printing in one finish, both
+    read in exactly that finish (scrape_prices.finish_prices)."""
+    out = {}
+    folder = ROOT / "cards" / "boxes"
+    for f in sorted(folder.glob("*.json")) if folder.is_dir() else ():
+        doc = _load(f)
+        for c, p in zip(doc.get("cards") or [], doc.get("prices") or []):
+            fins = [x for x in CARD_FINISHES if any(x in o for o in (c.get("odds") or {}).values())]
+            for x, pair in zip(fins, p):
+                if isinstance(pair, list) and len(pair) == 2:
+                    out[(c.get("uuid"), x)] = (pair[0], pair[1], doc.get("updated_at"))
+    return out
+
+
 def _card_file(rel: str) -> dict:
     """One card file (cards/decks or cards/boxes), strict JSON, with its two
     parallel lists checked to line up: prices[i] belongs to cards[i]."""
@@ -994,15 +1081,80 @@ def _price_pair(p, where: str):
         assert v is None or (num(v) and 0 < v < 100000 and round(v, 2) == v), f"{where}: price {v!r}"
 
 
+def _deck_outliers(rel: str, doc: dict, cr: dict, box_prices: dict):
+    """The outlier guard in a deck card list. A row's Card Kingdom price can
+    be in another finish than its TCGplayer price (Card Kingdom does not
+    sell that finish), so the rule is checked only where the finish is known:
+    each `outliers` record ({i, tcg, ck}, the prices the guard compared) is
+    an outlier and its row has no TCGplayer price; and a row whose printing
+    and finish a box card list of the same run also prices (both prices read
+    in that very finish) carries the box list's TCGplayer price and is not
+    an outlier against the box list's Card Kingdom price. No chase card
+    shows a price that was left out."""
+    rows, prices = doc["cards"], doc["prices"]
+    seen = []
+    for o in doc.get("outliers") or []:
+        where = f"{rel} outlier {o!r}"
+        assert isinstance(o, dict) and list(o) == ["i", "tcg", "ck"], f"{where}: keys"
+        i = o["i"]
+        assert isinstance(i, int) and not isinstance(i, bool) and 0 <= i < len(rows), f"{where}: no such row"
+        assert not seen or i > seen[-1], f"{where}: rows not in order or listed twice"
+        seen.append(i)
+        assert num(o["tcg"]) and num(o["ck"]) and not clearly_not_outlier(o["tcg"], o["ck"]), \
+            f"{where}: ${o['tcg']} against ${o['ck']} is not over {OUTLIER_RATIO:g} times and at least ${OUTLIER_FLOOR:.2f}"
+        assert prices[i][0] is None, f"{where}: row {i} still has the TCGplayer price {prices[i][0]}"
+        for t in cr.get("top_cards") or []:
+            assert not (t.get("name") == rows[i]["name"] and abs(t.get("price", 0) - o["tcg"]) < 0.006), \
+                f"{where}: chase card {t['name']} shows the price left out"
+    for i, (r, p) in enumerate(zip(rows, prices)):
+        b = box_prices.get((r["uuid"], r["finish"]))
+        if not b or b[2] != doc["updated_at"]:
+            continue
+        where = f"{rel} row {i} ({r['name']}, {r['finish']})"
+        assert p[0] == b[0], f"{where}: TCGplayer {p[0]} but a box card list of the same run says {b[0]}"
+        assert not clearly_outlier(p[0], b[1]), \
+            f"{where}: TCGplayer ${p[0]} is over {OUTLIER_RATIO:g} times Card Kingdom's ${b[1]}, an outlier left in"
+
+
+def _deck_profile(rel: str, doc: dict, cr: dict, updated_at: str):
+    """crack[deck].profile (new cards and Game Changers) from the deck's own
+    card list: `new` is the qty of the rows marked new, `new_share` the
+    share of the crack TCGplayer total those rows carry (2 decimals, null
+    without a total), `gc` the sorted names of the rows marked gc. Every
+    deck whose list this run wrote has one."""
+    prof = cr.get("profile")
+    if prof is None:
+        assert cr.get("carried_from") or doc["updated_at"] != updated_at, \
+            f"{rel}: written by this run but its crack entry has no profile"
+        return
+    assert isinstance(prof, dict) and list(prof) == ["new", "new_share", "gc"], f"{rel}: profile keys {prof!r}"
+    rows, prices = doc["cards"], doc["prices"]
+    new = sum(r["qty"] for r in rows if r.get("new"))
+    assert prof["new"] == new, f"{rel}: profile.new {prof['new']}, the new rows hold {new} copies"
+    gc = sorted({r["name"] for r in rows if r.get("gc")})
+    assert prof["gc"] == gc, f"{rel}: profile.gc {prof['gc']}, the rows marked gc are {gc}"
+    total = cr.get("tcg")
+    if not total:
+        assert prof["new_share"] is None, f"{rel}: new_share {prof['new_share']} without a TCGplayer total"
+    else:
+        share = sum((p[0] or 0) * r["qty"] for r, p in zip(rows, prices) if r.get("new")) / total
+        assert num(prof["new_share"]) and 0 <= prof["new_share"] <= 1 and abs(prof["new_share"] - share) <= 0.0051, \
+            f"{rel}: new_share {prof['new_share']}, the new rows carry {share:.4f} of ${total}"
+
+
 def test_card_files_decks():
     """Deck card lists (cards/decks/<deck id>.json): every crack entry points
     at its file, the file lines up (one price line per card) and adds up to
-    the crack value: card count, both vendor totals, missing cards."""
+    the crack value: card count, both vendor totals, missing cards. The
+    outlier guard holds where the finish of both prices is known (see
+    _deck_outliers), and the crack profile counts the file's new cards and
+    Game Changers."""
     prices = load("prices.json")
     crack = prices.get("crack", {})
     folder = ROOT / "cards" / "decks"
     on_disk = {f.name for f in folder.iterdir()} if folder.is_dir() else set()
     pointed = set()
+    box_prices = _box_finish_prices()
     for did, cr in crack.items():
         rel = cr.get("cards_file")
         if rel is None:
@@ -1010,7 +1162,7 @@ def test_card_files_decks():
         assert rel == f"cards/decks/{did}.json", f"crack {did}: cards_file {rel!r}"
         pointed.add(rel.rsplit("/", 1)[1])
         doc = _card_file(rel)
-        assert list(doc) == DECK_FILE_KEYS, f"{rel}: keys {list(doc)}"
+        _file_keys(rel, doc, DECK_FILE_KEYS)
         assert doc["deck_id"] == did, f"{rel}: deck_id {doc['deck_id']!r}"
         if not cr.get("carried_from"):
             assert doc["updated_at"] == prices["updated_at"], f"{rel}: written by another run"
@@ -1023,6 +1175,7 @@ def test_card_files_decks():
             where = f"{rel} row {i}"
             _card_shared(r, where)
             _price_pair(p, where)
+            _flags(r, where, ("new", "gc"))
             assert r.get("finish") in CARD_FINISHES, f"{where}: finish"
             assert isinstance(r.get("qty"), int) and r["qty"] > 0, f"{where}: qty"
             qty += r["qty"]
@@ -1036,6 +1189,8 @@ def test_card_files_decks():
             if cr.get(key) is not None:
                 assert abs(total - cr[key]) < 0.01 and t[key] == cr[key], \
                     f"{rel}: {key} rows add up to {total:.2f}, crack says {cr[key]}"
+        _deck_outliers(rel, doc, cr, box_prices)
+        _deck_profile(rel, doc, cr, prices["updated_at"])
     stray = sorted(n for n in on_disk - pointed if not PENDING)
     assert not stray, f"deck card files nothing points at: {stray}"
     assert all(CARD_NAME_RE.match(n) for n in on_disk), f"odd names in cards/decks: {sorted(on_disk)}"
@@ -1045,7 +1200,10 @@ def test_card_files_boxes():
     """Box card lists (cards/boxes/<set code>.json): every pointer names a
     file and a kind in it; the price lines line up with the finishes that
     have odds; odds are probabilities; per kind the expected copies add up to
-    the pack size, and the cards worth $1 or more rebuild the published EV."""
+    the pack size, and the cards worth $1 or more rebuild the published EV.
+    Both prices of a price pair are in the same finish, so no pair holds a
+    TCGplayer outlier, and each `outliers` record is one whose card lost its
+    TCGplayer price."""
     prices = load("prices.json")
     folder = ROOT / "cards" / "boxes"
     on_disk = {f.name for f in folder.iterdir()} if folder.is_dir() else set()
@@ -1062,14 +1220,16 @@ def test_card_files_boxes():
             pointed.setdefault(rel, []).append((set_name, kind, r))
     for rel, users in pointed.items():
         doc = _card_file(rel)
-        assert list(doc) == BOX_FILE_KEYS, f"{rel}: keys {list(doc)}"
+        _file_keys(rel, doc, BOX_FILE_KEYS)
         assert {u[0] for u in users} == {doc["set"]}, f"{rel}: set {doc['set']!r} vs rows of {sorted({u[0] for u in users})}"
         kinds = doc["kinds"]
         uuids = set()
         price = {}
+        ck_of = {}
         for i, (c, p) in enumerate(zip(doc["cards"], doc["prices"])):
             where = f"{rel} card {i}"
             _card_shared(c, where)
+            _flags(c, where, ("gc",))
             assert c["uuid"] not in uuids, f"{where}: uuid twice"
             uuids.add(c["uuid"])
             odds = c.get("odds")
@@ -1079,10 +1239,27 @@ def test_card_files_boxes():
             for f, pair in zip(fins, p):
                 _price_pair(pair, where)
                 price[(c["uuid"], f)] = pair[0]
+                # Both prices are in this finish, so the guard always applies.
+                assert not clearly_outlier(pair[0], pair[1]), \
+                    f"{where} {f}: TCGplayer ${pair[0]} is over {OUTLIER_RATIO:g} times Card Kingdom's ${pair[1]}, an outlier left in"
+                ck_of[(c["uuid"], f)] = pair[1]
             for o in odds.values():
                 for f, v in o.items():
                     assert f in CARD_FINISHES and num(v.get("pack")) and num(v.get("copies")), f"{where}: odds {o}"
                     assert 0 < v["pack"] <= 1 and v["pack"] <= v["copies"] * (1 + 1e-5), f"{where}: odds {v}"
+        seen = set()
+        for o in doc.get("outliers") or []:
+            where = f"{rel} outlier {o!r}"
+            assert isinstance(o, dict) and list(o) == ["uuid", "finish", "tcg", "ck"], f"{where}: keys"
+            key = (o["uuid"], o["finish"])
+            assert key in price, f"{where}: no such card and finish in the file"
+            assert key not in seen, f"{where}: listed twice"
+            seen.add(key)
+            assert price[key] is None, f"{where}: the card still has the TCGplayer price {price[key]}"
+            assert num(o["tcg"]) and num(o["ck"]) and not clearly_not_outlier(o["tcg"], o["ck"]), \
+                f"{where}: ${o['tcg']} against ${o['ck']} is not over {OUTLIER_RATIO:g} times and at least ${OUTLIER_FLOOR:.2f}"
+            assert ck_of[key] is not None and abs(ck_of[key] - o["ck"]) < 0.006, \
+                f"{where}: Card Kingdom ${o['ck']} compared, the file lists {ck_of[key]} in that finish"
         for set_name, kind, r in users:
             k = kinds.get(kind)
             where = f"{rel} kind {kind}"
@@ -1100,6 +1277,261 @@ def test_card_files_boxes():
     names = {rel.rsplit("/", 1)[1] for rel in pointed}
     assert PENDING or on_disk == names, f"box card files nothing points at: {sorted(on_disk - names)}"
     assert all(CARD_NAME_RE.match(n) for n in on_disk), f"odd names in cards/boxes: {sorted(on_disk)}"
+
+
+def spread_step(p90) -> int:
+    """The rounding step of a row spread (scrape_prices.row_spread): $1 while
+    p90 is under $150, $5 under $1,500, else $10."""
+    return 1 if p90 < 150 else 5 if p90 < 1500 else 10
+
+
+def rounded_spread(full: dict) -> dict:
+    """A box row's spread from its box file's (scrape_prices.row_spread)."""
+    step = spread_step(full["p90"])
+    out = {p: int(math.floor(full[p] / step + 0.5) * step) for p in ("p10", "p50", "p90")}
+    out["boxes"] = full["boxes"]
+    return out
+
+
+def test_box_spread():
+    """Box EV spread (10,000 simulated boxes per box type). A box file's
+    kinds[kind].spread has its keys in order, ordered quantiles, a 20 bin
+    histogram that counts every box, and a mean within SPREAD_MEAN_SLACK of
+    the kind's EV. A prices.json row's spread (keys p10, p50, p90, boxes)
+    sits on a row with an EV and a pack count, is ordered and rounded by the
+    step rule, and equals its box file's spread rounded the same way. A row
+    with an EV but no spread is fine (the run skips the spread when its time
+    budget runs short)."""
+    prices = load("prices.json")
+    files = {}
+    for set_name, rows in prices.get("boxes", {}).items():
+        for r in rows:
+            where = f"box {set_name}/{r.get('type')}"
+            sp = r.get("spread")
+            full = None
+            rel, kind = r.get("cards_file"), r.get("cards_kind")
+            if isinstance(rel, str) and (ROOT / rel).is_file():
+                if rel not in files:
+                    files[rel] = _load(ROOT / rel)
+                    for kname, k in (files[rel].get("kinds") or {}).items():
+                        if "spread" in k:
+                            _check_file_spread(f"{rel} kind {kname}", k)
+                full = ((files[rel].get("kinds") or {}).get(kind) or {}).get("spread")
+            if sp is None:
+                continue
+            assert isinstance(sp, dict) and list(sp) == SPREAD_ROW_KEYS, f"{where}: spread keys {sp!r}"
+            assert all(isinstance(sp[k], int) and not isinstance(sp[k], bool) for k in SPREAD_ROW_KEYS), \
+                f"{where}: spread values must be whole numbers: {sp}"
+            assert 0 <= sp["p10"] <= sp["p50"] <= sp["p90"] and sp["boxes"] >= 1, f"{where}: spread out of order {sp}"
+            assert num(r.get("ev")) and r.get("packs"), f"{where}: a spread without an EV and a pack count"
+            # The step follows the unrounded p90, which can round up across a
+            # step boundary ($149.60 rounds to $150 at a step of $1).
+            steps = {spread_step(sp["p90"])} | ({1} if sp["p90"] == 150 else {5} if sp["p90"] == 1500 else set())
+            assert any(all(sp[k] % st == 0 for k in ("p10", "p50", "p90")) for st in steps), \
+                f"{where}: spread {sp} is not rounded to ${min(steps)}"
+            if r.get("carried_from"):
+                continue
+            assert full is not None, f"{where}: a spread, but its box file kind has none"
+            assert sp == rounded_spread(full), f"{where}: spread {sp}, its box file's rounds to {rounded_spread(full)}"
+
+
+def _check_file_spread(where: str, k: dict):
+    sp = k["spread"]
+    assert isinstance(sp, dict) and list(sp) == SPREAD_FILE_KEYS, f"{where}: spread keys {list(sp or {})}"
+    qs = [sp[q] for q in ("p10", "p25", "p50", "p75", "p90")]
+    assert all(num(v) and v >= 0 and round(v, 2) == v for v in qs + [sp["mean"]]), f"{where}: spread values {sp}"
+    assert qs == sorted(qs), f"{where}: quantiles out of order {qs}"
+    n = sp["boxes"]
+    assert isinstance(n, int) and not isinstance(n, bool) and n >= 1000, f"{where}: {n!r} simulated boxes"
+    bins = sp["bins"]
+    assert isinstance(bins, dict) and list(bins) == ["start", "width", "counts"], f"{where}: bins keys"
+    counts = bins["counts"]
+    assert num(bins["start"]) and num(bins["width"]) and bins["width"] > 0, f"{where}: bins {bins}"
+    assert isinstance(counts, list) and len(counts) == 20 and all(
+        isinstance(c, int) and not isinstance(c, bool) and c >= 0 for c in counts), f"{where}: bin counts"
+    assert sum(counts) == n, f"{where}: bins count {sum(counts)} boxes of {n}"
+    assert bins["start"] <= sp["p10"] + 0.01, f"{where}: histogram starts at {bins['start']}, above p10 {sp['p10']}"
+    assert num(k.get("ev")) and k["ev"] > 0, f"{where}: a spread without an EV"
+    assert abs(sp["mean"] / k["ev"] - 1) <= SPREAD_MEAN_SLACK, \
+        f"{where}: simulated mean ${sp['mean']} is more than {SPREAD_MEAN_SLACK:.0%} from the EV ${k['ev']}"
+
+
+def _sig4(v: float) -> float:
+    return float(f"{v:.4g}")
+
+
+def index_name(name: str) -> str:
+    """scrape_prices.index_name: a reversible card whose MTGJSON name repeats
+    its faces ("Blood Crypt // Blood Crypt") counts as one copy of them."""
+    faces = name.split(" // ")
+    half = len(faces) // 2
+    if len(faces) % 2 == 0 and faces[:half] == faces[half:]:
+        return " // ".join(faces[:half])
+    return name
+
+
+def _expected_box_index() -> dict:
+    """box_index.json rebuilt from the box card lists prices.json points at,
+    as scrape_prices.build_box_index builds it: for every kind a row points
+    at, each card name (index_name) and finish, the chance one pack holds
+    it; printings of one name in one file, kind and finish merge as
+    1 - prod(1 - pack), rounded to 4 significant digits."""
+    kinds_of = {}
+    for rows in load("prices.json").get("boxes", {}).values():
+        for r in rows:
+            rel = r.get("cards_file")
+            if isinstance(r.get("cards_kind"), str) and isinstance(rel, str) \
+                    and re.fullmatch(r"cards/boxes/[a-z0-9-]+\.json", rel) and (ROOT / rel).is_file():
+                kinds_of.setdefault(rel, set()).add(r["cards_kind"])
+    chance, names = {}, {}
+    for rel in sorted(kinds_of):
+        stem = Path(rel).stem
+        for c in _load(ROOT / rel).get("cards") or []:
+            name = index_name(c["name"])
+            key = norm(name)
+            for kind in sorted(kinds_of[rel]):
+                for fin, o in (c["odds"].get(kind) or {}).items():
+                    if fin not in CARD_FINISHES or not num(o.get("pack")) or o["pack"] <= 0:
+                        continue
+                    none = chance.setdefault(key, {})
+                    none[(stem, kind, fin)] = none.get((stem, kind, fin), 1.0) * (1 - min(o["pack"], 1.0))
+                    names.setdefault(key, set()).add(name)
+    cards = {key: {"name": min(names[key]),
+                   "in": sorted([s, k, f, _sig4(1 - none)] for (s, k, f), none in chance[key].items())}
+             for key in sorted(chance)}
+    aliases = {}
+    for key, e in cards.items():
+        if " // " in e["name"]:
+            front = norm(e["name"].split(" // ")[0])
+            if front and front not in cards and (front not in aliases or key < aliases[front]):
+                aliases[front] = key
+    return {"aliases": aliases, "cards": cards, "kinds_of": kinds_of}
+
+
+def _same_sig4(a, b) -> bool:
+    """Equal to 4 significant digits, allowing one unit in the last digit
+    (a sum of float products can round either way at a tie)."""
+    if a == b:
+        return True
+    unit = 10 ** (math.floor(math.log10(max(abs(a), abs(b)))) - 3)
+    return abs(a - b) <= unit * 1.0001
+
+
+def test_box_index():
+    """box_index.json (card to box index, built from the box card lists): if
+    present, header keys in order and under BOX_INDEX_MAX_BYTES; every card
+    key is norm of its name; every `in` entry [stem, kind, finish, pack]
+    names an existing box file and a kind a prices.json row points at, a
+    finish, and a chance in (0, 1], sorted and listed once; and the whole
+    index matches the box files' odds (_expected_box_index). Aliases map a
+    front face that is not a card key itself to its card's key."""
+    p = ROOT / "box_index.json"
+    if not p.exists():
+        return  # written by the scraper from the box card lists
+    assert p.stat().st_size <= BOX_INDEX_MAX_BYTES, f"box_index.json is {p.stat().st_size} bytes, over the commit cap"
+    idx = load("box_index.json")
+    assert isinstance(idx, dict) and list(idx) == ["schema", "aliases", "cards"] and idx["schema"] == 1, \
+        "box_index.json header must be schema, aliases, cards (schema 1)"
+    cards, aliases = idx["cards"], idx["aliases"]
+    assert isinstance(cards, dict) and cards and isinstance(aliases, dict), "box_index.json has no cards"
+    want = _expected_box_index()
+    pointed = {(Path(rel).stem, k) for rel, ks in want["kinds_of"].items() for k in ks}
+    for key, e in cards.items():
+        where = f"box_index {key!r}"
+        assert isinstance(e, dict) and list(e) == ["name", "in"], f"{where}: keys"
+        assert isinstance(e["name"], str) and norm(e["name"]) == key, f"{where}: name {e.get('name')!r}"
+        ins = e["in"]
+        assert isinstance(ins, list) and ins, f"{where}: no boxes"
+        for x in ins:
+            assert isinstance(x, list) and len(x) == 4, f"{where}: entry {x!r}"
+            stem, kind, fin, pack = x
+            assert isinstance(stem, str) and (ROOT / "cards" / "boxes" / f"{stem}.json").is_file(), \
+                f"{where}: box file {stem!r} does not exist"
+            assert (stem, kind) in pointed, f"{where}: no prices.json row points at kind {kind!r} of {stem}"
+            assert fin in CARD_FINISHES, f"{where}: finish {fin!r}"
+            assert num(pack) and 0 < pack <= 1 and _sig4(pack) == pack, f"{where}: pack chance {pack!r}"
+        heads = [x[:3] for x in ins]
+        assert heads == sorted(heads) and len({tuple(h) for h in heads}) == len(heads), \
+            f"{where}: entries not sorted or listed twice"
+    for front, key in aliases.items():
+        assert front not in cards and key in cards, f"box_index alias {front!r} -> {key!r}"
+        assert norm(cards[key]["name"].split(" // ")[0]) == front, f"box_index alias {front!r} is not the front face of {key!r}"
+    exp = want["cards"]
+    missing, extra = sorted(set(exp) - set(cards)), sorted(set(cards) - set(exp))
+    assert not (missing or extra), f"box_index cards differ from the box files: missing {missing[:5]}, extra {extra[:5]}"
+    wrong = []
+    for key, e in exp.items():
+        got = cards[key]
+        if got["name"] != e["name"] or [x[:3] for x in got["in"]] != [x[:3] for x in e["in"]] \
+                or not all(_same_sig4(a[3], b[3]) for a, b in zip(got["in"], e["in"])):
+            wrong.append(f"{key}: {got} != {e}")
+    assert not wrong, f"{len(wrong)} box_index cards do not match their box files' odds, e.g. {wrong[:2]}"
+    assert aliases == want["aliases"], \
+        f"box_index aliases differ from the box files: {sorted(set(aliases) ^ set(want['aliases']))[:5]}"
+
+
+def history_long_tracked(key: str, decks: set, sets: set, fmap: dict | None = None) -> bool:
+    """Is a history_long.json series key one the daily run keeps? Deck keys
+    name a deck in decks.json (formerIds mapped when `fmap` is given), box
+    keys a tracked set, bundle keys are checked by pattern only."""
+    kind, _, rest = key.partition(":")
+    if kind == "deck":
+        return (fmap or {}).get(rest, rest) in decks
+    if kind == "box":
+        return box_key_parts(rest)[0] in sets
+    return kind == "bundle"
+
+
+def test_history_long():
+    """history_long.json (one TCGplayer Market point a week since 2024): if
+    present, under HISTORY_LONG_MAX_BYTES, header keys in order; series keys
+    'deck:<id in decks.json>', 'box:<tracked set>::<type>' or
+    'bundle:<slug>-bundle'; each series a non empty list of [date, price]
+    with real dates ascending at least HISTORY_LONG_MIN_GAP_DAYS apart,
+    none before HISTORY_LONG_FIRST or after the run, and prices positive
+    and in cents."""
+    p = ROOT / "history_long.json"
+    if not p.exists():
+        return  # the first daily run starts it
+    assert p.stat().st_size <= HISTORY_LONG_MAX_BYTES, \
+        f"history_long.json is {p.stat().st_size} bytes, over the commit cap"
+    doc = load("history_long.json")
+    assert isinstance(doc, dict) and list(doc) == ["schema", "source", "series"] and doc["schema"] == 1 \
+        and isinstance(doc["source"], str) and doc["source"], "history_long.json header must be schema, source, series"
+    series = doc["series"]
+    assert isinstance(series, dict) and series, "history_long.json has no series"
+    assert list(series) == sorted(series), "history_long.json series keys are not sorted"
+    decks, sets = set(decks_by_id()), box_sets()
+    last_day = parse_utc(load("prices.json")["updated_at"]).date() + timedelta(days=1)
+    stale = []
+    for key, pts in series.items():
+        where = f"history_long {key}"
+        kind, _, rest = key.partition(":")
+        if kind == "deck":
+            assert re.fullmatch(r"[a-z0-9-]+", rest), f"{where}: bad deck id"
+        elif kind == "box":
+            set_name, box_type, archived = box_key_parts(rest)
+            assert set_name and box_type in BOX_KINDS and archived is None, f"{where}: bad box key"
+        else:
+            assert HISTORY_LONG_BUNDLE_KEY.fullmatch(key), f"{where}: not a deck, box or bundle key"
+        if not history_long_tracked(key, decks, sets):
+            stale.append(key)
+        assert isinstance(pts, list) and pts, f"{where}: no points"
+        prev = None
+        for pt in pts:
+            assert isinstance(pt, list) and len(pt) == 2 and isinstance(pt[0], str) \
+                and _ISO_DAY.fullmatch(pt[0]), f"{where}: bad point {pt!r}"
+            day = date.fromisoformat(pt[0])
+            assert HISTORY_LONG_FIRST <= pt[0] and day <= last_day, f"{where}: point dated {pt[0]} out of range"
+            assert num(pt[1]) and 0 < pt[1] < 100000 and round(pt[1], 2) == pt[1], f"{where} {pt[0]}: price {pt[1]!r}"
+            if prev is not None:
+                assert day > prev, f"{where}: dates not ascending ({prev} then {pt[0]})"
+                assert (day - prev).days >= HISTORY_LONG_MIN_GAP_DAYS, \
+                    f"{where}: {prev} and {pt[0]} are under {HISTORY_LONG_MIN_GAP_DAYS} days apart"
+            prev = day
+    # The daily run drops series of decks and sets that left the catalog; a
+    # catalog edit is allowed to wait for it under --pending-scrape.
+    ids_must_match("history_long series", extra=stale)
 
 
 def test_keywords_file():
@@ -1124,9 +1556,27 @@ def test_keywords_file():
             re.compile(t["pattern"])
 
 
+def check_ck_offer(where: str, rec: dict, buy: str, qty: str, retail: str):
+    """A Card Kingdom sealed offer: `buy` is its live cash offer, set only
+    while Card Kingdom buys (null otherwise), with `qty` the most copies it
+    takes (an integer of at least 1, present only alongside the offer), and
+    below Card Kingdom's own retail price when both exist (an offer at or
+    above it is stale and the scraper leaves it out)."""
+    b = rec.get(buy)
+    if b is None:
+        assert qty not in rec, f"{where}: {qty} {rec[qty]!r} without a {buy} offer"
+        return
+    assert num(b) and b > 0, f"{where}: bad {buy} {b!r}"
+    n = rec.get(qty)
+    assert isinstance(n, int) and not isinstance(n, bool) and n >= 1, f"{where}: {buy} ${b} with {qty} {n!r}"
+    if num(rec.get(retail)):
+        assert b < rec[retail], f"{where}: {buy} ${b} is not below Card Kingdom's retail ${rec[retail]}"
+
+
 def test_vendors_cardkingdom():
     """CK vendor map (re-enabled via CK's public pricelist API): keys are real
-    deck ids; price positive-or-null; url present; status from a known set."""
+    deck ids; price positive or null; url present; status from a known set;
+    a live sealed offer has its quantity (check_ck_offer)."""
     prices = load("prices.json")
     deck_ids = set(decks_by_id())
     ck = prices["vendors"].get("cardkingdom", {})
@@ -1141,16 +1591,16 @@ def test_vendors_cardkingdom():
         p = e.get("price")
         if p is not None:
             assert num(p) and p > 0, f"CK {did} bad price {p}"
-        if e.get("buy") is not None:
-            assert num(e["buy"]) and e["buy"] >= 0, f"CK {did} bad buy"
+        check_ck_offer(f"CK {did}", e, "buy", "buy_qty", "price")
         if e.get("qty") is not None:
             assert isinstance(e["qty"], int) and e["qty"] >= 0, f"CK {did} bad qty"
 
 
 def test_boxes_ck():
     """CK box prices (when present): positive number; qty int>=0; url on
-    www.cardkingdom.com and, for a product page, the row's booster kind; in
-    the same ballpark as TCG per box and across boxes."""
+    www.cardkingdom.com and, for a product page, the row's booster kind; a
+    live sealed offer has its quantity (check_ck_offer); in the same ballpark
+    as TCG per box and across boxes."""
     prices = load("prices.json")
     ratios = []
     for set_name, rows in prices.get("boxes", {}).items():
@@ -1167,8 +1617,7 @@ def test_boxes_ck():
                 if r.get("kind") and path.startswith("/mtg-sealed/"):
                     assert names_kind(path.rsplit("/", 1)[-1], r["kind"]), \
                         f"{where}: CK product {path} is not the row's {r['kind']} booster box"
-            if r.get("ck_buy") is not None:
-                assert num(r["ck_buy"]) and r["ck_buy"] >= 0, f"{where} bad ck_buy {r['ck_buy']}"
+            check_ck_offer(where, r, "ck_buy", "ck_buy_qty", "ck_price")
             # Sanity: CK retail and TCG market should be in the same ballpark
             # (a mismatched product would be wildly off). Observed 0.78 to 2.05.
             if r.get("ck_price") is not None and r.get("price"):
@@ -1246,7 +1695,8 @@ def test_no_markup_in_generated_text():
                 yield from walk(v, f"{where}[{i}]")
         elif isinstance(x, str) and _UNSAFE_TEXT.search(x):
             yield f"{where}: {x[:60]!r}"
-    for name in ("prices.json", "cards_index.json", "prices_history.json"):
+    for name in ("prices.json", "cards_index.json", "prices_history.json", "box_index.json",
+                 "history_long.json"):
         if (ROOT / name).exists():
             bad = list(walk(load(name), name))
             assert not bad, f"{len(bad)} strings with markup or control characters, e.g. {bad[:3]}"
@@ -1632,6 +2082,8 @@ def gate_coverage():
     boxes = set(prices.get("boxes", {})) & box_sets()
     assert (ROOT / "cards_index.json").exists(), "cards_index.json missing"
     index = len(load("cards_index.json").get("cards", {}))
+    if any(r.get("cards_file") for rows in prices.get("boxes", {}).values() for r in rows):
+        assert (ROOT / "box_index.json").exists(), "box_index.json missing although box rows point at card lists"
     print(f"  coverage: {tcg} TCG, {ck} CK, {full}/{len(crack)} crack fully priced, "
           f"{len(boxes)}/{len(wanted_sets)} box sets ({len(box_sets())} tracked), {index} index cards "
           f"({n} decks, {released} released, in {len(catalog_sets())} sets)")
@@ -1716,7 +2168,8 @@ def gate_upstream_fresh():
 def gate_vs_previous(prev_dir: Path):
     """Compare with the last committed run. Previous ids are mapped through
     formerIds, and every count covers only decks and sets that are in
-    decks.json now, so a deliberate catalog edit never reads as a drop."""
+    decks.json now, so a deliberate catalog edit never reads as a drop.
+    history_long.json may lose at most MAX_HISTORY_LONG_DROP of its points."""
     prev_path = prev_dir / "prices.json"
     if not prev_path.exists():
         print("  no previous prices.json, skipping the drift check")
@@ -1779,6 +2232,18 @@ def gate_vs_previous(prev_dir: Path):
                     cause="history was likely reset" + (f" (this run applied {new_migrations})" if new_migrations else ""))
         if new_migrations:
             print(f"  history migrations applied this run: {new_migrations}")
+    l_prev = prev_dir / "history_long.json"
+    if l_prev.exists():
+        # Points of series the daily run keeps (decks mapped through
+        # formerIds, tracked box sets, every bundle), so a catalog edit that
+        # drops whole series is not a loss.
+        def points(doc):
+            return sum(len(s) for k, s in ((doc or {}).get("series") or {}).items()
+                       if isinstance(s, list) and history_long_tracked(k, current, sets, fmap))
+        was = points(_load(l_prev))
+        now = points(load("history_long.json")) if (ROOT / "history_long.json").exists() else 0
+        no_drop("history_long.json weekly points", was, now, limit=MAX_HISTORY_LONG_DROP,
+                cause="the long history was likely reset or replaced")
     assert not problems, "; ".join(problems)
     print("  drift vs previous run: ok")
 
