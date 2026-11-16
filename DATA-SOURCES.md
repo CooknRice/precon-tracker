@@ -241,8 +241,10 @@ run, about 150 requests; caching it is deferred (see the log).
   `outliers` (`[{"i": 60, "tcg": 31.53, "ck": 0.79}]`: row, TCGplayer price,
   Card Kingdom price compared); a box card list as `[{"uuid", "finish",
   "tcg", "ck"}]`. The key is there only when something was left out. The page
-  shows "n/a" for that TCGplayer price with a note saying what TCGplayer
-  lists and why it is left out. A deck row's own Card Kingdom price can be in
+  shows "n/a" for that TCGplayer price with a note giving the price matched
+  to the card, Card Kingdom's price in the same finish, and why it is left
+  out; it never says the printing is listed at that price, since the match
+  can be the wrong product (above). A deck row's own Card Kingdom price can be in
   another finish than the one compared (Card Kingdom does not sell every
   finish), so the note quotes the prices from the `outliers` entry.
 
@@ -354,13 +356,18 @@ value and the box EV use, so they add up to those numbers.
   line. A card key is the card name in lowercase letters and digits only (the
   same `norm` key `cards_index.json` uses). Each card lists `in`: `[box file
   stem, kind, finish, chance one pack holds it]`, to 4 significant digits,
-  for every kind a `prices.json` box row points at. `aliases` maps the front
+  for every kind a `prices.json` box row points at, with a fifth value, the
+  expected copies per pack, when that differs from the chance (a pack can
+  hold several copies: a Lord of the Rings Jumpstart pack holds 1.6 Plains
+  on average over its two printings, while the chance of any is 0.36).
+  Without a fifth value the expected copies equal the chance. `aliases` maps the front
   face of a multi face card ("A // B") to its full name key, when that front
   face is not a card key itself.
 - **Merging**: several printings of one name in the same file, kind and
   finish (a regular and a showcase printing, say) become one entry with the
   chance `1 - (1 - a)(1 - b)`; the exact chance lies between that and `a + b`,
-  under about 1.5% apart at these odds. Reversible cards whose MTGJSON name
+  under about 1.5% apart at these odds. Their expected copies add up
+  exactly. Reversible cards whose MTGJSON name
   repeats the faces ("Blood Crypt // Blood Crypt") are indexed under one copy
   of the faces, so they join the card's other printings.
 - **Finish** is the priced finish the box file lists the entry under, so a
@@ -369,8 +376,8 @@ value and the box EV use, so they add up to those numbers.
   `cards_kind`) and shows `1 - (1 - pack) ** packs` per box. Mystery Booster
   Commander Edition has no MTGJSON pack count, so its entries show the chance
   per pack only.
-- **Size**: about 2.16 MB raw (13,513 cards, 39,588 box kind entries and 566
-  aliases on 2026-11-15). The page loads it only when the staple finder or
+- **Size**: about 2.25 MB raw (13,513 cards, 39,588 box kind entries, 11,694
+  of them with expected copies, and 566 aliases on 2026-11-15). The page loads it only when the staple finder or
   the want list planner asks for it.
 
 ---
@@ -441,7 +448,12 @@ value and the box EV use, so they add up to those numbers.
   cards one by one. The two models give nearly the same mean (a reviewer
   measured a difference of at most 0.28%), and with sampling noise the
   simulated mean was within 1.4% of the EV for all 70 box types on
-  2026-11-15. A test fails any box type more than 3% apart.
+  2026-11-15. A test fails a box type whose mean is further from the EV
+  than 0.5% plus 5 standard errors of its own simulated mean, worked out
+  from the box file (1.4% to 12.4% on 2026-11-15). A fixed 3% was inside
+  the noise of Hobbit collector boxes, where one $24,500 foil Smaug in 1 of
+  500 boxes moves the mean of 10,000 boxes by about 2%, so a one cent price
+  change elsewhere failed the test.
 - **What the page says**: "Typical box ≈ $89 · 8 in 10 between $56 and $147
   (simulated)", labelled TCGplayer retail before fees, with a small histogram
   and a "How this is worked out" panel. It never shows a chance of profit or
@@ -720,8 +732,11 @@ history: its pricelist only ever gives today's prices.
 ## Share links and what stays in your browser
 
 - **Share links**: `?deck=<id>` opens that deck's card list, and
-  `?deck=<id>&view=chart` its price chart; `?box=<set code>:<kind>` opens a
-  box type's card list (`&view=chart` its chart). Renamed decks resolve
+  `?deck=<id>&view=chart` its price chart; `?box=<stem>:<kind>` opens a box
+  type's card list, where `<stem>` is the name of its box card file
+  (`cards/boxes/<stem>.json`, so `?box=fin:play`), and `&view=chart` its
+  chart; `?card=<key>` opens "Where to get" for a card, by its index key
+  (lowercase letters and digits). Renamed decks resolve
   through `formerIds`; an unknown id shows a short notice instead of a blank
   page. Every card list and chart has a "Copy link" button, and Back closes
   a dialog opened this way. The filter parameters keep working as before.
@@ -781,9 +796,11 @@ history: its pricelist only ever gives today's prices.
   this run, upstream freshness (a TCGCSV older than 3 days blocks the commit; a
   MTGJSON older than 7 days only warns, because crack and EV values carry
   forward), and no sharp drop against the last run. History is compared over
-  its last 60 days, so trimming and one off migrations pass, and
-  `history_long.json` may lose at most 10% of the weekly points of the series
-  still tracked.
+  its last 60 days, so trimming and one off migrations pass. In
+  `history_long.json` every series still tracked (a renamed deck under its
+  new id) must still be there and start with all of its old points, since
+  the daily run only appends; a run that drops or moves series without
+  adding a point still saves the file.
 - **Coverage floors scale with the catalog**, so adding or removing decks never
   blocks the scheduled runs: TCGplayer and Card Kingdom prices on at least 84%
   of decks, fully priced crack entries on at least 90% of released decks
@@ -813,13 +830,16 @@ history: its pricelist only ever gives today's prices.
   same run proves the finish), and every `outliers` entry is one; a Card
   Kingdom offer has its quantity and sits below Card Kingdom's retail; spread
   quantiles are ordered, rounded by the step rule, equal between the row and
-  its box file, and the simulated mean is within 3% of the EV; each deck
+  its box file, and the simulated mean is within its allowance of the EV
+  (above); each deck
   profile matches its card list; `box_index.json` matches the box files' odds
-  exactly as the scraper merges them; `history_long.json` keys are tracked
+  and copies exactly as the scraper merges them; `history_long.json` keys are tracked
   decks, tracked box sets or bundle ids, with dates ascending at least 6 days
   apart from 2024-02-09 on and prices in cents.
 - `validate.yml` runs on every push to main and every pull request without
-  scraping: catalog checks, data tests in `--pending-scrape` mode, the page
+  scraping: catalog checks, data tests in `--pending-scrape` mode (where
+  data written before a newer field existed, such as Card Kingdom offer
+  quantities or deck profiles, waits for the next scrape), the page
   shell check (`--page`: the CSP hash of the inline script, and that every
   file the manifest and service worker name exists), py_compile, and a syntax
   check of the page script, `sw.js` and the manifest. It is the fast signal

@@ -11,7 +11,7 @@
      exact text between its opening and closing tags), or the browser refuses
      to run the app. A remote prices URL (LIVE_PRICES_REMOTE_URL) would also
      need adding to connect-src. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-GGvZ+fdGViT9N8WWUt/l/FfGLPAijInshPT3BIq5HFk='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://cards.scryfall.io; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Ws9SJA+Tj4SvFnf4mjp9s/YU8TIF9sEO3V3eY1nr7UI='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://cards.scryfall.io; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>MTG Tracker · Commander Precon, Sealed Box & Bundle Prices</title>
 <meta name="description" content="Daily prices for Magic: The Gathering Commander precons since 2021, preorders included, their set bundles, and sealed booster boxes from those sets and a few more, checked at TCGplayer and Card Kingdom, with price history and buy signals.">
@@ -628,6 +628,11 @@ footer a { color: var(--gold-bright); text-decoration: none; }
 .footer-note { margin-top: 8px; text-transform: none; letter-spacing: 0.02em; line-height: 1.6; max-width: 900px; }
 footer a:hover { text-decoration: underline; color: var(--burgundy); }
 
+/* Between the phone layout and a wide screen the five auto columns need
+   about 900 px and overflowed (889 px of page at 768): let the groups wrap. */
+@media (max-width: 1000px) {
+  .filters { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+}
 @media (max-width: 720px) {
   .wrap { padding: 20px 16px 60px; }
   .filters { grid-template-columns: 1fr; }
@@ -1964,11 +1969,17 @@ main:focus { outline: none; }
 .cv-btn:disabled:hover { border-color: var(--ink-faded); color: var(--ink-soft); }
 .copy-scratch { position: fixed; top: 0; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 
-/* Notice for a share link that names nothing on the page. */
+/* Notice for a share link that names nothing on the page. It floats over
+   the top of the page, out of the flow, so showing it after the first
+   paint moves nothing (it was a layout shift of about 0.09). Above the
+   compare bar, below the dialogs. */
 .link-notice {
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px;
   background: var(--surface); border: 1px solid var(--gold); border-radius: var(--radius-sm);
-  padding: 10px 14px; margin-bottom: 16px; font-size: 13px; color: var(--ink);
+  padding: 10px 14px; font-size: 13px; color: var(--ink);
+  position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 60;
+  width: max-content; max-width: min(640px, calc(100% - 32px)); box-sizing: border-box;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
 }
 
 /* Since your last visit: a quiet strip with a gold edge, one line per change. */
@@ -1979,6 +1990,7 @@ main:focus { outline: none; }
 .since-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
 .since-head { font-family: var(--font-ui); font-weight: 600; color: var(--ink-soft); }
 .since-dismiss { padding: 6px 12px; }
+.since-more { margin-top: 8px; padding: 6px 12px; }
 .since-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
 .since-list li { font-size: 13px; line-height: 1.5; color: var(--ink-soft); overflow-wrap: anywhere; }
 .since-open {
@@ -2358,14 +2370,18 @@ a.fd-price:hover { text-decoration: underline; }
 <div id="staleBanner" class="stale-banner" role="status"></div>
 <div id="storageBanner" class="stale-banner" role="status"></div>
 <!-- Filled by renderSinceStrip() once the price history is in, when the
-     previous visit (precon-lastvisit) is a day old or more. -->
+     previous visit (precon-lastvisit, or precon-prevvisit on a later load the
+     same day) is a day old or more. It stays here, above the stats: at the
+     top of main it would push the page down after the first paint (a
+     layout shift of 0.16 at 1280 by 800). -->
 <section id="sinceStrip" class="since-strip" aria-labelledby="sinceHead" hidden>
   <div class="since-top">
     <h2 class="section-head since-head" id="sinceHead">Since your last visit</h2>
     <button type="button" class="cv-btn since-dismiss" id="sinceDismiss">Dismiss<span class="sr-only"> the changes since your last visit</span></button>
   </div>
   <ul class="since-list" id="sinceList"></ul>
-  <p class="since-note"><span id="sinceMore" hidden></span> Recorded prices for the decks you watch or own and the boxes you own, worked out in this browser.</p>
+  <button type="button" class="cv-btn since-more" id="sinceMore" hidden></button>
+  <p class="since-note">Recorded prices for the decks you watch or own and the boxes you own, worked out in this browser.</p>
 </section>
 <section class="stats" aria-labelledby="statsHead">
   <h2 class="sr-only" id="statsHead" tabindex="-1">At a glance</h2>
@@ -2375,7 +2391,7 @@ a.fd-price:hover { text-decoration: underline; }
     <div class="stat-sub" id="statSets">&nbsp;</div>
   </div>
   <div class="stat">
-    <div class="stat-label">On your shelf</div>
+    <div class="stat-label">Decks owned</div>
     <div class="stat-val" id="statOwned">…</div>
     <div class="stat-sub" id="statOwnedValue">&nbsp;</div>
   </div>
@@ -2404,6 +2420,8 @@ a.fd-price:hover { text-decoration: underline; }
   <p class="col-status" id="collectionStatus" role="status"></p>
   <p class="col-hint">Mark a deck with ✓ on its card, and a box or a set bundle with its Own button. Your collection is saved only in this browser: <a href="#savedData">back it up</a>.</p>
 </section>
+<!-- Says so when the last item is removed and the panel above goes. -->
+<p class="sr-only" id="collectionGone" role="status"></p>
 
 <section class="filters" aria-labelledby="filtersHead">
   <h2 class="sr-only" id="filtersHead">Filter decks</h2>
@@ -2554,6 +2572,7 @@ a.fd-price:hover { text-decoration: underline; }
       <button type="button" class="range-btn active" data-range="all" aria-pressed="true" aria-label="All history">All</button>
     </div>
     <div class="dlg-actions">
+      <button type="button" class="cv-btn dlg-return" id="chartBack" hidden></button>
       <button type="button" class="cv-btn" id="chartCopyLink">Copy link</button>
       <span class="dlg-status" id="chartCopyStatus" role="status"></span>
     </div>
@@ -2565,6 +2584,9 @@ a.fd-price:hover { text-decoration: underline; }
     <!-- The weekly history before the daily window: what it is, or its
          loading and error states (renderChart). -->
     <p class="chart-note chart-long" id="chartLong" tabindex="-1" hidden><span id="chartLongText"></span> <button type="button" class="cv-btn chart-retry" id="chartLongRetry" hidden>Try again</button></p>
+    <!-- Says when the weekly history starts loading, fails or comes in (the
+         note above is not a live region, since it holds a button). -->
+    <span class="sr-only" id="chartLongLive" role="status"></span>
   </div>
 </div>
 
@@ -2596,6 +2618,7 @@ a.fd-price:hover { text-decoration: underline; }
     </div>
     <!-- Filled by fillCardActions(): the deck only parts hide for a box. -->
     <div id="cvActions" class="dlg-actions cv-actions">
+      <button type="button" class="cv-btn dlg-return" id="cvBack" hidden></button>
       <button type="button" class="cv-btn" id="cvCopyLink">Copy link</button>
       <button type="button" class="cv-btn" id="cvCopyList" hidden>Copy decklist</button>
       <a class="cv-link" id="cvEdhrec" href="#" target="_blank" rel="noopener noreferrer" hidden>Commander page on EDHREC<span class="sr-deck sr-only"></span> →</a>
@@ -2793,6 +2816,7 @@ a.fd-price:hover { text-decoration: underline; }
     if (closed.id === "cardsModal") cardListClosed();
     if (closed.id === "chartModal") chartSpec = null;
     if (closed.id === "findModal") finderClosed();
+    nextReturn = dialogReturn = returnFk = null;
     restoreFocus();
     if (!closingFromHistory) leaveDialogEntry();
   }
@@ -3642,7 +3666,7 @@ a.fd-price:hover { text-decoration: underline; }
     if (p.new === 0) bits.push("All reprints");
     else {
       const share = typeof p.new_share === "number" && p.new_share >= 0 && p.new_share <= 1 ? Math.round(p.new_share * 100) : null;
-      bits.push(`${p.new} new ${p.new === 1 ? "card" : "cards"}${share != null ? ` · ${share}% of singles value` : ""}`);
+      bits.push(`${p.new} new ${p.new === 1 ? "card" : "cards"}${share != null ? ` · ${share}% of TCGPlayer singles value` : ""}`);
     }
     const gc = (Array.isArray(p.gc) ? p.gc : []).filter(n => typeof n === "string" && n.trim());
     if (gc.length) bits.push(`${gc.length} Game ${gc.length === 1 ? "Changer" : "Changers"} <span class="profile-names">(${gc.map(escapeHtml).join(", ")})</span>`);
@@ -3880,7 +3904,7 @@ a.fd-price:hover { text-decoration: underline; }
 
   // The sentence under the chart about the weekly points, or their loading
   // and error states. { text, retry }.
-  function longNoteOf(points) {
+  function longNoteOf(points, tcgOnly = false) {
     const x = chartExtra;
     if (!x.long) return { text: "", retry: false };
     if (LONG.state === "loading" || LONG.state === "idle") return { text: "Loading the weekly price history from TCGCSV's archive…", retry: false };
@@ -3890,8 +3914,10 @@ a.fd-price:hover { text-decoration: underline; }
     const bits = [];
     if (x.longNote) bits.push(x.longNote);
     else if (x.from != null && points.some(p => p.weekly)) {
-      bits.push(`One point a week before ${fmtChartDate(isoFromDay(x.from), "year")}, from TCGCSV's archive of TCGPlayer Market prices; the daily recorded prices take over from there.`);
-      if (x.ckNote) bits.push("Card Kingdom has no price history that far back.");
+      bits.push(tcgOnly
+        ? `One point a week before ${fmtChartDate(isoFromDay(x.from), "year")}, from TCGCSV's archive of TCGPlayer Market prices; the daily recorded TCGPlayer Market price takes over from there, so the whole line and its change are TCGPlayer Market.`
+        : `One point a week before ${fmtChartDate(isoFromDay(x.from), "year")}, from TCGCSV's archive of TCGPlayer Market prices; the daily recorded prices take over from there.`);
+      if (x.ckNote) bits.push(tcgOnly ? "Card Kingdom has no price history that far back, so this range leaves it out; the shorter ranges show the best recorded price across vendors." : "Card Kingdom has no price history that far back.");
     }
     if (bits.length && points.some(p => p.weekly && p.gap)) bits.push("A break in the line is a week with no Market price.");
     return { text: bits.join(" "), retry: false };
@@ -3901,17 +3927,6 @@ a.fd-price:hover { text-decoration: underline; }
     const wrap = $("chartCanvasWrap");
     const empty = $("chartEmpty");
     const all = chartCurrentPoints || [];
-    const points = windowPoints(all, chartCurrentRange);
-    const real = realPts(points);
-    const buy = chartCurrentBuy;
-    const noteEl = $("chartNote");
-    const noteText = [buy ? buyNoteText(buy, real.length >= 2) : "", chartCurrentNote].filter(Boolean).join(" ");
-    noteEl.hidden = !noteText;
-    noteEl.textContent = noteText;
-    const ln = longNoteOf(points);
-    $("chartLong").hidden = !ln.text;
-    $("chartLongText").textContent = ln.text;
-    $("chartLongRetry").hidden = !ln.retry;
     // A range that would draw the same chart as All is disabled, not
     // hidden, so the row of buttons never moves. While the weekly history
     // is loading, the ranges past the daily window wait for it.
@@ -3919,8 +3934,11 @@ a.fd-price:hover { text-decoration: underline; }
     const endDay = dayNum(HIST_REF) ?? (all.length ? all[all.length - 1].day : null);
     const firstDay = allReal.length ? allReal[0].day : null;
     const waiting = chartExtra.long && (LONG.state === "loading" || LONG.state === "idle");
+    const hadFocus = document.activeElement;
+    let allBtn = null, moveFocus = false;
     for (const b of document.querySelectorAll("#chartModal .range-btn")) {
       if (b.dataset.range === "all") {
+        allBtn = b;
         b.title = firstDay != null ? `All recorded history, from ${fmtChartDate(isoFromDay(firstDay), "year")}` : "All recorded history";
         continue;
       }
@@ -3929,7 +3947,43 @@ a.fd-price:hover { text-decoration: underline; }
       const off = same && !(waiting && days > (HIST_WINDOW || 90));
       b.disabled = off;
       b.title = off ? "Same as All: the recorded history is shorter than this" : "";
+      // The range on show turned into "same as All" (chosen while the
+      // weekly file loaded): show All, pressed, and keep the keyboard on it.
+      if (off && b.dataset.range === String(chartCurrentRange)) {
+        chartCurrentRange = "all";
+        b.classList.remove("active");
+        b.setAttribute("aria-pressed", "false");
+        if (hadFocus === b) moveFocus = true;
+      }
     }
+    if (chartCurrentRange === "all" && allBtn) {
+      allBtn.classList.add("active");
+      allBtn.setAttribute("aria-pressed", "true");
+      if (moveFocus) allBtn.focus({ preventScroll: true });
+    }
+    // A deck's line is the best recorded price across vendors, but the
+    // weekly archive is TCGPlayer Market only. A range that reaches into
+    // the weekly part draws its daily part from TCGPlayer Market too, so
+    // the line and its change measure one source.
+    let points = windowPoints(all, chartCurrentRange);
+    const tcgOnly = !!(chartExtra.tcgPoints && points.some(p => p.weekly));
+    if (tcgOnly) points = windowPoints(chartExtra.tcgPoints, chartCurrentRange);
+    $("chartSubtitle").textContent = tcgOnly && chartExtra.tcgSubtitle ? chartExtra.tcgSubtitle : chartBaseSubtitle;
+    const real = realPts(points);
+    const buy = chartCurrentBuy;
+    const noteEl = $("chartNote");
+    const noteText = [buy ? buyNoteText(buy, real.length >= 2) : "", chartCurrentNote].filter(Boolean).join(" ");
+    noteEl.hidden = !noteText;
+    noteEl.textContent = noteText;
+    const ln = longNoteOf(points, tcgOnly);
+    const live = $("chartLongLive"), loadingMsg = "Loading the weekly price history.";
+    const liveMsg = !chartExtra.long ? "" : waiting ? loadingMsg
+      : LONG.state === "error" ? "The weekly price history could not be loaded, so only the recorded daily prices show."
+      : live.textContent === loadingMsg ? "Weekly price history loaded." : live.textContent;
+    if (live.textContent !== liveMsg) live.textContent = liveMsg;
+    $("chartLong").hidden = !ln.text;
+    $("chartLongText").textContent = ln.text;
+    $("chartLongRetry").hidden = !ln.retry;
     // The big number is the price you can pay today, as on the card; the
     // change beside it is the plotted line's.
     const nowPrice = buy ? buy.price : real.length ? real[real.length - 1].price : null;
@@ -4124,6 +4178,7 @@ a.fd-price:hover { text-decoration: underline; }
     loadLongHistory().then(ok => {
       if (openModalEl === $("chartModal") && chartExtra.long) safely("chart", () => { refreshChartData(); renderChart(); });
       if (ok) safely("bundles", patchBundleCards);
+      if (ok) safely("collection trend", renderCollectionTrend);
     });
   }
   // One series as dated points, each checked, sorted, one per day.
@@ -4230,12 +4285,15 @@ a.fd-price:hover { text-decoration: underline; }
   // Shared modal opener: sets title/subtitle, range buttons, renders.
   // `spec` is the chart's share link form (see dialogParams), or null for a
   // chart with no link; `neutral` colors its change without a verdict.
+  let chartBaseSubtitle = "";
   function showChartModal(title, subtitle, dataFn, range, { spec = null, neutral = false } = {}) {
     chartDataFn = dataFn;
     chartNeutral = neutral;
     refreshChartData();
     chartCurrentRange = range;
     $("chartModalTitle").textContent = title;
+    chartBaseSubtitle = subtitle;
+    $("chartLongLive").textContent = "";
     $("chartSubtitle").textContent = subtitle;
     document.querySelectorAll("#chartModal .range-btn").forEach(b => {
       const on = b.dataset.range === String(range);
@@ -4247,7 +4305,7 @@ a.fd-price:hover { text-decoration: underline; }
     setDialogStatus("chartCopyStatus", "");
     openModal($("chartModal"), $("chartModalClose"));
     chartSpec = spec;
-    dialogOpened(spec || { t: "plain" });
+    dialogOpened(spec || { t: "plain" }, takeReturn());
     if (chartExtra.long) needLongHistory();
   }
   function refreshChartData() {
@@ -4256,7 +4314,8 @@ a.fd-price:hover { text-decoration: underline; }
     chartCurrentBuy = data.buy || null;
     chartCurrentNote = typeof data.note === "string" ? data.note : "";
     chartExtra = { long: !!data.long, from: data.from ?? null, msrp: data.msrp ?? null, release: data.release || null,
-                   longNote: data.longNote || "", longQuiet: !!data.longQuiet, ckNote: !!data.ckNote };
+                   longNote: data.longNote || "", longQuiet: !!data.longQuiet, ckNote: !!data.ckNote,
+                   tcgPoints: Array.isArray(data.tcgPoints) ? data.tcgPoints : null, tcgSubtitle: data.tcgSubtitle || "" };
   }
 
   function openChart(deckId, range = "all") {
@@ -4264,8 +4323,13 @@ a.fd-price:hover { text-decoration: underline; }
     if (!deck) return;
     showChartModal(deck.name, `${deck.set} · best recorded price across vendors`, () => {
       const long = deckLongPoints(deck);
+      // The same line from the recorded TCGPlayer Market price only, for the
+      // ranges that reach into the weekly archive (see renderChart).
+      const tcgDaily = historyPoints(deckSeries(deck), e => (e && typeof e.tcg === "number" ? e.tcg : null), isTracked(deck));
+      const tcgLong = withLongHistory(tcgDaily, deckLongKeys(deck));
       return { points: long.points, buy: buyAside(long.points, deckBuy(deck)), long: true, from: long.from,
-               msrp: deck.msrp, release: deck.releaseDate || null, ckNote: true };
+               msrp: deck.msrp, release: deck.releaseDate || null, ckNote: true,
+               tcgPoints: tcgLong.from != null ? tcgLong.points : null, tcgSubtitle: `${deck.set} · TCGPlayer Market price` };
     }, range, { spec: { t: "deck", id: deck.id, chart: true } });
   }
 
@@ -4840,9 +4904,12 @@ a.fd-price:hover { text-decoration: underline; }
       const [stem, kind, finish, pack] = it;
       if (typeof stem !== "string" || !/^[a-z0-9-]+$/.test(stem) || typeof kind !== "string" || !FINISHES.includes(finish)) continue;
       if (typeof pack !== "number" || !(pack > 0 && pack <= 1)) continue;
+      // A fifth value is the expected copies per pack, given when a pack
+      // can hold more than one (Jumpstart basics); else it equals the chance.
+      const per = typeof it[4] === "number" && Number.isFinite(it[4]) && it[4] >= pack && it[4] <= 30 ? it[4] : pack;
       const k = `${stem}:${kind}`;
       if (!by.has(k)) by.set(k, { stem, kind, finishes: [] });
-      by.get(k).finishes.push({ finish, pack });
+      by.get(k).finishes.push({ finish, pack, per });
     }
     const out = [];
     for (const t of by.values()) {
@@ -4850,7 +4917,7 @@ a.fd-price:hover { text-decoration: underline; }
       if (!hit) continue;
       const packs = Number.isInteger(hit.row.packs) && hit.row.packs > 0 ? hit.row.packs : null;
       const pack = 1 - t.finishes.reduce((a, f) => a * (1 - f.pack), 1);
-      const perPack = t.finishes.reduce((a, f) => a + f.pack, 0);
+      const perPack = t.finishes.reduce((a, f) => a + f.per, 0);
       out.push({ ...t, set: hit.set, row: hit.row, packs, pack,
                  box: packs ? 1 - Math.pow(1 - pack, packs) : null, copies: packs ? perPack * packs : null });
     }
@@ -4861,11 +4928,14 @@ a.fd-price:hover { text-decoration: underline; }
     const one = unit === "boxes" ? "box" : "pack";
     if (p >= 0.995) return `in nearly every ${one}`;
     if (p >= 0.095) return `in about ${Math.round(p * 100)}% of ${unit}`;
-    return `about 1 in ${Math.round(1 / p).toLocaleString("en-US")} ${unit}`;
+    // Two significant figures: the pack chances behind it are rounded and
+    // packs are taken as independent, so "1 in 3,133" claims too much.
+    return `about 1 in ${(+(1 / p).toPrecision(2)).toLocaleString("en-US")} ${unit}`;
   }
   function copiesText(c) {
+    if (c < 0.01) return "under 0.01 copies per box";
     const v = c >= 10 ? Math.round(c) : c >= 1 ? +c.toFixed(1) : +c.toPrecision(2);
-    return `about ${v.toLocaleString("en-US")} ${v === 1 ? "copy" : "copies"} per box`;
+    return `about ${v.toLocaleString("en-US", { maximumSignificantDigits: 2 })} ${v === 1 ? "copy" : "copies"} per box`;
   }
   const finishList = fins => fins.map(f => FINISH_LABEL[f.finish].toLowerCase()).join(" and ");
 
@@ -5003,9 +5073,10 @@ a.fd-price:hover { text-decoration: underline; }
     if (todo.length) {
       st.loading = true;
       drawFinder(host);
-      prog.textContent = `Loading ${todo.length} ${label}: 0 of ${todo.length}`;
+      const line = `Loading ${todo.length} ${label}`;
+      showProgress(prog, line, 0, todo.length);
       const r = await loadCardFilesLimited(todo, (done) => {
-        if (FINDERS.get(host.id)?.token === token) prog.textContent = `Loading ${todo.length} ${label}: ${done} of ${todo.length}`;
+        if (FINDERS.get(host.id)?.token === token) showProgress(prog, line, done, todo.length);
       });
       if (FINDERS.get(host.id)?.token !== token) return;
       st.loading = false;
@@ -5020,6 +5091,9 @@ a.fd-price:hover { text-decoration: underline; }
     if (!st) return;
     const key = st.key, decks = decksWithCard(key), types = boxTypesFor(key);
     const stems = [...new Set(types.map(t => t.stem))];
+    // Basic lands: the card index leaves them out, so "no precon holds it"
+    // would be wrong, and loading every box list for one is not worth it.
+    const basic = BASIC_KEYS.has(key);
     const $2 = v => `$${v.toFixed(2)}`;
     keepFinderFocus(host, () => {
       // Buy the single.
@@ -5029,7 +5103,9 @@ a.fd-price:hover { text-decoration: underline; }
       const best = cheapestPrinting(prints);
       const left = prints.filter(p => p.tcg == null && p.outlier).length;
       let single = `<h4 class="fd-label">Buy the single</h4>`;
-      if (best) {
+      if (basic && !best) {
+        single += `<p class="fd-note">A basic land: precons come with basic lands of their colors, so the finder does not price them.</p>`;
+      } else if (best) {
         const e = { name: best.p.name, tcg_id: best.p.tcg_id };
         const href = cardPriceHref(e, best.vendor);
         const vendor = best.vendor === "tcg" ? "TCGPlayer retail" : "Card Kingdom retail";
@@ -5054,7 +5130,7 @@ a.fd-price:hover { text-decoration: underline; }
       }
       const acts = [];
       if (decks.length > FINDER_AUTO_DECKS && !st.allDecks) acts.push(`<button type="button" class="cv-btn" data-fk="decks" data-fd-act="decks">Compare the printings in all ${decks.length} precon lists</button>`);
-      if (stems.length && !st.boxes) acts.push(`<button type="button" class="cv-btn" data-fk="boxes" data-fd-act="boxes">Also check ${stems.length === 1 ? "the box list" : `the ${stems.length} box lists`}</button><span class="fd-note">large files, up to about 1.3 MB each</span>`);
+      if (stems.length && !st.boxes && !basic) acts.push(`<button type="button" class="cv-btn" data-fk="boxes" data-fd-act="boxes">Also check ${stems.length === 1 ? "the box list" : `the ${stems.length} box lists`}</button><span class="fd-note">large files, up to about 1.3 MB each</span>`);
       if (acts.length) single += `<div class="fd-acts">${acts.join("")}</div>`;
       host.querySelector(".fd-single").innerHTML = single;
 
@@ -5062,8 +5138,8 @@ a.fd-price:hover { text-decoration: underline; }
       const rows = decks.map(d => { const bv = bestVendorPrice(d); return { d, ep: bv ? bv.best.price : null, vendor: bv ? bv.best.vendor : null }; })
         .sort((a, b) => (a.ep ?? Infinity) - (b.ep ?? Infinity) || a.d.name.localeCompare(b.d.name));
       const shown = st.moreDecks ? rows : rows.slice(0, 8);
-      let dh = `<h4 class="fd-label">Precons with it <span class="fd-count">${rows.length}</span></h4>`;
-      if (!rows.length) dh += `<p class="fd-note">No precon we track lists this card today.</p>`;
+      let dh = `<h4 class="fd-label">Precons with it ${basic && !rows.length ? "" : `<span class="fd-count">${rows.length}</span>`}</h4>`;
+      if (!rows.length) dh += `<p class="fd-note">${basic ? "Precons come with basic lands of their colors; the card index leaves them out." : "No precon we track lists this card today."}</p>`;
       dh += shown.map(({ d, ep, vendor }) => {
         const file = loadedDeckFile(d);
         const own = file ? cheapestPrinting(cardPrintings(key, [d])) : null;
@@ -5096,7 +5172,7 @@ a.fd-price:hover { text-decoration: underline; }
             <span class="fd-odds">${odds}</span>
             <span class="fd-box-meta">${escapeHtml(finishList(t.finishes))} · ${money}</span>
           </li>`;
-        }).join("") + `</ul><p class="fd-note">Chances per box assume packs are independent and count every finish; copies per box add up the chance per pack, from MTGJSON's booster data. EV is the box's singles at TCGPlayer retail, counting cards worth $1.00 or more.</p>`;
+        }).join("") + `</ul><p class="fd-note">Chances per box assume packs are independent and count every finish; copies per box add up the expected copies per pack, from MTGJSON's booster data. EV is the box's singles at TCGPlayer retail, counting cards worth $1.00 or more.</p>`;
       }
       host.querySelector(".fd-boxes").innerHTML = bh;
     });
@@ -5105,7 +5181,7 @@ a.fd-price:hover { text-decoration: underline; }
   // The finder dialog. back: the card list spec to return to, when the
   // dialog was opened from a card preview.
   let findSpec = null, findBackSpec = null;
-  async function openFinder(key, { back = null } = {}) {
+  async function openFinder(key, { back = null, focusFk = null } = {}) {
     const modal = $("findModal"), body = $("findBody");
     findBackSpec = back;
     $("findBack").hidden = !back;
@@ -5116,7 +5192,7 @@ a.fd-price:hover { text-decoration: underline; }
     openModal(modal, $("findModalClose"));
     modal.scrollTop = 0;
     findSpec = { t: "card", key };
-    dialogOpened(findSpec);
+    dialogOpened(findSpec, back);
     await loadFinderIndexes();
     if (openModalEl !== modal || !findSpec || findSpec.key !== key) return;
     if (!CARD_INDEX && !BOX_INDEX) { body.innerHTML = `<p class="staple-empty" role="alert">The card indexes could not be loaded. Check your connection and try again.</p>`; return; }
@@ -5125,10 +5201,13 @@ a.fd-price:hover { text-decoration: underline; }
     if (k !== key) { findSpec = { t: "card", key: k }; dialogChanged(findSpec); }
     $("findModalTitle").textContent = `Where to get ${cardNameOf(k)}`;
     showFinder(body, k, { heading: false });
+    // Back from a chart or card list opened here: the row it came from.
+    const row = focusFk ? body.querySelector(`[data-fk="${CSS.escape(focusFk)}"]`) : null;
+    if (row) row.focus();
   }
   function finderClosed() {
     stopFinder($("findBody"));
-    findSpec = findBackSpec = null;
+    findSpec = findBackSpec = findBackFocus = null;
   }
   // From a card preview: the card list gives way to the finder, which can
   // bring it back.
@@ -5136,7 +5215,31 @@ a.fd-price:hover { text-decoration: underline; }
     const back = cardListSpec();
     closeCardPreview("none");
     cardListClosed();
+    // "Back to the card list" puts focus on this card again.
+    findBackFocus = e.name;
     openFinder(cardKeyOf(e.name), { back: back.t !== "plain" ? back : null });
+  }
+  // The card a "Back to the card list" returns focus to (its name).
+  let findBackFocus = null;
+  // The finder a chart or card list opened from the finder dialog returns
+  // to: { t: "card", key } and the data-fk of the row it came from.
+  // nextReturn is set just before such a dialog opens and taken by it.
+  let nextReturn = null, dialogReturn = null, returnFk = null;
+  function takeReturn() {
+    dialogReturn = nextReturn;
+    nextReturn = null;
+    const label = dialogReturn ? `← Back to Where to get ${cardNameOf(dialogReturn.key) || "the card"}` : "";
+    for (const id of ["chartBack", "cvBack"]) { $(id).hidden = !dialogReturn; $(id).textContent = label; }
+    return dialogReturn;
+  }
+  function goReturn() {
+    const back = dialogReturn, fk = returnFk;
+    if (!back) return;
+    dialogReturn = null;
+    returnFk = null;
+    if (openModalEl === $("cardsModal")) { closeCardPreview("none"); cardListClosed(); }
+    if (openModalEl === $("chartModal")) chartSpec = null;
+    openFinder(back.key, { focusFk: fk });
   }
   // The preview's line: "Also in 3 precons and 2 boxes" (other than the
   // list it is shown in), once both indexes are in.
@@ -5239,25 +5342,84 @@ a.fd-price:hover { text-decoration: underline; }
     if (!/[a-z]/i.test(t)) return null;
     return { qty, name: t };
   }
+  // Basic lands come with every precon, and the card index leaves them out
+  // (scrape_prices.py is_basic), so the planner and finder name them apart.
+  const BASIC_KEYS = new Set(["plains", "island", "swamp", "mountain", "forest", "wastes"].flatMap(b => [b, `snowcovered${b}`]));
+  // The fields of one comma separated line, quotes honored.
+  function csvFields(line) {
+    const out = [];
+    let cur = "", q = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (q) {
+        if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+        else if (ch === '"') q = false;
+        else cur += ch;
+      } else if (ch === '"') q = true;
+      else if (ch === ",") { out.push(cur.trim()); cur = ""; }
+      else cur += ch;
+    }
+    out.push(cur.trim());
+    return out;
+  }
+  const lookUpWant = name => resolveCardKey(cardKeyOf(name)) || resolveCardKey(normName(name.split(/\s+\/\/?\s+/)[0]));
   // The want list: { wants: Map key -> { key, name, qty, lines: [i] },
-  // unmatched: [{ i, name, qty }], read (lines read), cut (lines past the
-  // cap) }. Needs both indexes.
+  // unmatched: [{ i, name, qty }], basics: [{ name, qty }], read (lines
+  // read), cut (lines past the cap), csv (a CSV header was found) }. Needs
+  // both indexes. A CSV export (Moxfield, Deckbox, Archidekt) is read from
+  // its Count and Name columns when its first line is a header; a comma
+  // line without one is tried field by field once it fails as plain text.
   function readWantList(text) {
     const all = String(text || "").split(/\r?\n/);
     const lines = [];
     for (let i = 0; i < all.length; i++) if (all[i].trim()) lines.push(i);
     const read = lines.slice(0, PLAN_MAX_LINES), cut = lines.length - read.length;
-    const wants = new Map(), unmatched = [];
-    for (const i of read) {
-      const w = parseWantLine(all[i]);
-      if (!w) continue;
-      const key = resolveCardKey(cardKeyOf(w.name)) || resolveCardKey(normName(w.name.split(/\s+\/\/?\s+/)[0]));
+    const wants = new Map(), unmatched = [], basics = new Map();
+    let nameCol = -1, qtyCol = -1;
+    if (read.length && all[read[0]].includes(",")) {
+      const head = csvFields(all[read[0]]).map(h => h.toLowerCase());
+      nameCol = head.findIndex(h => h === "name" || h === "card name" || h === "card");
+      qtyCol = head.findIndex(h => h === "count" || h === "quantity" || h === "qty");
+    }
+    const csv = nameCol >= 0;
+    for (const i of csv ? read.slice(1) : read) {
+      let w, key = null;
+      // A row put right with "Did you mean" is plain text again.
+      const f0 = csv ? csvFields(all[i]) : null;
+      if (f0 && f0.length > nameCol) {
+        const f = f0;
+        const name = (f[nameCol] || "").trim(), n = parseInt(f[qtyCol] || "1", 10);
+        if (!/[a-z]/i.test(name)) continue;
+        w = { qty: Number.isFinite(n) && n > 0 ? Math.min(99, n) : 1, name };
+        key = lookUpWant(name);
+      } else {
+        w = parseWantLine(all[i]);
+        if (!w) continue;
+        key = lookUpWant(w.name);
+        if (!key && all[i].includes(",")) {
+          // "1,Planet Killer,TRC,117" or a quoted row: the first field that
+          // names a card, with a leading count.
+          const f = csvFields(all[i].trim());
+          const lead = /^\d{1,3}$/.test(f[0]) ? parseInt(f[0], 10) : null;
+          for (const name of f) {
+            if (!/[a-z]/i.test(name)) continue;
+            const k = lookUpWant(name);
+            if (k) { key = k; w = { qty: lead ? Math.max(1, Math.min(99, lead)) : 1, name }; break; }
+          }
+        }
+      }
+      const raw = cardKeyOf(w.name);
+      if (BASIC_KEYS.has(key || raw)) {
+        const bk = key || raw, b = basics.get(bk);
+        if (b) b.qty = Math.min(99, b.qty + w.qty); else basics.set(bk, { name: cardNameOf(bk) || w.name, qty: w.qty });
+        continue;
+      }
       if (!key) { unmatched.push({ i, name: w.name, qty: w.qty }); continue; }
       const cur = wants.get(key);
       if (cur) { cur.qty = Math.min(99, cur.qty + w.qty); cur.lines.push(i); }
       else wants.set(key, { key, name: cardNameOf(key), qty: w.qty, lines: [i] });
     }
-    return { wants, unmatched, read: read.length, cut };
+    return { wants, unmatched, basics: [...basics.values()], read: read.length, cut, csv };
   }
   // "Did you mean": up to three names close to an unmatched one, by shared
   // letter pairs of the keys (Dice), from both indexes.
@@ -5266,27 +5428,90 @@ a.fd-price:hover { text-decoration: underline; }
     for (let i = 0; i + 1 < k.length; i++) out.add(k.slice(i, i + 2));
     return out;
   }
+  // Edit distance with swaps of two neighbours counted as one edit (optimal
+  // string alignment), given up past max. "solrnig" is 1 from "solring".
+  function editDistance(a, b, max) {
+    if (Math.abs(a.length - b.length) > max) return max + 1;
+    let pp = null, p = Array.from({ length: b.length + 1 }, (_, j) => j);
+    for (let i = 1; i <= a.length; i++) {
+      const c = [i];
+      let low = i;
+      for (let j = 1; j <= b.length; j++) {
+        let v = Math.min(p[j] + 1, c[j - 1] + 1, p[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        if (pp && i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) v = Math.min(v, pp[j - 2] + 1);
+        c.push(v);
+        if (v < low) low = v;
+      }
+      if (low > max) return max + 1;
+      pp = p; p = c;
+    }
+    return p[b.length];
+  }
+  // The letter pairs of every indexed name, built once per pair of index
+  // objects (both indexes hold about 18,000 names; building their pairs on
+  // every lookup froze the page for seconds on a long list).
+  let suggestPool = null, suggestPoolOf = [null, null];
+  const SUGGESTED = new Map();   // normalized name -> its suggestions, for this pool
+  function suggestionPool() {
+    if (suggestPool && suggestPoolOf[0] === CARD_INDEX && suggestPoolOf[1] === BOX_INDEX) return suggestPool;
+    const pool = [], seen = new Set();
+    for (const src of [CARD_INDEX || {}, BOX_INDEX?.cards || {}]) {
+      for (const [k, v] of Object.entries(src)) {
+        if (seen.has(k) || !v || typeof v.name !== "string") continue;
+        seen.add(k);
+        pool.push({ k, name: v.name, pairs: pairsOf(k) });
+      }
+    }
+    SUGGESTED.clear();
+    suggestPoolOf = [CARD_INDEX, BOX_INDEX];
+    return (suggestPool = pool);
+  }
   function suggestNames(name) {
     const q = normName(name);
     if (q.length < 3) return [];
-    const qp = pairsOf(q), found = [], seen = new Set();
-    for (const src of [CARD_INDEX || {}, BOX_INDEX?.cards || {}]) {
-      for (const [k, v] of Object.entries(src)) {
-        if (seen.has(k) || !v || typeof v.name !== "string" || Math.abs(k.length - q.length) > Math.max(6, q.length)) continue;
-        seen.add(k);
-        let common = 0;
-        const kp = pairsOf(k);
-        for (const p of kp) if (qp.has(p)) common++;
-        let score = (2 * common) / (qp.size + kp.size || 1);
-        if (k.startsWith(q) || q.startsWith(k)) score += 0.25;
-        if (score >= 0.55) found.push({ name: v.name, score });
+    const pool = suggestionPool();
+    if (SUGGESTED.has(q)) return SUGGESTED.get(q);
+    const qp = pairsOf(q), found = [];
+    // One edit for short names, two for long ones; past that, shared
+    // letter pairs (Dice) of 0.6 or more.
+    const maxEdits = q.length >= 8 ? 2 : q.length >= 4 ? 1 : 0;
+    for (const { k, name: nm, pairs: kp } of pool) {
+      if (Math.abs(k.length - q.length) > Math.max(6, q.length)) continue;
+      let common = 0;
+      for (const p of kp) if (qp.has(p)) common++;
+      let score = (2 * common) / (qp.size + kp.size || 1);
+      if (k.startsWith(q) || q.startsWith(k)) score += 0.25;
+      if (score < 0.6 && maxEdits && Math.abs(k.length - q.length) <= maxEdits) {
+        const dist = editDistance(q, k, maxEdits);
+        if (dist <= maxEdits) score = Math.max(score, 0.9 - 0.1 * dist);
       }
+      if (score >= 0.6) found.push({ name: nm, score });
     }
-    return found.sort((a, b) => b.score - a.score || a.name.length - b.name.length).slice(0, 3).map(x => x.name);
+    const alts = found.sort((a, b) => b.score - a.score || a.name.length - b.name.length).slice(0, 3).map(x => x.name);
+    SUGGESTED.set(q, alts);
+    return alts;
   }
+  // Names not found get suggestions only for the first few, so a long list
+  // of odd lines stays quick; the rest are listed plainly.
+  const PLAN_SUGGEST_MAX = 20;
   // The copies of a card a deck file gives, and its rows.
   const deckCopies = (file, key) => (deckRowsByKey(file).get(key) || []).reduce((a, e) => a + e.qty, 0);
   const planSay = text => { $("planStatus").textContent = text; };
+  // A loading line in a live region: the label ("Loading 120 precon lists")
+  // is announced once, and the running count beside it sits in an
+  // aria-hidden span, so a screen reader is not told about every file.
+  function showProgress(el, label, done, total) {
+    let n = el.querySelector(":scope > .live-count");
+    if (!n || el.dataset.progLabel !== label) {
+      el.textContent = label;
+      el.dataset.progLabel = label;
+      n = document.createElement("span");
+      n.className = "live-count";
+      n.setAttribute("aria-hidden", "true");
+      el.append(n);
+    }
+    n.textContent = `: ${done} of ${total}`;
+  }
 
   async function renderPlan() {
     const token = ++PLAN.token;
@@ -5314,12 +5539,18 @@ a.fd-price:hover { text-decoration: underline; }
     const candidates = new Map();
     for (const w of ranked) for (const d of w.decks) if (!(skipOwned && ownedSet.has(d.id))) candidates.set(d.id, d);
     const needOwned = haveOwned ? owned.filter(d => ranked.some(w => w.decks.includes(d))) : [];
-    const jobs = [...new Map([...candidates.values(), ...needOwned].map(d => [d.id, deckCardsRef(d)]).filter(([, r]) => r)).values()]
+    // Every deck that lists a ranked card is loaded, owned or not: its
+    // printings take part in the card's cheapest price whatever the options
+    // say, so the same list always gives the same values. Leaving out owned
+    // decks only drops them from the candidate rows.
+    const pricing = ranked.flatMap(w => w.decks);
+    const jobs = [...new Map([...candidates.values(), ...needOwned, ...pricing].map(d => [d.id, deckCardsRef(d)]).filter(([, r]) => r)).values()]
       .filter(r => !CARD_FILES.has(r.file)).map(r => ({ mode: "deck", file: r.file }));
     let failed = 0;
     if (jobs.length) {
-      planSay(`Loading deck lists: 0 of ${jobs.length}`);
-      const r = await loadCardFilesLimited(jobs, done => { if (token === PLAN.token) planSay(`Loading deck lists: ${done} of ${jobs.length}`); });
+      const label = `Loading ${jobs.length} deck ${jobs.length === 1 ? "list" : "lists"}`;
+      showProgress($("planStatus"), label, 0, jobs.length);
+      const r = await loadCardFilesLimited(jobs, done => { if (token === PLAN.token) showProgress($("planStatus"), label, done, jobs.length); });
       failed = r.failed;
       if (token !== PLAN.token) return;
     }
@@ -5376,7 +5607,9 @@ a.fd-price:hover { text-decoration: underline; }
     PLAN.last = { list, noPrecon, staples, ranked, given, active, rows, wantedCopies, failed, skipOwned };
     drawPlan();
     const n = rows.length;
-    planSay(n ? `${n} ${n === 1 ? "precon covers" : "precons cover"} some of your list.` : "No precon covers the cards left in your list.");
+    planSay(n ? `${n} ${n === 1 ? "precon covers" : "precons cover"} some of your list.`
+      : !list.wants.size && !list.basics.length ? "None of the lines matched a card we track."
+      : "No precon covers the cards left in your list.");
   }
 
   function drawPlan() {
@@ -5385,16 +5618,21 @@ a.fd-price:hover { text-decoration: underline; }
     const $2 = v => `$${v.toFixed(2)}`;
     const keep = document.activeElement && out.contains(document.activeElement) ? document.activeElement.dataset.fk : null;
     const parts = [];
-    const matched = P.list.wants.size;
+    const matched = P.list.wants.size + P.list.basics.length;
     parts.push(`<h3 class="plan-head" id="planResultsHead" tabindex="-1">Your list: ${matched} ${matched === 1 ? "card" : "cards"} found${P.list.unmatched.length ? `, ${P.list.unmatched.length} not found` : ""}</h3>`);
     if (P.list.cut) parts.push(`<p class="fd-note">Only the first ${PLAN_MAX_LINES} lines were read; ${P.list.cut} more ${P.list.cut === 1 ? "was" : "were"} left out.</p>`);
     if (P.failed) parts.push(`<p class="fd-note" role="alert">${P.failed} deck ${P.failed === 1 ? "list" : "lists"} could not be loaded, so ${P.failed === 1 ? "that deck is" : "those decks are"} missing below. Plan again to retry.</p>`);
     if (P.list.unmatched.length) {
-      parts.push(`<div class="plan-block"><h4 class="fd-label">Not found</h4><ul class="plan-list">` + P.list.unmatched.map((u, j) => {
+      const capped = P.list.unmatched.length > PLAN_SUGGEST_MAX;
+      parts.push(`<div class="plan-block"><h4 class="fd-label">Not found</h4>${capped ? `<p class="fd-note">Suggestions are given for the first ${PLAN_SUGGEST_MAX} names not found.</p>` : ""}<ul class="plan-list">` + P.list.unmatched.map((u, j) => {
+        if (j >= PLAN_SUGGEST_MAX) return `<li><span class="plan-miss">${escapeHtml(u.name)}</span></li>`;
         const alts = suggestNames(u.name);
         return `<li><span class="plan-miss">${escapeHtml(u.name)}</span>${alts.length ? ` <span class="staple-alts">Did you mean ${alts.map((a, k) =>
           `<button type="button" class="staple-alt" data-fk="fix${j}-${k}" data-plan-fix="${u.i}" data-plan-qty="${u.qty}" data-plan-name="${escapeHtml(a)}">${escapeHtml(a)}</button>`).join("")}</span>` : ` <span class="fd-note">no close name in the cards we track</span>`}</li>`;
       }).join("") + `</ul></div>`);
+    }
+    if (P.list.basics.length) {
+      parts.push(`<div class="plan-block"><h4 class="fd-label">Basic lands</h4><p class="fd-note">${escapeHtml(P.list.basics.map(b => `${b.qty > 1 ? `${b.qty} ` : ""}${b.name}`).join(", "))}: precons come with basic lands of their colors, so they are left out of the plan.</p></div>`);
     }
     if (P.noPrecon.length) {
       parts.push(`<div class="plan-block"><h4 class="fd-label">In no precon we track</h4><p class="plan-chips">` + P.noPrecon.map((w, j) =>
@@ -5781,6 +6019,7 @@ a.fd-price:hover { text-decoration: underline; }
     view: "grid",    // "grid" or "list", saved as precon-cardview
     token: 0,        // bumped per load, so a late answer never draws into a newer list
     badImages: new Set(),   // Scryfall ids whose image failed while this list was open
+    focusName: null, // a card to focus once the list is drawn (back from the finder)
   };
 
   const ownProp = (o, k) => (o && typeof o === "object" && Object.prototype.hasOwnProperty.call(o, k) ? o[k] : undefined);
@@ -6306,7 +6545,7 @@ a.fd-price:hover { text-decoration: underline; }
     fillCardActions();
     openModal(modal, $("cardsModalClose"));
     modal.scrollTop = 0;
-    dialogOpened(cardListSpec());
+    dialogOpened(cardListSpec(), takeReturn());
     loadIntoCardList();
   }
   // Everything under the title bar, back to nothing.
@@ -6360,7 +6599,12 @@ a.fd-price:hover { text-decoration: underline; }
     const v = CARD_VIEW, data = v.data;
     if (v.mode === "box") {
       // Start on the row's own kind; a file that lacks it shows its first.
+      const asked = v.kind;
       if (!data.kinds.has(v.kind)) v.kind = data.kinds.size ? data.kinds.keys().next().value : null;
+      if (linkKind != null && linkKind === asked && v.kind !== asked && v.kind != null) {
+        showLinkNotice(`That link names a box type this page does not list, so the ${data.kinds.get(v.kind).label || "first"} list of the set opened instead.`);
+      }
+      linkKind = null;
       if (v.kind == null) throw new Error("the box file lists no box type");
     } else if (!data.entries.length) {
       throw new Error("the deck file lists no cards");
@@ -6378,6 +6622,19 @@ a.fd-price:hover { text-decoration: underline; }
       applyCardFilters();
     }
     fillCardActions();
+    focusCardByName();
+  }
+  // Back from the finder: focus the card it was opened for, drawing more of
+  // a long box list when it is further down.
+  function focusCardByName() {
+    const v = CARD_VIEW, name = v.focusName;
+    v.focusName = null;
+    if (!name || openModalEl !== $("cardsModal")) return;
+    const at = v.shown.findIndex(e => e.name === name);
+    if (at < 0) return;
+    while (v.drawn <= at && v.drawn < v.shown.length) { const before = v.drawn; drawMoreCards(false); if (v.drawn === before) break; }
+    const btn = $("cvBody").querySelector(`.cv-open[data-cv-entry="${v.shown[at].idx}"]`);
+    if (btn) btn.focus();
   }
 
   // Tabs, one per box type in the file, when it holds more than one.
@@ -6556,7 +6813,7 @@ a.fd-price:hover { text-decoration: underline; }
         + `<p class="cv-spread-lead">Typical box ≈ <strong>${m(s.p50)}</strong> · 8 in 10 between <strong>${m(s.p10)}</strong> and <strong>${m(s.p90)}</strong> · half between ${m(s.p25)} and ${m(s.p75)}</p>`
         + `<div class="cv-hist" role="img" aria-label="${escapeHtml(label)}">${bars}</div>`
         + `<div class="cv-hist-axis" aria-hidden="true"><span>${m(start)}</span><span>${m(start + (counts.length / 2) * width)}</span><span>${m(edge)}+</span></div>`
-        + `<p class="cv-pf-text"><span class="cv-key cv-key-mid" aria-hidden="true"></span>Bars in this shade: the middle 8 in 10 boxes. The last bar also holds every box above ${m(edge)}, at most 1 in 100. The figures are sampled, so they move a little from day to day.</p>`
+        + `<p class="cv-pf-text"><span class="cv-key cv-key-mid" aria-hidden="true"></span>Bars in this shade reach into the middle 8 in 10 boxes, so together they hold more than 8 in 10. The last bar also holds every box above ${m(edge)}, at most 1 in 100. The figures are sampled, so they move a little from day to day.</p>`
         + `</section>`;
     }
     if (!s && kind.ev == null) return "";
@@ -6916,17 +7173,15 @@ a.fd-price:hover { text-decoration: underline; }
     if (e.tcg == null && e.outlier) info.append(cvEl("p", "cv-pv-note cv-pv-outlier", outlierNote(e)));
     if (e.qty > 1) info.append(cvEl("p", "cv-pv-note", "Prices are for one copy."));
     // Where else the card is: opens the finder. The counts need both card
-    // indexes, loaded on the first preview; until then the button says
-    // only what it does, in the same space.
+    // indexes (about 480 KB compressed), loaded on the first pinned preview
+    // (previewAlsoCounts), not on a hover; until then the button says only
+    // what it does, in the same space.
     const also = cvEl("p", "cv-pv-also");
     const find = cvEl("button", "cv-btn cv-pv-find", alsoText(e));
     find.type = "button";
     find.dataset.cvFind = "";
     also.append(find);
     info.append(also);
-    if (!CARD_INDEX || !BOX_INDEX) {
-      loadFinderIndexes().then(() => { if (PV.entry === e && find.isConnected) find.textContent = alsoText(e); });
-    }
 
     body.append(top, media, info);
     previewArtFill(e);
@@ -6952,6 +7207,16 @@ a.fd-price:hover { text-decoration: underline; }
   function setPreviewPinned(on) {
     PV.pinned = on;
     $("cvPreview").classList.toggle("is-pinned", on);
+    if (on) previewAlsoCounts();
+  }
+  // A pinned preview loads the card indexes once, then shows the counts.
+  function previewAlsoCounts() {
+    if (CARD_INDEX && BOX_INDEX) return;
+    const e = PV.entry;
+    loadFinderIndexes().then(() => {
+      const find = $("cvPreview").querySelector(".cv-pv-find");
+      if (e && PV.entry === e && find) find.textContent = alsoText(e);
+    });
   }
   // refocus: "opener" puts focus back on the button; "auto" does so only
   // when focus was in the panel (which is about to go), "none" never.
@@ -7557,17 +7822,21 @@ a.fd-price:hover { text-decoration: underline; }
   let dialogFromHistory = false;   // set while Back, Forward or a share link opens a dialog
   let backPending = false;         // closeModal stepped back and that popstate has not come yet
   let pushAfterBack = null;        // a dialog opened in that moment, pushed once it comes
-  function dialogOpened(spec) {
+  // back: what the dialog's own Back button returns to (the card list for a
+  // finder opened from it, the finder for a chart or card list opened from
+  // it), kept in the history entry so Forward brings the button back.
+  function dialogOpened(spec, back = null) {
     if (dialogFromHistory) return;
     if (backPending) { pushAfterBack = spec; return; }
-    const state = { mtgDialog: spec };
+    const state = back ? { mtgDialog: spec, mtgBack: back } : { mtgDialog: spec };
     if (history.state && history.state.mtgDialog) history.replaceState(state, "", pageUrl(spec));
     else history.pushState(state, "", pageUrl(spec));
   }
   // The open dialog now shows something else (another box type).
   function dialogChanged(spec) {
     if (backPending || !(history.state && history.state.mtgDialog)) return;
-    history.replaceState({ mtgDialog: spec }, "", pageUrl(spec));
+    const back = history.state.mtgBack;
+    history.replaceState(back ? { mtgDialog: spec, mtgBack: back } : { mtgDialog: spec }, "", pageUrl(spec));
   }
   // Called by closeModal when the page closed a dialog (not Back).
   function leaveDialogEntry() {
@@ -7588,13 +7857,16 @@ a.fd-price:hover { text-decoration: underline; }
       closingFromHistory = true;
       try { closeModal(); } finally { closingFromHistory = false; }
     }
-    if (spec) openFromSpec(spec, { fromHistory: true });
+    if (spec) openFromSpec(spec, { fromHistory: true, back: validSpec(e.state && e.state.mtgBack) });
   }
   // Open the dialog a spec names. False when the page cannot: an id no deck
   // has (renamed ids resolve through formerIds), a box no longer listed, a
   // deck with no card list yet.
-  function openFromSpec(spec, { fromHistory = false } = {}) {
+  function openFromSpec(spec, { fromHistory = false, back = null } = {}) {
     dialogFromHistory = fromHistory;
+    // A chart or card list reopened from history gets its "Back to Where to
+    // get" button again; so does a finder its "Back to the card list".
+    nextReturn = back && back.t === "card" && spec.t !== "card" ? back : null;
     try {
       if (spec.t === "compare") {
         renderCompareModal();
@@ -7607,7 +7879,7 @@ a.fd-price:hover { text-decoration: underline; }
         if (spec.chart) { openChart(id); return true; }
         return openDeckCards(id);
       }
-      if (spec.t === "card") { openFinder(spec.key); return true; }
+      if (spec.t === "card") { openFinder(spec.key, { back: back && (back.t === "deck" || back.t === "box") && !back.chart ? back : null }); return true; }
       if (spec.t === "box") {
         const hit = findBoxLink(spec.stem, spec.kind);
         if (!hit || (spec.chart && !hit.exact)) return false;
@@ -7655,11 +7927,17 @@ a.fd-price:hover { text-decoration: underline; }
         showLinkNotice(`The card list for ${d.name} is not published yet, so the link opened its price chart.`);
       }
     }
+    // A box link to a type with no box row of its own opens the file on
+    // that type when the file has it; showCardList says so when it does not.
+    const near = spec && spec.t === "box" && !spec.chart ? findBoxLink(spec.stem, spec.kind) : null;
+    linkKind = near && !near.exact ? spec.kind : null;
     if (spec && openFromSpec(spec)) return;
+    linkKind = null;
     showLinkNotice(deck != null
       ? "That link points to a deck this page does not list, so nothing was opened."
       : "That link points to a sealed box this page does not list today, so nothing was opened.");
   }
+  let linkKind = null;   // a box type a share link named, checked once its file is in
   function showLinkNotice(text) {
     $("linkNoticeText").textContent = text;
     $("linkNotice").hidden = false;
@@ -7908,12 +8186,14 @@ a.fd-price:hover { text-decoration: underline; }
     for (const p of pts) { if (p.day > day) break; hit = p; }
     return hit;
   }
-  // long: also read the weekly history (once it has loaded, for the chart;
-  // the sparkline stays on the daily history), which adds the time before
-  // the daily window and the bundles.
+  // long: also read the weekly history (once it has loaded: the chart, and
+  // the sparkline from then on), which adds the time before the daily
+  // window and the bundles.
   function collectionSeries({ long = false } = {}) {
     const series = [];
-    let left = 0, bundles = 0, from = null;
+    // from: the latest day an item's daily prices begin; fromMin: the
+    // earliest (they differ by item, and the note names both).
+    let left = 0, bundles = 0, from = null, fromMin = null;
     const useLong = long && LONG.state === "ready";
     for (const [key, item] of Object.entries(collection)) {
       const sealed = item.qty - item.opened;
@@ -7924,12 +8204,12 @@ a.fd-price:hover { text-decoration: underline; }
         const d = PRECONS.find(x => x.id === parts.id);
         const r = d ? (useLong ? deckLongPoints(d) : { points: deckPoints(d), from: null }) : null;
         pts = r && r.points;
-        if (r && r.from != null) from = from == null ? r.from : Math.max(from, r.from);
+        if (r && r.from != null) { from = from == null ? r.from : Math.max(from, r.from); fromMin = fromMin == null ? r.from : Math.min(fromMin, r.from); }
       } else if (parts.kind === "box") {
         const r = useLong ? boxLongPoints(parts.set, parts.type) : null;
         const b = findBox(parts.set, parts.type);
         pts = r ? r.points : b ? boxPoints(parts.set, b) : historyPoints(boxSeries(parts.set, parts.type), s => s.price, false);
-        if (r && r.from != null) from = from == null ? r.from : Math.max(from, r.from);
+        if (r && r.from != null) { from = from == null ? r.from : Math.max(from, r.from); fromMin = fromMin == null ? r.from : Math.min(fromMin, r.from); }
       } else if (parts.kind === "bundle" && useLong) {
         pts = bundlePoints(parts.id, bundleById(parts.id));
         if (realPts(pts).length) bundles++;
@@ -7937,7 +8217,7 @@ a.fd-price:hover { text-decoration: underline; }
       if (!pts || !realPts(pts).length) { left++; continue; }
       series.push({ pts, n: sealed });
     }
-    if (!series.length) return { points: [], left, start: null, long: useLong, bundles, from };
+    if (!series.length) return { points: [], left, start: null, long: useLong, bundles, from, fromMin };
     const start = Math.max(...series.map(s => realPts(s.pts)[0].day));
     const end = Math.max(...series.map(s => s.pts[s.pts.length - 1].day));
     const out = [];
@@ -7956,12 +8236,15 @@ a.fd-price:hover { text-decoration: underline; }
       const same = prev && !prev.gap && Math.abs(prev.price - sum) < 0.005;
       if (!same || day === end) out.push({ day, date: isoFromDay(day), price: cents(sum), carried: !!same });
     }
-    return { points: out, left, start, long: useLong, bundles, from };
+    return { points: out, left, start, long: useLong, bundles, from, fromMin };
   }
   function collectionChartNote(cs) {
     const bits = ["The line adds up the sealed copies you own today at each day's recorded price (decks: the best of TCGPlayer Market and Card Kingdom in stock; boxes" + (cs.long ? " and bundles" : "") + ": TCGPlayer Market)."];
     if (cs.long && cs.from != null && cs.start != null && cs.start < cs.from) {
-      bits.push(`Before ${fmtChartDate(isoFromDay(cs.from), "year")} it uses one TCGPlayer Market point a week from TCGCSV's archive, and a week missing for any item breaks the line.`);
+      const when = cs.fromMin != null && cs.fromMin < cs.from
+        ? `Before each item's recorded daily prices begin (${fmtChartDate(isoFromDay(cs.fromMin), "year")} to ${fmtChartDate(isoFromDay(cs.from), "year")}, by item)`
+        : `Before ${fmtChartDate(isoFromDay(cs.from), "year")}`;
+      bits.push(`${when} it uses one TCGPlayer Market point a week from TCGCSV's archive, and a week missing for any item breaks the line.`);
     }
     if (cs.start != null) bits.push(`It starts on ${fmtChartDate(isoFromDay(cs.start), "year")}, the first day every one of them has a price.`);
     bits.push((cs.long ? "Opened copies are not in it" : "Opened copies and bundles are not in it (bundles have only the weekly history, which loads with the chart)")
@@ -8013,15 +8296,27 @@ a.fd-price:hover { text-decoration: underline; }
     if (opened.length) stats.push(stat("Singles", opened.some(x => x.singles != null) ? $0(singles) : "n/a", "opened decks, TCGPlayer retail"));
     grid.innerHTML = stats.join("");
 
-    // Value over time, as a sparkline that opens the full chart.
-    const cs = collectionSeries();
-    const spark = sparklineSvg(cs.points, "your collection");
-    $("collectionTrend").innerHTML = spark
-      ? `<span class="pf-label">Value over time</span> ${spark} <span class="col-trend-note">sealed copies at recorded prices · select for the chart</span>`
-      : `<span class="pf-label">Value over time</span> <span class="col-trend-note">appears once your sealed copies have two recorded prices</span>`;
+    renderCollectionTrend();
 
     list.innerHTML = infos.map(x => collectionItemHtml(x, $2)).join("");
     if (keep) restoreCollectionField(keep);
+  }
+  // Value over time, as a sparkline that opens the full chart. Bundles have
+  // only the weekly history, so before it loads (with any chart) they are
+  // left out and the note says so; once it is in, the last 90 days of the
+  // long series are drawn, bundles included, so the line ends at Value now.
+  function renderCollectionTrend() {
+    const el = $("collectionTrend");
+    if (!el) return;
+    const cs = LONG.state === "ready" ? collectionSeries({ long: true }) : collectionSeries();
+    const pts = cs.long ? windowPoints(cs.points, "90") : cs.points;
+    const spark = sparklineSvg(pts, "your collection");
+    const sealedBundles = !cs.long && Object.entries(collection).some(([k, it]) => itemKeyParts(k)?.kind === "bundle" && it.qty - it.opened > 0);
+    el.innerHTML = spark
+      ? `<span class="pf-label">Value over time</span> ${spark} <span class="col-trend-note">sealed copies at recorded prices${sealedBundles ? ", bundles not in it until the weekly history loads" : ""} · select for the chart</span>`
+      : sealedBundles
+        ? `<span class="pf-label">Value over time</span> <button type="button" class="bundle-chart" data-chart-trigger="1">Chart<span class="sr-only">: value over time of your collection</span></button> <span class="col-trend-note">bundles have only the weekly history, which loads with the chart</span>`
+        : `<span class="pf-label">Value over time</span> <span class="col-trend-note">appears once your sealed copies have two recorded prices</span>`;
   }
   function collectionItemHtml(x, $2) {
     const { item } = x;
@@ -8108,6 +8403,7 @@ a.fd-price:hover { text-decoration: underline; }
   async function removeCollectionItem(key) {
     const parts = itemKeyParts(key);
     if (!parts) return;
+    const name = collectionInfos().find(x => x.key === key)?.name || "the item";
     if (parts.kind === "deck") {
       await toggleSavedId("owned", parts.id, false);
       await updateCollection(() => {});
@@ -8118,6 +8414,12 @@ a.fd-price:hover { text-decoration: underline; }
     }
     renderPortfolio();
     syncOwnChips();
+    // The last item gone hides the panel, and focus with it: move it to the
+    // stats above and say what happened (the panel's own status is hidden).
+    if ($("portfolio").hidden) {
+      $("collectionGone").textContent = `Removed ${name}. Your collection is empty.`;
+      $("statsHead").focus();
+    }
   }
   // The Own buttons on box tiles and bundle notes, set from the collection
   // without redrawing what holds them.
@@ -8140,8 +8442,17 @@ a.fd-price:hover { text-decoration: underline; }
       if (add) { if (!items[key]) items[key] = { qty: 1, paid: null, opened: 0 }; }
       else delete items[key];
     });
+    // The panel above can appear, grow or go; keep the pressed button where
+    // it was on screen in browsers without scroll anchoring (with it, the
+    // button has not moved and this does nothing).
+    const top = btn.getBoundingClientRect().top;
     syncOwnChips();
     renderPortfolio();
+    if (btn.isConnected) {
+      const dy = btn.getBoundingClientRect().top - top;
+      if (Math.abs(dy) >= 1) window.scrollBy(0, dy);
+    }
+    $("collectionGone").textContent = "";
   }
   function ownChipHtml(key, name) {
     const on = isOwnedItem(key);
@@ -8206,10 +8517,25 @@ a.fd-price:hover { text-decoration: underline; }
     return { values, skipped, created };
   }
   const BACKUP_NAMES = { owned: "owned decks", watched: "watchlist", targets: "price targets", collection: "collection", theme: "theme", cardview: "card list view", lastvisit: "last visit date" };
-  function backupSummary(values) {
+  // How many of a backup's collection items a restore keeps: a deck item
+  // stays only when its deck is in the owned list in effect after the
+  // restore (the backup's, or this browser's when the backup has none).
+  function collectionKept(raw, owned) {
+    const own = new Set((owned || []).map(id => aliasId(id)));
+    const src = raw && raw.items && typeof raw.items === "object" ? raw.items : {};
+    let kept = 0, dropped = 0;
+    for (const k of Object.keys(src).slice(0, COLLECTION_MAX_ITEMS)) {
+      const parts = itemKeyParts(k);
+      if (!parts || !cleanItem(src[k])) continue;
+      if (parts.kind !== "deck" || own.has(aliasId(parts.id))) kept++; else dropped++;
+    }
+    return { kept, dropped };
+  }
+  // kept: the collection count to show (see collectionKept), when known.
+  function backupSummary(values, kept = null) {
     return Object.keys(values).map(name => {
       const v = values[name];
-      const n = name === "collection" ? Object.keys(v.items).length : Array.isArray(v) ? v.length : name === "targets" ? Object.keys(v).length : null;
+      const n = name === "collection" ? (kept ? kept.kept : Object.keys(v.items).length) : Array.isArray(v) ? v.length : name === "targets" ? Object.keys(v).length : null;
       return `${BACKUP_NAMES[name]}${n != null ? ` (${n})` : ""}`;
     }).join(", ");
   }
@@ -8225,8 +8551,15 @@ a.fd-price:hover { text-decoration: underline; }
     const names = Object.keys(got.values);
     if (!names.length) { say("Nothing in that backup could be used, so nothing was restored."); return; }
     const made = got.created ? new Date(got.created).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }) : "at an unknown time";
-    const ok = window.confirm(`Restore the backup made ${made}?\n\nIt replaces what this browser has saved for: ${backupSummary(got.values)}.`
+    // Deck items whose deck will not be owned are dropped by the restore;
+    // count only what stays, and say what goes.
+    const kept = "collection" in got.values
+      ? collectionKept(got.values.collection, "owned" in got.values ? got.values.owned : await storedOwnedIds()) : null;
+    const droppedText = kept && kept.dropped
+      ? `${kept.dropped} deck ${kept.dropped === 1 ? "item is" : "items are"} left out of the collection because ${kept.dropped === 1 ? "its deck is" : "their decks are"} not in the owned list.` : "";
+    const ok = window.confirm(`Restore the backup made ${made}?\n\nIt replaces what this browser has saved for: ${backupSummary(got.values, kept)}.`
       + `${got.skipped.length ? `\n\nLeft out because they did not pass the checks: ${got.skipped.map(n => BACKUP_NAMES[n]).join(", ")}.` : ""}`
+      + (droppedText ? `\n\n${droppedText}` : "")
       + "\n\nAnything the backup does not hold stays as it is.");
     if (!ok) { say("Restore cancelled. Nothing was changed."); return; }
     // The owned list first: the collection is matched to it.
@@ -8240,8 +8573,9 @@ a.fd-price:hover { text-decoration: underline; }
     renderPortfolio();
     patchCards(null);
     syncOwnChips();
-    say(`Restored ${backupSummary(got.values)} from the backup made ${made}.`
-      + (got.skipped.length ? ` Left out: ${got.skipped.map(n => BACKUP_NAMES[n]).join(", ")}.` : ""));
+    say(`Restored ${backupSummary(got.values, kept)} from the backup made ${made}.`
+      + (got.skipped.length ? ` Left out: ${got.skipped.map(n => BACKUP_NAMES[n]).join(", ")}.` : "")
+      + (droppedText ? ` ${droppedText}` : ""));
   }
 
   // ---------- Since your last visit (precon-lastvisit) ----------
@@ -8253,11 +8587,18 @@ a.fd-price:hover { text-decoration: underline; }
   let prevVisit = null;     // the saved date before this visit, read at init
   let sinceItems = [];      // what the strip shows, for its buttons
   let sinceDismissed = false;
+  let sinceShowAll = false; // "Show N more" pressed
   function sinceChanges(lastDay) {
     const found = [];
     const look = (name, pts, open, target = null, buyNow = null) => {
       const real = realPts(pts);
       const end = pts[pts.length - 1];
+      // Recorded prices that begin after the visit have no "then" price:
+      // say so rather than leave the deck out without a word.
+      if (real.length && end && !end.gap && real[0].day > lastDay) {
+        found.push({ kind: "new", name, since: real[0].date, now: end.price, pct: 0, days: spanOf(pts), open });
+        return;
+      }
       if (real.length < 2 || !end || end.gap || end.day <= lastDay) return;
       const thenPt = pointAt(pts, lastDay);
       const then = thenPt && !thenPt.gap ? thenPt.price : null;
@@ -8284,13 +8625,14 @@ a.fd-price:hover { text-decoration: underline; }
       const b = findBox(parts.set, parts.type);
       if (b) look(boxNameParts(b).name || `${parts.set} ${b.label || "box"}`, boxPoints(parts.set, b), { t: "boxchart", set: parts.set, type: parts.type });
     }
-    const rank = { target: 0, low: 1, move: 2 };
+    const rank = { target: 0, low: 1, move: 2, new: 3 };
     return found.sort((a, b) => rank[a.kind] - rank[b.kind] || Math.abs(b.pct) - Math.abs(a.pct) || a.name.localeCompare(b.name));
   }
   function sinceLineHtml(x, i) {
     const num = (v, now, good) => `<span class="since-num${now ? " now" : ""}${good ? " good" : ""}">$${v.toFixed(2)}</span>`;
     const name = `<button type="button" class="since-open" data-since="${i}">${escapeHtml(x.name)}<span class="sr-only">, open its price chart</span></button>`;
     if (x.kind === "target") return `${name} reached your ${num(x.target)} target: ${num(x.now, true, true)}, from ${num(x.then)}`;
+    if (x.kind === "new") return `${name}: prices recorded only since ${escapeHtml(releaseDayText(x.since))}, now ${num(x.now, true)}`;
     if (x.kind === "low") return `${name} is at a new ${x.days} day low: from ${num(x.then)} to ${num(x.now, true, true)}`;
     const up = x.pct > 0;
     return `${name} is ${up ? "up" : "down"} ${Math.abs(x.pct * 100).toFixed(0)}%: from ${num(x.then)} to ${num(x.now, true, !up)}`;
@@ -8300,12 +8642,13 @@ a.fd-price:hover { text-decoration: underline; }
     if (!el || sinceDismissed) return;
     const lastDay = dayNum(prevVisit), today = dayNum(localTodayIso());
     const all = lastDay != null && today != null && today - lastDay >= 1 ? sinceChanges(lastDay) : [];
-    sinceItems = all.slice(0, SINCE_MAX);
+    sinceItems = sinceShowAll ? all : all.slice(0, SINCE_MAX);
     if (!sinceItems.length) { el.hidden = true; return; }
     $("sinceHead").textContent = `Since your last visit on ${releaseDayText(prevVisit)}`;
     $("sinceList").innerHTML = sinceItems.map((x, i) => `<li>${sinceLineHtml(x, i)}</li>`).join("");
-    $("sinceMore").textContent = all.length > SINCE_MAX ? `and ${all.length - SINCE_MAX} more` : "";
-    $("sinceMore").hidden = all.length <= SINCE_MAX;
+    const more = all.length - sinceItems.length;
+    $("sinceMore").textContent = more > 0 ? `Show ${more} more ${more === 1 ? "change" : "changes"}` : "";
+    $("sinceMore").hidden = more <= 0;
     el.hidden = false;
   }
   // A strip on show follows the data it lists (a target cleared, a deck no
@@ -8359,8 +8702,10 @@ a.fd-price:hover { text-decoration: underline; }
     $("statOwned").textContent = owned.length;
     const ot = ownedTotals(owned);
     const unpricedTail = ot.unpriced ? ` · ${missingText(ot.noPrice, ot.noMsrp)}` : "";
-    $("statOwnedValue").textContent = !owned.length ? "nothing owned yet"
-      : ot.priced.length ? `$${ot.msrp.toFixed(0)} MSRP · ~$${ot.now.toFixed(0)} now${unpricedTail}`
+    // One copy of each owned deck; copies, boxes and bundles are in the
+    // collection panel's figures.
+    $("statOwnedValue").textContent = !owned.length ? "no decks owned yet"
+      : ot.priced.length ? `$${ot.msrp.toFixed(0)} MSRP · ~$${ot.now.toFixed(0)} now, one copy each${unpricedTail}`
       : missingText(ot.noPrice, ot.noMsrp);
 
     const msrps = PRECONS.map(d => d.msrp).filter(v => v != null).sort((a, b) => a - b);
@@ -8418,14 +8763,20 @@ a.fd-price:hover { text-decoration: underline; }
       return;
     }
     const box = e.target.closest("[data-fd-kind]");
-    if (box) { openBoxCards(box.dataset.fdSet, box.dataset.fdType, box.dataset.fdKind); return; }
+    if (box) { fromFinder(host, box); openBoxCards(box.dataset.fdSet, box.dataset.fdType, box.dataset.fdKind); return; }
     const row = e.target.closest("[data-staple-id]");
-    if (row) openChart(row.dataset.stapleId);
+    if (row) { fromFinder(host, row); openChart(row.dataset.stapleId); }
+  }
+  // A chart or card list opened from the finder dialog can go back to it.
+  function fromFinder(host, el) {
+    const st = host.id === "findBody" ? FINDERS.get(host.id) : null;
+    nextReturn = st ? { t: "card", key: st.key } : null;
+    returnFk = st ? el.dataset.fk || null : null;
   }
   function onFinderKey(e) {
     if (e.key !== "Enter" && e.key !== " ") return;
     const row = e.target.closest("[data-staple-id]");
-    if (row && e.target === row) { e.preventDefault(); openChart(row.dataset.stapleId); }
+    if (row && e.target === row) { e.preventDefault(); fromFinder($("findBody"), row); openChart(row.dataset.stapleId); }
   }
 
   function wireEvents() {
@@ -8684,6 +9035,13 @@ a.fd-price:hover { text-decoration: underline; }
       if (x.open.t === "deck") openChart(x.open.id);
       else openBoxChart(x.open.set, x.open.type);
     });
+    $("sinceMore").addEventListener("click", () => {
+      const n = sinceItems.length;
+      sinceShowAll = true;
+      renderSinceStrip();
+      // Keyboard users go on to the first change that was hidden.
+      $("sinceList").querySelectorAll("[data-since]")[n]?.focus({ preventScroll: true });
+    });
     $("sinceDismiss").addEventListener("click", () => {
       sinceDismissed = true;
       $("sinceStrip").hidden = true;
@@ -8882,11 +9240,14 @@ a.fd-price:hover { text-decoration: underline; }
     $("findModal").addEventListener("click", e => { if (e.target === $("findModal")) closeModal(); });
     $("findCopyLink").addEventListener("click", () => { if (findSpec) copyLinkTo(findSpec, "findCopyStatus"); });
     $("findBack").addEventListener("click", () => {
-      const back = findBackSpec;
+      const back = findBackSpec, focusName = findBackFocus;
       if (!back) return;
       finderClosed();
-      if (!openFromSpec(back)) closeModal();
+      CARD_VIEW.focusName = focusName;
+      if (!openFromSpec(back)) { CARD_VIEW.focusName = null; closeModal(); }
     });
+    $("chartBack").addEventListener("click", goReturn);
+    $("cvBack").addEventListener("click", goReturn);
     // Sealed-box section is collapsible.
     $("boxToggle").addEventListener("click", () => {
       const body = $("boxBody");
@@ -8988,8 +9349,14 @@ a.fd-price:hover { text-decoration: underline; }
     await Promise.all([loadOwned(), loadWatched(), loadTargets(), loadCardView()]);
     await migrateSavedIds();
     await migrateCollection();
-    const lv = await loadKey("lastvisit");
-    prevVisit = typeof lv === "string" && dayNum(lv) != null ? lv : null;
+    // precon-lastvisit is the day of the latest visit; precon-prevvisit the
+    // visit day before that. A later load on the same day compares against
+    // prevvisit, so the strip does not vanish on a reload (or after a visit
+    // that began on a share link).
+    const lv = await loadKey("lastvisit"), pv = await loadKey("prevvisit");
+    const visitToday = localTodayIso();
+    const pastDay = v => typeof v === "string" && dayNum(v) != null && v < visitToday;
+    prevVisit = pastDay(lv) ? lv : lv === visitToday && pastDay(pv) ? pv : null;
     safely("years", fillYearFilter);
     safely("url", readUrlState);
     safely("stale", updateStaleBanner);
@@ -9024,7 +9391,10 @@ a.fd-price:hover { text-decoration: underline; }
       safely("portfolio", renderPortfolio);
       // This visit is the next one's "last visit", once there was history
       // to compare against.
-      saveKey("lastvisit", localTodayIso());
+      if (lv !== visitToday) {
+        if (pastDay(lv)) saveKey("prevvisit", lv);
+        saveKey("lastvisit", visitToday);
+      }
       safely("boxes", renderBoxes);
       safely("grid", () => patchCards(null, { passive: true, anchor }));
     }

@@ -2450,10 +2450,13 @@ _SET_CODE_RE = re.compile(r"^[A-Z0-9]{2,8}$")
 # the source sets do not all fall due on the same run.
 CARD_REFRESH_DAYS = 28
 CARD_REFRESH_SPREAD = 7
-# Box card details read before this date predate the "gc" key (Game
-# Changer), so they are read again once instead of waiting for their refresh
-# (box_details_due). None turns this off.
-CARD_GC_SINCE = "2026-11-15"
+# Box card details that the scraper before the "gc" key (Game Changer) read
+# lack it, so they are read again once instead of waiting for their refresh
+# (box_details_due). Which run wrote the stored files is told by the previous
+# prices.json (gc_details_missing), not by a date: main's scraper refreshes
+# sets on its own cycle until the merge and dates them after any fixed day,
+# without "gc". False turns this off (comparison runs).
+CARD_GC_REREAD = True
 # Key order of a deck row and of a box card (keys a card lacks are left out).
 # "new" (a printing new to Magic) and "gc" (a Game Changer) are written only
 # when true.
@@ -2617,11 +2620,21 @@ def details_due(code: str, fetched, today: str) -> bool:
     return age < 0 or age >= limit
 
 
-def box_details_due(code: str, fetched, today: str) -> bool:
+def gc_details_missing(previous: dict) -> bool:
+    """Were the stored box card details read by the scraper before the "gc"
+    key? That scraper wrote no crack `profile`; this one gives every crack
+    entry it writes one, and a run that writes no card files leaves the
+    previous prices.json as it was. With no previous prices.json the box
+    files are rebuilt from fresh reads anyway."""
+    crack = (previous or {}).get("crack") if isinstance(previous, dict) else None
+    entries = [c for c in crack.values() if isinstance(c, dict)] if isinstance(crack, dict) else []
+    return bool(CARD_GC_REREAD) and not any("profile" in c for c in entries)
+
+
+def box_details_due(code: str, fetched, today: str, gc_missing: bool = False) -> bool:
     """details_due for the card details a box file keeps, which are also due
-    once when they were read before CARD_GC_SINCE (they lack "gc")."""
-    return details_due(code, fetched, today) or (
-        CARD_GC_SINCE is not None and str(fetched) < CARD_GC_SINCE <= today)
+    when `gc_missing` (gc_details_missing: they lack "gc")."""
+    return gc_missing or details_due(code, fetched, today)
 
 
 # ---- Deck card lists ----
@@ -3291,6 +3304,7 @@ def add_box_spreads(box_results: dict, plans: dict, allp: dict) -> dict:
     published EV)} for the log and the measurements."""
     timings: dict = {}
     skipped = 0
+    failed: list = []
     for set_name, plan in plans.items():
         for r in box_results.get(set_name) or []:
             if r.get("carried_from"):
@@ -3315,6 +3329,7 @@ def add_box_spreads(box_results: dict, plans: dict, allp: dict) -> dict:
                                                          k["spread"]["mean"], r["ev"])
             except Exception as e:
                 print(f"  spread: [{set_name}] {r['kind']} failed: {e}", flush=True)
+                failed.append(f"{plan['code']}:{r['kind']}")
                 k.pop("spread", None)
                 r.pop("spread", None)
                 timings.pop(f"{plan['code']}:{r['kind']}", None)
@@ -3324,6 +3339,12 @@ def add_box_spreads(box_results: dict, plans: dict, allp: dict) -> dict:
     print(f"Box spread: {len(timings)} kinds, {SPREAD_BOXES} simulated boxes each, "
           f"in {total:.1f}s" + (f"; {skipped} left out, run budget nearly spent" if skipped else "")
           + (f"; mean more than 2% off the EV: {', '.join(far)}" if far else ""), flush=True)
+    if failed:
+        # Unlike the budget skip, a failure is a bug: the tiles lose their
+        # typical box line with nothing else in the run summary to say so.
+        print(f"::warning::Box spread failed for {len(failed)} of {len(failed) + len(timings)} "
+              f"box types ({', '.join(failed[:5])}{', ...' if len(failed) > 5 else ''}); "
+              f"they go without a spread today", flush=True)
     return timings
 
 
@@ -3332,16 +3353,24 @@ def add_box_spreads(box_results: dict, plans: dict, allp: dict) -> dict:
 # and want list planner, without loading the large box files. Keys are
 # norm(full card name), as in cards_index.json (index_name: a reversible
 # card counts as its one face); `aliases` maps the norm of a multi face
-# card's front face to its full name key. `in` lists [box file
-# stem, kind, finish, pack chance] for every kind a prices.json box row
-# points at (cards_file, cards_kind); the chance that one pack holds the
+# card's front face to its full name key. `in` lists [box file stem,
+# kind, finish, pack chance] or [..., pack chance, copies per pack] for
+# every kind a prices.json box row points at (cards_file, cards_kind); the
+# chance that one pack holds the
 # card in that finish, to 4 significant digits (two printings of one name in
 # one kind and finish count as either: 1 - (1 - a)(1 - b)). The finish is
 # the one the box file lists the entry under, which is its priced finish
 # (box_cards_doc): a foil sheet card with no foil TCGplayer price but a
 # nonfoil one is listed as nonfoil, so a price that appears or goes away can
-# move an entry between finishes. No updated_at: the file is byte identical,
-# and so not rewritten, while the odds and those finishes stay.
+# move an entry between finishes. An entry gets a fifth value, the expected
+# copies per pack (the odds' copies summed over those printings, 4
+# significant digits), when it differs from the chance: a pack can hold
+# several copies (an LTR Jumpstart pack holds 1.6 Plains on average over
+# its two printings, while the chance of any is 0.36), so chance times
+# packs undercounts a box's copies up to 5 times (ONE Jumpstart basics).
+# Without a fifth value the copies equal the chance.
+# No updated_at: the file is byte identical, and so not rewritten, while
+# the odds and those finishes stay.
 BOX_INDEX_SCHEMA = 1
 
 
@@ -3370,6 +3399,7 @@ def build_box_index(root: Path, box_results: dict) -> dict:
             if isinstance(r.get("cards_kind"), str) and _pointer_ok(root, r.get("cards_file"), "boxes"):
                 kinds_of.setdefault(r["cards_file"], set()).add(r["cards_kind"])
     chance: dict = {}   # key -> {(stem, kind, finish): chance of none}
+    copies: dict = {}   # key -> {(stem, kind, finish): expected copies per pack}
     names: dict = {}
     for pointer in sorted(kinds_of):
         stem = Path(pointer).stem
@@ -3387,9 +3417,16 @@ def build_box_index(root: Path, box_results: dict) -> dict:
                         continue
                     none = chance.setdefault(key, {})
                     none[(stem, kind, fin)] = none.get((stem, kind, fin), 1.0) * (1 - min(pack, 1.0))
+                    cp = copies.setdefault(key, {})
+                    cp[(stem, kind, fin)] = cp.get((stem, kind, fin), 0.0) + (_finite(o.get("copies")) or pack)
                     names.setdefault(key, set()).add(name)
-    cards = {key: {"name": min(names[key]),
-                   "in": sorted([s, k, f, _sig4(1 - none)] for (s, k, f), none in chance[key].items())}
+
+    def entry(key, at):
+        out = [*at, _sig4(1 - chance[key][at])]
+        n = _sig4(copies[key][at])
+        return out + [n] if n != out[3] else out
+
+    cards = {key: {"name": min(names[key]), "in": sorted(entry(key, at) for at in chance[key])}
              for key in sorted(chance)}
     aliases: dict = {}
     for key, e in cards.items():
@@ -3645,13 +3682,16 @@ def update_card_files(root: Path, decks: list, crack_results: dict, box_results:
                     or details_due(r["set"], prev["fetched"].get(r["set"]), today)):
                 want_details(wanted, r["uuid"], (r["set"],))
     prev_boxes: dict = {}
+    gc_missing = gc_details_missing(previous)
+    if gc_missing and plans:
+        print("Card lists: stored box card details predate Game Changer flags, read again once", flush=True)
     for set_name, plan in plans.items():
         prev = read_cards_file(boxes_dir / f"{plan['code'].lower()}.json")
         prev["cards"] = {u: d for u, d in ((u, reusable_details(c))
                                            for u, c in prev["cards"].items()) if d}
         prev_boxes[set_name] = prev
         # Sets whose cards the previous file holds and that are not due yet.
-        held = {c for c, when in prev["fetched"].items() if not box_details_due(c, when, today)}
+        held = {c for c, when in prev["fetched"].items() if not box_details_due(c, when, today, gc_missing)}
         for u, codes in plan_sources(plan).items():
             interest.add(u)
             if u in _CARD_DETAILS:
@@ -3660,7 +3700,7 @@ def update_card_files(root: Path, decks: list, crack_results: dict, box_results:
             if old is None:
                 want_details(wanted, u, tuple(c for c in codes if c not in held),
                              tuple(c for c in codes if c in held))
-            elif box_details_due(old["set"], prev["fetched"].get(old["set"]), today):
+            elif box_details_due(old["set"], prev["fetched"].get(old["set"]), today, gc_missing):
                 want_details(wanted, u, (old["set"],))
 
     # 2. Download the set files those cards need, largest need first.
@@ -3929,9 +3969,14 @@ def fetch_ck_phase(decks: list) -> tuple[dict, dict]:
 def update_long_history(path: Path, prices: dict, decks: list, run_date: str,
                         previous: dict | None = None) -> int:
     """Add this run's weekly points to history_long.json (history_long.py:
-    update_weekly, then save when it added any). Never raises: a missing
+    update_weekly, then save when the doc changed). Never raises: a missing
     module or any error is logged and the run goes on. Returns the points
     added.
+
+    The doc can change without a new point: update_weekly also moves the
+    series of renamed decks and drops untracked ones, and on a day without
+    a weekly point that change must still be written, or test_history_long
+    refuses every commit until the next point day (up to 6 days).
 
     A file that exists but cannot be read is left as it is, with a warning:
     starting a fresh doc would replace years of weekly points with one, the
@@ -3943,6 +3988,9 @@ def update_long_history(path: Path, prices: dict, decks: list, run_date: str,
         import history_long
         doc = history_long.load(path)
         why = doc.get(history_long.UNREADABLE)
+        # Compared after the update; a missing file stays missing until
+        # the first point is added, as before.
+        old_text = path.read_text(encoding="utf-8") if path.exists() and not why else None
         if why:
             print(f"::warning::Long history: {path.name} cannot be read ({why}); left as it "
                   f"is, no points added. Restore it from git.", flush=True)
@@ -3959,9 +4007,11 @@ def update_long_history(path: Path, prices: dict, decks: list, run_date: str,
             print(f"  Long history: product check skipped: {e}", flush=True)
         added = history_long.update_weekly(doc, prices, decks, run_date,
                                            box_sets=set(box_sets(decks)))
-        if added:
+        changed = old_text is not None and history_long.dump(doc) != old_text
+        if added or changed:
             history_long.save(path, doc)
-        print(f"Long history: {added} weekly points added", flush=True)
+        note = " (no new point; series moved, dropped or cleaned, so saved)" if changed and not added else ""
+        print(f"Long history: {added} weekly points added{note}", flush=True)
         return added
     except Exception as e:
         print(f"Long history skipped (not fatal): {type(e).__name__}: {e}", flush=True)
@@ -4082,7 +4132,10 @@ def main() -> None:
             add_box_spreads(box_results, getattr(fetch_box_prices, "card_plans", {}),
                             getattr(_get_allprices, "_data", None) or {})
         except Exception as e:
-            print(f"Box spread failed (not fatal): {e}", flush=True)
+            # A warning, so a whole failed step shows in the run summary
+            # (the budget skip inside add_box_spreads is expected and is not).
+            print(f"::warning::Box spread failed (not fatal), box types simulated before the "
+                  f"error keep theirs: {type(e).__name__}: {e}", flush=True)
             traceback.print_exc()
 
     # Card lists (cards/decks, cards/boxes), written before prices.json so

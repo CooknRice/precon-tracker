@@ -228,7 +228,12 @@ logic is in the inline `<script>`.
     with `.fd-box-open`, `.fd-odds`, `.fd-box-meta`): per box type from
     `box_index.json` (the card key, then its alias), finishes together:
     "in about 41% of boxes · about 0.51 copies per box" (or "about 1 in 25
-    boxes"), the finishes, the box price you can pay and its EV. Packs come
+    boxes", two significant figures, as in "about 1 in 3,100 boxes"; under
+    0.01 copies reads "under 0.01 copies per box"), the finishes, the box
+    price you can pay and its EV. Copies per box use an entry's fifth value
+    (expected copies per pack) when `box_index.json` gives one, else its
+    chance. A basic land gets a short note instead of a price and no "check
+    the box lists" button (the card index leaves basics out). Packs come
     from the prices.json row whose `cards_file` and `cards_kind` match; a
     row with no `packs` (Mystery Booster Commander Edition) shows the chance
     per pack only. **Never a cost per copy figure.** A box opens its card
@@ -257,12 +262,25 @@ logic is in the inline `<script>`.
   - Parsing: plain names, "1 Sol Ring", "1x Sol Ring", Moxfield, Archidekt
     and Arena exports ((SET) numbers, `*F*`, `[Category]`, `^tag^`, `#tag`
     and "SB:" stripped); headers, `#` and `//` comments skipped; the first
-    250 nonblank lines. Names match the index keys (the scraper's `norm`)
-    and aliases; unmatched ones get up to three suggestions by shared
-    letter pairs.
-  - Each wanted card is valued at its cheapest printing in the precon lists
-    loaded (the lower retail price, outlier guarded), counted up to the
-    copies wanted, so one odd printing cannot make a deck look cheap.
+    250 nonblank lines. A CSV export (Moxfield, Deckbox, Archidekt) is read
+    from its Count and Name columns when its first line is a header; a
+    comma line without one is tried field by field once it fails as plain
+    text. Names match the index keys (the scraper's `norm`) and aliases;
+    basic lands get their own "Basic lands" block (left out of the plan).
+    The first 20 unmatched names get up to three suggestions (shared letter
+    pairs of 0.6 or more, or an edit distance of 1, 2 for names of 8 letters
+    or more, with a swap of neighbours counted as one); the letter pairs of
+    both indexes are built once and suggestions are cached by name. With
+    nothing matched the status says "None of the lines matched a card we
+    track." Loading lines in `.planner-status` and the finder's
+    `.fd-progress` announce the label once; the running count sits in an
+    `aria-hidden` `.live-count` span.
+  - Each wanted card is valued at its cheapest printing in every precon list
+    that holds it (the lower retail price, outlier guarded), owned or not,
+    whatever the options say: those lists are always loaded, so the same
+    list gives the same values. "Leave out decks I own" only drops owned
+    decks from the rows. Counted up to the copies wanted, so one odd
+    printing cannot make a deck look cheap.
 - **Best buys feed:** `section.best-deals` (`.best-deals-head`,
   `.best-deals-grid`) of `.best-deal` / `.uf-item` tiles (`.bd-name`,
   `.bd-price`, `.bd-disc`) with a `.uf-kind` badge (`.uf-deck`, `.uf-box`,
@@ -271,13 +289,19 @@ logic is in the inline `<script>`.
   loaded or failed; until then they show a `.pending` placeholder.
 - `.since-strip` (`.since-top` / `.since-head` / `.since-dismiss` /
   `.since-list` / `.since-open` / `.since-num` (`.now`, `.good`) /
-  `.since-note`): "Since your last visit on Nov 1", up to 6 changes for
-  watched or owned decks and owned boxes since the previous visit (a price
-  target reached, a new low over the recorded range, a move of 10% or more,
-  "from $A to $B"). It shows only when that visit is a day old or more,
-  appears once the price history is in (above the stats, so mostly below
-  the first screen), and Dismiss hides it for this visit. Each name is a
-  button that opens its chart. Computed in the browser; nothing is sent.
+  `.since-more` / `.since-note`): "Since your last visit on Nov 1", up to 6
+  changes for watched or owned decks and owned boxes since the previous
+  visit (a price target reached, a new low over the recorded range, a move
+  of 10% or more, "from $A to $B"; a deck whose recorded prices begin after
+  that visit gets "prices recorded only since <day>"). "Show N more
+  changes" lists the rest. It shows only when that visit is a day old or
+  more: the previous visit is `precon-lastvisit`, or `precon-prevvisit`
+  (the visit day before it) on a later load the same day, so a reload does
+  not hide it. It appears once the price history is in, above the stats
+  (mostly below the first screen: placed higher it would push the page
+  down after the first paint), and Dismiss hides it for this visit. Each
+  name is a button that opens its chart. Computed in the browser; nothing
+  is sent.
 - `.portfolio` (`.portfolio-grid` / `.portfolio-head` / `.pf-stat` /
   `.pf-label` / `.pf-val` / `.pf-sub`): the collection panel ("Your
   collection"), shown when the collection holds anything. Stats: copies
@@ -287,28 +311,43 @@ logic is in the inline `<script>`.
   the sealed copies it takes, `buy_qty`; shown only when the data has an
   offer and a maximum; checked with real data on 2026-11-15) and "Singles"
   (opened decks, TCGPlayer retail).
-  - `.col-trend` (`.col-trend-note`): "Value over time" sparkline (daily
-    history only); it opens the chart dialog on the collection line
+  - `.col-trend` (`.col-trend-note`): "Value over time" sparkline. Before
+    the weekly history loads it is the daily history only, and the note
+    says bundles are not in it (a collection of only bundles shows a
+    "Chart" button instead); once it is in (any chart loads it), the last
+    90 days of the long series, bundles included, so the line ends at
+    Value now. It opens the chart dialog on the collection line
     (today's sealed copies at each day's recorded price, from the first day
     all of them have one, with a note saying what is left out). Once the
     weekly history has loaded the chart line also reaches back before the
     daily window and includes bundles; a missing week for any item breaks
-    it. Its change is drawn neutral, not as a buyer's verdict.
+    it. Its note names the day the daily prices begin, or the range of
+    those days when they differ by item. Its change is drawn neutral, not
+    as a buyer's verdict.
   - `.col-list` of `.col-item` (`.col-name` with a `.uf-kind` badge,
     `.col-title`; `.col-fields` of labelled `.col-field` / `.col-flabel` /
     `.col-input` for Copies, Paid each and Opened, and `.col-remove`;
     `.col-figs` with `.col-money`, `.col-quiet`, `.col-up`, `.col-down`).
     Fields save on change; a value that fails its check is put back with a
-    note in `.col-status`. A deck's Paid starts at its MSRP.
+    note in `.col-status`. A deck's Paid starts at its MSRP. Removing the
+    last item hides the panel, moves focus to the stats heading and says so
+    in `#collectionGone` (an sr only status after the panel). An Own button
+    keeps its place on screen when the panel above appears or goes, also
+    in browsers without scroll anchoring.
   - `.col-hint`: how to add items, and a link to the saved data controls.
 - `.own-chip` (`.checked`, `aria-pressed`): the Own button on each box tile
   and in each deck's set bundle note. Outlined; owned is `--owned-bg` with
   `--sage-text`. The visible "Own" or "✓ Owned" is hidden from screen
   readers, which hear "Own <product>" and the pressed state.
-- `.link-notice`: at the top of `<main>`, when a share link names a deck or
-  box the page does not list (or a deck whose card list is not out yet, whose
-  chart opens instead). Dismissable.
-- `.stats` / `.stat` / `.stat-label` / `.stat-val` / `.stat-sub`: summary tiles.
+- `.link-notice`: first in `<main>` but fixed over the top of the page
+  (z-index 60: above the compare bar, below the dialogs), so it moves
+  nothing when it appears. Shown when a share link names a deck, box or
+  card the page does not list, a deck whose card list is not out yet (its
+  chart opens instead), or a box type the set does not list (the set's
+  first listed type opens instead). Dismissable.
+- `.stats` / `.stat` / `.stat-label` / `.stat-val` / `.stat-sub`: summary
+  tiles. "Decks owned" counts owned decks, with MSRP and today's price for
+  one copy each; copies, boxes and bundles are in the collection panel.
 
 ### Deck card (`.card`, states `.owned`, `.deal`, `.watching`, `.target-hit`)
 - Identity: `.card-top` / `h3.card-name` / `.card-set` / `.card-setrow` /
@@ -410,7 +449,9 @@ logic is in the inline `<script>`.
 ### Filters and controls
 - `.filters` / `.filter-group` / `.filter-label` / `.search-input` /
   `.filter-select` / `.sort-wrap` / `.sort-select` / `.count-line` /
-  `.reset-btn` / `.scope-chip`. Every control has a label.
+  `.reset-btn` / `.scope-chip`. Every control has a label. Five columns
+  above 1000 px, wrapping columns of at least 220 px from 721 to 1000 px
+  (the five auto columns overflowed at tablet width), one column below.
 - Color filter: `.color-filter` / `.color-btn` / `.cb-w|u|b|r|g|c`.
 - Power filter: `.bracket-filter` / `.bracket-chip` / `.power-bracket`.
 - Toggle buttons (color, bracket, scope, chart range) use `aria-pressed`.
@@ -443,10 +484,21 @@ logic is in the inline `<script>`.
     "One point a week before Aug 17, 2026, from TCGCSV's archive of
     TCGPlayer Market prices", and for decks that Card Kingdom has no
     history that far back; while loading it says so, and on failure it
-    offers `.chart-retry` "Try again" (focus moves to the line).
+    offers `.chart-retry` "Try again" (focus moves to the line). An sr only
+    `#chartLongLive` (role status) announces loading, failure and "Weekly
+    price history loaded."
+  - A deck's line is the best recorded price across vendors, but the weekly
+    archive is TCGPlayer Market only. A range whose points reach into the
+    weekly part draws its daily part from the recorded `tcg` field instead,
+    so the line and its change are one source; the subtitle then reads
+    "<set> · TCGPlayer Market price" and the note says the shorter ranges
+    show the best price across vendors.
   - A range that would show the same as All is `disabled` (faded), never
     hidden, so the row never moves; while the weekly file loads, 6M and 1Y
-    wait for it. Axes past about 8 months label months with years.
+    wait for it. A range chosen then that turns out the same as All
+    switches the chart to All (pressed), and focus moves to All if it was
+    on the disabled button. Axes past about 8 months label months with
+    years.
   - `.msrp-line` (dashed `--ink-muted`, labelled "MSRP $59.99", decks only,
     inside the y range) and `.release-line` (dotted `--sage`, "Release Mar
     8, 2024"; presale points can sit before it). Labels are
@@ -506,7 +558,7 @@ logic is in the inline `<script>`.
     `kinds[kind].spread`): "10,000 simulated boxes · TCGPlayer retail before
     fees", a `.cv-spread-lead` line (typical box, 8 in 10, half), and a
     `.cv-hist` histogram (`role="img"` with a full sentence as its label;
-    20 `.cv-hist-col` bars, the middle 8 in 10 in `.mid` with `--ink-soft`,
+    20 `.cv-hist-col` bars, the bars that reach into the middle 8 in 10 (p10 to p90) in `.mid` with `--ink-soft`,
     the tails `--ink-faded` at reduced opacity; `.cv-hist-axis` gives start,
     middle and end). The note says the last bar also holds every box above
     its range (at most 1 in 100). Figures are rounded like the row spread
@@ -534,9 +586,15 @@ logic is in the inline `<script>`.
 - Finder dialog `#findModal` (`.find-modal-inner`, `#findModalTitle`
   "Where to get Sol Ring", `#findBody` as a `.finder`): `.dlg-actions`
   with "← Back to the card list" (only when opened from a preview; it
-  reopens that list) and "Copy link". `?card=<key>` (the card's index key,
+  reopens that list with focus on the card, drawing more of a box list if
+  needed) and "Copy link". `?card=<key>` (the card's index key,
   `[a-z0-9]`) opens it; a key that is no card says so inside the dialog.
-  Rows in it open a deck's chart or a box's card list, replacing it.
+  Rows in it open a deck's chart or a box's card list, replacing it; that
+  dialog then has `.dlg-return` "← Back to Where to get <card>" (`#chartBack`,
+  `#cvBack`), which reopens the finder with focus on the row. Each back
+  target is kept in the history entry (`mtgBack`), so Forward brings the
+  button back. The first pinned card preview (not a hover) loads both card
+  indexes for its "Also in N precons and M boxes" line.
 - **Share links and Back.** `?deck=<id>` opens a deck's card list and
   `?deck=<id>&view=chart` its chart; `?box=<stem>:<kind>` opens a box type's
   card list (`<stem>` is the box card file's name, `<kind>` its type) and
@@ -559,7 +617,10 @@ logic is in the inline `<script>`.
   "Restore" reads one back after a confirmation that names what it replaces.
   Every key is checked whole (types, ranges, id shapes); a key that fails is
   left out and named, anything the file lacks stays as it is, and a file
-  that is not a backup changes nothing. The note warns that Safari can clear
+  that is not a backup changes nothing. The collection count in the
+  confirmation and the result is what the restore keeps: deck items whose
+  deck is not in the owned list in effect afterwards are dropped, and both
+  say how many. The note warns that Safari can clear
   a site's storage after seven days of use without a visit.
 
 ---
@@ -623,7 +684,7 @@ logic is in the inline `<script>`.
   (`precon-*`), with `precon-collection` (`{"schema":1,"items":{"deck:<id>"
   | "box:<set name>::<type>" | "bundle:<id>": {qty, paid, opened}}}`),
   `precon-lastvisit` (a local date, written once the price history has
-  loaded), `precon-theme` and `precon-cardview`. `precon-owned` stays the
+  loaded) with `precon-prevvisit` (the visit day before it, not in backups), `precon-theme` and `precon-cardview`. `precon-owned` stays the
   owned flag: a deck is in the collection exactly when it is owned, and
   every load and save matches the two (existing owners get one copy per
   owned deck, priced at MSRP, on their first visit with this version). Each save rereads storage and applies one change, a `storage`
