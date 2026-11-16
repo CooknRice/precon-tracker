@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Bloomburrow Commander",
 "code":"BLB",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":36,"pack_size":14.0,"ev":158.27,"sources":["BLB","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":158.63,"p10":102.35,"p25":124.97,"p50":153.07,"p75":185.91,"p90":221.55,"bins":{"start":40.0,"width":20.0,"counts":[14,177,689,1208,1728,1781,1513,1107,741,454,268,163,82,40,20,10,3,1,0,1]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":468.62,"sources":["BLB","BLC","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":469.52,"p10":259.88,"p25":306.48,"p50":383.8,"p75":517.6,"p90":755.14,"bins":{"start":100.0,"width":100.0,"counts":[104,2185,3132,1862,929,553,398,231,116,52,70,111,61,29,13,15,5,38,44,52]}}}},
 "fetched":{"BLB":"2026-11-16","BLC":"2026-11-16","SPG":"2026-11-16"},
 "cards":[

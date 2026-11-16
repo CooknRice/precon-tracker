@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Commander: Final Fantasy",
 "code":"FIN",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":175.16,"sources":["FCA","FIN"],"unresolved":0,"spread":{"boxes":10000,"mean":175.32,"p10":102.52,"p25":128.42,"p50":163.89,"p75":210.1,"p90":265.33,"bins":{"start":20.0,"width":20.0,"counts":[2,26,243,621,1081,1350,1421,1304,1022,779,589,458,342,240,186,122,65,58,40,51]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":938.11,"sources":["FCA","FIC","FIN"],"unresolved":0,"spread":{"boxes":10000,"mean":938.87,"p10":480.16,"p25":594.41,"p50":785.03,"p75":1076.11,"p90":1586.37,"bins":{"start":200.0,"width":200.0,"counts":[324,2261,2584,1845,1056,602,340,231,175,136,90,124,82,60,31,20,13,6,8,12]}}}},
 "fetched":{"FCA":"2026-11-16","FIC":"2026-11-16","FIN":"2026-11-16"},
 "cards":[

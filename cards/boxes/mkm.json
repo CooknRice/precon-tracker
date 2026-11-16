@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Murders at Karlov Manor",
 "code":"MKM",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":36,"pack_size":14.0,"ev":151.12,"sources":["MKM","PLST","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":150.87,"p10":98.32,"p25":119.89,"p50":147.32,"p75":178.81,"p90":207.6,"bins":{"start":20.0,"width":20.0,"counts":[3,59,270,763,1420,1828,1758,1484,1098,681,319,177,85,31,15,8,1,0,0,0]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":251.05,"sources":["MKC","MKM","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":251.47,"p10":134.75,"p25":168.51,"p50":213.57,"p75":268.7,"p90":348.41,"bins":{"start":0.0,"width":50.0,"counts":[3,203,1393,2681,2508,1604,621,240,75,44,59,30,16,11,62,97,126,103,68,56]}}}},
 "fetched":{"MKC":"2026-11-16","MKM":"2026-11-16","PLST":"2026-11-16","SPG":"2026-11-16"},
 "cards":[

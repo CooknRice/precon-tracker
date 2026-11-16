@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"March of the Machine",
 "code":"MOM",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":161.7,"sources":["MOM","MUL"],"unresolved":0,"spread":{"boxes":10000,"mean":162.45,"p10":105.8,"p25":129.42,"p50":159.24,"p75":191.48,"p90":223.49,"bins":{"start":40.0,"width":20.0,"counts":[17,190,549,1058,1548,1708,1599,1324,897,538,304,150,68,30,10,7,3,0,0,0]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":null,"sources":["MOC","MOM","MUL"],"unresolved":0},"jumpstart":{"label":"Jumpstart Box","packs":18,"pack_size":20.0,"ev":119.64,"sources":["MOM"],"unresolved":0,"spread":{"boxes":10000,"mean":119.56,"p10":78.17,"p25":96.61,"p50":118.06,"p75":140.65,"p90":162.14,"bins":{"start":10.0,"width":10.0,"counts":[2,6,25,60,152,331,524,753,1025,1168,1178,1196,1026,813,633,399,306,177,87,139]}}}},
 "fetched":{"MOC":"2026-11-16","MOM":"2026-11-16","MUL":"2026-11-16"},
 "cards":[

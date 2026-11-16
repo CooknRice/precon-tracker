@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Streets of New Capenna",
 "code":"SNC",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":89.13,"sources":["SNC"],"unresolved":0,"spread":{"boxes":10000,"mean":89.34,"p10":55.67,"p25":70.12,"p50":87.62,"p75":106.73,"p90":124.84,"bins":{"start":10.0,"width":10.0,"counts":[1,27,147,425,799,1078,1416,1470,1372,1119,811,608,327,197,110,45,26,17,2,3]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":171.16,"sources":["NCC","SNC"],"unresolved":0,"spread":{"boxes":10000,"mean":171.13,"p10":119.75,"p25":141.25,"p50":168.11,"p75":197.4,"p90":227.32,"bins":{"start":40.0,"width":20.0,"counts":[4,44,241,720,1393,1807,1896,1561,1058,659,349,158,68,34,3,5,0,0,0,0]}}}},
 "fetched":{"NCC":"2026-11-16","SNC":"2026-11-16"},
 "cards":[

@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"The Brothers' War",
 "code":"BRO",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":148.6,"sources":["BRO","BRR"],"unresolved":0,"spread":{"boxes":10000,"mean":149.27,"p10":87.35,"p25":107.7,"p50":138.48,"p75":178.77,"p90":222.87,"bins":{"start":20.0,"width":20.0,"counts":[6,103,511,1249,1597,1643,1371,1076,808,572,363,234,158,94,65,47,21,26,14,42]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":297.84,"sources":["BOT","BRC","BRO","BRR"],"unresolved":0,"spread":{"boxes":10000,"mean":296.98,"p10":185.5,"p25":217.08,"p50":263.14,"p75":332.14,"p90":442.62,"bins":{"start":50.0,"width":50.0,"counts":[1,163,1467,2702,2236,1301,758,428,257,158,139,119,87,52,33,25,17,19,9,29]}}},"jumpstart":{"label":"Jumpstart Box","packs":18,"pack_size":20.0,"ev":26.22,"sources":["BRO"],"unresolved":0,"spread":{"boxes":10000,"mean":26.38,"p10":10.04,"p25":15.33,"p50":24.36,"p75":34.89,"p90":45.45,"bins":{"start":0.0,"width":5.0,"counts":[177,811,1418,1409,1331,1308,1062,783,658,400,241,174,99,55,33,23,9,4,1,4]}}}},
 "fetched":{"BOT":"2026-11-16","BRC":"2026-11-16","BRO":"2026-11-16","BRR":"2026-11-16"},
 "cards":[

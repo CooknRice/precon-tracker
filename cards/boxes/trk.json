@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Star Trek",
 "code":"TRK",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":74.59,"sources":["SDS","TRK"],"unresolved":0,"spread":{"boxes":10000,"mean":74.14,"p10":43.03,"p25":55.47,"p50":71.04,"p75":88.97,"p90":108.93,"bins":{"start":10.0,"width":10.0,"counts":[25,170,542,999,1455,1654,1504,1262,878,566,351,239,157,80,53,28,16,13,3,5]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":275.6,"sources":["SDS","TRC","TRK"],"unresolved":0,"spread":{"boxes":10000,"mean":276.42,"p10":186.28,"p25":218.0,"p50":264.25,"p75":319.06,"p90":382.54,"bins":{"start":75.0,"width":25.0,"counts":[1,26,157,471,911,1293,1352,1311,1213,979,657,492,382,224,180,131,66,56,35,63]}}}},
 "fetched":{"SDS":"2026-11-16","TRC":"2026-11-16","TRK":"2026-11-16"},
 "cards":[

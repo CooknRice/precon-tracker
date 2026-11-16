@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Outlaws of Thunder Junction",
 "code":"OTJ",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":36,"pack_size":14.0,"ev":188.54,"sources":["BIG","OTJ","OTP","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":188.75,"p10":124.6,"p25":150.87,"p50":183.67,"p75":221.39,"p90":258.54,"bins":{"start":60.0,"width":20.0,"counts":[28,235,558,981,1406,1526,1435,1238,963,674,398,235,153,87,43,21,14,4,0,1]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":287.86,"sources":["BIG","OTC","OTJ","OTP","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":287.83,"p10":179.34,"p25":217.1,"p50":269.34,"p75":337.74,"p90":416.06,"bins":{"start":50.0,"width":50.0,"counts":[3,297,1489,2290,2160,1600,949,537,287,147,94,68,44,21,8,3,1,1,0,1]}}}},
 "fetched":{"BIG":"2026-11-16","OTC":"2026-11-16","OTJ":"2026-11-16","OTP":"2026-11-16","SPG":"2026-11-16"},
 "cards":[

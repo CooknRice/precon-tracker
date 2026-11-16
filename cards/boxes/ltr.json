@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"The Lord of the Rings: Tales of Middle-earth",
 "code":"LTR",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":190.45,"sources":["LTR"],"unresolved":0,"spread":{"boxes":10000,"mean":190.79,"p10":117.05,"p25":143.12,"p50":178.75,"p75":227.93,"p90":279.88,"bins":{"start":40.0,"width":20.0,"counts":[8,82,320,738,1153,1419,1358,1160,951,738,618,458,326,215,142,102,72,51,31,58]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":609.63,"sources":["LTC","LTR"],"unresolved":0,"spread":{"boxes":10000,"mean":606.79,"p10":361.42,"p25":435.07,"p50":535.39,"p75":667.08,"p90":869.24,"bins":{"start":0.0,"width":200.0,"counts":[5,1717,4717,2273,616,363,130,28,6,2,0,0,11,63,29,14,13,7,2,4]}}},"jumpstart":{"label":"Jumpstart Box","packs":18,"pack_size":20.0,"ev":123.19,"sources":["LTR"],"unresolved":0,"spread":{"boxes":10000,"mean":123.36,"p10":75.49,"p25":93.8,"p50":119.25,"p75":147.9,"p90":176.71,"bins":{"start":20.0,"width":20.0,"counts":[5,270,1076,1750,1967,1811,1394,841,451,256,102,48,21,6,0,1,1,0,0,0]}}}},
 "fetched":{"LTC":"2026-11-16","LTR":"2026-11-16"},
 "cards":[

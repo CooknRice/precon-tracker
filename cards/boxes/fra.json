@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Reality Fracture",
 "code":"FRA",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":86.08,"sources":["FRA","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":85.98,"p10":53.65,"p25":65.47,"p50":81.93,"p75":102.36,"p90":124.36,"bins":{"start":20.0,"width":10.0,"counts":[13,131,543,1081,1440,1545,1384,1111,936,621,419,301,193,127,61,49,26,8,7,4]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":233.01,"sources":["FRA","FRC","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":232.9,"p10":138.92,"p25":162.87,"p50":197.0,"p75":251.93,"p90":366.62,"bins":{"start":50.0,"width":50.0,"counts":[46,1565,3546,2286,948,526,278,203,169,133,77,87,64,24,21,3,3,5,0,16]}}}},
 "fetched":{"FRA":"2026-11-16","FRC":"2026-11-16","SPG":"2026-11-16"},
 "cards":[

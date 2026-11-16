@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Commander Masters",
 "code":"CMM",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":24,"pack_size":20.0,"ev":541.63,"sources":["CMM"],"unresolved":0,"spread":{"boxes":10000,"mean":541.62,"p10":405.22,"p25":460.7,"p50":533.2,"p75":612.31,"p90":689.35,"bins":{"start":200.0,"width":50.0,"counts":[7,37,228,613,1266,1654,1834,1532,1187,765,447,232,112,50,23,7,4,1,1,0]}}},"collector":{"label":"Collector Booster Box","packs":4,"pack_size":15.0,"ev":363.06,"sources":["CMM"],"unresolved":0,"spread":{"boxes":10000,"mean":362.83,"p10":228.41,"p25":275.38,"p50":338.75,"p75":419.88,"p90":510.51,"bins":{"start":100.0,"width":50.0,"counts":[22,420,1174,1851,1962,1579,1104,771,426,257,134,56,34,17,27,49,35,36,17,29]}}}},
 "fetched":{"CMM":"2026-11-16"},
 "cards":[

@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Innistrad: Midnight Hunt",
 "code":"MID",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":38.92,"sources":["MID"],"unresolved":0,"spread":{"boxes":10000,"mean":38.91,"p10":21.09,"p25":27.02,"p50":35.2,"p75":48.2,"p90":61.98,"bins":{"start":5.0,"width":5.0,"counts":[33,208,551,1115,1544,1494,1180,916,715,584,508,355,253,180,127,85,56,38,27,31]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":106.29,"sources":["MIC","MID"],"unresolved":0,"spread":{"boxes":10000,"mean":106.18,"p10":77.65,"p25":88.95,"p50":103.54,"p75":120.8,"p90":138.55,"bins":{"start":40.0,"width":10.0,"counts":[12,73,345,813,1436,1739,1657,1348,990,683,407,224,143,58,41,19,8,2,2,0]}}}},
 "fetched":{"MIC":"2026-11-16","MID":"2026-11-16"},
 "cards":[

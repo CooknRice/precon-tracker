@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Strixhaven: School of Mages (Commander 2021)",
 "code":"STX",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":103.54,"sources":["STA","STX"],"unresolved":0,"spread":{"boxes":10000,"mean":103.32,"p10":55.13,"p25":70.2,"p50":92.41,"p75":128.33,"p90":166.06,"bins":{"start":0.0,"width":20.0,"counts":[2,170,1212,2233,2053,1349,1035,773,496,313,158,87,51,29,20,10,6,2,1,0]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":385.02,"sources":["C21","STA","STX"],"unresolved":0,"spread":{"boxes":10000,"mean":387.82,"p10":250.74,"p25":291.7,"p50":349.79,"p75":435.12,"p90":563.25,"bins":{"start":100.0,"width":50.0,"counts":[2,125,858,1878,2146,1672,1097,663,459,295,173,110,87,115,103,82,41,31,23,40]}}}},
 "fetched":{"C21":"2026-11-16","STA":"2026-11-16","STX":"2026-11-16"},
 "cards":[

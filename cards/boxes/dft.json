@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Aetherdrift Commander",
 "code":"DFT",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":69.93,"sources":["DFT","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":70.31,"p10":34.51,"p25":46.6,"p50":61.89,"p75":79.92,"p90":101.94,"bins":{"start":0.0,"width":20.0,"counts":[133,1449,3127,2798,1415,476,110,14,4,39,155,166,71,32,4,0,2,0,1,4]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":138.19,"sources":["DFT","DRC","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":137.01,"p10":80.85,"p25":97.63,"p50":120.2,"p75":147.76,"p90":191.22,"bins":{"start":20.0,"width":20.0,"counts":[9,142,793,1820,2205,1963,1226,627,299,168,90,75,52,75,129,114,82,55,22,54]}}}},
 "fetched":{"DFT":"2026-11-16","DRC":"2026-11-16","SPG":"2026-11-16"},
 "cards":[

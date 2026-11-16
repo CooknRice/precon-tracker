@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Edge of Eternities",
 "code":"EOE",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":170.38,"sources":["EOE","EOS","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":170.78,"p10":106.84,"p25":131.06,"p50":161.99,"p75":200.45,"p90":247.11,"bins":{"start":20.0,"width":20.0,"counts":[1,22,164,516,1051,1428,1659,1477,1160,797,554,428,261,174,116,79,49,28,13,23]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":474.19,"sources":["EOC","EOE","EOS","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":471.65,"p10":277.0,"p25":330.27,"p50":402.55,"p75":507.64,"p90":679.31,"bins":{"start":100.0,"width":100.0,"counts":[52,1536,3330,2456,1183,520,269,151,127,63,43,18,9,3,0,4,37,101,42,56]}}}},
 "fetched":{"EOC":"2026-11-16","EOE":"2026-11-16","EOS":"2026-11-16","SPG":"2026-11-16"},
 "cards":[

@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Doctor Who Commander",
 "code":"WHO",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":526.23,"sources":["WHO"],"unresolved":0,"spread":{"boxes":10000,"mean":526.33,"p10":439.77,"p25":475.89,"p50":518.45,"p75":565.28,"p90":613.09,"bins":{"start":300.0,"width":25.0,"counts":[3,8,45,145,420,728,1097,1476,1454,1376,1138,805,493,352,177,86,52,30,9,106]}}}},
 "fetched":{"WHO":"2026-11-16"},
 "cards":[

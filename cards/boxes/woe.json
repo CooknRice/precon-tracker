@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Wilds of Eldraine",
 "code":"WOE",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":251.07,"sources":["WOE","WOT"],"unresolved":0,"spread":{"boxes":10000,"mean":252.74,"p10":149.35,"p25":184.11,"p50":234.52,"p75":301.13,"p90":378.47,"bins":{"start":50.0,"width":50.0,"counts":[70,957,2286,2371,1788,1109,629,368,198,93,65,28,20,10,2,2,3,0,1,0]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":416.3,"sources":["WOC","WOE","WOT"],"unresolved":0,"spread":{"boxes":10000,"mean":416.45,"p10":218.47,"p25":266.31,"p50":337.02,"p75":439.17,"p90":617.81,"bins":{"start":0.0,"width":200.0,"counts":[583,6097,2248,580,179,36,8,0,4,97,55,84,17,9,0,1,0,0,1,1]}}}},
 "fetched":{"WOC":"2026-11-16","WOE":"2026-11-16","WOT":"2026-11-16"},
 "cards":[

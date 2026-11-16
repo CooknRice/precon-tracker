@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Teenage Mutant Ninja Turtles",
 "code":"TMT",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":55.79,"sources":["PZA","TMT"],"unresolved":0,"spread":{"boxes":10000,"mean":55.54,"p10":28.28,"p25":37.93,"p50":52.16,"p75":69.74,"p90":87.09,"bins":{"start":0.0,"width":10.0,"counts":[5,208,989,1659,1800,1563,1304,985,658,394,200,102,66,35,22,7,1,1,0,1]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":253.33,"sources":["PZA","TMC","TMT"],"unresolved":0,"spread":{"boxes":10000,"mean":252.06,"p10":162.57,"p25":187.74,"p50":224.28,"p75":272.37,"p90":337.88,"bins":{"start":50.0,"width":50.0,"counts":[4,544,2780,3209,1782,807,293,180,131,116,60,33,8,7,6,0,0,1,0,39]}}}},
 "fetched":{"PZA":"2026-11-16","TMC":"2026-11-16","TMT":"2026-11-16"},
 "cards":[

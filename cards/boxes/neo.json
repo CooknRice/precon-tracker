@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Kamigawa: Neon Dynasty",
 "code":"NEO",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":162.32,"sources":["NEO"],"unresolved":0,"spread":{"boxes":10000,"mean":162.74,"p10":103.06,"p25":126.12,"p50":156.63,"p75":192.07,"p90":230.0,"bins":{"start":40.0,"width":20.0,"counts":[11,141,680,1241,1592,1605,1482,1126,828,559,316,180,92,64,39,22,12,6,2,2]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":293.02,"sources":["NEC","NEO"],"unresolved":0,"spread":{"boxes":10000,"mean":293.49,"p10":195.53,"p25":230.71,"p50":279.11,"p75":337.88,"p90":403.48,"bins":{"start":100.0,"width":25.0,"counts":[7,84,355,709,1051,1294,1293,1242,1025,782,647,454,308,234,168,91,73,38,34,111]}}}},
 "fetched":{"NEC":"2026-11-16","NEO":"2026-11-16"},
 "cards":[

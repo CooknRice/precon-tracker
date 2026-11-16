@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Commander Legends: Battle for Baldur's Gate",
 "code":"CLB",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":24,"pack_size":20.0,"ev":269.36,"sources":["CLB"],"unresolved":0,"spread":{"boxes":10000,"mean":268.22,"p10":180.86,"p25":210.95,"p50":250.76,"p75":310.91,"p90":381.9,"bins":{"start":75.0,"width":25.0,"counts":[3,28,173,579,1106,1495,1562,1297,932,696,579,464,343,248,173,112,73,44,31,62]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":582.44,"sources":["CLB"],"unresolved":0,"spread":{"boxes":10000,"mean":581.57,"p10":388.95,"p25":465.14,"p50":561.01,"p75":676.66,"p90":796.81,"bins":{"start":200.0,"width":50.0,"counts":[23,109,340,714,959,1252,1287,1258,1069,882,619,520,337,204,158,84,76,42,33,34]}}}},
 "fetched":{"CLB":"2026-11-16"},
 "cards":[

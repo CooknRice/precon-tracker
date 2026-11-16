@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"The Lost Caverns of Ixalan",
 "code":"LCI",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":125.52,"sources":["LCI"],"unresolved":0,"spread":{"boxes":10000,"mean":124.91,"p10":60.02,"p25":85.64,"p50":118.55,"p75":157.1,"p90":197.25,"bins":{"start":0.0,"width":20.0,"counts":[7,186,805,1112,1461,1526,1380,1178,815,593,419,239,138,80,30,14,11,3,2,1]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":478.42,"sources":["LCC","LCI","REX","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":476.48,"p10":298.74,"p25":349.04,"p50":414.18,"p75":500.47,"p90":688.21,"bins":{"start":100.0,"width":100.0,"counts":[19,1010,3399,3065,1136,407,270,175,99,65,94,53,46,44,29,26,26,15,5,17]}}}},
 "fetched":{"LCC":"2026-11-16","LCI":"2026-11-16","REX":"2026-11-16","SPG":"2026-11-16"},
 "cards":[

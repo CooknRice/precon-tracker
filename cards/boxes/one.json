@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Phyrexia: All Will Be One",
 "code":"ONE",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":140.5,"sources":["DMU","KHM","NEO","ONE","SNC"],"unresolved":0,"spread":{"boxes":10000,"mean":141.07,"p10":63.38,"p25":87.3,"p50":122.08,"p75":176.15,"p90":247.73,"bins":{"start":0.0,"width":20.0,"counts":[2,124,712,1189,1402,1433,1176,915,658,470,426,358,331,212,195,108,73,58,41,117]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":328.17,"sources":["DMU","KHM","NEO","ONC","ONE","SNC"],"unresolved":0,"spread":{"boxes":10000,"mean":327.93,"p10":179.4,"p25":223.49,"p50":294.15,"p75":397.12,"p90":523.12,"bins":{"start":50.0,"width":50.0,"counts":[11,355,1276,1866,1669,1297,1083,711,543,365,244,203,158,74,54,29,25,19,8,10]}}},"jumpstart":{"label":"Jumpstart Box","packs":18,"pack_size":20.0,"ev":61.94,"sources":["ONE"],"unresolved":0,"spread":{"boxes":10000,"mean":62.4,"p10":23.34,"p25":36.08,"p50":57.58,"p75":82.04,"p90":108.08,"bins":{"start":0.0,"width":10.0,"counts":[89,560,1148,1119,1175,1159,1135,942,731,551,464,293,223,154,97,72,34,20,12,22]}}}},
 "fetched":{"DMU":"2026-11-16","KHM":"2026-11-16","NEO":"2026-11-16","ONC":"2026-11-16","ONE":"2026-11-16","SNC":"2026-11-16"},
 "cards":[

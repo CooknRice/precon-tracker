@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-16T02:16:11.377566+00:00",
+  "updated_at": "2026-11-16T08:05:35.930827+00:00",
   "deck_count": 121,
   "vendors": {
     "cardkingdom": {
@@ -115,7 +115,7 @@
         "status": "ok",
         "qty": 2,
         "buy": 45.0,
-        "buy_qty": 17
+        "buy_qty": 18
       },
       "prismari-artistry": {
         "price": 54.99,
@@ -559,15 +559,14 @@
         "status": "ok",
         "qty": 3,
         "buy": 84.0,
-        "buy_qty": 13
+        "buy_qty": 11
       },
       "food-and-fellowship": {
         "price": 109.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/the-lord-of-the-rings-tales-of-middle-earth-commander-deck-food-and-fellowship",
         "status": "ok",
         "qty": 1,
-        "buy": 71.0,
-        "buy_qty": 1
+        "buy": null
       },
       "elven-council": {
         "price": 89.99,
@@ -575,15 +574,14 @@
         "status": "ok",
         "qty": 6,
         "buy": 58.0,
-        "buy_qty": 9
+        "buy_qty": 7
       },
       "riders-of-rohan": {
         "price": 89.99,
         "url": "https://www.cardkingdom.com/mtg-sealed/the-lord-of-the-rings-tales-of-middle-earth-commander-deck-riders-of-rohan",
         "status": "ok",
         "qty": 1,
-        "buy": 58.0,
-        "buy_qty": 1
+        "buy": null
       },
       "call-for-backup": {
         "price": 119.99,
@@ -835,7 +833,7 @@
         "status": "ok",
         "qty": 4,
         "buy": 97.0,
-        "buy_qty": 19
+        "buy_qty": 18
       },
       "spirit-squadron": {
         "price": 84.99,
@@ -843,7 +841,7 @@
         "status": "ok",
         "qty": 1,
         "buy": 55.0,
-        "buy_qty": 23
+        "buy_qty": 22
       },
       "coven-counters": {
         "price": 74.99,
@@ -7798,7 +7796,7 @@
         "ck_qty": 1,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/final-fantasy-play-booster-box",
         "ck_buy": 180.0,
-        "ck_buy_qty": 8,
+        "ck_buy_qty": 7,
         "cards_file": "cards/boxes/fin.json",
         "cards_kind": "play"
       },
@@ -8212,10 +8210,10 @@
           "boxes": 10000
         },
         "ck_price": 299.99,
-        "ck_qty": 5,
+        "ck_qty": 4,
         "ck_url": "https://www.cardkingdom.com/mtg-sealed/kamigawa-neon-dynasty-draft-booster-box",
         "ck_buy": 195.0,
-        "ck_buy_qty": 14,
+        "ck_buy_qty": 15,
         "cards_file": "cards/boxes/neo.json",
         "cards_kind": "draft"
       },

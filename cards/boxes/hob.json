@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"The Hobbit",
 "code":"HOB",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":56.92,"sources":["HOB"],"unresolved":0,"spread":{"boxes":10000,"mean":57.15,"p10":23.72,"p25":34.56,"p50":52.11,"p75":73.99,"p90":97.48,"bins":{"start":0.0,"width":10.0,"counts":[54,544,1226,1472,1418,1325,1076,858,647,472,325,222,132,79,64,38,18,14,6,10]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":465.31,"sources":["HOB","HOC"],"unresolved":0,"spread":{"boxes":10000,"mean":460.83,"p10":235.31,"p25":293.0,"p50":375.09,"p75":489.6,"p90":676.16,"bins":{"start":50.0,"width":50.0,"counts":[2,31,350,936,1422,1540,1441,1085,829,554,358,306,264,239,170,136,99,73,47,118]}}}},
 "fetched":{"HOB":"2026-11-16","HOC":"2026-11-16"},
 "cards":[

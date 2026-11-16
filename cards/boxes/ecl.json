@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Lorwyn Eclipsed",
 "code":"ECL",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":79.12,"sources":["ECL","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":79.19,"p10":42.06,"p25":56.47,"p50":76.39,"p75":98.24,"p90":120.81,"bins":{"start":0.0,"width":10.0,"counts":[7,70,221,545,892,1204,1191,1317,1225,977,768,557,396,259,178,83,51,27,15,17]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":177.7,"sources":["ECC","ECL","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":177.13,"p10":108.19,"p25":132.35,"p50":166.81,"p75":205.96,"p90":248.51,"bins":{"start":0.0,"width":50.0,"counts":[10,658,3054,3440,1871,627,169,52,16,2,2,20,39,24,12,3,1,0,0,0]}}}},
 "fetched":{"ECC":"2026-11-16","ECL":"2026-11-16","SPG":"2026-11-16"},
 "cards":[

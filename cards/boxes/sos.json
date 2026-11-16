@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Secrets of Strixhaven",
 "code":"SOS",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":77.57,"sources":["SOA","SOS","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":77.84,"p10":44.56,"p25":55.26,"p50":70.96,"p75":93.95,"p90":121.48,"bins":{"start":10.0,"width":10.0,"counts":[6,81,502,1092,1602,1572,1355,981,686,594,454,344,248,174,103,72,54,38,13,29]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":313.5,"sources":["SOA","SOC","SOS","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":315.67,"p10":165.11,"p25":200.33,"p50":254.69,"p75":337.48,"p90":486.07,"bins":{"start":0.0,"width":100.0,"counts":[10,2471,4059,1870,649,262,156,123,120,56,9,79,63,24,9,3,2,6,1,28]}}}},
 "fetched":{"SOA":"2026-11-16","SOC":"2026-11-16","SOS":"2026-11-16","SPG":"2026-11-16"},
 "cards":[

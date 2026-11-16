@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Duskmourn: House of Horror",
 "code":"DSK",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":36,"pack_size":14.0,"ev":161.52,"sources":["DSK","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":161.05,"p10":117.32,"p25":135.83,"p50":159.42,"p75":184.16,"p90":206.99,"bins":{"start":40.0,"width":20.0,"counts":[1,26,251,910,1715,2172,2065,1493,841,352,122,37,13,2,0,0,0,0,0,0]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":321.95,"sources":["DSC","DSK","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":321.04,"p10":214.62,"p25":250.26,"p50":299.18,"p75":360.75,"p90":452.09,"bins":{"start":100.0,"width":50.0,"counts":[47,564,1880,2560,2124,1231,576,292,225,175,136,91,48,27,6,6,6,4,1,1]}}}},
 "fetched":{"DSC":"2026-11-16","DSK":"2026-11-16","SPG":"2026-11-16"},
 "cards":[

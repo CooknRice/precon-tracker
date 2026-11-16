@@ -1,7 +1,7 @@
 {"schema":1,
 "set":"Dominaria United",
 "code":"DMU",
-"updated_at":"2026-11-16T02:16:11.377566+00:00",
+"updated_at":"2026-11-16T08:05:35.930827+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":79.0,"sources":["DMU"],"unresolved":0,"spread":{"boxes":10000,"mean":79.61,"p10":39.15,"p25":46.72,"p50":57.12,"p75":84.01,"p90":156.38,"bins":{"start":0.0,"width":20.0,"counts":[8,1133,4412,1878,133,58,439,1130,462,41,15,68,137,60,3,3,6,8,2,4]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":220.9,"sources":["DMC","DMU","LEG"],"unresolved":0,"spread":{"boxes":10000,"mean":219.46,"p10":112.18,"p25":134.33,"p50":205.28,"p75":272.83,"p90":356.72,"bins":{"start":50.0,"width":25.0,"counts":[24,399,1457,1517,808,614,1017,1017,700,534,450,366,311,225,157,113,81,57,40,113]}}},"jumpstart":{"label":"Jumpstart Box","packs":18,"pack_size":20.0,"ev":61.23,"sources":["DMU"],"unresolved":0,"spread":{"boxes":10000,"mean":61.64,"p10":29.8,"p25":34.47,"p50":40.73,"p75":52.1,"p90":140.14,"bins":{"start":0.0,"width":20.0,"counts":[29,4682,3136,61,0,1,1078,813,11,0,0,80,91,1,0,0,11,6,0,0]}}}},
 "fetched":{"DMC":"2026-11-16","DMU":"2026-11-16","LEG":"2026-11-16"},
 "cards":[
