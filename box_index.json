@@ -4753,7 +4753,7 @@
 "goblinpicker":{"name":"Goblin Picker","in":[["dmu","collector","foil",0.03931],["dmu","draft","foil",0.001653],["dmu","draft","nonfoil",0.09571],["dmu","jumpstart","nonfoil",0.1]]},
 "goblinplatemail":{"name":"Goblin Plate Mail","in":[["hob","collector","foil",0.07463],["hob","play","foil",0.01007],["hob","play","nonfoil",0.1277,0.1292]]},
 "goblinrecruiter":{"name":"Goblin Recruiter","in":[["mbc","booster","foil",0.0003509],["mbc","booster","nonfoil",0.007873]]},
-"goblinsettler":{"name":"Goblin Settler","in":[["mbc","booster","nonfoil",0.008224]]},
+"goblinsettler":{"name":"Goblin Settler","in":[["mbc","booster","foil",0.0003509],["mbc","booster","nonfoil",0.007873]]},
 "goblinsharpshooter":{"name":"Goblin Sharpshooter","in":[["ecl","collector","foil",0.005232],["ecl","play","nonfoil",0.0009091]]},
 "goblinslide":{"name":"Goblinslide","in":[["mbc","booster","nonfoil",0.00838]]},
 "goblinsurveyor":{"name":"Goblin Surveyor","in":[["dft","collector","foil",0.04396],["dft","play","foil",0.007531],["dft","play","nonfoil",0.08764,0.08777]]},
