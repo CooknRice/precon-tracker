@@ -2,9 +2,9 @@
 "deck_id":"lorehold-spirit",
 "name":"Lorehold Spirit",
 "source":"LoreholdSpirit_SOC",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "totals":{"cards":100,"tcg":78.25,"cardkingdom":127.58,"missing":0},
-"fetched":{"SOC":"2026-11-16","SOS":"2026-11-26"},
+"fetched":{"SOC":"2026-11-16","SOS":"2026-11-27"},
 "cards":[
 {"uuid":"6644a443-bf7b-50a6-93e2-829a335aef47","name":"Quintorius, History Chaser","qty":1,"board":"commander","type":"Legendary Planeswalker — Quintorius","mana":"{2}{R}{W}","mv":4,"colors":["W","R"],"rarity":"mythic","set":"SOC","num":"7","finish":"foil","img":"0742f19d-179c-43c4-ab95-4160c56b4384","text":"Whenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creature token.\n[+1]: You may discard a card. If you do, draw two cards, then mill a card.\n[−4]: Spirits you control gain double strike and vigilance until end of turn.\nQuintorius, History Chaser can be your commander.","keywords":["Mill"],"new":true,"tcg_id":"686630"},
 {"uuid":"19998fa4-c2b3-5e63-b95e-a6f60df157a0","name":"Excava, the Risen Past","qty":1,"board":"main","type":"Legendary Creature — Spirit Horse","mana":"{2}{R}{W}","mv":4,"colors":["W","R"],"rarity":"mythic","set":"SOC","num":"2","finish":"foil","img":"d47ebf19-b3fa-48a2-851a-254d32b0305a","text":"Flying, haste\nWhenever Excava attacks, return up to one target artifact, creature, or non-Aura enchantment card with mana value 3 or less from your graveyard to the battlefield with a finality counter on it. It's a 1/1 Spirit creature with flying in addition to its other types. (If a creature with a finality counter on it would die, exile it instead.)","keywords":["Flying","Haste"],"new":true,"tcg_id":"687502"},

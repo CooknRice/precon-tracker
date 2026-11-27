@@ -2,9 +2,9 @@
 "deck_id":"fae-dominion",
 "name":"Fae Dominion",
 "source":"FaeDominion_WOC",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "totals":{"cards":100,"tcg":146.64,"cardkingdom":199.53,"missing":0},
-"fetched":{"WOC":"2026-11-16","WOE":"2026-11-26"},
+"fetched":{"WOC":"2026-11-16","WOE":"2026-11-27"},
 "cards":[
 {"uuid":"44050a5a-73c9-5fba-9015-73b8def08301","name":"Tegwyll, Duke of Splendor","qty":1,"board":"commander","type":"Legendary Creature — Faerie Noble","mana":"{1}{U}{B}","mv":3,"colors":["U","B"],"rarity":"mythic","set":"WOC","num":"1","finish":"foil","img":"03fab911-7bd4-45fa-ba07-cd0e51b0cd95","text":"Flying, deathtouch\nOther Faeries you control get +1/+1.\nWhenever another Faerie you control dies, you draw a card and you lose 1 life.","keywords":["Deathtouch","Flying"],"new":true,"tcg_id":"512241"},
 {"uuid":"f15e8466-058b-5801-b19b-3c07d826297e","name":"Alela, Cunning Conqueror","qty":1,"board":"main","type":"Legendary Creature — Faerie Warlock","mana":"{2}{U}{B}","mv":4,"colors":["U","B"],"rarity":"mythic","set":"WOC","num":"3","finish":"foil","img":"79ba5c35-6e5c-406a-b95f-844d5ec296ab","text":"Flying\nWhenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.\nWhenever one or more Faeries you control deal combat damage to a player, goad target creature that player controls.","keywords":["Flying","Goad"],"new":true,"tcg_id":"512238"},

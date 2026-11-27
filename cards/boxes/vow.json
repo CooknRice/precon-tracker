@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Innistrad: Crimson Vow",
 "code":"VOW",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":60.59,"sources":["VOW"],"unresolved":0,"spread":{"boxes":10000,"mean":60.43,"p10":41.16,"p25":49.1,"p50":59.01,"p75":70.28,"p90":81.43,"bins":{"start":20.0,"width":5.0,"counts":[25,95,229,492,806,1062,1232,1296,1218,996,799,611,423,269,195,93,68,40,23,28]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":128.04,"sources":["VOC","VOW"],"unresolved":0,"spread":{"boxes":10000,"mean":128.43,"p10":96.51,"p25":110.42,"p50":127.18,"p75":144.67,"p90":162.14,"bins":{"start":40.0,"width":10.0,"counts":[2,6,61,118,374,732,1155,1443,1552,1479,1146,785,548,294,144,91,42,18,6,4]}}}},
-"fetched":{"VOC":"2026-11-16","VOW":"2026-11-26"},
+"fetched":{"VOC":"2026-11-16","VOW":"2026-11-27"},
 "cards":[
 {"uuid":"8ff8dbe3-2532-5d34-a050-f51c06d41c75","name":"Millicent, Restless Revenant","type":"Legendary Creature — Spirit Soldier","mana":"{5}{W}{U}","mv":7,"colors":["W","U"],"rarity":"mythic","set":"VOC","num":"39","img":"520904b2-6358-4419-b66b-62566c2b49b3","text":"Affinity for Spirits (This spell costs {1} less to cast for each Spirit you control.)\nFlying\nWhenever Millicent or another nontoken Spirit you control dies or deals combat damage to a player, create a 1/1 white Spirit creature token with flying.","keywords":["Affinity","Flying"],"tcg_id":"253819","finishes":["nonfoil"],"odds":{"collector":{"nonfoil":{"pack":0.0142857,"copies":0.0142857}}}},
 {"uuid":"14bea86d-33f3-58ae-9b48-ea6f1fa05a8d","name":"Strefan, Maurer Progenitor","type":"Legendary Creature — Vampire Noble","mana":"{2}{B}{R}","mv":4,"colors":["B","R"],"rarity":"mythic","set":"VOC","num":"40","img":"6d37e626-1f2e-4c26-a6a3-93eaddee1233","text":"Flying\nAt the beginning of your end step, create a Blood token for each player who lost life this turn.\nWhenever Strefan attacks, you may sacrifice two Blood tokens. If you do, you may put a Vampire card from your hand onto the battlefield tapped and attacking. It gains indestructible until end of turn.","keywords":["Flying"],"tcg_id":"253820","finishes":["nonfoil"],"odds":{"collector":{"nonfoil":{"pack":0.0142857,"copies":0.0142857}}}},

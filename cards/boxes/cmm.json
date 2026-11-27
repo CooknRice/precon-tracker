@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Commander Masters",
 "code":"CMM",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":24,"pack_size":20.0,"ev":535.46,"sources":["CMM"],"unresolved":0,"spread":{"boxes":10000,"mean":534.85,"p10":399.72,"p25":455.15,"p50":523.83,"p75":606.48,"p90":687.2,"bins":{"start":200.0,"width":50.0,"counts":[2,48,248,707,1325,1815,1746,1442,1128,682,477,214,98,46,15,4,2,0,1,0]}}},"collector":{"label":"Collector Booster Box","packs":4,"pack_size":15.0,"ev":361.3,"sources":["CMM"],"unresolved":0,"spread":{"boxes":10000,"mean":361.39,"p10":227.68,"p25":274.21,"p50":338.91,"p75":420.27,"p90":507.89,"bins":{"start":100.0,"width":50.0,"counts":[31,393,1254,1822,1913,1565,1155,765,465,236,125,62,22,12,27,40,35,34,22,22]}}}},
-"fetched":{"CMM":"2026-11-26"},
+"fetched":{"CMM":"2026-11-27"},
 "cards":[
 {"uuid":"1c8d3f82-7b94-5fc0-80d5-60a8d6363bfc","name":"The Prismatic Piper","type":"Legendary Creature — Shapeshifter","mana":"{5}","mv":5,"colors":[],"rarity":"special","set":"CMM","num":"1","img":"c78c2713-39e7-4a6e-a132-027099a89665","text":"If The Prismatic Piper is your commander, choose a color before the game begins. The Prismatic Piper is the chosen color.\nPartner (You can have two commanders if both have partner.)","keywords":["Partner"],"tcg_id":"503412","finishes":["nonfoil"],"odds":{"draft":{"nonfoil":{"pack":0.166667,"copies":0.166667}}}},
 {"uuid":"eb6d32be-f67d-5e7e-86ad-a118ef00c49b","name":"Kozilek, the Great Distortion","type":"Legendary Creature — Eldrazi","mana":"{8}{C}{C}","mv":10,"colors":[],"rarity":"mythic","set":"CMM","num":"2","img":"c41554e7-2a07-4cc7-b01b-44deed08e588","text":"When you cast this spell, if you have fewer than seven cards in hand, draw cards equal to the difference.\nMenace\nDiscard a card with mana value X: Counter target spell with mana value X.","keywords":["Menace"],"tcg_id":"503378","finishes":["nonfoil","foil"],"odds":{"draft":{"nonfoil":{"pack":0.00524934,"copies":0.00524934},"foil":{"pack":0.000952381,"copies":0.000952381}},"collector":{"foil":{"pack":0.00327869,"copies":0.00327869}}}},

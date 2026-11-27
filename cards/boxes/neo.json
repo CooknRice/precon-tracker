@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Kamigawa: Neon Dynasty",
 "code":"NEO",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":154.63,"sources":["NEO"],"unresolved":0,"spread":{"boxes":10000,"mean":154.11,"p10":95.65,"p25":116.37,"p50":147.19,"p75":183.09,"p90":221.85,"bins":{"start":20.0,"width":20.0,"counts":[1,30,294,946,1497,1658,1566,1327,970,663,429,254,180,69,49,41,10,5,7,4]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":292.29,"sources":["NEC","NEO"],"unresolved":0,"spread":{"boxes":10000,"mean":292.88,"p10":195.94,"p25":230.28,"p50":278.29,"p75":338.49,"p90":402.91,"bins":{"start":100.0,"width":25.0,"counts":[7,81,358,705,1077,1296,1309,1181,1029,801,651,457,327,226,171,89,73,31,31,100]}}}},
-"fetched":{"NEC":"2026-11-16","NEO":"2026-11-26"},
+"fetched":{"NEC":"2026-11-16","NEO":"2026-11-27"},
 "cards":[
 {"uuid":"a2bf5495-14c1-5e59-9287-2e9371776502","name":"Myojin of Blooming Dawn","type":"Legendary Creature — Spirit","mana":"{5}{W}{W}{W}","mv":8,"colors":["W"],"rarity":"rare","set":"NEC","num":"31","img":"afd718b5-040b-4bb7-9f0c-b72373d786d4","text":"Myojin of Blooming Dawn enters with an indestructible counter on it if you cast it from your hand.\nRemove an indestructible counter from Myojin of Blooming Dawn: Create a 1/1 colorless Spirit creature token for each permanent you control.","keywords":[],"tcg_id":"262829","finishes":["nonfoil","foil"],"odds":{"collector":{"foil":{"pack":0.0133333,"copies":0.0133333}}}},
 {"uuid":"173e6228-dfc7-5f5f-b0d1-7786cd94bc83","name":"Yoshimaru, Ever Faithful","type":"Legendary Creature — Dog","mana":"{W}","mv":1,"colors":["W"],"rarity":"mythic","set":"NEC","num":"32","img":"aa409269-3698-42a2-8c51-75557b27a6f6","text":"Whenever another legendary permanent you control enters, put a +1/+1 counter on Yoshimaru.\nPartner (You can have two commanders if both have partner.)","keywords":["Partner"],"tcg_id":"262832","finishes":["nonfoil","foil"],"odds":{"collector":{"foil":{"pack":0.00666667,"copies":0.00666667}}}},

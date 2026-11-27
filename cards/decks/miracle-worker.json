@@ -2,9 +2,9 @@
 "deck_id":"miracle-worker",
 "name":"Miracle Worker",
 "source":"MiracleWorker_DSC",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "totals":{"cards":100,"tcg":104.08,"cardkingdom":165.44,"missing":0},
-"fetched":{"DSC":"2026-11-16","DSK":"2026-11-26"},
+"fetched":{"DSC":"2026-11-16","DSK":"2026-11-27"},
 "cards":[
 {"uuid":"38223445-a6c7-545f-8c2a-d054b22f08ee","name":"Aminatou, Veil Piercer","qty":1,"board":"commander","type":"Legendary Creature — Human Wizard","mana":"{1}{W}{U}{B}","mv":4,"colors":["W","U","B"],"rarity":"mythic","set":"DSC","num":"1","finish":"foil","img":"9f868023-6035-403d-ba91-7a4840c6c392","text":"At the beginning of your upkeep, surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)\nEach enchantment card in your hand has miracle. Its miracle cost is equal to its mana cost reduced by {4}. (You may cast a card for its miracle cost when you draw it if it's the first card you drew this turn.)","keywords":["Surveil"],"new":true,"tcg_id":"575094"},
 {"uuid":"58e488e5-04cf-5b5b-b996-b91421ebf948","name":"The Master of Keys","qty":1,"board":"main","type":"Legendary Enchantment Creature — Horror","mana":"{X}{W}{U}{B}","mv":3,"colors":["W","U","B"],"rarity":"mythic","set":"DSC","num":"4","finish":"foil","img":"3545341b-dacc-4ac8-976e-39754a62bbc3","text":"Flying\nWhen The Master of Keys enters, put X +1/+1 counters on it and mill twice X cards.\nEach enchantment card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)","keywords":["Flying","Mill"],"new":true,"tcg_id":"579080"},

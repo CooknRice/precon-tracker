@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Fallout Commander",
 "code":"PIP",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":992.53,"sources":["PIP"],"unresolved":0,"spread":{"boxes":10000,"mean":992.65,"p10":841.34,"p25":895.62,"p50":963.95,"p75":1050.1,"p90":1151.26,"bins":{"start":600.0,"width":100.0,"counts":[9,359,2291,3555,2176,944,353,101,36,10,29,37,29,34,20,9,2,2,1,3]}}}},
-"fetched":{"PIP":"2026-11-26"},
+"fetched":{"PIP":"2026-11-27"},
 "cards":[
 {"uuid":"759ca3de-1758-59a2-bad8-d65070984712","name":"Caesar, Legion's Emperor","type":"Legendary Creature — Human Soldier","mana":"{1}{R}{W}{B}","mv":4,"colors":["W","B","R"],"rarity":"mythic","set":"PIP","num":"1","img":"246a7176-98bc-4f54-aa61-38747420f178","text":"Whenever you attack, you may sacrifice another creature. When you do, choose two —\n• Create two 1/1 red and white Soldier creature tokens with haste that are tapped and attacking.\n• You draw a card and you lose 1 life.\n• Caesar deals damage equal to the number of creature tokens you control to target opponent.","keywords":[],"tcg_id":"523039","finishes":["foil"],"odds":{"collector":{"foil":{"pack":0.0128274,"copies":0.0128524}}}},
 {"uuid":"0ec1782b-4274-5d6e-9b22-4fb3fb53d6ba","name":"Dogmeat, Ever Loyal","type":"Legendary Creature — Dog","mana":"{R}{G}{W}","mv":3,"colors":["W","R","G"],"rarity":"mythic","set":"PIP","num":"2","img":"86b45e3e-8460-4678-87d1-d74479936c83","text":"When Dogmeat enters, mill five cards, then return an Aura or Equipment card from your graveyard to your hand.\nWhenever a creature you control that's enchanted or equipped attacks, create a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")","keywords":["Mill"],"tcg_id":"523044","finishes":["foil"],"odds":{"collector":{"foil":{"pack":0.0125901,"copies":0.0126145}}}},

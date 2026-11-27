@@ -2,9 +2,9 @@
 "deck_id":"paradox-power",
 "name":"Paradox Power",
 "source":"ParadoxPower_WHO",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "totals":{"cards":100,"tcg":100.78,"cardkingdom":156.18,"missing":0},
-"fetched":{"WHO":"2026-11-26"},
+"fetched":{"WHO":"2026-11-27"},
 "cards":[
 {"uuid":"845adf01-30b9-59f5-940b-2200b70f713d","name":"The Thirteenth Doctor","qty":1,"board":"commander","type":"Legendary Creature — Time Lord Doctor","mana":"{1}{G}{U}","mv":3,"colors":["U","G"],"rarity":"mythic","set":"WHO","num":"4","finish":"foil","img":"0dc4ec90-1650-4b98-9350-66341394cf0b","text":"Paradox — Whenever you cast a spell from anywhere other than your hand, put a +1/+1 counter on target creature.\nTeam TARDIS — At the beginning of your end step, untap each creature you control with a counter on it.","keywords":["Paradox","Team TARDIS"],"new":true,"tcg_id":"509583"},
 {"uuid":"87ba4c05-0385-584d-a6c0-44ce59fec23d","name":"Yasmin Khan","qty":1,"board":"commander","type":"Legendary Creature — Human Detective","mana":"{3}{R}","mv":4,"colors":["R"],"rarity":"rare","set":"WHO","num":"7","finish":"foil","img":"12b09a4f-bb62-4766-8115-cae4d5cc4c12","text":"{T}: Exile the top card of your library. Until your next end step, you may play it.\nDoctor's companion (You can have two commanders if the other is the Doctor.)","keywords":["Doctor's companion"],"new":true,"tcg_id":"509582"},

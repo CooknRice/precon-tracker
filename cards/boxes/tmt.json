@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Teenage Mutant Ninja Turtles",
 "code":"TMT",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":56.95,"sources":["PZA","TMT"],"unresolved":0,"spread":{"boxes":10000,"mean":56.76,"p10":29.46,"p25":38.45,"p50":53.43,"p75":70.74,"p90":89.04,"bins":{"start":10.0,"width":10.0,"counts":[137,930,1690,1644,1669,1348,982,653,410,242,152,78,37,8,10,4,3,1,1,1]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":251.97,"sources":["PZA","TMC","TMT"],"unresolved":0,"spread":{"boxes":10000,"mean":252.57,"p10":161.18,"p25":186.56,"p50":222.8,"p75":270.1,"p90":336.71,"bins":{"start":50.0,"width":50.0,"counts":[5,592,2814,3186,1794,761,294,175,114,100,62,25,15,7,5,1,0,2,0,48]}}}},
-"fetched":{"PZA":"2026-11-16","TMC":"2026-11-16","TMT":"2026-11-26"},
+"fetched":{"PZA":"2026-11-16","TMC":"2026-11-16","TMT":"2026-11-27"},
 "cards":[
 {"uuid":"030f738e-9d74-563d-acb5-381c63dfea6a","name":"Path to Exile","type":"Instant","mana":"{W}","mv":1,"colors":["W"],"rarity":"mythic","set":"PZA","num":"1","img":"ae0397e7-796b-412b-afec-d22759b610db","text":"Exile target creature. Its controller may search their library for a basic land card, put that card onto the battlefield tapped, then shuffle.","keywords":[],"tcg_id":"679070","finishes":["nonfoil","foil"],"odds":{"play":{"nonfoil":{"pack":0.00178571,"copies":0.00178571}},"collector":{"nonfoil":{"pack":0.0375,"copies":0.0375},"foil":{"pack":0.0125,"copies":0.0125}}}},
 {"uuid":"06d5c1f5-b712-5209-a118-c2c707a94a7e","name":"Teleportation Circle","type":"Enchantment","mana":"{3}{W}","mv":4,"colors":["W"],"rarity":"mythic","set":"PZA","num":"2","img":"d4291f04-2f94-483f-93f6-db313ecffabf","text":"At the beginning of your end step, exile up to one target artifact or creature you control, then return that card to the battlefield under its owner's control.","keywords":[],"tcg_id":"679071","finishes":["nonfoil","foil"],"odds":{"play":{"nonfoil":{"pack":0.00178571,"copies":0.00178571}},"collector":{"nonfoil":{"pack":0.0375,"copies":0.0375},"foil":{"pack":0.0125,"copies":0.0125}}}},

@@ -2,9 +2,9 @@
 "deck_id":"hail-caesar",
 "name":"Hail, Caesar",
 "source":"HailCaesar_PIP",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "totals":{"cards":100,"tcg":81.65,"cardkingdom":122.24,"missing":0},
-"fetched":{"PIP":"2026-11-26"},
+"fetched":{"PIP":"2026-11-27"},
 "cards":[
 {"uuid":"759ca3de-1758-59a2-bad8-d65070984712","name":"Caesar, Legion's Emperor","qty":1,"board":"commander","type":"Legendary Creature — Human Soldier","mana":"{1}{R}{W}{B}","mv":4,"colors":["W","B","R"],"rarity":"mythic","set":"PIP","num":"1","finish":"foil","img":"246a7176-98bc-4f54-aa61-38747420f178","text":"Whenever you attack, you may sacrifice another creature. When you do, choose two —\n• Create two 1/1 red and white Soldier creature tokens with haste that are tapped and attacking.\n• You draw a card and you lose 1 life.\n• Caesar deals damage equal to the number of creature tokens you control to target opponent.","keywords":[],"new":true,"tcg_id":"523039"},
 {"uuid":"2a214374-0a31-5564-80f8-b30249201277","name":"Mr. House, President and CEO","qty":1,"board":"main","type":"Legendary Artifact Creature — Human","mana":"{R}{W}{B}","mv":3,"colors":["W","B","R"],"rarity":"mythic","set":"PIP","num":"7","finish":"foil","img":"23eb3cf7-c90d-4bfa-b125-4fbcb5614468","text":"Whenever you roll a 4 or higher, create a 3/3 colorless Robot artifact creature token. If you rolled 6 or higher, instead create that token and a Treasure token.\n{4}, {T}: Roll a six-sided die plus an additional six-sided die for each mana from Treasures spent to activate this ability.","keywords":["Treasure"],"new":true,"tcg_id":"523013"},

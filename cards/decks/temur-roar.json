@@ -2,9 +2,9 @@
 "deck_id":"temur-roar",
 "name":"Temur Roar",
 "source":"TemurRoar_TDC",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "totals":{"cards":100,"tcg":86.56,"cardkingdom":114.01,"missing":0},
-"fetched":{"TDM":"2026-11-26"},
+"fetched":{"TDM":"2026-11-27"},
 "cards":[
 {"uuid":"93323985-08ca-5bf7-a07f-af664478c183","name":"Eshki, Temur's Roar","qty":1,"board":"commander","type":"Legendary Creature — Human Warrior","mana":"{G}{U}{R}","mv":3,"colors":["U","R","G"],"rarity":"mythic","set":"TDC","num":"3","finish":"foil","img":"ff9aa863-8773-452d-946c-ae334c632e11","text":"Whenever you cast a creature spell, put a +1/+1 counter on Eshki. If that spell's power is 4 or greater, draw a card. If that spell's power is 6 or greater, Eshki deals damage equal to Eshki's power to each opponent.","keywords":[],"new":true,"tcg_id":"623910"},
 {"uuid":"d292eed1-c527-5384-b376-5aaff02840cc","name":"Ureni of the Unwritten","qty":1,"board":"main","type":"Legendary Creature — Spirit Dragon","mana":"{4}{G}{U}{R}","mv":7,"colors":["U","R","G"],"rarity":"mythic","set":"TDC","num":"9","finish":"foil","img":"f54ecbf1-83df-4486-bd6a-7d1f173b6863","text":"Flying, trample\nWhenever Ureni enters or attacks, look at the top eight cards of your library. You may put a Dragon creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order.","keywords":["Flying","Trample"],"new":true,"tcg_id":"623916"},

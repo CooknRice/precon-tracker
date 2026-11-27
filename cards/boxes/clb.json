@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Commander Legends: Battle for Baldur's Gate",
 "code":"CLB",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":24,"pack_size":20.0,"ev":262.09,"sources":["CLB"],"unresolved":0,"spread":{"boxes":10000,"mean":261.85,"p10":175.89,"p25":204.75,"p50":246.48,"p75":305.7,"p90":370.17,"bins":{"start":75.0,"width":25.0,"counts":[4,39,242,685,1236,1533,1443,1207,959,740,578,404,306,210,150,99,50,43,30,42]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":572.3,"sources":["CLB"],"unresolved":0,"spread":{"boxes":10000,"mean":569.72,"p10":380.41,"p25":451.41,"p50":549.29,"p75":664.74,"p90":786.58,"bins":{"start":200.0,"width":50.0,"counts":[20,144,402,767,1129,1284,1274,1187,1016,822,597,454,328,216,130,100,55,32,16,27]}}}},
-"fetched":{"CLB":"2026-11-26"},
+"fetched":{"CLB":"2026-11-27"},
 "cards":[
 {"uuid":"ad82cd8d-c3e4-5c4d-9a01-a7d74086bbed","name":"Faceless One","type":"Legendary Enchantment Creature — Background","mana":"{5}","mv":5,"colors":[],"rarity":"special","set":"CLB","num":"1","img":"25564fba-5765-457b-8dd3-f26b877221b8","text":"If Faceless One is your commander, choose a color before the game begins. Faceless One is the chosen color.\nChoose a Background (You can have a Background as a second commander.)","keywords":["Choose a background"],"tcg_id":"272628","finishes":["nonfoil"],"odds":{"draft":{"nonfoil":{"pack":0.166667,"copies":0.166667}}}},
 {"uuid":"ae83f439-f05e-5d15-849a-808b8c8c8098","name":"Abdel Adrian, Gorion's Ward","type":"Legendary Creature — Human Warrior","mana":"{4}{W}","mv":5,"colors":["W"],"rarity":"uncommon","set":"CLB","num":"2","img":"396f9198-67b6-45d8-91b4-dc853bff9623","text":"When Abdel Adrian enters, exile any number of other nonland permanents you control until Abdel Adrian leaves the battlefield. Create a 1/1 white Soldier creature token for each permanent exiled this way.\nChoose a Background (You can have a Background as a second commander.)","keywords":["Choose a background"],"tcg_id":"272555","finishes":["nonfoil","foil"],"odds":{"draft":{"nonfoil":{"pack":0.0152381,"copies":0.0152381},"foil":{"pack":0.000980392,"copies":0.000980392}},"collector":{"foil":{"pack":0.0345455,"copies":0.0348485}}}},

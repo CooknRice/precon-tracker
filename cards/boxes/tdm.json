@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Tarkir: Dragonstorm",
 "code":"TDM",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":108.2,"sources":["SPG","TDM"],"unresolved":0,"spread":{"boxes":10000,"mean":108.35,"p10":50.03,"p25":71.03,"p50":101.38,"p75":138.44,"p90":174.77,"bins":{"start":0.0,"width":20.0,"counts":[16,448,1209,1547,1661,1520,1199,913,623,385,201,132,78,33,14,14,5,1,1,0]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":367.0,"sources":["SPG","TDC","TDM"],"unresolved":0,"spread":{"boxes":10000,"mean":368.46,"p10":191.99,"p25":237.94,"p50":305.13,"p75":407.81,"p90":650.37,"bins":{"start":0.0,"width":100.0,"counts":[7,1220,3580,2579,972,433,423,331,217,114,36,24,13,13,6,0,1,0,0,31]}}}},
-"fetched":{"SPG":"2026-11-16","TDC":"2026-11-16","TDM":"2026-11-26"},
+"fetched":{"SPG":"2026-11-16","TDC":"2026-11-16","TDM":"2026-11-27"},
 "cards":[
 {"uuid":"9492d0fa-b7d6-572f-93e2-5977a5e76c2e","name":"Eerie Ultimatum","type":"Sorcery","mana":"{W}{W}{B}{B}{B}{G}{G}","mv":7,"colors":["W","B","G"],"rarity":"mythic","set":"SPG","num":"104","img":"5dca6cae-b357-4ce5-a913-f4ff9cf032ed","text":"Return any number of permanent cards with different names from your graveyard to the battlefield.","keywords":[],"tcg_id":"623920","finishes":["nonfoil","foil"],"odds":{"play":{"nonfoil":{"pack":0.0015625,"copies":0.0015625}},"collector":{"foil":{"pack":0.0059988,"copies":0.0059988}}}},
 {"uuid":"a21507c7-1a2c-5e19-a7bd-247c01c0d6ad","name":"Emergent Ultimatum","type":"Sorcery","mana":"{B}{B}{G}{G}{G}{U}{U}","mv":7,"colors":["U","B","G"],"rarity":"mythic","set":"SPG","num":"105","img":"66cc9980-be00-4351-b0d5-082a5a402a2a","text":"Search your library for up to three monocolored cards with different names and exile them. An opponent chooses one of those cards. Shuffle that card into your library. You may cast the other cards without paying their mana costs. Exile Emergent Ultimatum.","keywords":[],"tcg_id":"623922","finishes":["nonfoil","foil"],"odds":{"play":{"nonfoil":{"pack":0.0015625,"copies":0.0015625}},"collector":{"foil":{"pack":0.0059988,"copies":0.0059988}}}},

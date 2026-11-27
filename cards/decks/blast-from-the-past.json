@@ -2,9 +2,9 @@
 "deck_id":"blast-from-the-past",
 "name":"Blast from the Past",
 "source":"BlastFromThePast_WHO",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "totals":{"cards":100,"tcg":101.74,"cardkingdom":128.5,"missing":0},
-"fetched":{"WHO":"2026-11-26"},
+"fetched":{"WHO":"2026-11-27"},
 "cards":[
 {"uuid":"91f13aee-1fea-522f-ba42-20c14b400f82","name":"The Fourth Doctor","qty":1,"board":"commander","type":"Legendary Creature — Time Lord Doctor","mana":"{2}{G}{U}","mv":4,"colors":["U","G"],"rarity":"mythic","set":"WHO","num":"2","finish":"foil","img":"c84ea0fd-efc7-4614-9f8f-41a3c71fceaa","text":"You may look at the top card of your library any time.\nWould You Like A...? — Once each turn, you may play a historic land or cast a historic spell from the top of your library. When you do, create a Food token. (Artifacts, legendaries, and Sagas are historic.)","keywords":["Food"],"new":true,"tcg_id":"509584"},
 {"uuid":"71bb3a62-bf3e-5f3b-b334-7e68d27b72de","name":"Sarah Jane Smith","qty":1,"board":"commander","type":"Legendary Creature — Human Detective","mana":"{1}{W}","mv":2,"colors":["W"],"rarity":"rare","set":"WHO","num":"6","finish":"foil","img":"1ba76f68-e647-4786-903c-92dbd3cef05d","text":"Whenever you cast a historic spell, investigate. This ability triggers only once each turn. (Artifacts, legendaries, and Sagas are historic. To investigate, create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nDoctor's companion (You can have two commanders if the other is the Doctor.)","keywords":["Doctor's companion","Investigate"],"new":true,"tcg_id":"509578"},

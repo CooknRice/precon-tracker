@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Wilds of Eldraine",
 "code":"WOE",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":250.7,"sources":["WOE","WOT"],"unresolved":0,"spread":{"boxes":10000,"mean":249.72,"p10":148.15,"p25":182.94,"p50":231.92,"p75":296.15,"p90":375.52,"bins":{"start":50.0,"width":50.0,"counts":[81,976,2323,2431,1788,1060,605,364,180,79,55,27,14,5,5,2,1,2,1,1]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":415.52,"sources":["WOC","WOE","WOT"],"unresolved":0,"spread":{"boxes":10000,"mean":410.14,"p10":216.74,"p25":263.83,"p50":334.4,"p75":440.42,"p90":613.55,"bins":{"start":0.0,"width":200.0,"counts":[618,6118,2202,606,177,29,4,0,12,89,42,75,16,9,1,0,0,0,1,1]}}}},
-"fetched":{"WOC":"2026-11-16","WOE":"2026-11-26","WOT":"2026-11-16"},
+"fetched":{"WOC":"2026-11-16","WOE":"2026-11-27","WOT":"2026-11-16"},
 "cards":[
 {"uuid":"6f54f30d-3c55-5361-a3ad-b00de8377b63","name":"Court of Ardenvale","type":"Enchantment","mana":"{2}{W}{W}","mv":4,"colors":["W"],"rarity":"rare","set":"WOC","num":"29","img":"af7f7659-1f20-45b6-bcd2-21879beb7849","text":"When this enchantment enters, you become the monarch.\nAt the beginning of your upkeep, return target permanent card with mana value 3 or less from your graveyard to your hand. If you're the monarch, return that permanent card to the battlefield instead.","keywords":[],"tcg_id":"513404","finishes":["nonfoil","foil"],"odds":{"collector":{"nonfoil":{"pack":0.0122603,"copies":0.0122603},"foil":{"pack":0.0116667,"copies":0.0116667}}}},
 {"uuid":"263efbed-f94a-546e-9911-3e134fb8654a","name":"Court of Vantress","type":"Enchantment","mana":"{2}{U}{U}","mv":4,"colors":["U"],"rarity":"rare","set":"WOC","num":"30","img":"0a4cb69a-4ca6-43ac-9b8a-78e968c19293","text":"When this enchantment enters, you become the monarch.\nAt the beginning of your upkeep, choose up to one other target enchantment or artifact. If you're the monarch, you may create a token that's a copy of it. If you're not the monarch, you may have this enchantment become a copy of it, except it has this ability.","keywords":[],"tcg_id":"513406","finishes":["nonfoil","foil"],"odds":{"collector":{"nonfoil":{"pack":0.0122603,"copies":0.0122603},"foil":{"pack":0.0116667,"copies":0.0116667}}}},

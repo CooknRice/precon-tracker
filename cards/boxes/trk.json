@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Star Trek",
 "code":"TRK",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":111.14,"sources":["SDS","TRK"],"unresolved":0,"spread":{"boxes":10000,"mean":111.53,"p10":68.61,"p25":85.45,"p50":107.3,"p75":133.37,"p90":159.72,"bins":{"start":20.0,"width":10.0,"counts":[7,45,144,304,616,848,1054,1121,1172,1031,894,719,596,463,325,220,142,100,72,127]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":282.44,"sources":["SDS","TRC","TRK"],"unresolved":0,"spread":{"boxes":10000,"mean":282.18,"p10":194.88,"p25":229.48,"p50":273.0,"p75":324.95,"p90":380.43,"bins":{"start":75.0,"width":25.0,"counts":[3,23,113,340,693,1101,1382,1459,1330,1057,821,574,390,251,169,125,67,36,29,37]}}}},
-"fetched":{"SDS":"2026-11-16","TRC":"2026-11-16","TRK":"2026-11-26"},
+"fetched":{"SDS":"2026-11-16","TRC":"2026-11-16","TRK":"2026-11-27"},
 "cards":[
 {"uuid":"79c825f3-6e9d-582c-bc15-1c47b7277c69","name":"Mikaeus, the Lunarch","type":"Legendary Creature — Human Cleric","mana":"{X}{W}","mv":1,"colors":["W"],"rarity":"mythic","set":"SDS","num":"1","img":"f57d8134-4ec9-40f2-8d7b-560f246215a5","text":"Mikaeus enters with X +1/+1 counters on it.\n{T}: Put a +1/+1 counter on Mikaeus.\n{T}, Remove a +1/+1 counter from Mikaeus: Put a +1/+1 counter on each other creature you control.","keywords":[],"tcg_id":"726790","finishes":["nonfoil","foil"],"odds":{"play":{"nonfoil":{"pack":0.00133333,"copies":0.00133333}},"collector":{"nonfoil":{"pack":0.0153846,"copies":0.0153846},"foil":{"pack":0.00333333,"copies":0.00333333}}}},
 {"uuid":"ed1af301-5df2-59b7-92c2-b76f6c652241","name":"Flare of Fortitude","type":"Instant","mana":"{2}{W}{W}","mv":4,"colors":["W"],"rarity":"mythic","set":"SDS","num":"2","img":"362e20d5-5e7f-4367-86d0-ac5fc556682d","text":"You may sacrifice a nontoken white creature rather than pay this spell's mana cost.\nUntil end of turn, your life total can't change, and permanents you control gain hexproof and indestructible.","keywords":[],"tcg_id":"726791","finishes":["nonfoil","foil"],"odds":{"play":{"nonfoil":{"pack":0.00133333,"copies":0.00133333}},"collector":{"nonfoil":{"pack":0.0153846,"copies":0.0153846},"foil":{"pack":0.00333333,"copies":0.00333333}}}},

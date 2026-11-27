@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Innistrad: Midnight Hunt",
 "code":"MID",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":32.55,"sources":["MID"],"unresolved":0,"spread":{"boxes":10000,"mean":32.78,"p10":16.11,"p25":21.55,"p50":29.23,"p75":41.58,"p90":54.29,"bins":{"start":0.0,"width":5.0,"counts":[20,176,597,1247,1602,1591,1238,819,671,596,500,312,231,127,91,65,49,28,10,30]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":102.62,"sources":["MIC","MID"],"unresolved":0,"spread":{"boxes":10000,"mean":102.78,"p10":74.88,"p25":85.49,"p50":100.19,"p75":116.93,"p90":134.6,"bins":{"start":30.0,"width":10.0,"counts":[1,18,118,452,1064,1591,1719,1620,1252,881,567,330,175,101,66,25,10,7,2,1]}}}},
-"fetched":{"MIC":"2026-11-16","MID":"2026-11-26"},
+"fetched":{"MIC":"2026-11-16","MID":"2026-11-27"},
 "cards":[
 {"uuid":"6060855e-8f20-57a1-9c46-affa159e5276","name":"Leinore, Autumn Sovereign","type":"Legendary Creature — Human Noble","mana":"{2}{G}{W}","mv":4,"colors":["W","G"],"rarity":"mythic","set":"MIC","num":"39","img":"03533243-24cf-4e08-8999-311f23dda0ab","text":"Coven — At the beginning of combat on your turn, put a +1/+1 counter on up to one target creature you control. Then if you control three or more creatures with different powers, draw a card.","keywords":["Coven"],"tcg_id":"247931","finishes":["nonfoil"],"odds":{"collector":{"nonfoil":{"pack":0.0147059,"copies":0.0147059}}}},
 {"uuid":"93fe8b6a-fff4-513b-a681-1651c2edf0f5","name":"Wilhelt, the Rotcleaver","type":"Legendary Creature — Zombie Warrior","mana":"{2}{U}{B}","mv":4,"colors":["U","B"],"rarity":"mythic","set":"MIC","num":"40","img":"21eaf326-5586-4ff2-9d86-df49a0a62cca","text":"Whenever another Zombie you control dies, if it didn't have decayed, create a 2/2 black Zombie creature token with decayed. (It can't block. When it attacks, sacrifice it at end of combat.)\nAt the beginning of your end step, you may sacrifice a Zombie. If you do, draw a card.","keywords":[],"tcg_id":"247933","finishes":["nonfoil"],"odds":{"collector":{"nonfoil":{"pack":0.0147059,"copies":0.0147059}}}},

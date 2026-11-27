@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Modern Horizons 3",
 "code":"MH3",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":36,"pack_size":14.0,"ev":348.86,"sources":["M3C","MH3","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":349.3,"p10":268.18,"p25":302.29,"p50":343.81,"p75":390.95,"p90":436.63,"bins":{"start":140.0,"width":20.0,"counts":[2,10,31,92,197,426,663,954,1156,1239,1197,1060,846,659,539,333,239,133,77,147]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":617.68,"sources":["H2R","M3C","MH3","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":618.34,"p10":472.17,"p25":531.47,"p50":602.47,"p75":682.75,"p90":760.94,"bins":{"start":250.0,"width":50.0,"counts":[2,28,132,453,1012,1486,1806,1672,1330,918,562,293,150,75,27,10,4,0,0,40]}}}},
-"fetched":{"H2R":"2026-11-16","M3C":"2026-11-16","MH3":"2026-11-26","SPG":"2026-11-16"},
+"fetched":{"H2R":"2026-11-16","M3C":"2026-11-16","MH3":"2026-11-27","SPG":"2026-11-16"},
 "cards":[
 {"uuid":"3f66f95f-2ccd-5d0e-aa4c-85fda8de423e","name":"Abiding Grace","type":"Enchantment","mana":"{2}{W}","mv":3,"colors":["W"],"rarity":"uncommon","set":"H2R","num":"1","img":"1eaccb5a-76f9-4250-9bf0-0baa2d905868","text":"At the beginning of your end step, choose one —\n• You gain 1 life.\n• Return target creature card with mana value 1 from your graveyard to the battlefield.","keywords":[],"tcg_id":"552339","finishes":["nonfoil","foil"],"odds":{"collector":{"nonfoil":{"pack":0.0263158,"copies":0.0263158},"foil":{"pack":0.0263158,"copies":0.0263158}}}},
 {"uuid":"b2e21064-9e01-5de2-969b-8d411bcce970","name":"Esper Sentinel","type":"Artifact Creature — Human Soldier","mana":"{W}","mv":1,"colors":["W"],"rarity":"rare","set":"H2R","num":"2","img":"8b5a916f-a6f2-4e89-b38f-7e5bc0c2e032","text":"Whenever an opponent casts their first noncreature spell each turn, draw a card unless that player pays {X}, where X is this creature's power.","keywords":[],"tcg_id":"552319","finishes":["nonfoil","foil"],"odds":{"collector":{"nonfoil":{"pack":0.0240964,"copies":0.0240964},"foil":{"pack":0.00946514,"copies":0.00946514}}}},

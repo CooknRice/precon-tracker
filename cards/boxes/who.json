@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Doctor Who Commander",
 "code":"WHO",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":529.9,"sources":["WHO"],"unresolved":0,"spread":{"boxes":10000,"mean":528.75,"p10":438.6,"p25":477.22,"p50":520.64,"p75":568.79,"p90":619.56,"bins":{"start":300.0,"width":25.0,"counts":[1,11,53,159,412,718,1040,1372,1479,1363,1111,819,563,330,204,118,76,47,25,99]}}}},
-"fetched":{"WHO":"2026-11-26"},
+"fetched":{"WHO":"2026-11-27"},
 "cards":[
 {"uuid":"9d7695d0-cfcd-5923-8f16-0513ec31b047","name":"Davros, Dalek Creator","type":"Legendary Artifact Creature — Alien Scientist","mana":"{1}{U}{B}{R}","mv":4,"colors":["U","B","R"],"rarity":"mythic","set":"WHO","num":"1","img":"59c5bd2b-cf68-4e5e-819d-53917a6c5275","text":"Menace\nAt the beginning of your end step, create a 3/3 black Dalek artifact creature token with menace if an opponent lost 3 or more life this turn. Then each opponent who lost 3 or more life this turn faces a villainous choice — You draw a card, or that player discards a card.","keywords":["Menace"],"tcg_id":"509585","finishes":["foil"],"odds":{"collector":{"foil":{"pack":0.00318021,"copies":0.00318021}}}},
 {"uuid":"91f13aee-1fea-522f-ba42-20c14b400f82","name":"The Fourth Doctor","type":"Legendary Creature — Time Lord Doctor","mana":"{2}{G}{U}","mv":4,"colors":["U","G"],"rarity":"mythic","set":"WHO","num":"2","img":"c84ea0fd-efc7-4614-9f8f-41a3c71fceaa","text":"You may look at the top card of your library any time.\nWould You Like A...? — Once each turn, you may play a historic land or cast a historic spell from the top of your library. When you do, create a Food token. (Artifacts, legendaries, and Sagas are historic.)","keywords":["Food"],"tcg_id":"509584","finishes":["foil"],"odds":{"collector":{"foil":{"pack":0.0366667,"copies":0.0367816}}}},

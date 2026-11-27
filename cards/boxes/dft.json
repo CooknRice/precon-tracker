@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Aetherdrift Commander",
 "code":"DFT",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":68.55,"sources":["DFT","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":68.63,"p10":33.34,"p25":45.28,"p50":60.16,"p75":78.2,"p90":100.53,"bins":{"start":0.0,"width":20.0,"counts":[154,1621,3199,2717,1288,428,97,26,5,64,157,127,74,26,7,1,0,3,3,3]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":137.82,"sources":["DFT","DRC","SPG"],"unresolved":0,"spread":{"boxes":10000,"mean":137.7,"p10":80.58,"p25":97.91,"p50":119.84,"p75":147.05,"p90":193.13,"bins":{"start":20.0,"width":20.0,"counts":[9,154,798,1761,2297,1966,1160,641,281,169,102,68,45,73,118,111,103,50,28,66]}}}},
-"fetched":{"DFT":"2026-11-26","DRC":"2026-11-16","SPG":"2026-11-16"},
+"fetched":{"DFT":"2026-11-27","DRC":"2026-11-16","SPG":"2026-11-16"},
 "cards":[
 {"uuid":"6aecfdb4-c13d-5264-8d42-eb73598c0319","name":"Air Response Unit","type":"Artifact — Vehicle","mana":"{2}{W}","mv":3,"colors":["W"],"rarity":"uncommon","set":"DFT","num":"1","img":"d77c8e29-de24-4664-baf8-959608dd99ca","text":"Flying, vigilance\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)","keywords":["Crew","Flying","Vigilance"],"tcg_id":"614222","finishes":["nonfoil","foil"],"odds":{"play":{"nonfoil":{"pack":0.0348524,"copies":0.0350025},"foil":{"pack":0.0022875,"copies":0.0022875}},"collector":{"foil":{"pack":0.03,"copies":0.03}}}},
 {"uuid":"1e8bcc6d-783f-52fb-a50d-6c119fd63e8b","name":"Alacrian Armory","type":"Artifact","mana":"{3}{W}","mv":4,"colors":["W"],"rarity":"uncommon","set":"DFT","num":"2","img":"d39f7f98-ad5e-4e5e-9f7b-abe0984ffe17","text":"Creatures you control get +0/+1 and have vigilance.\nAt the beginning of combat on your turn, choose up to one target Mount or Vehicle you control. Until end of turn, that permanent becomes saddled if it's a Mount and becomes an artifact creature if it's a Vehicle.","keywords":[],"tcg_id":"615770","finishes":["nonfoil","foil"],"odds":{"play":{"nonfoil":{"pack":0.0364699,"copies":0.03667},"foil":{"pack":0.00305,"copies":0.00305}},"collector":{"foil":{"pack":0.03,"copies":0.03}}}},

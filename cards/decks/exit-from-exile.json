@@ -2,9 +2,9 @@
 "deck_id":"exit-from-exile",
 "name":"Exit from Exile",
 "source":"ExitFromExile_CLB",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "totals":{"cards":100,"tcg":148.65,"cardkingdom":194.3,"missing":0},
-"fetched":{"CLB":"2026-11-26"},
+"fetched":{"CLB":"2026-11-27"},
 "cards":[
 {"uuid":"d52c2867-1d6d-5441-9516-8dc7ebf9d927","name":"Faldorn, Dread Wolf Herald","qty":1,"board":"commander","type":"Legendary Creature — Human Druid","mana":"{1}{R}{G}","mv":3,"colors":["R","G"],"rarity":"mythic","set":"CLB","num":"647","finish":"foil","img":"213e530e-33a9-4358-b43b-4a276a7e7190","text":"Whenever you cast a spell from exile or a land you control enters from exile, create a 2/2 green Wolf creature token.\n{1}, {T}, Discard a card: Exile the top card of your library. You may play it this turn.","keywords":[],"new":true,"tcg_id":"272613"},
 {"uuid":"e07a64d3-dfc8-550b-9192-375e0df04679","name":"Vivien, Champion of the Wilds","qty":1,"board":"main","type":"Legendary Planeswalker — Vivien","mana":"{2}{G}","mv":3,"colors":["G"],"rarity":"rare","set":"CLB","num":"838","finish":"nonfoil","img":"e11dc967-ae38-4c19-bf54-b3209e203b39","text":"You may cast creature spells as though they had flash.\n[+1]: Until your next turn, up to one target creature gains reach and vigilance.\n[−2]: Look at the top three cards of your library. Exile one face down and put the rest on the bottom of your library in any order. For as long as it remains exiled, you may cast it if it's a creature spell.","keywords":[],"tcg_id":"273677"},

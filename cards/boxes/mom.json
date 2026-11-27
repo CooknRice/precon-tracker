@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"March of the Machine",
 "code":"MOM",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":159.0,"sources":["MOM","MUL"],"unresolved":0,"spread":{"boxes":10000,"mean":158.46,"p10":103.97,"p25":126.08,"p50":155.13,"p75":187.32,"p90":217.74,"bins":{"start":20.0,"width":20.0,"counts":[2,24,181,608,1211,1639,1764,1593,1242,811,495,246,109,45,23,4,1,1,1,0]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":null,"sources":["MOC","MOM","MUL"],"unresolved":0},"jumpstart":{"label":"Jumpstart Box","packs":18,"pack_size":20.0,"ev":120.96,"sources":["MOM"],"unresolved":0,"spread":{"boxes":10000,"mean":120.85,"p10":79.12,"p25":97.81,"p50":119.34,"p75":142.1,"p90":163.69,"bins":{"start":10.0,"width":10.0,"counts":[1,5,23,62,132,324,499,708,977,1168,1187,1153,1078,798,690,450,293,197,106,149]}}}},
-"fetched":{"MOC":"2026-11-16","MOM":"2026-11-26","MUL":"2026-11-16"},
+"fetched":{"MOC":"2026-11-16","MOM":"2026-11-27","MUL":"2026-11-16"},
 "cards":[
 {"uuid":"1cafe859-53e4-5307-af59-6177041603ab","name":"Elspeth's Talent","type":"Enchantment — Aura","mana":"{2}{W}{W}","mv":4,"colors":["W"],"rarity":"rare","set":"MOC","num":"72","img":"52b20ab7-2a35-479b-bdc4-88ecde5d496c","text":"Enchant planeswalker\nEnchanted planeswalker has \"[+1]: Create three 1/1 white Soldier creature tokens.\"\nWhenever you activate a loyalty ability of enchanted planeswalker, creatures you control get +2/+2 and gain vigilance until end of turn.","keywords":["Enchant"],"tcg_id":"491488","finishes":["nonfoil","foil"],"odds":{"collector":{"foil":{"pack":0.012987,"copies":0.012987}}}},
 {"uuid":"119ca5ce-0d19-5075-8b53-db625698fc1b","name":"Firemane Commando","type":"Creature — Angel Soldier","mana":"{3}{W}","mv":4,"colors":["W"],"rarity":"rare","set":"MOC","num":"73","img":"426a50de-13bb-4481-8643-ad492d3fc84a","text":"Flying\nWhenever you attack with two or more creatures, draw a card.\nWhenever another player attacks with two or more creatures, they draw a card if none of those creatures attacked you.","keywords":["Flying"],"tcg_id":"491482","finishes":["nonfoil","foil"],"odds":{"collector":{"foil":{"pack":0.012987,"copies":0.012987}}}},

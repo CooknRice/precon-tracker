@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"The Hobbit",
 "code":"HOB",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"play":{"label":"Play Booster Box","packs":30,"pack_size":14.0,"ev":56.79,"sources":["HOB"],"unresolved":0,"spread":{"boxes":10000,"mean":56.41,"p10":25.25,"p25":35.88,"p50":51.7,"p75":71.63,"p90":92.83,"bins":{"start":0.0,"width":10.0,"counts":[18,416,1181,1531,1595,1437,1153,883,638,415,250,211,107,60,31,33,18,9,6,8]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":445.51,"sources":["HOB","HOC"],"unresolved":0,"spread":{"boxes":10000,"mean":435.69,"p10":224.42,"p25":276.55,"p50":355.85,"p75":466.31,"p90":647.67,"bins":{"start":50.0,"width":50.0,"counts":[1,66,439,1161,1601,1557,1330,1105,681,495,342,232,266,184,177,120,74,62,23,84]}}}},
-"fetched":{"HOB":"2026-11-26","HOC":"2026-11-16"},
+"fetched":{"HOB":"2026-11-27","HOC":"2026-11-16"},
 "cards":[
 {"uuid":"ceec57cf-042d-514f-997c-54b47fc678d1","name":"Long-Bodied Grey Dog","type":"Creature — Dog","mana":"{3}","mv":3,"colors":[],"rarity":"common","set":"HOB","num":"1","img":"d1a1e520-1fe2-4529-8afb-c187bb80da3c","text":"Flash\nReach\nWhen this creature enters, create a tapped Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")","keywords":["Flash","Reach","Treasure"],"tcg_id":"709547","finishes":["nonfoil","foil"],"odds":{"play":{"nonfoil":{"pack":0.127701,"copies":0.129158},"foil":{"pack":0.0100673,"copies":0.0100673}},"collector":{"foil":{"pack":0.0746269,"copies":0.0746269}}}},
 {"uuid":"2c07880d-f8c0-51d2-8343-6abf4c247a2a","name":"Old Thrush","type":"Creature — Bird","mana":"{2}","mv":2,"colors":[],"rarity":"common","set":"HOB","num":"2","img":"3ad02b56-13ec-46ef-92bd-ae078b8bb517","text":"Flying\nWhen this creature enters, you gain 2 life. You may search your library for a basic land card, reveal it, then shuffle and put that card on top.","keywords":["Flying"],"tcg_id":"709550","finishes":["nonfoil","foil"],"odds":{"play":{"nonfoil":{"pack":0.127701,"copies":0.129158},"foil":{"pack":0.0100673,"copies":0.0100673}},"collector":{"foil":{"pack":0.0746269,"copies":0.0746269}}}},

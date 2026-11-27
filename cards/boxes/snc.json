@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Streets of New Capenna",
 "code":"SNC",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":92.27,"sources":["SNC"],"unresolved":0,"spread":{"boxes":10000,"mean":92.28,"p10":59.43,"p25":72.95,"p50":90.03,"p75":109.48,"p90":128.23,"bins":{"start":10.0,"width":10.0,"counts":[1,9,93,289,672,1041,1394,1498,1412,1142,899,644,423,233,110,71,38,16,11,4]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":172.03,"sources":["NCC","SNC"],"unresolved":0,"spread":{"boxes":10000,"mean":172.27,"p10":120.43,"p25":142.5,"p50":169.03,"p75":199.5,"p90":227.52,"bins":{"start":40.0,"width":20.0,"counts":[1,56,229,687,1319,1787,1895,1551,1152,706,356,160,67,18,13,3,0,0,0,0]}}}},
-"fetched":{"NCC":"2026-11-16","SNC":"2026-11-26"},
+"fetched":{"NCC":"2026-11-16","SNC":"2026-11-27"},
 "cards":[
 {"uuid":"32b4d9a6-2686-5212-9f56-a722f0608319","name":"Bennie Bracks, Zoologist","type":"Legendary Creature — Elf Druid","mana":"{3}{W}","mv":4,"colors":["W"],"rarity":"mythic","set":"NCC","num":"94","img":"10d2df76-a495-48be-9f86-3f4ddd2ad3dd","text":"Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nAt the beginning of each end step, if you created a token this turn, draw a card.","keywords":["Convoke"],"tcg_id":"268977","finishes":["nonfoil","foil"],"odds":{"collector":{"nonfoil":{"pack":0.00581395,"copies":0.00581395},"foil":{"pack":0.00505123,"copies":0.00505123}}}},
 {"uuid":"221a1754-7d31-5c23-ae19-78775e7a81dc","name":"Tenuous Truce","type":"Enchantment — Aura","mana":"{1}{W}","mv":2,"colors":["W"],"rarity":"rare","set":"NCC","num":"95","img":"97de1297-2e0b-43a5-8b80-5b57d222e9f0","text":"Enchant opponent\nAt the beginning of enchanted opponent's end step, you and that player each draw a card.\nWhen you attack enchanted opponent or a planeswalker they control or when they attack you or a planeswalker you control, sacrifice this Aura.","keywords":["Enchant"],"tcg_id":"268979","finishes":["nonfoil","foil"],"odds":{"collector":{"nonfoil":{"pack":0.0116279,"copies":0.0116279},"foil":{"pack":0.0101025,"copies":0.0101025}}}},

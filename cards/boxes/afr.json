@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Adventures in the Forgotten Realms",
 "code":"AFR",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":93.37,"sources":["AFR"],"unresolved":0,"spread":{"boxes":10000,"mean":93.46,"p10":54.25,"p25":67.31,"p50":86.03,"p75":113.45,"p90":142.68,"bins":{"start":10.0,"width":10.0,"counts":[2,25,142,473,987,1251,1345,1256,991,815,625,580,403,319,255,146,97,83,67,138]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":203.03,"sources":["AFC","AFR"],"unresolved":0,"spread":{"boxes":10000,"mean":202.85,"p10":137.29,"p25":160.53,"p50":192.4,"p75":236.44,"p90":282.81,"bins":{"start":60.0,"width":20.0,"counts":[7,48,288,805,1314,1602,1450,1176,980,737,529,379,263,184,88,59,40,21,13,17]}}}},
-"fetched":{"AFC":"2026-11-16","AFR":"2026-11-26"},
+"fetched":{"AFC":"2026-11-16","AFR":"2026-11-27"},
 "cards":[
 {"uuid":"bd5e2622-76fd-5a12-bb61-79b1dab12e7c","name":"Fey Steed","type":"Creature — Elk","mana":"{2}{W}{W}","mv":4,"colors":["W"],"rarity":"rare","set":"AFC","num":"274","img":"bde3cd31-ccb8-4242-b893-0cbd12f6ae86","text":"Whenever this creature attacks, another target attacking creature you control gains indestructible until end of turn.\nWhenever a creature or planeswalker you control becomes the target of a spell or ability an opponent controls, you may draw a card.","keywords":[],"tcg_id":"244206","finishes":["nonfoil"],"odds":{"collector":{"nonfoil":{"pack":0.0192308,"copies":0.0192308}}}},
 {"uuid":"cb9128e2-4c5d-52b3-ac77-af38d2298d81","name":"Holy Avenger","type":"Artifact — Equipment","mana":"{2}{W}","mv":3,"colors":["W"],"rarity":"rare","set":"AFC","num":"275","img":"df8a2a1a-0c38-4cf7-9115-843d18ed884f","text":"Equipped creature has double strike.\nWhenever equipped creature deals combat damage, you may put an Aura card from your hand onto the battlefield attached to it.\nEquip {2}{W}","keywords":["Equip"],"tcg_id":"244208","finishes":["nonfoil"],"odds":{"collector":{"nonfoil":{"pack":0.0192308,"copies":0.0192308}}}},

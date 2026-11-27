@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Assassin's Creed",
 "code":"ACR",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"collector":{"label":"Collector Booster Box","packs":12,"pack_size":10.0,"ev":322.83,"sources":["ACR"],"unresolved":0,"spread":{"boxes":10000,"mean":323.73,"p10":241.06,"p25":275.05,"p50":316.0,"p75":360.3,"p90":402.64,"bins":{"start":140.0,"width":20.0,"counts":[6,46,116,277,520,797,1017,1188,1311,1159,1046,864,590,401,259,144,103,49,27,80]}}}},
-"fetched":{"ACR":"2026-11-26"},
+"fetched":{"ACR":"2026-11-27"},
 "cards":[
 {"uuid":"d1c00a42-14a5-5480-a704-b1c457f177db","name":"The Capitoline Triad","type":"Legendary Creature — God Artificer","mana":"{10}","mv":10,"colors":[],"rarity":"mythic","set":"ACR","num":"1","img":"fa1b63ce-47d3-4633-9062-3fecd810e85f","text":"Those Who Came Before — This spell costs {1} less to cast for each historic card in your graveyard. (Artifacts, legendaries, and Sagas are historic.)\nExile any number of historic cards from your graveyard with total mana value 30 or greater: You get an emblem with \"Creatures you control have base power and toughness 9/9.\"","keywords":["Those Who Came Before"],"tcg_id":"556366","finishes":["nonfoil","foil"],"odds":{"collector":{"foil":{"pack":0.0128205,"copies":0.0128205}}}},
 {"uuid":"c74344f2-826e-58de-8f98-b27a5937bd6e","name":"Caduceus, Staff of Hermes","type":"Legendary Artifact — Equipment","mana":"{2}{W}","mv":3,"colors":["W"],"rarity":"rare","set":"ACR","num":"2","img":"2b60f18e-4709-4b91-a342-74eb3fca71e1","text":"Equipped creature has lifelink.\nAs long as you have 30 or more life, equipped creature gets +5/+5 and has indestructible and \"Prevent all damage that would be dealt to this creature.\"\nEquip {W}{W}","keywords":["Equip"],"tcg_id":"555790","finishes":["nonfoil","foil"],"odds":{"collector":{"foil":{"pack":0.025641,"copies":0.025641}}}},

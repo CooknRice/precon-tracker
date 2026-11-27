@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Strixhaven: School of Mages (Commander 2021)",
 "code":"STX",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"draft":{"label":"Draft Booster Box","packs":36,"pack_size":15.0,"ev":100.62,"sources":["STA","STX"],"unresolved":0,"spread":{"boxes":10000,"mean":100.47,"p10":53.42,"p25":67.69,"p50":89.71,"p75":125.5,"p90":161.89,"bins":{"start":0.0,"width":20.0,"counts":[1,232,1386,2349,1925,1308,1023,719,431,283,163,90,44,24,12,6,1,1,1,1]}}},"collector":{"label":"Collector Booster Box","packs":12,"pack_size":15.0,"ev":379.64,"sources":["C21","STA","STX"],"unresolved":0,"spread":{"boxes":10000,"mean":378.99,"p10":245.35,"p25":286.09,"p50":343.44,"p75":424.85,"p90":547.98,"bins":{"start":100.0,"width":50.0,"counts":[5,150,965,1990,2152,1657,1050,627,417,290,164,86,69,87,78,76,45,30,26,36]}}}},
-"fetched":{"C21":"2026-11-16","STA":"2026-11-16","STX":"2026-11-26"},
+"fetched":{"C21":"2026-11-16","STA":"2026-11-16","STX":"2026-11-27"},
 "cards":[
 {"uuid":"d449a9b7-bb66-57e3-8fc1-827334dc8713","name":"Breena, the Demagogue","type":"Legendary Creature — Bird Warlock","mana":"{1}{W}{B}","mv":3,"colors":["W","B"],"rarity":"mythic","set":"C21","num":"328","img":"7c4cb151-432e-4652-9ebd-b4640cc04c3b","text":"Flying\nWhenever a player attacks one of your opponents, if that opponent has more life than another of your opponents, that attacking player draws a card and you put two +1/+1 counters on a creature you control.","keywords":["Flying"],"tcg_id":"235530","finishes":["nonfoil"],"odds":{"collector":{"nonfoil":{"pack":0.00666667,"copies":0.00666667}}}},
 {"uuid":"6700dd4a-ea71-5e65-b81f-b17e9338ae2f","name":"Felisa, Fang of Silverquill","type":"Legendary Creature — Vampire Wizard","mana":"{2}{W}{B}","mv":4,"colors":["W","B"],"rarity":"mythic","set":"C21","num":"329","img":"229dec6e-7997-4954-bff7-c79dd4339211","text":"Flying\nMentor (Whenever this creature attacks, put a +1/+1 counter on target attacking creature with lesser power.)\nWhenever a nontoken creature you control dies, if it had counters on it, create X tapped 2/1 white and black Inkling creature tokens with flying, where X is the number of counters it had on it.","keywords":["Flying","Mentor"],"tcg_id":"236610","finishes":["nonfoil"],"odds":{"collector":{"nonfoil":{"pack":0.00666667,"copies":0.00666667}}}},

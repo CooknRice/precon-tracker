@@ -1,9 +1,9 @@
 {"schema":1,
 "set":"Mystery Booster Commander Edition",
 "code":"MBC",
-"updated_at":"2026-11-26T09:41:14.578020+00:00",
+"updated_at":"2026-11-27T09:45:58.611056+00:00",
 "kinds":{"booster":{"label":"Booster Box","packs":null,"pack_size":20.0,"ev":null,"sources":["MB2","MBC","PLST"],"unresolved":0}},
-"fetched":{"MB2":"2026-11-16","MBC":"2026-11-26","PLST":"2026-11-16"},
+"fetched":{"MB2":"2026-11-16","MBC":"2026-11-27","PLST":"2026-11-16"},
 "cards":[
 {"uuid":"4fde2e96-a670-548b-a148-17ec67feec82","name":"Future Sight","type":"Enchantment","mana":"{2}{U}{U}{U}","mv":5,"colors":["U"],"rarity":"rare","set":"MB2","num":"122","img":"0856f657-6664-4e33-8615-e005cb211baf","text":"Play with the top card of your library revealed.\nYou may play lands and cast spells from the top of your library.","keywords":[],"tcg_id":"562491","finishes":["nonfoil","foil"],"odds":{"booster":{"nonfoil":{"pack":0.00787879,"copies":0.00787879},"foil":{"pack":0.000311688,"copies":0.000311688}}}},
 {"uuid":"9def2a98-9b6a-5c2f-8135-acb3355e125a","name":"Hoodwink","type":"Instant","mana":"{1}{U}","mv":2,"colors":["U"],"rarity":"common","set":"MB2","num":"123","img":"75080570-add8-4fdb-8a2f-b095e818450e","text":"Return target artifact, enchantment, or land to its owner's hand.","keywords":[],"tcg_id":"563193","finishes":["nonfoil","foil"],"odds":{"booster":{"nonfoil":{"pack":0.0082236,"copies":0.0082236}}}},
